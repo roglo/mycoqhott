@@ -785,12 +785,27 @@ Axiom AC : ∀ X (A : X → U) (P : Π (x : X), (A x → U)),
   → (Π (x : X), ∥ (Σ (a : A x), P x a) ∥)
   → ∥ (Σ (g : Π (x : X), A x), Π (x : X), P x (g x)) ∥.
 
-Print AC.
-
 Definition hott_3_8_2 :
-  AC ↔
-  ∀ (X : U) (Y : X → U), (Π (x : X), isSet (Y x)) →
-  (Π (x : X), ∥ (Y x) ∥) → ∥ (Π (x : X), Y x) ∥.
+  (∀ X (A : X → U) (P : Π (x : X), (A x → U)),
+   isSet X
+   → (Π (x : X), isSet (A x))
+   → (Π (x : X), Π (a : A x), isProp (P x a))
+   → (Π (x : X), ∥ (Σ (a : A x), P x a) ∥)
+   → ∥ (Σ (g : Π (x : X), A x), Π (x : X), P x (g x)) ∥)
+  ≃ (∀ (X : U) (Y : X → U), (Π (x : X), isSet (Y x)) →
+     (Π (x : X), ∥ (Y x) ∥) → ∥ (Π (x : X), Y x) ∥).
+Proof.
+assert 
+  ((∀ X (A : X → U) (P : Π (x : X), (A x → U)),
+    isSet X
+    → (Π (x : X), isSet (A x))
+    → (Π (x : X), Π (a : A x), isProp (P x a))
+    → (Π (x : X), ∥ (Σ (a : A x), P x a) ∥)
+    → ∥ (Σ (g : Π (x : X), A x), Π (x : X), P x (g x)) ∥)
+   → (∀ (X : U) (Y : X → U), (Π (x : X), isSet (Y x)) →
+     (Π (x : X), ∥ (Y x) ∥) → ∥ (Π (x : X), Y x) ∥)) as ffff.
+ intros AC X Y IS H.
+
 bbb.
 
 (* reminder
