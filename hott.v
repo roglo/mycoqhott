@@ -804,7 +804,11 @@ assert
     → ∥ (Σ (g : Π (x : X), A x), Π (x : X), P x (g x)) ∥)
    → (∀ (X : U) (Y : X → U), (Π (x : X), isSet (Y x)) →
      (Π (x : X), ∥ (Y x) ∥) → ∥ (Π (x : X), Y x) ∥)) as ffff.
+(*
  intros AC X Y IS H.
+ pose proof @UnivProp.hott_2_15_7 X Y.
+
+bbb.
  constructor; intros u x.
  pose proof H x as Hx.
  (* apply Hx : interdit. Je n'ai pas le droit de savoir quel est le
@@ -822,6 +826,7 @@ bbb.
    modèle doit donc être faux. *)
 
 bbb.
+*)
 
 assert 
   (((∀ (X : U) (Y : X → U), (Π (x : X), isSet (Y x)) →
@@ -833,6 +838,18 @@ assert
     → (Π (x : X), ∥ (Σ (a : A x), P x a) ∥)
     → ∥ (Σ (g : Π (x : X), A x), Π (x : X), P x (g x)) ∥)) as gggg.
  intros AC2 X Y P XIS IS IP H.
+Focus 1.
+(* @UnivProp.hott_2_15_7
+     : ∀ (X : Type) (A : X → Type) (P : ∀ x : X, A x → Type),
+       (∀ x : X, {a : A x & P x a}) ≃ {g : ∀ x : X, A x & ∀ x : X, P x (g x)} *)
+ pose proof @UnivProp.hott_2_15_7 X Y P as H1.
+(*
+set (u := {g : ∀ x : X, Y x & ∀ x : X, P x (g x)}) in H1 |-*.
+*)
+bbb.
+
+ eapply UnivProp.hott_2_15_7; intros x.
+
  constructor; intros u.
  apply UnivProp.hott_2_15_7; intros x.
 
