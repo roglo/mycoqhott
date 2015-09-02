@@ -805,6 +805,28 @@ assert
    → (∀ (X : U) (Y : X → U), (Π (x : X), isSet (Y x)) →
      (Π (x : X), ∥ (Y x) ∥) → ∥ (Π (x : X), Y x) ∥)) as ffff.
  intros AC X Y IS H.
+clear AC.
+ constructor; intros u x.
+ apply H, u.
+
+(* ah oui, mais non, ça ne devrait pas pouvoir se prouver comme ça ;
+   faut que je doive appliquer l'axiome du choix (l'hypothèse AC). Mon
+   modèle doit donc être faux. *)
+
+bbb.
+
+assert 
+  (((∀ (X : U) (Y : X → U), (Π (x : X), isSet (Y x)) →
+     (Π (x : X), ∥ (Y x) ∥) → ∥ (Π (x : X), Y x) ∥)) →
+   (∀ X (A : X → U) (P : Π (x : X), (A x → U)),
+    isSet X
+    → (Π (x : X), isSet (A x))
+    → (Π (x : X), Π (a : A x), isProp (P x a))
+    → (Π (x : X), ∥ (Σ (a : A x), P x a) ∥)
+    → ∥ (Σ (g : Π (x : X), A x), Π (x : X), P x (g x)) ∥)) as gggg.
+ intros AC2 X Y P XIS IS IP H.
+ constructor; intros u.
+ apply UnivProp.hott_2_15_7; intros x.
 
 bbb.
 
