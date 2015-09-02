@@ -805,7 +805,12 @@ assert
    → (∀ (X : U) (Y : X → U), (Π (x : X), isSet (Y x)) →
      (Π (x : X), ∥ (Y x) ∥) → ∥ (Π (x : X), Y x) ∥)) as ffff.
  intros AC X Y IS H.
+ constructor; intros u x.
+bbb.
+
+assert (isSet X) as triche. Focus 2.
 clear AC.
+bbb.
  constructor; intros u x.
  apply H, u.
 
