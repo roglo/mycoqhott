@@ -806,6 +806,9 @@ assert
      (Π (x : X), ∥ (Y x) ∥) → ∥ (Π (x : X), Y x) ∥)) as ffff.
  intros AC X Y IS H.
  constructor; intros u x.
+ pose proof H x as Hx.
+ (* apply Hx : interdit. Je n'ai pas le droit de savoir quel est le
+    témoin |Y x| *)
 bbb.
 
 assert (isSet X) as triche. Focus 2.
