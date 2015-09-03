@@ -721,23 +721,9 @@ Definition PT_elim {A} (x : ∥A∥) : A := match x with PT f => f I end.
 (* "If B is a mere proposition and we have f : A → B, then there is an
     induced g : ∥A∥ → B such that g(|a|) ≡ f(a) for all a : A." *)
 
-Definition prop_trunc_rec_princ {A B} : isProp B →
+Axiom prop_trunc_rec : ∀ A B, isProp B →
   ∀ f : A → B, ∃ g : ∥A∥ → B, ∀ a : A, g |a| = f a.
-Proof.
-intros H f.
-bbb.
-
-exists (λ z, f (PT_elim z)).
-reflexivity.
-Defined.
-
-Definition prop_trunc_rec_fun {A B} (f : A → B) := f ◦ PT_elim.
-
-Definition prop_trunc_rec_princ2 {A B} (f : A → B) a :
-  prop_trunc_rec_fun f |a| = f a.
-Proof.
-reflexivity.
-Defined.
+Arguments prop_trunc_rec [A] [B] _ f.
 
 (* doing the exercise 3.14 in advance, just to see if my definition of
    propositional truncation works *)
@@ -746,7 +732,10 @@ Definition ex_3_14 : LEM → ∀ A, isProp A → (notT (notT A) ≃ ∥A∥).
 Proof.
 intros HLEM A HPA.
 apply (existT _ (λ p, | (pr₁ LEM_LDN HLEM A HPA p) |)), qinv_isequiv.
-apply (existT _ (λ p q, q (PT_elim p))).
+apply
+  (existT _ 
+     (λ p (q : notT A),
+      match prop_trunc_rec HPA id with ex_intro _ f _ => q (f p) end)).
 unfold "◦", "~~", id; simpl.
 split; [ intros x; destruct (HLEM A HPA); apply PT_eq | ].
 intros f; apply Π_type.funext; intros x; destruct (f x).
@@ -754,33 +743,24 @@ Defined.
 
 (* "3.8 The axiom of choice" *)
 
-Axiom AC : ∀ X (A : X → U) (P : Π (x : X), (A x → U)),
+Definition AC_def := ∀ X (A : X → U) (P : Π (x : X), (A x → U)),
   isSet X
   → (Π (x : X), isSet (A x))
   → (Π (x : X), Π (a : A x), isProp (P x a))
   → (Π (x : X), ∥ (Σ (a : A x), P x a) ∥)
   → ∥ (Σ (g : Π (x : X), A x), Π (x : X), P x (g x)) ∥.
 
+Axiom AC : AC_def.
+
 Definition hott_3_8_2 :
-  (∀ X (A : X → U) (P : Π (x : X), (A x → U)),
-   isSet X
-   → (Π (x : X), isSet (A x))
-   → (Π (x : X), Π (a : A x), isProp (P x a))
-   → (Π (x : X), ∥ (Σ (a : A x), P x a) ∥)
-   → ∥ (Σ (g : Π (x : X), A x), Π (x : X), P x (g x)) ∥)
+  AC_def
   ≃ (∀ (X : U) (Y : X → U), (Π (x : X), isSet (Y x)) →
      (Π (x : X), ∥ (Y x) ∥) → ∥ (Π (x : X), Y x) ∥).
 Proof.
 assert 
-  ((∀ X (A : X → U) (P : Π (x : X), (A x → U)),
-    isSet X
-    → (Π (x : X), isSet (A x))
-    → (Π (x : X), Π (a : A x), isProp (P x a))
-    → (Π (x : X), ∥ (Σ (a : A x), P x a) ∥)
-    → ∥ (Σ (g : Π (x : X), A x), Π (x : X), P x (g x)) ∥)
+  (AC_def
    → (∀ (X : U) (Y : X → U), (Π (x : X), isSet (Y x)) →
      (Π (x : X), ∥ (Y x) ∥) → ∥ (Π (x : X), Y x) ∥)) as ffff.
-(*
  intros AC X Y IS H.
  pose proof @UnivProp.hott_2_15_7 X Y.
 
