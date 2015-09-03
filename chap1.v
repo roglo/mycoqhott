@@ -7,7 +7,7 @@ Require Import NPeano.
 (* no default implicit without arguments *)
 Arguments eq_refl [A] x.
 
-Notation "⊥" := False.
+Notation "0" := False : type_scope.
 Notation "( x , y ) '_{' P }" := (existT P x y)
   (at level 0, format "'[' ( x ,  y ) _{ P } ']'", only parsing).
 
@@ -165,7 +165,9 @@ Definition iter_f {A B} (cs : _ → _ → B) (r : nat * A) :=
 Definition rec_ℕ' {C} (c₀ : C) (cs : nat → C → C) (n : nat) :=
   snd (iter (0, c₀) (iter_f cs) n).
 
+(*
 Eval compute in rec_ℕ' nil (λ n l, cons n (cons 7 l)) 5.
+*)
 
 Theorem rec_ℕ_0 : ∀ C (c₀ : C) cs, rec_ℕ' c₀ cs 0 = c₀.
 Proof. reflexivity. Qed.
@@ -191,8 +193,6 @@ Definition U := Type.
 
 Definition rec₂ C (c₀ c₁ : C) (b : bool) := if b then c₀ else c₁.
 
-Inspect 1.
-
 Definition ApB A B := Σ (x : bool), rec₂ U A B x.
 
 Definition ApB_inl (A B : U) (a : A) := existT (rec₂ U A B) true a.
@@ -210,8 +210,6 @@ induction x as (b, x).
 destruct b; [ apply HA | apply HB ].
 Qed.
 
-Check ind_ApB_1.
-
 (* same definition, by value *)
 Definition ind_ApB_2 {A B : U} (C : Π (_ : ApB A B), U)
     (HA : Π (a : A), C (ApB_inl A B a))
@@ -220,14 +218,12 @@ Definition ind_ApB_2 {A B : U} (C : Π (_ : ApB A B), U)
   let (v, u) as s return (C s) := x in
   (if v return Π (z : _), C (existT _ v z) then HA else HB) u.
 
-Check @ind_ApB_1.
 (* ind_ApB_1
      : Π (A : U),
        Π (B : U),
        Π (C : Π (_ : ApB A B), U),
        Π (_ : Π (a : A), C (ApB_inl A B a)),
        Π (_ : Π (b : B), C (ApB_inr A B b)), Π (x : ApB A B), C x *)
-Check @ind_ApB_2.
 (* ind_ApB_2
      : Π (A : U),
        Π (B : U),
@@ -352,10 +348,12 @@ Definition ℕ_exp x := rec_ℕ' 1 (λ _, ℕ_mul x).
 Definition ℕ_tet x := rec_ℕ' 1 (λ _, ℕ_exp x).
 Definition ℕ_pen x := rec_ℕ' 1 (λ _, ℕ_tet x).
 
+(*
 Eval vm_compute in (ℕ_add 3 7).
 Eval vm_compute in (ℕ_mul 3 7).
 Eval vm_compute in (ℕ_exp 2 9).
 Eval vm_compute in (ℕ_tet 2 3).
+*)
 
 Fixpoint ind_ℕ (C : nat → U) P0 Pn n :=
   match n return C n with
@@ -397,7 +395,6 @@ Definition pair_succ r := (S (fst r), S (snd r)).
 Inductive Fin n := elem : ∀ i, i < n → Fin n.
 Definition fmax n := elem (n + 1) n (Nat.lt_add_pos_r 1 n Nat.lt_0_1).
 
-Check fmax.
 (* fmax
      : ∀ n : nat, Fin (n + 1) *)
 
@@ -449,9 +446,6 @@ Qed.
 (* solution with proof term *)
 Definition not_not_not_2 A (Hnnn : ¬¬¬A) : ¬A := λ a, Hnnn (λ HnA, HnA a).
 
-Check not_not_not_1.
-Check not_not_not_2.
-
 (* this was on Prop; solutions on Types: *)
 
 (* with tactics *)
@@ -465,9 +459,6 @@ Qed.
 (* with proof term *)
 Definition not_not_not_4 A (Hnnn : notT (notT (notT A))) : notT A :=
   λ a, Hnnn (λ HnA, HnA a).
-
-Check not_not_not_3.
-Check not_not_not_4.
 
 (* Exercise 1.12. Using the propositions as types interpretation,
    derive the following tautologies.

@@ -7,7 +7,8 @@ Require Import chap1.
 (* no default implicit without arguments *)
 Arguments eq_refl [A] x.
 
-Notation "⊥" := False.
+Notation "0" := False : type_scope.
+Notation "1" := True : type_scope.
 Notation "( x , y ) '_{' P }" := (existT P x y)
   (at level 0, format "'[' ( x ,  y ) _{ P } ']'", only parsing).
 
@@ -149,7 +150,6 @@ Notation "q '•l' β" := (dotl q β) (at level 50).
 Definition ru {A} {a b : A} (p : a = b) : p = p • eq_refl b :=
   hott_2_1_4_i_1 p.
 
-Check @ru.
 (* ru
      : ∀ (A : Type) (a b : A) (p : a = b) → p = p • eq_refl b *)
 
@@ -164,7 +164,6 @@ Qed.
 Definition lu {A} {b c : A} (r : b = c) : r = eq_refl b • r :=
   hott_2_1_4_i_2 r.
 
-Check @lu.
 (* lu
      : ∀ (A : Type) (b c : A) (r : b = c), r = eq_refl b • r *)
 
@@ -236,8 +235,6 @@ eapply compose; [ idtac | apply star'_dot ].
 apply star_star'.
 Qed.
 
-Check @eckmann_hilton.
-
 (* *)
 
 (* hott section 2.2 *)
@@ -284,7 +281,6 @@ Definition transport {A} P {x y : A} (p : x = y) : P x → P y :=
   | eq_refl _ => id
   end.
 
-Check @transport.
 (* transport =
      : ∀ (A : Type) (P : A → Type) (x y : A), x = y → P x → P y *)
 
@@ -299,17 +295,13 @@ Definition lift {A P} {x y : A} (u : P x) (p : x = y)
      | eq_refl _ => eq_refl (existT P x (transport P (eq_refl x) u))
      end.
 
-Check @lift.
-
 (* lift
      : ∀ (A : Type) (P : A → Type) (x y : A) (u : P x) (p : x = y),
        existT x u = existT y (transport P p u) *)
 
-Check projT1.
 (* projT1
      : ∀ (A : Type) (P : A → Type), sigT P → A *)
 
-Check @ap.
 (* ap
      : ∀ (A B : Type) (f : A → B) (x y : A), x = y → f x = f y *)
 
@@ -346,8 +338,8 @@ Definition transportconst {A : U} {x y : A}
      match p return (transport P p b = b) with
      | eq_refl _ => eq_refl b
      end.
+Arguments transportconst A%type x y B p b.
 
-Check @transportconst.
 (* transportconst
      : ∀ (A : U) (x y : A) (B : Type) (P:=λ _ : A, B)
        (p : x = y) (b : B), transport P p b = b *)
@@ -1146,12 +1138,12 @@ End Σ_type.
 
 (* 2.8 The unit type *)
 
-Theorem hott_2_8_1 : ∀ x y : unit, (x = y) ≃ unit.
+Theorem hott_2_8_1 : ∀ x y : 1, (x = y) ≃ 1.
 Proof.
 intros.
 destruct x, y.
-set (f := λ _ : tt = tt, tt).
-set (g := λ _ : unit, eq_refl tt).
+set (f := λ _ : I = I, I).
+set (g := λ _ : 1, eq_refl I).
 unfold equivalence.
 apply (existT _ f), qinv_isequiv.
 apply (existT _ g); split.
@@ -1166,11 +1158,10 @@ apply (existT _ g); split.
  reflexivity.
 Qed.
 
-Definition unit_intro : unit := tt.
-Definition unit_elim : unit → unit := id.
-Definition unit_comp : unit → unit := id.
-Definition unit_transport := @transportconst unit tt tt.
-Print unit_transport.
+Definition unit_intro : 1 := I.
+Definition unit_elim : 1 → 1 := id.
+Definition unit_comp : 1 → 1 := id.
+Definition unit_transport := @transportconst 1 I I.
 
 (* 2.9 Π-types and the function extensionality axiom *)
 
@@ -1889,15 +1880,15 @@ Defined.
 
 (* Expression 2.12.3 *)
 
-Definition inl_inr_equiv {A B} (a : A) (b : B) : inl a = inr b ≃ ⊥.
+Definition inl_inr_equiv {A B} (a : A) (b : B) : inl a = inr b ≃ 0.
 Proof.
-assert (inl a = inr b → ⊥) as f.
+assert (inl a = inr b → 0) as f.
  intros p.
- change (match (inl a : A + B) with inl _ => False | inr _ => True end).
+ change (match (inl a : A + B) with inl _ => False | inr _ => 1 end).
  rewrite p; constructor.
 
  apply (existT _ f), qinv_isequiv.
- assert (⊥ → inl a = inr b) as g by (intros H; contradiction).
+ assert (0 → inl a = inr b) as g by (intros H; contradiction).
  apply (existT _ g); split; intros x; contradiction.
 Defined.
 
@@ -1910,7 +1901,7 @@ Definition code {A B} a₀ : A + B → U :=
   λ x,
   match x with
   | inl a => a₀ = a
-  | inr b => ⊥
+  | inr b => 0%type
   end.
 
 (* I did it the reverse way they did: that 2.12.1 and 2.12.3 imply 2.12.5: *)
@@ -1958,7 +1949,7 @@ Defined.
 
 (* 2.12.3 again *)
 
-Definition inl_inr_equiv_bis {A B} (a : A) (b : B) : inl a = inr b ≃ ⊥.
+Definition inl_inr_equiv_bis {A B} (a : A) (b : B) : inl a = inr b ≃ 0.
 Proof.
 eapply equiv_compose; [ apply hott_2_12_5_bis | apply eqv_eq_refl ].
 Defined.
@@ -1968,7 +1959,7 @@ Defined.
 Definition code_r {A B} b₀ : A + B → U :=
   λ x,
   match x with
-  | inl a => ⊥
+  | inl a => 0%type
   | inr b => b₀ = b
   end.
 
@@ -2010,17 +2001,17 @@ Definition encode_inl_inl {A B} a₀
   := λ a, encode a₀ (inl a).
 
 Definition encode_inl_inr {A B} a₀
-  : ∀ b, (@eq (A + B) (inl a₀) (inr b)) → ⊥
+  : ∀ b, (@eq (A + B) (inl a₀) (inr b)) → 0
   := λ b, encode a₀ (inr b).
 
 (* Remark 2.12.6. In particular, since the two-element type 2 is
    equivalent to 1+1, we have 0₂ ≠ 1₂ *)
 
-Definition bool_unit_unit : bool → unit + unit :=
-  λ b, match b with true => inr tt | false => inl tt end.
+Definition bool_unit_unit : bool → 1 + 1 :=
+  λ b, match b with true => inr I | false => inl I end.
 
 Definition hott_2_12_6 : false ≠ true :=
-  λ p, encode_inl_inr tt tt (ap bool_unit_unit p).
+  λ p, encode_inl_inr I I (ap bool_unit_unit p).
 
 (* action of transport in coproduct types *)
 
@@ -2046,15 +2037,15 @@ Module ℕ.
 
 Fixpoint code m n : U :=
   match (m, n) with
-  | (0, 0) => unit
-  | (S m, 0) => ⊥
-  | (0, S n) => ⊥
+  | (0, 0) => 1%type
+  | (S m, 0) => 0%type
+  | (0, S n) => 0%type
   | (S m, S n) => code m n
   end.
 
 Fixpoint r n : code n n :=
   match n with
-  | 0 => tt
+  | 0 => I
   | S m => r m
   end.
 
@@ -2104,7 +2095,7 @@ unfold "◦", "~~", id; simpl.
 split; intros p; [ apply encode_decode | apply decode_encode ].
 Defined.
 
-Definition hott_2_13_2 {m} : S m = 0 → ⊥ := encode (S m) 0.
+Definition hott_2_13_2 {m} : S m = 0 → 0%type := encode (S m) 0.
 
 Definition hott_2_13_3 m n : (S m = S n) → (m = n) :=
   λ p, decode m n (encode (S m) (S n) p).
@@ -2408,10 +2399,7 @@ Defined.
 
 (* pr₁ and pr₂ on semigroups *)
 
-Check (pr₁ : Semigroup → U).
 (* pr₁ : Semigroup → U *)
-
-Check (pr₂ : Π (x : Semigroup), (_ ◦ pr₁) x).
 (* pr₂ : ∀ x : Semigroup, (SemigroupStr ◦ pr₁) x *)
 
 (* equality in semigroup str *)
@@ -3013,10 +3001,10 @@ Arguments Cons [A] [n] x l.
 
 Fixpoint n_dim_path' {A nx ny} (x : ilist A nx) (y : ilist A ny) :=
   match x with
-  | Nil => tt = tt
+  | Nil => I = I
   | Cons x₁ x₂ =>
       match y with
-      | Nil => tt = tt
+      | Nil => I = I
       | Cons y₁ y₂ => (x₁ = y₁) ∧ n_dim_path' x₂ y₂
       end
   end.
@@ -3427,7 +3415,7 @@ Defined.
     cases, the apparently weaker formulation has been chosen for
     readability and consistency.)" *)
 
-Print hott_2_10_5.
+(* Print hott_2_10_5. *)
 
 (* Well, it seems that my implementation did not use function
    extensionality anyway, but just induction of p. Perhaps I should
@@ -3445,8 +3433,6 @@ Print hott_2_10_5.
 Axiom funext2 :
   Π (A:U), Π (B:A→U), Π (f:Π(x:A),B x), Π (g:Π(x:A),B x),
   (∀ x, f x = g x) → (f = g).
-
-Check @Π_type.happly.
 
 Definition ex_2_16 {A B} (f g : Π (x : A), B x) : (f = g) ≃ (∀ x, f x = g x).
 Proof.

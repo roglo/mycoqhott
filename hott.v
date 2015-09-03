@@ -7,7 +7,8 @@ Require Import chap1 chap2.
 (* no default implicit without arguments *)
 Arguments eq_refl [A] x.
 
-Notation "⊥" := False.
+Notation "0" := False : type_scope.
+Notation "1" := True : type_scope.
 Notation "( x , y ) '_{' P }" := (existT P x y)
   (at level 0, format "'[' ( x ,  y ) _{ P } ']'", only parsing).
 
@@ -50,7 +51,7 @@ Definition ex_3_1_2 : isSet unit :=
 
 (* hott_2_8_1 : ∀ x y : unit, (x = y) ≃ unit *)
 
-Definition ex_3_1_2_alt_tac : isSet unit.
+Definition ex_3_1_2_alt_tac : isSet 1.
 Proof.
 intros x y p q.
 pose proof hott_2_8_1 x y as r.
