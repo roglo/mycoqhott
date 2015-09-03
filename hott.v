@@ -760,14 +760,14 @@ Definition AC := ∀ X (A : X → U) (P : Π (x : X), (A x → U)),
 
 Definition hott_3_8_2 :
   AC
-  ≃ (∀ (X : U) (Y : X → U), (Π (x : X), isSet (Y x)) → isSet X →
-     (Π (x : X), ∥ (Y x) ∥) → ∥ (Π (x : X), Y x) ∥).
+  ≃ (∀ (X : U) (Y : X → U), isSet X → (Π (x : X), isSet (Y x))
+     → (Π (x : X), ∥ (Y x) ∥) → ∥ (Π (x : X), Y x) ∥).
 Proof.
 assert
   (AC
-   → (∀ (X : U) (Y : X → U), (Π (x : X), isSet (Y x)) → isSet X →
-     (Π (x : X), ∥ (Y x) ∥) → ∥ (Π (x : X), Y x) ∥)) as f.
- intros AC X Y SY SX.
+   → (∀ (X : U) (Y : X → U), isSet X → (Π (x : X), isSet (Y x))
+      → (Π (x : X), ∥ (Y x) ∥) → ∥ (Π (x : X), Y x) ∥)) as f.
+ intros AC X Y SX SY.
  assert (H1 : ∀ x : X, Y x → isProp 1).
   intros _ _ x y.
   apply (Σ_type.pr₁ (quasi_inv (hott_2_8_1 x y))), x.
@@ -782,13 +782,13 @@ assert
    intros x; apply I.
 
  assert
-   ((∀ (X : U) (Y : X → U), (Π (x : X), isSet (Y x)) → isSet X →
-     (Π (x : X), ∥ (Y x) ∥) → ∥ (Π (x : X), Y x) ∥) →
+   ((∀ (X : U) (Y : X → U), isSet X → (Π (x : X), isSet (Y x))
+     → (Π (x : X), ∥ (Y x) ∥) → ∥ (Π (x : X), Y x) ∥) →
     AC) as g.
   intros H.
   unfold AC.
   intros X A P SX SA PP H1.
-  pose proof (λ J, H X (λ x, Σ (a : A x), P x a) J SX H1) as H2.
+  pose proof (λ J, H X (λ x, Σ (a : A x), P x a) SX J H1) as H2.
   simpl in H2.
   pose proof (λ A P, ua (quasi_inv (@UnivProp.hott_2_15_7 X A P))) as H3.
   rewrite H3.
@@ -796,17 +796,11 @@ assert
   apply ex_3_1_5_bis; [ apply SA | intros y; apply hott_3_3_4, PP ].
 
   apply hott_3_3_3; [ | | apply f | apply g ].
-   apply ex_3_6_2; intros X.
-   apply ex_3_6_2; intros A.
-   apply ex_3_6_2; intros P.
-   do 4 apply isPropImp.
-   intros x y; apply PT_eq.
+   do 7 (apply ex_3_6_2; intros).
+   intros u v; apply PT_eq.
 
-   apply ex_3_6_2; intros X.
-   apply ex_3_6_2; intros Y.
-   apply ex_3_6_2; intros SY.
-   do 2 apply isPropImp.
-   intros x y; apply PT_eq.
+   do 5 (apply ex_3_6_2; intros).
+   intros u v; apply PT_eq.
 Defined.
 
 _5htp.
