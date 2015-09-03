@@ -64,7 +64,7 @@ subst p q; reflexivity.
 Defined.
 
 (* "Example 3.1.3. The type 0 is a set, for given any x, y : 0 we may
-    deduce anything we like, by the induction principle of 0. *)
+    deduce anything we like, by the induction principle of 0." *)
 
 Definition ex_3_1_3_tac : isSet False.
 Proof.
@@ -80,8 +80,6 @@ Definition ex_3_1_3 : isSet False := λ x y, match x with end.
     are equal. We will see another proof of this fact in Chapter 7. *)
 
 (* ℕ.hott_2_13_1 : ∀ m n : nat, (m = n) ≃ ℕ.code m n *)
-
-Print or.
 
 Definition ℕ_code_equiv_1_or_0 m n :
   (ℕ.code m n ≃ True) + (ℕ.code m n ≃ False).
@@ -228,8 +226,6 @@ Section lemma_3_1_8.
 
 Import Σ_type2.
 
-Check @compose.
-
 (* required, but general purpose lemma, tac and exp versions *)
 Definition compose_cancel_l_tac {A} {x y z : A} (p : x = y) (q r : y = z) :
   p • q = p • r
@@ -274,8 +270,6 @@ Definition compose_insert {A x} (f : Π (y : A), x = y) {y z} (p : y = z) :
   | eq_refl _ => (ru (f y))⁻¹
   end
   • apd f p.
-
-Print ru.
 
 (* done but not obvious at all; I had to look at the way they did it,
    and I am sure I don't understand the point *)
@@ -410,7 +404,7 @@ Definition hott_3_2_7 : notT (∀ A, A + notT A)
 (* "Definition 3.3.1. A type P is a mere proposition if for all x, y :
     P we have x = y." *)
 
-Print isProp.
+(* Print isProp. *)
 
 (* "Lemma 3.3.2. If P is a mere proposition and x0 : P, then P ≃ 1." *)
 
@@ -654,8 +648,6 @@ split.
     or just logically equivalent? *)
 Abort.
 
-Print SetU.
-
 End hott_3_5.
 
 (* "Recall that for any two universes Ui and Ui+1, if A : Ui then also
@@ -761,8 +753,6 @@ Definition prop_trunc_rec_princ2 {A B} (f : A → B) a :
 Proof.
 reflexivity.
 Defined.
-
-Print prop_trunc_rec_princ2.
 
 (* doing the exercise 3.14 in advance, just to see if my definition of
    propositional truncation works *)
