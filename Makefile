@@ -1,4 +1,4 @@
-all: chap1.vo chap2.vo
+all: chap1.vo chap2.vo hott.vo
 
 clean:
 	rm -f *.vo *.glob
