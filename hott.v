@@ -23,7 +23,7 @@ Open Scope nat_scope.
 Definition isSet A := ∀ (x y : A) (p q : x = y), p = q.
 
 (* personal solution *)
-Definition ex_3_1_2_tac : isSet unit.
+Definition ex_3_1_2_tac : isSet True.
 Proof.
 intros x y p q.
 destruct x, y.
@@ -32,12 +32,12 @@ refine (match q with eq_refl _ => _ end).
 reflexivity.
 Defined.
 
-Definition ex_3_1_2 : isSet unit :=
-  λ (x y : unit),
+Definition ex_3_1_2 : isSet True :=
+  λ (x y : True),
   match x with
-  | tt =>
+  | I =>
       match y with
-      | tt =>
+      | I =>
           λ p q,
           match p with
           | eq_refl _ => match q with eq_refl _ => eq_refl _ end
@@ -49,7 +49,7 @@ Definition ex_3_1_2 : isSet unit :=
     equivalent to 1. Since any two elements of 1 are equal, this
     implies that any two elements of x = y are equal." *)
 
-(* hott_2_8_1 : ∀ x y : unit, (x = y) ≃ unit *)
+(* hott_2_8_1 : ∀ x y : True, (x = y) ≃ True *)
 
 Definition ex_3_1_2_alt_tac : isSet 1.
 Proof.
@@ -84,11 +84,11 @@ Definition ex_3_1_3 : isSet False := λ x y, match x with end.
 Print or.
 
 Definition ℕ_code_equiv_1_or_0 m n :
-  (ℕ.code m n ≃ unit) + (ℕ.code m n ≃ False).
+  (ℕ.code m n ≃ True) + (ℕ.code m n ≃ False).
 Proof.
 destruct (eq_nat_dec m n) as [H1| H1].
  left; subst m.
- apply (existT _ (λ c, tt)), qinv_isequiv.
+ apply (existT _ (λ c, I)), qinv_isequiv.
  apply (existT _ (λ _, ℕ.r n)).
  unfold "◦", "~~", id; simpl.
  split; [ intros u; destruct u; reflexivity | ].
@@ -129,14 +129,14 @@ Definition ex_3_1_4 : isSet nat :=
       match s ◦◦ ℕ.hott_2_13_1 m n with
       | existT _ f (existT _ g Hg, existT _ h Hh) =>
           match f p with
-          | tt =>
-              λ (Hp0 : h tt = p),
+          | I =>
+              λ (Hp0 : h I = p),
               match f q as u1 return (h u1 = q → p = q) with
-              | tt =>
-                  λ Hq0 : h tt = q,
-                  eq_ind (h tt) (λ p0 : m = n, p0 = q)
-                    (eq_ind (h tt)
-                       (λ q0 : m = n, h tt = q0) (eq_refl _) q Hq0) p
+              | I =>
+                  λ Hq0 : h I = q,
+                  eq_ind (h I) (λ p0 : m = n, p0 = q)
+                    (eq_ind (h I)
+                       (λ q0 : m = n, h I = q0) (eq_refl _) q Hq0) p
                     Hp0
               end (Hh q)
           end (Hh p)
@@ -414,21 +414,21 @@ Print isProp.
 
 (* "Lemma 3.3.2. If P is a mere proposition and x0 : P, then P ≃ 1." *)
 
-Definition hott_3_3_2_tac P : isProp P → ∀ x₀ : P, P ≃ unit.
+Definition hott_3_3_2_tac P : isProp P → ∀ x₀ : P, P ≃ True.
 Proof.
 intros HP x₀.
-apply (existT _ (λ _, tt)), qinv_isequiv.
+apply (existT _ (λ _, I)), qinv_isequiv.
 apply (existT _ (λ _, x₀)).
 split; intros x; [ destruct x; reflexivity | apply HP ].
 Defined.
 
-Definition hott_3_3_2 P : isProp P → ∀ x₀ : P, P ≃ unit
+Definition hott_3_3_2 P : isProp P → ∀ x₀ : P, P ≃ True
 :=
   λ (HP : isProp P) (x₀ : P),
-  existT isequiv (λ _, tt)
-    (qinv_isequiv (λ _, tt)
+  existT isequiv (λ _, I)
+    (qinv_isequiv (λ _, I)
        (existT _ (λ _, x₀)
-          (λ x, match x with tt => eq_refl (id tt) end,  λ x, HP _ x))).
+          (λ x, match x with I => eq_refl (id I) end,  λ x, HP _ x))).
 
 (* "Lemma 3.3.3. If P and Q are mere propositions such that P → Q and
     Q → P, then P ≃ Q." *)
@@ -446,7 +446,7 @@ Definition hott_3_3_3 P Q : isProp P → isProp Q → (P → Q) → (Q → P) �
   λ (p : isProp P) (q : isProp Q) (f : P → Q) (g : Q → P),
   existT isequiv f (qinv_isequiv f (existT _ g (λ y, q _ y, λ x, p _ x))).
 
-Definition isContractible P := (isProp P * (P ≃ unit))%type.
+Definition isContractible P := (isProp P * (P ≃ True))%type.
 
 (* "Lemma 3.3.4. Every mere proposition is a set." *)
 
@@ -516,14 +516,14 @@ Definition LDN := Π (A : U), (isProp A → (notT (notT A) → A)).
 
 (* LEM and LDN are logically equivalent (ex 3.18) *)
 
-Definition isProp_notT_tac A : isProp (A → ⊥).
+Definition isProp_notT_tac A : isProp (A → 0).
 Proof.
 intros x y.
 apply Π_type.funext; intros z; destruct (x z).
 Defined.
 
-Definition isProp_notT A : isProp (A → ⊥) :=
-  λ x y : A → ⊥, Π_type.funext (λ (z : A), match x z with end).
+Definition isProp_notT A : isProp (A → 0) :=
+  λ x y : A → 0, Π_type.funext (λ (z : A), match x z with end).
 
 Definition LEM_LDN : (LEM → LDN) * (LDN → LEM).
 Proof.
@@ -713,7 +713,7 @@ End hott_3_6.
 (* "3.7 Propositional truncation" *)
 
 (* I implement the element of a propositional truncation using a
-   function of type unit → A. This way, two such elements can be
+   function of type True → A. This way, two such elements can be
    forced to be equal (axiom PT_eq below), but the discriminate
    tactic, not appliable to functions, cannot be used with the
    risk of creating a contradiction (H: |1| = |2| and using the
@@ -722,7 +722,7 @@ End hott_3_6.
  *)
 
 Inductive prop_trunc A :=
-| PT : ∀ f : unit → A, prop_trunc A.
+| PT : ∀ f : True → A, prop_trunc A.
 Arguments PT [A] f.
 
 Notation "∥ A ∥" := (prop_trunc A) (A at level 0, format "∥ A ∥").
@@ -731,7 +731,7 @@ Notation "| x |" := (PT (λ _, x)) (x at level 0, format "| x |") : type_scope.
 Axiom PT_eq : ∀ A, isProp ∥A∥.
 Arguments PT_eq [A] x y.
 
-Definition PT_elim {A} (x : ∥A∥) : A := match x with PT f => f tt end.
+Definition PT_elim {A} (x : ∥A∥) : A := match x with PT f => f I end.
 
 (* do not use "ap PT_elim"! here is the reason *)
 Definition contradiction : False.
