@@ -704,44 +704,29 @@ End hott_3_6.
 
 (* "3.7 Propositional truncation" *)
 
-(* I implement the element of a propositional truncation using a
-   function of type True → A. This way, two such elements can be
-   forced to be equal (axiom PT_eq below), but the discriminate
-   tactic, not appliable to functions, cannot be used with the
-   risk of creating a contradiction (H: |1| = |2| and using the
-   tactic 'discriminate H'). Not 100% sure since nothing prevent
-   to use 'ap PT_elim' before (see theorem 'contradiction' below).
- *)
+Axiom prop_trunc : Type → Type.
+Axiom PT : ∀ A (x : A), prop_trunc A.
+Arguments PT [A] x.
 
-Inductive prop_trunc A :=
-| PT : ∀ f : True → A, prop_trunc A.
-Arguments PT [A] f.
-
-Notation "∥ A ∥" := (prop_trunc A) (A at level 0, format "∥ A ∥").
-Notation "| x |" := (PT (λ _, x)) (x at level 0, format "| x |") : type_scope.
+Notation "∥ A ∥" := (prop_trunc A) (A at level 0, format "∥ A ∥") : type_scope.
+Notation "| x |" := (PT x) (x at level 0, format "| x |").
 
 Axiom PT_eq : ∀ A, isProp ∥A∥.
 Arguments PT_eq [A] x y.
 
+(*
 Definition PT_elim {A} (x : ∥A∥) : A := match x with PT f => f I end.
-
-(* do not use "ap PT_elim"! here is the reason *)
-Definition contradiction : False.
-Proof.
-pose proof PT_eq |1| |2| as H.
-apply (ap PT_elim) in H.
-discriminate H.
-(* no  more subgoals, but aborting it even so *)
-Abort.
+*)
 
 (* "If B is a mere proposition and we have f : A → B, then there is an
     induced g : ∥A∥ → B such that g(|a|) ≡ f(a) for all a : A." *)
 
-(* the hypothesis for B to be a mere proposition seems not useful... *)
-Definition prop_trunc_rec_princ {A B} : (*isProp B →*)
+Definition prop_trunc_rec_princ {A B} : isProp B →
   ∀ f : A → B, ∃ g : ∥A∥ → B, ∀ a : A, g |a| = f a.
 Proof.
-intros (*H*) f.
+intros H f.
+bbb.
+
 exists (λ z, f (PT_elim z)).
 reflexivity.
 Defined.
