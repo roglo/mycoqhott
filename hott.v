@@ -780,16 +780,22 @@ assert
  assert (∀ x : X, Y x → isProp 1) as H1.
   intros _ _ x y.
   apply (Σ_type.pr₁ (quasi_inv (hott_2_8_1 x y))), x.
-(**)
  assert (∀ x : X, ∥{_ : Y x & 1%type}∥) as H2.
   intros x; simpl.
-  apply PT; simpl.
   pose proof H x as Hx.
-bbb.
-Focus 2.
+(* I need a value of type Y x *)
+apply PT.
+Check (Y x).
+eapply (existT _ _), I.
  pose proof AC X Y (λ _ _, 1%type) triche IS H1 H2 as H3.
  simpl in H3.
-SearchAbout prop_trunc.
+apply PT.
+intros x.
+pose proof H2 x as H4.
+simpl in H4.
+pose proof IS x as H5.
+unfold isSet in H5; simpl in H5.
+(* parti en couille *)
 bbb.
 
 (*
