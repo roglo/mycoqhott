@@ -783,19 +783,28 @@ assert
    pose proof (AC X Y (λ _ _, 1%type) SX IS H1) as H3.
    simpl in H3.
 
-(* "Conversely, (3.8.3) is equivalent to the instance of (3.8.1) where
-    A(x) :≡ Y(x) and P(x, a) :≡ 1.", they say. It is the situation where
-    I am, but I don't see how to prove the goal I got. *)
-
-bbb.
-
-   intros H.
 assert (∀ Z (z : Z), ∥{_ : Z & X → 1}∥ → ∥Z∥) as H2.
-intros Z z H2; apply PT, z.
-apply H2.
-intros x.
+ intros Z z H2; apply PT, z.
 
+ intros H; apply H2; [ intros x | ].
+Focus 2.
+ apply H3; intros x.
+Unfocus.
+
+(* for both first goals, I need the existence of a value of type Y x *)
 nnn.
+  AC : AC_def
+  X : U
+  Y : X → U
+  IS : ∀ x : X, isSet (Y x)
+  SX : isSet X
+  H1 : ∀ x : X, Y x → isProp 1
+  H3 : (∀ x : X, ∥{_ : Y x & 1%type}∥) → ∥{_ : ∀ x : X, Y x & X → 1}∥
+  H2 : ∀ Z : Type, Z → ∥{_ : Z & X → 1}∥ → ∥Z∥
+  H : ∀ x : X, ∥(Y x)∥
+  x : X
+  ============================
+   Y x
 
 vvv.
    assert (H2 : ∀ x : X, ∥{_ : Y x & 1%type}∥).
