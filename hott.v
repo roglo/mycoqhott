@@ -792,6 +792,9 @@ Focus 2.
 Unfocus.
 
 (* for both first goals, I need the existence of a value of type Y x *)
+
+pose proof H x as H4.
+
 nnn.
   AC : AC_def
   X : U
