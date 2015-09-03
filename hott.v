@@ -758,12 +758,49 @@ Definition hott_3_8_2 :
      (Π (x : X), ∥ (Y x) ∥) → ∥ (Π (x : X), Y x) ∥).
 Proof.
 assert 
+  ((∀ (X : U) (Y : X → U), (Π (x : X), isSet (Y x)) →
+    (Π (x : X), ∥ (Y x) ∥) → ∥ (Π (x : X), Y x) ∥) →
+   AC_def) as gggg.
+ intros H.
+ unfold AC_def.
+ intros X A P SX SA PP H1.
+ pose proof (λ J, H X (λ x, Σ (a : A x), P x a) J H1) as H2.
+ simpl in H2.
+ pose proof (λ A P, ua (quasi_inv (@UnivProp.hott_2_15_7 X A P))) as H3.
+ rewrite H3.
+ apply H2; intros x.
+ apply ex_3_1_5_bis; [ apply SA | intros y; apply hott_3_3_4, PP ].
+
+assert
   (AC_def
    → (∀ (X : U) (Y : X → U), (Π (x : X), isSet (Y x)) →
      (Π (x : X), ∥ (Y x) ∥) → ∥ (Π (x : X), Y x) ∥)) as ffff.
  intros AC X Y IS H.
- unfold AC_def in AC.
  assert (isSet X) as triche. Focus 2.
+ assert (∀ x : X, Y x → isProp 1) as H1.
+  intros _ _ x y.
+  apply (Σ_type.pr₁ (quasi_inv (hott_2_8_1 x y))), x.
+ assert (∀ x : X, ∥{_ : Y x & 1%type}∥) as H2.
+  intros x; simpl.
+  apply PT; simpl.
+  pose proof H x as Hx.
+pose proof prop_trunc_rec.
+bbb.
+
+ pose proof AC X Y (λ _ _, 1%type) triche IS H1 as H2.
+ simpl in H2.
+
+(*
+ assert
+   (∀ A P,
+    ∥ (Σ (g : Π (x : X), A x), Π (x : X), P x (g x)) ∥ ≃
+    ∥ (Π (x : X), Σ (a : A x), P x a) ∥) as p.
+  intros A P.
+*)
+ pose proof (λ A P, quasi_inv (@UnivProp.hott_2_15_7 X A P)) as H1.
+ pose proof AC X Y.
+bbb.
+
  pose proof (λ P, AC X Y P triche IS) as Hac.
  pose proof @UnivProp.hott_2_15_7 X Y.
 bbb.
