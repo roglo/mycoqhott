@@ -77,7 +77,7 @@ Definition ex_3_1_3 : isSet False := λ x y, match x with end.
 (* "Example 3.1.4. The type ℕ of natural numbers is also a set. This
     follows from Theorem 2.13.1, since all equality types x =_{ℕ} y
     are equivalent to either 1 or 0, and any two inhabitants of 1 or 0
-    are equal. We will see another proof of this fact in Chapter 7. *)
+    are equal. We will see another proof of this fact in Chapter 7." *)
 
 (* ℕ.hott_2_13_1 : ∀ m n : nat, (m = n) ≃ ℕ.code m n *)
 
@@ -215,7 +215,7 @@ Defined.
 End ex_3_1_6.
 
 (* "Definition 3.1.7. A type A is a 1-type if for all x, y : A and p,
-    q : x = y and r, s : p = q, we have r = s. *)
+    q : x = y and r, s : p = q, we have r = s." *)
 
 Definition is1Type A := ∀ (x y : A) (p q : x = y) (r s : p = q), r = s.
 
@@ -754,48 +754,63 @@ Axiom AC : AC_def.
 
 Definition hott_3_8_2 :
   AC_def
-  ≃ (∀ (X : U) (Y : X → U), (Π (x : X), isSet (Y x)) →
+  ≃ (∀ (X : U) (Y : X → U), (Π (x : X), isSet (Y x)) → isSet X →
      (Π (x : X), ∥ (Y x) ∥) → ∥ (Π (x : X), Y x) ∥).
 Proof.
 assert 
-  ((∀ (X : U) (Y : X → U), (Π (x : X), isSet (Y x)) →
+  ((∀ (X : U) (Y : X → U), (Π (x : X), isSet (Y x)) → isSet X →
     (Π (x : X), ∥ (Y x) ∥) → ∥ (Π (x : X), Y x) ∥) →
    AC_def) as gggg.
  intros H.
  unfold AC_def.
  intros X A P SX SA PP H1.
- pose proof (λ J, H X (λ x, Σ (a : A x), P x a) J H1) as H2.
+ pose proof (λ J, H X (λ x, Σ (a : A x), P x a) J SX H1) as H2.
  simpl in H2.
  pose proof (λ A P, ua (quasi_inv (@UnivProp.hott_2_15_7 X A P))) as H3.
  rewrite H3.
  apply H2; intros x.
  apply ex_3_1_5_bis; [ apply SA | intros y; apply hott_3_3_4, PP ].
 
-assert
-  (AC_def
-   → (∀ (X : U) (Y : X → U), (Π (x : X), isSet (Y x)) →
-     (Π (x : X), ∥ (Y x) ∥) → ∥ (Π (x : X), Y x) ∥)) as ffff.
- intros AC X Y IS H.
- assert (isSet X) as triche. Focus 2.
- assert (∀ x : X, Y x → isProp 1) as H1.
-  intros _ _ x y.
-  apply (Σ_type.pr₁ (quasi_inv (hott_2_8_1 x y))), x.
- assert (∀ x : X, ∥{_ : Y x & 1%type}∥) as H2.
-  intros x; simpl.
-  pose proof H x as Hx.
-(* I need a value of type Y x *)
-apply PT.
-Check (Y x).
-eapply (existT _ _), I.
- pose proof AC X Y (λ _ _, 1%type) triche IS H1 H2 as H3.
- simpl in H3.
-apply PT.
+ assert
+   (AC_def
+    → (∀ (X : U) (Y : X → U), (Π (x : X), isSet (Y x)) → isSet X →
+      (Π (x : X), ∥ (Y x) ∥) → ∥ (Π (x : X), Y x) ∥)) as ffff.
+  intros AC X Y IS SX.
+  assert (H1 : ∀ x : X, Y x → isProp 1).
+   intros _ _ x y.
+   apply (Σ_type.pr₁ (quasi_inv (hott_2_8_1 x y))), x.
+
+   pose proof (AC X Y (λ _ _, 1%type) SX IS H1) as H3.
+   simpl in H3.
+
+(* "Conversely, (3.8.3) is equivalent to the instance of (3.8.1) where
+    A(x) :≡ Y(x) and P(x, a) :≡ 1.", they say. It is the situation where
+    I am, but I don't see how to prove the goal I got. *)
+
+bbb.
+
+   intros H.
+assert (∀ Z (z : Z), ∥{_ : Z & X → 1}∥ → ∥Z∥) as H2.
+intros Z z H2; apply PT, z.
+apply H2.
 intros x.
-pose proof H2 x as H4.
-simpl in H4.
-pose proof IS x as H5.
-unfold isSet in H5; simpl in H5.
-(* parti en couille *)
+
+nnn.
+
+vvv.
+   assert (H2 : ∀ x : X, ∥{_ : Y x & 1%type}∥).
+    intros x; simpl.
+    pose proof (H x) as Hx.
+    apply PT.
+    eapply (existT _ _), I. (* strange, it works *)
+    pose proof (AC X Y (λ _ _, 1%type) SX IS H1 H2) as H3.
+    simpl in H3.
+    apply PT.
+    intros x.
+    pose proof (H2 x) as H4.
+    simpl in H4.
+    pose proof (IS x) as H5.
+    unfold isSet in H5; simpl in H5.
 bbb.
 
 (*
