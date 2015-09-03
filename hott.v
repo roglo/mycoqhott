@@ -762,8 +762,15 @@ assert
    → (∀ (X : U) (Y : X → U), (Π (x : X), isSet (Y x)) →
      (Π (x : X), ∥ (Y x) ∥) → ∥ (Π (x : X), Y x) ∥)) as ffff.
  intros AC X Y IS H.
+ unfold AC_def in AC.
+ assert (isSet X) as triche. Focus 2.
+ pose proof (λ P, AC X Y P triche IS) as Hac.
  pose proof @UnivProp.hott_2_15_7 X Y.
+bbb.
 
+ pose proof @UnivProp.hott_2_15_7 X Y (λ (x : X) (y : Y x), ∥(∀ x : X, Y x)∥).
+ simpl in X0.
+ destruct X0 as (f, ((g, Hg), (h, Hh))).
 bbb.
  constructor; intros u x.
  pose proof H x as Hx.
