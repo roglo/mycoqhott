@@ -711,19 +711,27 @@ Arguments PT [A] x.
 Notation "∥ A ∥" := (prop_trunc A) (A at level 0, format "∥ A ∥") : type_scope.
 Notation "| x |" := (PT x) (x at level 0, format "| x |").
 
-Axiom PT_eq : ∀ A, isProp ∥A∥.
+Axiom PT_eq : ∀ A (x y : ∥A∥), x = y.
 Arguments PT_eq [A] x y.
 
-(*
-Definition PT_elim {A} (x : ∥A∥) : A := match x with PT f => f I end.
-*)
+Axiom PT_elim : ∀ A, ∥A∥ → A.
 
 (* "If B is a mere proposition and we have f : A → B, then there is an
     induced g : ∥A∥ → B such that g(|a|) ≡ f(a) for all a : A." *)
 
+Definition prop_trunc_rec {A B} : isProp B →
+  ∀ f : A → B, ∃ g : ∥A∥ → B, ∀ a : A, g |a| = f a.
+Proof.
+intros PB f.
+exists (f ◦ PT_elim A); intros a.
+apply PB.
+Defined.
+
+(*
 Axiom prop_trunc_rec : ∀ A B, isProp B →
   ∀ f : A → B, ∃ g : ∥A∥ → B, ∀ a : A, g |a| = f a.
 Arguments prop_trunc_rec [A] [B] _ f.
+*)
 
 (* doing the exercise 3.14 in advance, just to see if my definition of
    propositional truncation works *)
@@ -743,159 +751,62 @@ Defined.
 
 (* "3.8 The axiom of choice" *)
 
-Definition AC_def := ∀ X (A : X → U) (P : Π (x : X), (A x → U)),
+Definition AC := ∀ X (A : X → U) (P : Π (x : X), (A x → U)),
   isSet X
   → (Π (x : X), isSet (A x))
   → (Π (x : X), Π (a : A x), isProp (P x a))
   → (Π (x : X), ∥ (Σ (a : A x), P x a) ∥)
   → ∥ (Σ (g : Π (x : X), A x), Π (x : X), P x (g x)) ∥.
 
-Axiom AC : AC_def.
-
 Definition hott_3_8_2 :
-  AC_def
+  AC
   ≃ (∀ (X : U) (Y : X → U), (Π (x : X), isSet (Y x)) → isSet X →
      (Π (x : X), ∥ (Y x) ∥) → ∥ (Π (x : X), Y x) ∥).
 Proof.
-assert 
-  ((∀ (X : U) (Y : X → U), (Π (x : X), isSet (Y x)) → isSet X →
-    (Π (x : X), ∥ (Y x) ∥) → ∥ (Π (x : X), Y x) ∥) →
-   AC_def) as gggg.
- intros H.
- unfold AC_def.
- intros X A P SX SA PP H1.
- pose proof (λ J, H X (λ x, Σ (a : A x), P x a) J SX H1) as H2.
- simpl in H2.
- pose proof (λ A P, ua (quasi_inv (@UnivProp.hott_2_15_7 X A P))) as H3.
- rewrite H3.
- apply H2; intros x.
- apply ex_3_1_5_bis; [ apply SA | intros y; apply hott_3_3_4, PP ].
+assert
+  (AC
+   → (∀ (X : U) (Y : X → U), (Π (x : X), isSet (Y x)) → isSet X →
+     (Π (x : X), ∥ (Y x) ∥) → ∥ (Π (x : X), Y x) ∥)) as f.
+ intros AC X Y SY SX.
+ assert (H1 : ∀ x : X, Y x → isProp 1).
+  intros _ _ x y.
+  apply (Σ_type.pr₁ (quasi_inv (hott_2_8_1 x y))), x.
+
+  pose proof (AC X Y (λ _ _, 1%type) SX SY H1) as H3.
+  simpl in H3.
+  assert (∀ Z (z : Z), ∥{_ : Z & X → 1}∥ → ∥Z∥) as H2.
+   intros Z z H2; apply PT, z.
+
+   intros H; apply H2; [ intros x; apply PT_elim, H | ].
+   apply PT, (existT _ (λ x, PT_elim _ (H x))).
+   intros x; apply I.
 
  assert
-   (AC_def
-    → (∀ (X : U) (Y : X → U), (Π (x : X), isSet (Y x)) → isSet X →
-      (Π (x : X), ∥ (Y x) ∥) → ∥ (Π (x : X), Y x) ∥)) as ffff.
-  intros AC X Y IS SX.
-  assert (H1 : ∀ x : X, Y x → isProp 1).
-   intros _ _ x y.
-   apply (Σ_type.pr₁ (quasi_inv (hott_2_8_1 x y))), x.
+   ((∀ (X : U) (Y : X → U), (Π (x : X), isSet (Y x)) → isSet X →
+     (Π (x : X), ∥ (Y x) ∥) → ∥ (Π (x : X), Y x) ∥) →
+    AC) as g.
+  intros H.
+  unfold AC.
+  intros X A P SX SA PP H1.
+  pose proof (λ J, H X (λ x, Σ (a : A x), P x a) J SX H1) as H2.
+  simpl in H2.
+  pose proof (λ A P, ua (quasi_inv (@UnivProp.hott_2_15_7 X A P))) as H3.
+  rewrite H3.
+  apply H2; intros x.
+  apply ex_3_1_5_bis; [ apply SA | intros y; apply hott_3_3_4, PP ].
 
-   pose proof (AC X Y (λ _ _, 1%type) SX IS H1) as H3.
-   simpl in H3.
+  apply hott_3_3_3; [ | | apply f | apply g ].
+   apply ex_3_6_2; intros X.
+   apply ex_3_6_2; intros A.
+   apply ex_3_6_2; intros P.
+   do 4 apply isPropImp.
+   intros x y; apply PT_eq.
 
-assert (∀ Z (z : Z), ∥{_ : Z & X → 1}∥ → ∥Z∥) as H2.
- intros Z z H2; apply PT, z.
-
- intros H; apply H2; [ intros x | ].
-Focus 2.
- apply H3; intros x.
-Unfocus.
-
-(* for both first goals, I need the existence of a value of type Y x *)
-
-pose proof H x as H4.
-
-nnn.
-  AC : AC_def
-  X : U
-  Y : X → U
-  IS : ∀ x : X, isSet (Y x)
-  SX : isSet X
-  H1 : ∀ x : X, Y x → isProp 1
-  H3 : (∀ x : X, ∥{_ : Y x & 1%type}∥) → ∥{_ : ∀ x : X, Y x & X → 1}∥
-  H2 : ∀ Z : Type, Z → ∥{_ : Z & X → 1}∥ → ∥Z∥
-  H : ∀ x : X, ∥(Y x)∥
-  x : X
-  ============================
-   Y x
-
-vvv.
-   assert (H2 : ∀ x : X, ∥{_ : Y x & 1%type}∥).
-    intros x; simpl.
-    pose proof (H x) as Hx.
-    apply PT.
-    eapply (existT _ _), I. (* strange, it works *)
-    pose proof (AC X Y (λ _ _, 1%type) SX IS H1 H2) as H3.
-    simpl in H3.
-    apply PT.
-    intros x.
-    pose proof (H2 x) as H4.
-    simpl in H4.
-    pose proof (IS x) as H5.
-    unfold isSet in H5; simpl in H5.
-bbb.
-
-(*
- assert
-   (∀ A P,
-    ∥ (Σ (g : Π (x : X), A x), Π (x : X), P x (g x)) ∥ ≃
-    ∥ (Π (x : X), Σ (a : A x), P x a) ∥) as p.
-  intros A P.
-*)
- pose proof (λ A P, quasi_inv (@UnivProp.hott_2_15_7 X A P)) as H1.
- pose proof AC X Y.
-bbb.
-
- pose proof (λ P, AC X Y P triche IS) as Hac.
- pose proof @UnivProp.hott_2_15_7 X Y.
-bbb.
-
- pose proof @UnivProp.hott_2_15_7 X Y (λ (x : X) (y : Y x), ∥(∀ x : X, Y x)∥).
- simpl in X0.
- destruct X0 as (f, ((g, Hg), (h, Hh))).
-bbb.
- constructor; intros u x.
- pose proof H x as Hx.
- (* apply Hx : interdit. Je n'ai pas le droit de savoir quel est le
-    témoin |Y x| *)
-bbb.
-
-assert (isSet X) as triche. Focus 2.
-clear AC.
-bbb.
- constructor; intros u x.
- apply H, u.
-
-(* ah oui, mais non, ça ne devrait pas pouvoir se prouver comme ça ;
-   faut que je doive appliquer l'axiome du choix (l'hypothèse AC). Mon
-   modèle doit donc être faux. *)
-
-bbb.
-*)
-
-assert 
-  (((∀ (X : U) (Y : X → U), (Π (x : X), isSet (Y x)) →
-     (Π (x : X), ∥ (Y x) ∥) → ∥ (Π (x : X), Y x) ∥)) →
-   (∀ X (A : X → U) (P : Π (x : X), (A x → U)),
-    isSet X
-    → (Π (x : X), isSet (A x))
-    → (Π (x : X), Π (a : A x), isProp (P x a))
-    → (Π (x : X), ∥ (Σ (a : A x), P x a) ∥)
-    → ∥ (Σ (g : Π (x : X), A x), Π (x : X), P x (g x)) ∥)) as gggg.
- intros AC2 X Y P XIS IS IP H.
-Focus 1.
-(* @UnivProp.hott_2_15_7
-     : ∀ (X : Type) (A : X → Type) (P : ∀ x : X, A x → Type),
-       (∀ x : X, {a : A x & P x a}) ≃ {g : ∀ x : X, A x & ∀ x : X, P x (g x)} *)
- pose proof @UnivProp.hott_2_15_7 X Y P as H1.
-(*
-set (u := {g : ∀ x : X, Y x & ∀ x : X, P x (g x)}) in H1 |-*.
-*)
-bbb.
-
- eapply UnivProp.hott_2_15_7; intros x.
-
- constructor; intros u.
- apply UnivProp.hott_2_15_7; intros x.
-
-bbb.
-
-(* reminder
-
-Definition hott_2_15_7 {X A} P :
-  (Π (x : X), Σ (a : A x), P x a) ≃
-  (Σ (g : Π (x : X), A x), Π (x : X), P x (g x)).
-
-*)
+   apply ex_3_6_2; intros X.
+   apply ex_3_6_2; intros Y.
+   apply ex_3_6_2; intros SY.
+   do 2 apply isPropImp.
+   intros x y; apply PT_eq.
+Defined.
 
 _5htp.
