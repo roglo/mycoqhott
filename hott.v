@@ -791,38 +791,75 @@ apply hott_3_3_3.
  apply ex_3_1_5_bis; [ apply SA | intros y; apply hott_3_3_4, PP ].
 Defined.
 
+Definition isProp_Σ_type_tac {A B} :
+  isProp A → (Π (x : A), isProp (B x)) → isProp Σ (x : A), B x.
+Proof.
+intros PA PB (x₁, x₂) (y₁, y₂).
+pose proof (PA x₁ y₁) as H; destruct H.
+pose proof (PB x₁ x₂ y₂) as H; destruct H.
+reflexivity.
+Defined.
+
+Definition isProp_Σ_type {A B} :
+  isProp A → (Π (x : A), isProp (B x)) → isProp Σ (x : A), B x
+:=
+  λ PA PB x,
+  match x with
+  | existT _ x₁ x₂ =>
+      λ y,
+      match y with
+      | existT _ y₁ y₂ =>
+          match PA x₁ y₁ with
+          | eq_refl _ =>
+              λ y₂,
+              match PB x₁ x₂ y₂  with
+              | eq_refl _ => eq_refl (existT B x₁ x₂)
+              end
+          end y₂
+      end
+  end.
+
 Definition AC_3_8_3_equiv :=
   ∀ (X : U) (Y : X → U), isSet X → (Π (x : X), isSet (Y x))
   → (Π (x : X), ∥ (Y x) ∥) ≃ ∥ (Π (x : X), Y x) ∥.
 
 Definition AC_equiv_3_8_3_equiv : AC ≃ AC_3_8_3_equiv.
 Proof.
-eapply equiv_compose; [ apply hott_3_8_2 | ].
+eapply equiv_compose; [ apply hott_3_8_2 |  ].
 apply hott_3_3_3.
  do 5 (apply ex_3_6_2; intros).
  intros u v; apply PT_eq.
 
  do 4 (apply ex_3_6_2; intros).
+ unfold equivalence.
+ apply isProp_Σ_type.
+  apply ex_3_6_2; intros.
+  intros u v; apply PT_eq.
 
-(* is equivalence a mere proposition? *)
+  intros y; apply isequiv_mere_prop.
+  apply equivalence_isequiv.
 
-unfold equivalence.
-(* @isequiv_mere_prop
-     : ∀ (A B : Type) (f : A → B), equiv_prop isequiv → isProp (isequiv f) *)
-
-bbb.
-
-assert (AC_3_8_3 → AC_3_8_3_equiv) as ffff.
  unfold AC_3_8_3, AC_3_8_3_equiv.
  intros AC X Y SX SY.
  apply hott_3_3_3.
-  apply ex_3_6_2; intros.
-  intros u v; apply PT_eq.
+  apply ex_3_6_2; intros; intros u v; apply PT_eq.
 
   intros u v; apply PT_eq.
 
   intros H; apply (PT (λ x, PT_elim _ (H x))).
 
   intros H x; apply (PT (PT_elim _ H x)).
+
+ unfold AC_3_8_3, AC_3_8_3_equiv.
+ intros AC X Y SX SY.
+ apply hott_3_3_3.
+  apply ex_3_6_2; intros; intros u v; apply PT_eq.
+
+  intros u v; apply PT_eq.
+
+  intros H; apply (PT (λ x, PT_elim _ (H x))).
+
+  intros H x; apply (PT (PT_elim _ H x)).
+Defined.
 
 _5htp.
