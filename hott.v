@@ -862,4 +862,6 @@ apply hott_3_3_3.
   intros H x; apply (PT (PT_elim _ H x)).
 Defined.
 
+Check @ex_3_6_2.
+
 _5htp.
