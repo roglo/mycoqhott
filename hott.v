@@ -775,26 +775,19 @@ apply hott_3_3_3.
   intros _ _ x y.
   apply (Σ_type.pr₁ (quasi_inv (hott_2_8_1 x y))), x.
 
-  pose proof (AC X Y (λ _ _, 1%type) SX SY H1) as H3.
-  simpl in H3.
   assert (∀ Z (z : Z), ∥{_ : Z & X → 1}∥ → ∥Z∥) as H2.
    intros Z z H2; apply PT, z.
 
    intros H; apply H2; [ intros x; apply PT_elim, H | ].
-   apply PT, (existT _ (λ x, PT_elim _ (H x))).
-   intros x; apply I.
+   apply (AC X Y (λ _ _, 1%type) SX SY H1); intros x.
+   apply PT, (existT _ (PT_elim _ (H x))), I.
 
- intros H.
  unfold AC.
- intros X A P SX SA PP H1.
- pose proof (λ J, H X (λ x, Σ (a : A x), P x a) SX J H1) as H2.
- simpl in H2.
+ intros H X A P SX SA PP H1.
  pose proof (λ A P, ua (quasi_inv (@UnivProp.hott_2_15_7 X A P))) as H3.
  rewrite H3.
- apply H2; intros x.
+ apply (λ S, H X (λ x, Σ (a : A x), P x a) SX S H1); intros x.
  apply ex_3_1_5_bis; [ apply SA | intros y; apply hott_3_3_4, PP ].
 Defined.
-
-Print LEM.
 
 _5htp.
