@@ -758,12 +758,11 @@ Definition AC := ∀ X (A : X → U) (P : Π (x : X), (A x → U)),
   → (Π (x : X), ∥ (Σ (a : A x), P x a) ∥)
   → ∥ (Σ (g : Π (x : X), A x), Π (x : X), P x (g x)) ∥.
 
-Definition hott_3_8_3 :=
+Definition AC_3_8_3 :=
   ∀ (X : U) (Y : X → U), isSet X → (Π (x : X), isSet (Y x))
   → (Π (x : X), ∥ (Y x) ∥) → ∥ (Π (x : X), Y x) ∥.
 
-Definition hott_3_8_2 :
-  AC ≃ hott_3_8_3.
+Definition hott_3_8_2 : AC ≃ AC_3_8_3.
 Proof.
 apply hott_3_3_3.
  do 7 (apply ex_3_6_2; intros).
@@ -791,5 +790,39 @@ apply hott_3_3_3.
  apply (λ S, H X (λ x, Σ (a : A x), P x a) SX S H1); intros x.
  apply ex_3_1_5_bis; [ apply SA | intros y; apply hott_3_3_4, PP ].
 Defined.
+
+Definition AC_3_8_3_equiv :=
+  ∀ (X : U) (Y : X → U), isSet X → (Π (x : X), isSet (Y x))
+  → (Π (x : X), ∥ (Y x) ∥) ≃ ∥ (Π (x : X), Y x) ∥.
+
+Definition AC_equiv_3_8_3_equiv : AC ≃ AC_3_8_3_equiv.
+Proof.
+eapply equiv_compose; [ apply hott_3_8_2 | ].
+apply hott_3_3_3.
+ do 5 (apply ex_3_6_2; intros).
+ intros u v; apply PT_eq.
+
+ do 4 (apply ex_3_6_2; intros).
+
+(* is equivalence a mere proposition? *)
+
+unfold equivalence.
+(* @isequiv_mere_prop
+     : ∀ (A B : Type) (f : A → B), equiv_prop isequiv → isProp (isequiv f) *)
+
+bbb.
+
+assert (AC_3_8_3 → AC_3_8_3_equiv) as ffff.
+ unfold AC_3_8_3, AC_3_8_3_equiv.
+ intros AC X Y SX SY.
+ apply hott_3_3_3.
+  apply ex_3_6_2; intros.
+  intros u v; apply PT_eq.
+
+  intros u v; apply PT_eq.
+
+  intros H; apply (PT (λ x, PT_elim _ (H x))).
+
+  intros H x; apply (PT (PT_elim _ H x)).
 
 _5htp.
