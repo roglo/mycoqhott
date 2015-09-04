@@ -758,10 +758,12 @@ Definition AC := ∀ X (A : X → U) (P : Π (x : X), (A x → U)),
   → (Π (x : X), ∥ (Σ (a : A x), P x a) ∥)
   → ∥ (Σ (g : Π (x : X), A x), Π (x : X), P x (g x)) ∥.
 
+Definition hott_3_8_3 :=
+  ∀ (X : U) (Y : X → U), isSet X → (Π (x : X), isSet (Y x))
+  → (Π (x : X), ∥ (Y x) ∥) → ∥ (Π (x : X), Y x) ∥.
+
 Definition hott_3_8_2 :
-  AC
-  ≃ (∀ (X : U) (Y : X → U), isSet X → (Π (x : X), isSet (Y x))
-     → (Π (x : X), ∥ (Y x) ∥) → ∥ (Π (x : X), Y x) ∥).
+  AC ≃ hott_3_8_3.
 Proof.
 apply hott_3_3_3.
  do 7 (apply ex_3_6_2; intros).
