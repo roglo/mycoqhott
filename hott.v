@@ -862,6 +862,12 @@ apply hott_3_3_3.
   intros H x; apply (PT (PT_elim _ H x)).
 Defined.
 
-Check @ex_3_6_2.
+(* "Lemma 3.8.5. There exists a type X and a family Y : X → U such
+    that each Y(x) is a set, but such that (3.8.3) is false." *)
+
+Definition hott_3_8_5 : ∃ X (Y : X → U), (∀ x, isSet (Y x))
+  → notT ((Π (x : X), ∥(Y x)∥) → ∥(Π (x : X), Y x)∥).
+Proof.
+bbb.
 
 _5htp.
