@@ -879,6 +879,21 @@ assert (not (isSet X)) as NSX.
  intros H.
  assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)).
   clear; intros.
+(*
+  assert (((existT _ A p : X) = existT _ B q) → (A ≃ B)) as ffff.
+   intros H.
+   apply (ap Σ_type.pr₁), idtoeqv in H; assumption.
+*)
+  apply
+    (existT _
+       (λ H,
+          (λ H2 : Σ_type.pr₁ (existT (λ A0 : U, ∥((bool : U) = A0)∥) A p)
+                 ≃ Σ_type.pr₁ (existT (λ A0 : U, ∥((bool : U) = A0)∥) B q),
+           H2)
+           (idtoeqv (ap Σ_type.pr₁ H)))).
+  apply qinv_isequiv.
+  assert ((A ≃ B) → ((existT _ A p : X) = existT _ B q)) as ffff.
+   intros H.
 bbb.
 
  assert ((x₀ = x₀) ≃ (bool ≃ bool)).
