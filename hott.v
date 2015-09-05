@@ -892,8 +892,18 @@ assert (not (isSet X)) as NSX.
            H2)
            (idtoeqv (ap Σ_type.pr₁ H)))).
   apply qinv_isequiv.
+(*
   assert ((A ≃ B) → ((existT _ A p : X) = existT _ B q)) as ffff.
-   intros H.
+   intros r.
+   apply (Σ_type.pair_eq (ua r)).
+   apply PT_eq.
+*)
+  apply (existT _ (λ r : A ≃ B, Σ_type.pair_eq (ua r) (PT_eq ((ua r)⁎ p) q))).
+  unfold "◦", "~~", id; simpl.
+  split.
+   intros r.
+   destruct (ua r); simpl; unfold id.
+   destruct (PT_eq p q); simpl.
 bbb.
 
  assert ((x₀ = x₀) ≃ (bool ≃ bool)).
