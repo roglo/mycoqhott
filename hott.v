@@ -879,6 +879,7 @@ assert (not (isSet X)) as NSX.
  intros H.
  assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)).
   clear; intros.
+bbb.
 (*
   assert (((existT _ A p : X) = existT _ B q) → (A ≃ B)) as ffff.
    intros H.
@@ -904,6 +905,10 @@ assert (not (isSet X)) as NSX.
    intros r.
    destruct (ua r); simpl; unfold id.
    destruct (PT_eq p q); simpl.
+bbb.
+
+destruct r as (f, ((g, Hg), (h, Hh))).
+unfold idtoeqv; simpl.
 bbb.
 
  assert ((x₀ = x₀) ≃ (bool ≃ bool)).
