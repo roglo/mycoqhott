@@ -9,6 +9,7 @@ Arguments eq_refl [A] x.
 
 Notation "0" := False : type_scope.
 Notation "1" := True : type_scope.
+Notation "2" := bool : type_scope.
 Notation "( x , y ) '_{' P }" := (existT P x y)
   (at level 0, format "'[' ( x ,  y ) _{ P } ']'", only parsing).
 
@@ -865,12 +866,26 @@ Defined.
 (* "Lemma 3.8.5. There exists a type X and a family Y : X → U such
     that each Y(x) is a set, but such that (3.8.3) is false." *)
 
+(* If I understand well, the axiom of choice is not compatible with
+   families of sets whose father is not a set. *)
+
 Definition hott_3_8_5 : ∃ X (Y : X → U), (∀ x, isSet (Y x))
   → notT ((Π (x : X), ∥(Y x)∥) → ∥(Π (x : X), Y x)∥).
 Proof.
 set (X := Σ (A : U), ∥((bool : U) = A)∥).
-set (x := (existT _ (bool : U) |(eq_refl (bool : U))| : X)).
-simpl in X, x.
+set (x₀ := (existT _ (bool : U) |(eq_refl (bool : U))| : X)).
+simpl in X, x₀.
+assert (not (isSet X)) as NSX.
+ intros H.
+ assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)).
+  clear; intros.
+bbb.
+
+ assert ((x₀ = x₀) ≃ (bool ≃ bool)).
+SearchAbout (bool ≃ bool).
+
+exists X, (λ x, x₀ = x).
+intros H1 H2.
 bbb.
 
 _5htp.
