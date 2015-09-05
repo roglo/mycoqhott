@@ -868,6 +868,9 @@ Defined.
 Definition hott_3_8_5 : ∃ X (Y : X → U), (∀ x, isSet (Y x))
   → notT ((Π (x : X), ∥(Y x)∥) → ∥(Π (x : X), Y x)∥).
 Proof.
+set (X := Σ (A : U), ∥((bool : U) = A)∥).
+set (x := (existT _ (bool : U) |(eq_refl (bool : U))| : X)).
+simpl in X, x.
 bbb.
 
 _5htp.
