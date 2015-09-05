@@ -879,6 +879,13 @@ set (x₀ := (existT _ (bool : U) |(eq_refl (bool : U))| : X)).
 simpl in X, x₀.
 assert (not (isSet X)) as NSX.
  intros H.
+ assert ((x₀ = x₀) ≃ ((bool : U) ≃ bool)) as H1; [ | simpl in H1 ].
+Focus 2.
+unfold isSet in H.
+pose proof H x₀ x₀ as H2.
+bbb.
+
+bbb.
  assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)).
   intros.
 (*
