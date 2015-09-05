@@ -706,16 +706,18 @@ End hott_3_6.
 (* "3.7 Propositional truncation" *)
 
 Axiom prop_trunc : Type → Type.
-Axiom PT : ∀ A (x : A), prop_trunc A.
-Arguments PT [A] x.
-
 Notation "∥ A ∥" := (prop_trunc A) (A at level 0, format "∥ A ∥") : type_scope.
-Notation "| x |" := (PT x) (x at level 0, format "| x |").
+
+Axiom PT_intro : ∀ A, A → ∥A∥.
+Axiom PT_elim : ∀ A, ∥A∥ → A.
+
+Arguments PT_intro [A] x.
+Arguments PT_elim [A] x.
+
+Notation "| x |" := (PT_intro x) (x at level 0, format "| x |").
 
 Axiom PT_eq : ∀ A (x y : ∥A∥), x = y.
 Arguments PT_eq [A] x y.
-
-Axiom PT_elim : ∀ A, ∥A∥ → A.
 
 (* "If B is a mere proposition and we have f : A → B, then there is an
     induced g : ∥A∥ → B such that g(|a|) ≡ f(a) for all a : A." *)
@@ -724,7 +726,7 @@ Definition prop_trunc_rec {A B} : isProp B →
   ∀ f : A → B, ∃ g : ∥A∥ → B, ∀ a : A, g |a| = f a.
 Proof.
 intros PB f.
-exists (f ◦ PT_elim A); intros a.
+exists (f ◦ @PT_elim A); intros a.
 apply PB.
 Defined.
 
@@ -778,11 +780,11 @@ apply hott_3_3_3.
   apply (Σ_type.pr₁ (quasi_inv (hott_2_8_1 x y))), x.
 
   assert (∀ Z (z : Z), ∥{_ : Z & X → 1}∥ → ∥Z∥) as H2.
-   intros Z z H2; apply PT, z.
+   intros Z z H2; apply PT_intro, z.
 
    intros H; apply H2; [ intros x; apply PT_elim, H | ].
    apply (AC X Y (λ _ _, 1%type) SX SY H1); intros x.
-   apply PT, (existT _ (PT_elim _ (H x))), I.
+   apply PT_intro, (existT _ (PT_elim (H x))), I.
 
  unfold AC.
  intros H X A P SX SA PP H1.
@@ -847,9 +849,9 @@ apply hott_3_3_3.
 
   intros u v; apply PT_eq.
 
-  intros H; apply (PT (λ x, PT_elim _ (H x))).
+  intros H; apply (PT_intro (λ x, PT_elim (H x))).
 
-  intros H x; apply (PT (PT_elim _ H x)).
+  intros H x; apply (PT_intro (PT_elim H x)).
 
  unfold AC_3_8_3, AC_3_8_3_equiv.
  intros AC X Y SX SY.
@@ -858,9 +860,9 @@ apply hott_3_3_3.
 
   intros u v; apply PT_eq.
 
-  intros H; apply (PT (λ x, PT_elim _ (H x))).
+  intros H; apply (PT_intro (λ x, PT_elim (H x))).
 
-  intros H x; apply (PT (PT_elim _ H x)).
+  intros H x; apply (PT_intro (PT_elim H x)).
 Defined.
 
 (* "Lemma 3.8.5. There exists a type X and a family Y : X → U such
@@ -878,8 +880,7 @@ simpl in X, x₀.
 assert (not (isSet X)) as NSX.
  intros H.
  assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)).
-  clear; intros.
-bbb.
+  intros.
 (*
   assert (((existT _ A p : X) = existT _ B q) → (A ≃ B)) as ffff.
    intros H.
@@ -905,6 +906,22 @@ bbb.
    intros r.
    destruct (ua r); simpl; unfold id.
    destruct (PT_eq p q); simpl.
+Focus 2.
+intros r.
+rewrite ua_idtoeqv.
+refine (match r with eq_refl _ => _ end); simpl; unfold id.
+injection r; intros _ HAB; subst B.
+destruct r.
+bbb.
+
+destruct (PT_eq p p).
+bbb.
+
+assert (p = q).
+apply PT_eq.
+subst q.
+refine (match r with eq_refl _ => _ end).
+simpl; unfold id.
 bbb.
 
 destruct r as (f, ((g, Hg), (h, Hh))).
