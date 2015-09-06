@@ -907,6 +907,10 @@ assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)).
   injection r; intros _ HAB; subst B; simpl.
   unfold U; simpl.
   destruct (PT_eq p p).
+  unfold U, id in *; simpl.
+bbb.
+
+  destruct (PT_eq p p).
 bbb.
 
 assert (p = q).
