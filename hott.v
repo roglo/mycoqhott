@@ -905,9 +905,8 @@ assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)).
   rewrite ua_idtoeqv.
   refine (match r with eq_refl _ => _ end); simpl; unfold id.
   injection r; intros _ HAB; subst B; simpl.
-bbb.
+  unfold U; simpl.
   destruct (PT_eq p p).
-
 bbb.
 
 assert (p = q).
