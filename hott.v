@@ -877,64 +877,35 @@ Proof.
 set (X := Σ (A : U), ∥((bool : U) = A)∥).
 set (x₀ := (existT _ (bool : U) |(eq_refl (bool : U))| : X)).
 simpl in X, x₀.
-assert (not (isSet X)) as NSX.
- assert ((x₀ = x₀) ≃ ((bool : U) ≃ bool)) as H1; [ | simpl in H1 ].
-  eapply equiv_compose; [ | eapply quasi_inv, ex_2_13 ].
-  assert ((x₀ = x₀) → bool) as ffff.
-   intros p.
-   subst x₀.
-
-
-  subst x₀; simpl.
-  subst X; simpl.
-
-bbb.
-Focus 2.
-unfold isSet in H.
-pose proof H x₀ x₀ as H2.
-destruct H1 as (f, ((g, Hg), (h, Hh))).
-pose proof EqStr.quasi_inv_l_eq_r f g h Hg Hh as Hgh.
-unfold "◦", "~~", id in Hg, Hh, Hgh.
-pose proof H2 (eq_refl _) as H3.
-set (p := eq_refl x₀).
-assert (x₀ = x₀) as q.
-
-bbb.
-
-bbb.
- assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)).
-  intros.
+assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)).
+ intros.
+ apply
+   (existT _
+      (λ H,
+         (λ H2 : Σ_type.pr₁ (existT (λ A0 : U, ∥((bool : U) = A0)∥) A p)
+                ≃ Σ_type.pr₁ (existT (λ A0 : U, ∥((bool : U) = A0)∥) B q),
+          H2)
+          (idtoeqv (ap Σ_type.pr₁ H)))).
+ apply qinv_isequiv.
 (*
-  assert (((existT _ A p : X) = existT _ B q) → (A ≃ B)) as ffff.
-   intros H.
-   apply (ap Σ_type.pr₁), idtoeqv in H; assumption.
+ assert ((A ≃ B) → ((existT _ A p : X) = existT _ B q)) as ffff.
+  intros r.
+  apply (Σ_type.pair_eq (ua r)).
+  apply PT_eq.
 *)
-  apply
-    (existT _
-       (λ H,
-          (λ H2 : Σ_type.pr₁ (existT (λ A0 : U, ∥((bool : U) = A0)∥) A p)
-                 ≃ Σ_type.pr₁ (existT (λ A0 : U, ∥((bool : U) = A0)∥) B q),
-           H2)
-           (idtoeqv (ap Σ_type.pr₁ H)))).
-  apply qinv_isequiv.
-(*
-  assert ((A ≃ B) → ((existT _ A p : X) = existT _ B q)) as ffff.
-   intros r.
-   apply (Σ_type.pair_eq (ua r)).
-   apply PT_eq.
-*)
-  apply (existT _ (λ r : A ≃ B, Σ_type.pair_eq (ua r) (PT_eq ((ua r)⁎ p) q))).
-  unfold "◦", "~~", id; simpl.
-  split.
-   intros r.
-   destruct (ua r); simpl; unfold id.
-   destruct (PT_eq p q); simpl.
-Focus 2.
-intros r.
-rewrite ua_idtoeqv.
-refine (match r with eq_refl _ => _ end); simpl; unfold id.
-injection r; intros _ HAB; subst B.
-destruct r.
+ apply (existT _ (λ r : A ≃ B, Σ_type.pair_eq (ua r) (PT_eq ((ua r)⁎ p) q))).
+ unfold "◦", "~~", id; simpl.
+ split.
+  intros r.
+  rewrite <- idtoeqv_ua; f_equal.
+  destruct (ua r); simpl; unfold id.
+  destruct (PT_eq p q); reflexivity.
+
+  intros r.
+  rewrite ua_idtoeqv.
+  refine (match r with eq_refl _ => _ end); simpl; unfold id.
+  injection r; intros _ HAB; subst B.
+
 bbb.
 
 destruct (PT_eq p p).
