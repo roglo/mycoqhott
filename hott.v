@@ -908,6 +908,38 @@ assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)).
   unfold U; simpl.
   destruct (PT_eq p p).
   unfold U, id in *; simpl.
+
+Axiom PT_eq2 : ∀ A, isProp ∥A∥.
+Arguments PT_eq2 [A] x y.
+
+Definition titi : ∀ A (x y : ∥A∥), PT_eq x y = PT_eq2 x y.
+intros.
+destruct (PT_eq2 x y).
+bbb.
+
+destruct (PT_eq x x).
+
+Definition toto : ∀ A (x : ∥A∥), PT_eq x x = eq_refl x.
+Proof.
+intros A x.
+destruct (PT_eq x x).
+
+bbb.
+
+  ============================
+   @eq (@eq (prop_trunc A) x x) (@PT_eq A x x) (@eq_refl (prop_trunc A) x)
+
+*** [ PT_eq : ∀ (A : Type) (x y : ∥A∥), x = y ]
+
+Argument A is implicit
+Argument scopes are [type_scope _ _]
+
+*** [ PT_eq :
+forall (A : Type) (x y : prop_trunc A), @eq (prop_trunc A) x y ]
+
+Argument A is implicit
+Argument scopes are [type_scope _ _]
+
 bbb.
 
   destruct (PT_eq p p).
