@@ -878,10 +878,15 @@ set (X := Σ (A : U), ∥((bool : U) = A)∥).
 set (x₀ := (existT _ (bool : U) |(eq_refl (bool : U))| : X)).
 simpl in X, x₀.
 assert (not (isSet X)) as NSX.
- intros H.
  assert ((x₀ = x₀) ≃ ((bool : U) ≃ bool)) as H1; [ | simpl in H1 ].
-  unfold isSet in H.
   eapply equiv_compose; [ | eapply quasi_inv, ex_2_13 ].
+  assert ((x₀ = x₀) → bool) as ffff.
+   intros p.
+   subst x₀.
+
+
+  subst x₀; simpl.
+  subst X; simpl.
 
 bbb.
 Focus 2.
