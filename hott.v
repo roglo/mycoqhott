@@ -9,7 +9,7 @@ Arguments eq_refl [A] x.
 
 Notation "0" := False : type_scope.
 Notation "1" := True : type_scope.
-Notation "2" := bool : type_scope.
+Notation "2" := (bool : U) : type_scope.
 Notation "( x , y ) '_{' P }" := (existT P x y)
   (at level 0, format "'[' ( x ,  y ) _{ P } ']'", only parsing).
 
@@ -730,6 +730,16 @@ exists (f ◦ @PT_elim A); intros a.
 apply PB.
 Defined.
 
+Definition PT_elim2 : ∀ A, ∥A∥ → A.
+Proof.
+intros A x.
+pose proof @prop_trunc_rec A ∥A∥ (@PT_eq A) (@PT_intro A) as H.
+Set Printing All. Show.
+destruct H.
+
+Error: Case analysis on sort Type is not allowed for inductive definition ex.
+bbb.
+
 (*
 Axiom prop_trunc_rec : ∀ A B, isProp B →
   ∀ f : A → B, ∃ g : ∥A∥ → B, ∀ a : A, g |a| = f a.
@@ -890,6 +900,30 @@ assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)).
 (*
  assert ((A ≃ B) → ((existT _ A p : X) = existT _ B q)) as ffff.
   intros r.
+  apply hott_3_5_1; [ intros x y z; apply PT_eq | simpl ].
+  apply ua; assumption.
+*)
+(*
+apply (existT _
+            (λ r : A ≃ B,
+             hott_3_5_1 (λ x : U, ∥((bool : U) = x)∥)
+               (λ (x : U) (y z : ∥((bool : U) = x)∥), PT_eq y z)
+               (existT (λ A0 : U, ∥((bool : U) = A0)∥) A p)
+               (existT (λ A0 : U, ∥((bool : U) = A0)∥) B q)
+               (ua r))).
+ unfold "◦", "~~", id; simpl.
+ split.
+  intros r.
+  unfold hott_3_5_1;  simpl.
+  unfold Σ_type.hott_2_7_2; simpl.
+  destruct (ua r); simpl; unfold id.
+  destruct (PT_eq p q); simpl.
+  ============================
+   idtoeqv (eq_refl A) = r
+*)
+(*
+ assert ((A ≃ B) → ((existT _ A p : X) = existT _ B q)) as ffff.
+  intros r.
   apply (Σ_type.pair_eq (ua r)).
   apply PT_eq.
 *)
@@ -903,11 +937,14 @@ assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)).
 
   intros r.
   rewrite ua_idtoeqv.
+SearchAbout prop_trunc.
   refine (match r with eq_refl _ => _ end); simpl; unfold id.
   injection r; intros _ HAB; subst B; simpl.
   unfold U; simpl.
   destruct (PT_eq p p).
   unfold U, id in *; simpl.
+bbb.
+  destruct (PT_eq p p).
 
 Axiom PT_eq2 : ∀ A, isProp ∥A∥.
 Arguments PT_eq2 [A] x y.

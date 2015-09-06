@@ -980,7 +980,7 @@ apply (existT _ (hott_2_7_2_g P w w')); split.
  unfold hott_2_7_2_g; simpl.
  unfold "◦"; simpl.
  reflexivity.
-Qed.
+Defined.
 
 (* Corollary 2.7.3... but I don't see in what it is a corollary... *)
 
