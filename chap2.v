@@ -3300,7 +3300,7 @@ Definition bool_eq_bool_negb : bool ≃ bool :=
           if b return (negb (negb b) = b) then eq_refl true
           else eq_refl false))).
 
-Definition ex_2_13_tac : (bool ≃ bool) ≃ bool.
+Definition ex_2_13 : (bool ≃ bool) ≃ bool.
 Proof.
 apply (existT _ (λ p : bool ≃ bool, Π_type.pr₁ p true)).
 apply qinv_isequiv.

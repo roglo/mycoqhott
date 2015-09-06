@@ -880,9 +880,20 @@ simpl in X, x₀.
 assert (not (isSet X)) as NSX.
  intros H.
  assert ((x₀ = x₀) ≃ ((bool : U) ≃ bool)) as H1; [ | simpl in H1 ].
+  unfold isSet in H.
+  eapply equiv_compose; [ | eapply quasi_inv, ex_2_13 ].
+
+bbb.
 Focus 2.
 unfold isSet in H.
 pose proof H x₀ x₀ as H2.
+destruct H1 as (f, ((g, Hg), (h, Hh))).
+pose proof EqStr.quasi_inv_l_eq_r f g h Hg Hh as Hgh.
+unfold "◦", "~~", id in Hg, Hh, Hgh.
+pose proof H2 (eq_refl _) as H3.
+set (p := eq_refl x₀).
+assert (x₀ = x₀) as q.
+
 bbb.
 
 bbb.
