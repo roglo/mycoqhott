@@ -716,7 +716,7 @@ Arguments PT_elim [A] x.
 
 Notation "| x |" := (PT_intro x) (x at level 0, format "| x |").
 
-Axiom PT_eq : ∀ A (x y : ∥A∥), x = y.
+Axiom PT_eq : ∀ A, isProp ∥A∥.
 Arguments PT_eq [A] x y.
 
 (* "If B is a mere proposition and we have f : A → B, then there is an
@@ -730,20 +730,11 @@ exists (f ◦ @PT_elim A); intros a.
 apply PB.
 Defined.
 
+(*
 Definition PT_elim2 : ∀ A, ∥A∥ → A.
 Proof.
 intros A x.
-pose proof @prop_trunc_rec A ∥A∥ (@PT_eq A) (@PT_intro A) as H.
-Set Printing All. Show.
-destruct H.
-
-Error: Case analysis on sort Type is not allowed for inductive definition ex.
 bbb.
-
-(*
-Axiom prop_trunc_rec : ∀ A B, isProp B →
-  ∀ f : A → B, ∃ g : ∥A∥ → B, ∀ a : A, g |a| = f a.
-Arguments prop_trunc_rec [A] [B] _ f.
 *)
 
 (* doing the exercise 3.14 in advance, just to see if my definition of
