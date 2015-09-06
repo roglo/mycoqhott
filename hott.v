@@ -9,7 +9,7 @@ Arguments eq_refl [A] x.
 
 Notation "0" := False : type_scope.
 Notation "1" := True : type_scope.
-Notation "2" := (bool : U) : type_scope.
+Notation "2" := bool : type_scope.
 Notation "( x , y ) '_{' P }" := (existT P x y)
   (at level 0, format "'[' ( x ,  y ) _{ P } ']'", only parsing).
 
@@ -876,9 +876,8 @@ Definition hott_3_8_5 : ∃ X (Y : X → U), (∀ x, isSet (Y x))
   → notT ((Π (x : X), ∥(Y x)∥) → ∥(Π (x : X), Y x)∥).
 Proof.
 set (X := Σ (A : U), ∥((bool : U) = A)∥).
-set (x₀ := (existT _ (bool : U) |(eq_refl (bool : U))| : X)).
-simpl in X, x₀.
-assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)).
+simpl in X.
+assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)) as H1.
  intros.
  apply
    (existT _
@@ -888,30 +887,6 @@ assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)).
           H2)
           (idtoeqv (ap Σ_type.pr₁ H)))).
  apply qinv_isequiv.
-(*
- assert ((A ≃ B) → ((existT _ A p : X) = existT _ B q)) as ffff.
-  intros r.
-  apply hott_3_5_1; [ intros x y z; apply PT_eq | simpl ].
-  apply ua; assumption.
-*)
-(*
-apply (existT _
-            (λ r : A ≃ B,
-             hott_3_5_1 (λ x : U, ∥((bool : U) = x)∥)
-               (λ (x : U) (y z : ∥((bool : U) = x)∥), PT_eq y z)
-               (existT (λ A0 : U, ∥((bool : U) = A0)∥) A p)
-               (existT (λ A0 : U, ∥((bool : U) = A0)∥) B q)
-               (ua r))).
- unfold "◦", "~~", id; simpl.
- split.
-  intros r.
-  unfold hott_3_5_1;  simpl.
-  unfold Σ_type.hott_2_7_2; simpl.
-  destruct (ua r); simpl; unfold id.
-  destruct (PT_eq p q); simpl.
-  ============================
-   idtoeqv (eq_refl A) = r
-*)
 (*
  assert ((A ≃ B) → ((existT _ A p : X) = existT _ B q)) as ffff.
   intros r.
@@ -928,67 +903,13 @@ apply (existT _
 
   intros r.
   rewrite ua_idtoeqv.
-SearchAbout prop_trunc.
   refine (match r with eq_refl _ => _ end); simpl; unfold id.
-  injection r; intros _ HAB; subst B; simpl.
-  unfold U; simpl.
-  destruct (PT_eq p p).
-  unfold U, id in *; simpl.
-bbb.
-  destruct (PT_eq p p).
+  assert (isSet ∥((bool : U) = A)∥) as SA by (apply hott_3_3_4, PT_eq).
+  assert (PT_eq p p = eq_refl p) as H by apply SA.
+  rewrite H; reflexivity.
 
-Axiom PT_eq2 : ∀ A, isProp ∥A∥.
-Arguments PT_eq2 [A] x y.
-
-Definition titi : ∀ A (x y : ∥A∥), PT_eq x y = PT_eq2 x y.
-intros.
-destruct (PT_eq2 x y).
-bbb.
-
-destruct (PT_eq x x).
-
-Definition toto : ∀ A (x : ∥A∥), PT_eq x x = eq_refl x.
-Proof.
-intros A x.
-destruct (PT_eq x x).
-
-bbb.
-
-  ============================
-   @eq (@eq (prop_trunc A) x x) (@PT_eq A x x) (@eq_refl (prop_trunc A) x)
-
-*** [ PT_eq : ∀ (A : Type) (x y : ∥A∥), x = y ]
-
-Argument A is implicit
-Argument scopes are [type_scope _ _]
-
-*** [ PT_eq :
-forall (A : Type) (x y : prop_trunc A), @eq (prop_trunc A) x y ]
-
-Argument A is implicit
-Argument scopes are [type_scope _ _]
-
-bbb.
-
-  destruct (PT_eq p p).
-bbb.
-
-assert (p = q).
-apply PT_eq.
-subst q.
-refine (match r with eq_refl _ => _ end).
-simpl; unfold id.
-bbb.
-
-destruct r as (f, ((g, Hg), (h, Hh))).
-unfold idtoeqv; simpl.
-bbb.
-
- assert ((x₀ = x₀) ≃ (bool ≃ bool)).
-SearchAbout (bool ≃ bool).
-
-exists X, (λ x, x₀ = x).
-intros H1 H2.
-bbb.
+ simpl in H1.
+ pose proof H1 bool |(eq_refl (bool : U))| bool |(eq_refl (bool : U))| as H2.
+ set (x₀ := (existT _ (bool : U) |(eq_refl (bool : U))| : X)) in *.
 
 _5htp.
