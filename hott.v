@@ -911,5 +911,8 @@ assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)) as H1.
  simpl in H1.
  pose proof H1 bool |(eq_refl (bool : U))| bool |(eq_refl (bool : U))| as H2.
  set (x₀ := (existT _ (bool : U) |(eq_refl (bool : U))| : X)) in *.
+ assert (notT (isSet X)) as NSX.
+
+Check ex_3_1_9.
 
 _5htp.
