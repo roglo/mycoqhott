@@ -75,6 +75,21 @@ Defined.
 
 Definition ex_3_1_3 : isSet False := λ x y, match x with end.
 
+(* bool is also a set *)
+
+Definition bool_set : isSet 2.
+Proof.
+intros x y p q.
+destruct x, y; try discriminate p.
+ refine (match p with eq_refl _ => _ end).
+ refine (match q with eq_refl _ => _ end).
+ reflexivity.
+
+ refine (match p with eq_refl _ => _ end).
+ refine (match q with eq_refl _ => _ end).
+ reflexivity.
+Defined.
+
 (* "Example 3.1.4. The type ℕ of natural numbers is also a set. This
     follows from Theorem 2.13.1, since all equality types x =_{ℕ} y
     are equivalent to either 1 or 0, and any two inhabitants of 1 or 0
@@ -938,5 +953,17 @@ assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)) as H1.
   injection s; intros H _ _.
   assert (negb true = true) as H2 by (rewrite <- H; reflexivity).
   revert H2; apply Σ_type2.hott_2_12_6.
+
+  assert (∀ Ap : X, isSet (Σ_type.pr₁ Ap)) as SAP.
+   intros (A, p); simpl.
+   apply PT_elim in p.
+   destruct p; apply bool_set.
+
+   assert (∀ A B, isSet (A ≃ B)) as SAB.
+    intros A B x y p q.
+
+bbb.
+
+Check @prop_trunc_rec.
 
 _5htp.
