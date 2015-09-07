@@ -923,12 +923,20 @@ assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)) as H1.
  pose proof H1 bool |(eq_refl (bool : U))| bool |(eq_refl (bool : U))| as H2.
  set (x₀ := (existT _ (bool : U) |(eq_refl (bool : U))| : X)) in *.
  assert (notT (isSet X)) as NSX.
- intros r.
- assert ((x₀ = x₀) ≃ ((bool : U) = bool)) as s; [ | simpl in s ].
-  eapply equiv_compose; [ apply H2 | apply quasi_inv, univalence2 ].
-
-Check (@idtoeqv_ua (x₀ = x₀) ((bool : U) = bool) s).
-(* idtoeqv_ua s : idtoeqv (ua s) = s *)
-Print isSet_U_counterex.
+  intros r.
+  set (p := Σ_type.pr₁ (pr₁ (Σ_type.pr₂ H2)) bool_eq_bool_id).
+  set (q := Σ_type.pr₁ (pr₁ (Σ_type.pr₂ H2)) bool_eq_bool_negb).
+  pose proof r x₀ x₀ p q as s.
+  subst p q.
+  unfold bool_eq_bool_id, bool_eq_bool_negb in s.
+  simpl in s.
+  destruct H2 as (f, ((g, Hg), (h, Hh))); simpl in s.
+  apply (ap f) in s.
+  eapply compose in s; [ symmetry in s | eapply invert, Hg ].
+  eapply compose in s; [ symmetry in s | eapply invert, Hg ].
+  unfold id in s.
+  injection s; intros H _ _.
+  assert (negb true = true) as H2 by (rewrite <- H; reflexivity).
+  revert H2; apply Σ_type2.hott_2_12_6.
 
 _5htp.
