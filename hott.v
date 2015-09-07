@@ -341,7 +341,7 @@ revert H1; apply Σ_type2.hott_2_12_6.
 Defined.
 
 Definition isSet_U_counterex (r : isSet U) {A B} (p q : A ≃ B) : p = q :=
- (idtoeqv_ua p)⁻¹ • (ap idtoeqv (r A B (ua q) (ua p)))⁻¹ • idtoeqv_ua q.
+ (idtoeqv_ua p)⁻¹ • ap idtoeqv (r A B (ua p) (ua q)) • idtoeqv_ua q.
 
 Definition ex_3_1_9 : ¬ isSet U :=
   λ r : isSet U,
@@ -923,7 +923,9 @@ assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)) as H1.
  pose proof H1 bool |(eq_refl (bool : U))| bool |(eq_refl (bool : U))| as H2.
  set (x₀ := (existT _ (bool : U) |(eq_refl (bool : U))| : X)) in *.
  assert (notT (isSet X)) as NSX.
+ intros r.
+bbb.
 
-Print ex_3_1_9.
+ pose proof isSet_U_counterex r.
 
 _5htp.
