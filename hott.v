@@ -896,11 +896,35 @@ Definition isSet_equiv {A B : U} : isSet (A ≃ B).
 Proof.
 unfold equivalence.
 intros x y p q.
-Check @isProp_isequiv.
-(*
 bbb.
+
+Check @isProp_isequiv.
+(* @isProp_isequiv
+     : ∀ (A B : Type) (f : A → B), isProp (isequiv f) *)
 SearchAbout isSet.
-*)
+pose proof Σ_type.hott_2_7_2 _ x y as e.
+destruct e as (f, ((g, Hg), (h, Hh))).
+pose proof Hh p as Hhp.
+pose proof Hh q as Hhq.
+unfold "◦", id in Hhp, Hhq.
+pose proof f p as fp.
+pose proof f q as fq.
+destruct fp as (fp, Hfp).
+destruct fq as (fq, Hfq).
+destruct x as (fx, Hfx); simpl in fp, fq.
+destruct y as (fy, Hfy); simpl in fp, fq.
+bbb.
+
+destruct x as (f, ((g, Hg), (h, Hh))).
+Check @Σ_type.hott_2_7_2.
+
+bbb.
+
+pose proof @ex_3_1_6 (A → B) isequiv as H.
+
+
+bbb.
+
 (* tactics from ex_3_1_5_bis... *)
 pose proof Σ_type.hott_2_7_2 _ x y as e.
 destruct x as (fx, ((gx, Hgx), (hx, Hhx))).
