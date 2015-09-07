@@ -892,12 +892,12 @@ Defined.
 
 (* *)
 
+(*
 Definition isSet_equiv {A B : U} : isSet (A ≃ B).
 Proof.
 unfold equivalence.
 intros x y p q.
 bbb.
-
 Check @isProp_isequiv.
 (* @isProp_isequiv
      : ∀ (A B : Type) (f : A → B), isProp (isequiv f) *)
@@ -921,7 +921,6 @@ Check @Σ_type.hott_2_7_2.
 bbb.
 
 pose proof @ex_3_1_6 (A → B) isequiv as H.
-
 
 bbb.
 
@@ -960,6 +959,7 @@ destruct fxy, gxy, hxy.
 
 Check @ex_3_1_5_bis.
 bbb.
+*)
 
 (* "Lemma 3.8.5. There exists a type X and a family Y : X → U such
     that each Y(x) is a set, but such that (3.8.3) is false." *)
@@ -1028,7 +1028,6 @@ assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)) as H1.
    apply PT_elim in p.
    destruct p; apply bool_set.
 
-bbb.
    assert (∀ A B, isSet (A ≃ B)) as SAB.
     intros A B.
     intros x y p q.
