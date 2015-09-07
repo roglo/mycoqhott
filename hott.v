@@ -300,7 +300,7 @@ Fixpoint ispType A p :=
   end.
 
 (* A n-type has property 'ispType A (S n)', because the n of n-types
-   start at -1 *)
+   starts at -1 *)
 
 Definition ispType_isSpType_tac {A} n : ispType A n → ispType A (S n).
 Proof.
