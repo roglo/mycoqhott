@@ -512,11 +512,10 @@ Definition hott_3_3_5_ii A : isProp (isSet A) :=
            funext
              (λ q, ispType_isSpType 1 f x y p q (f x y p q) (g x y p q))))).
 
-Definition isequiv_mere_prop {A B} (f : A → B) :
-  @equiv_prop A B isequiv → isProp (isequiv f).
+Definition isProp_isequiv {A B} (f : A → B) : isProp (isequiv f).
 Proof.
-intros p e₁ e₂.
-pose proof p f as pf.
+intros e₁ e₂.
+pose proof equivalence_isequiv f as pf.
 destruct pf as ((qi, iq), eqv).
 apply eqv.
 Defined.
@@ -866,8 +865,7 @@ apply hott_3_3_3.
   apply ex_3_6_2; intros.
   intros u v; apply PT_eq.
 
-  intros y; apply isequiv_mere_prop.
-  apply equivalence_isequiv.
+  intros y; apply isProp_isequiv.
 
  unfold AC_3_8_3, AC_3_8_3_equiv.
  intros AC X Y SX SY.
@@ -898,6 +896,9 @@ Definition isSet_equiv {A B : U} : isSet (A ≃ B).
 Proof.
 unfold equivalence.
 intros x y p q.
+Check @isProp_isequiv.
+bbb.
+
 SearchAbout isSet.
 
 (* tactics from ex_3_1_5_bis... *)
