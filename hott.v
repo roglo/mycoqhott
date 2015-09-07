@@ -892,6 +892,43 @@ apply hott_3_3_3.
   intros H x; apply (PT_intro (PT_elim H x)).
 Defined.
 
+(* *)
+
+Definition isSet_equiv {A B : U} : isSet (A ≃ B).
+Proof.
+unfold equivalence.
+intros x y p q.
+SearchAbout isSet.
+
+(* tactics from ex_3_1_5_bis... *)
+pose proof Σ_type.hott_2_7_2 _ x y as e.
+destruct x as (fx, ((gx, Hgx), (hx, Hhx))).
+destruct y as (fy, ((gy, Hgy), (hy, Hhy))).
+simpl in p, q, e.
+destruct e as (f, ((g, Hg), (h, Hh))).
+unfold "◦", "~~", id in Hg, Hh.
+pose proof Hh p as Hhp.
+pose proof Hh q as Hhq.
+destruct (f p) as (fpa, fpb).
+destruct (f q) as (fqa, fqb).
+bbb.
+
+pose proof r xa ya fpa fqa as Hra.
+destruct Hhp.
+subst fpa.
+rewrite <- Hhq.
+apply ap, ap, s.
+Defined.
+bbb.
+
+destruct x as (fx, ((gx, Hgx), (hx, Hhx))).
+destruct y as (fy, ((gy, Hgy), (hy, Hhy))).
+injection p; intros hxy gxy fxy.
+destruct fxy, gxy, hxy.
+
+Check @ex_3_1_5_bis.
+bbb.
+
 (* "Lemma 3.8.5. There exists a type X and a family Y : X → U such
     that each Y(x) is a set, but such that (3.8.3) is false." *)
 
@@ -959,9 +996,14 @@ assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)) as H1.
    apply PT_elim in p.
    destruct p; apply bool_set.
 
+bbb.
    assert (∀ A B, isSet (A ≃ B)) as SAB.
     intros A B.
-    unfold equivalence.
+    intros x y p q.
+    destruct x as (fx, Hfx).
+    destruct y as (fy, Hfy).
+bbb.
+
 Check @ex_3_1_5_bis.
 (* @ex_3_1_5_bis
      : ∀ (A : Type) (B : A → Type),
@@ -971,6 +1013,33 @@ Check @ex_3_1_5_bis.
    inconsistency, they say *)
 
 About isequiv.
+
+(* trying to re-execute the tactics of ex_3_1_5_bis *)
+intros x y p q.
+pose proof Σ_type.hott_2_7_2 _ x y as e.
+destruct x as (xa, xb).
+destruct y as (ya, yb); simpl in e.
+destruct e as (f, ((g, Hg), (h, Hh))).
+unfold "◦", "~~", id in Hg, Hh.
+pose proof Hh p as Hhp.
+pose proof Hh q as Hhq.
+destruct (f p) as (fpa, fpb).
+destruct (f q) as (fqa, fqb).
+assert (isSet (A → B)) as r.
+ apply ex_3_1_6.
+ intros x.
+SearchAbout B.
+Check B.
+
+
+bbb.
+pose proof r xa ya fpa fqa as Hra.
+destruct Hhp.
+subst fpa.
+rewrite <- Hhq.
+apply ap, ap, s.
+bbb.
+Defined.
 
 pose proof (@ex_3_1_5_bis (A → B) isequiv).
 bbb.
