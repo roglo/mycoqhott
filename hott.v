@@ -9,7 +9,7 @@ Arguments eq_refl [A] x.
 
 Notation "0" := False : type_scope.
 Notation "1" := True : type_scope.
-Notation "2" := bool : type_scope.
+Notation "2" := bool (only parsing) : type_scope.
 Notation "( x , y ) '_{' P }" := (existT P x y)
   (at level 0, format "'[' ( x ,  y ) _{ P } ']'", only parsing).
 
@@ -259,9 +259,8 @@ Definition compose_cancel_l {A} {x y z : A} (p : x = y) (q r : y = z) :
 Definition compose_insert_tac {A x} (f : Π (y : A), x = y) {y z} (p : y = z) :
   f y • p = f z.
 Proof.
-pose proof apd f p as h.
-eapply compose; [ | eassumption ].
-eapply invert; destruct p; simpl; unfold id; apply ru.
+eapply compose; [ | apply (apd f p) ].
+eapply invert; destruct p; simpl; apply ru.
 Defined.
 
 Definition compose_insert {A x} (f : Π (y : A), x = y) {y z} (p : y = z) :
@@ -326,7 +325,7 @@ Definition ispType_isSpType {A} n : ispType A n → ispType A (S n) :=
 
 (* "Example 3.1.9. The universe U is not a set." *)
 
-Definition ex_3_1_9 : ¬isSet U.
+Definition ex_3_1_9_tac : ¬isSet U.
 Proof.
 intros r.
 unfold isSet in r.
@@ -340,6 +339,20 @@ injection s; intros H _ _.
 assert (negb true = true) as H1; [ rewrite H; reflexivity | ].
 revert H1; apply Σ_type2.hott_2_12_6.
 Defined.
+
+Definition ex_3_1_9 : ¬ isSet U :=
+  λ r : isSet U,
+  let bni : bool_eq_bool_negb = bool_eq_bool_id :=
+    (idtoeqv_ua bool_eq_bool_negb)⁻¹
+    • (ap idtoeqv (r bool bool (ua bool_eq_bool_id) (ua bool_eq_bool_negb)))⁻¹
+    • idtoeqv_ua bool_eq_bool_id
+  in
+  let ni : negb = id :=
+    f_equal (λ e, Σ_type.pr₁ (pr₂ (Σ_type.pr₂ e))) bni
+  in
+  Σ_type2.hott_2_12_6 (eq_ind_r (λ b, b true = true) (eq_refl true) ni).
+
+bbb.
 
 (* 3.2 Propositions as types? *)
 
@@ -913,6 +926,6 @@ assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)) as H1.
  set (x₀ := (existT _ (bool : U) |(eq_refl (bool : U))| : X)) in *.
  assert (notT (isSet X)) as NSX.
 
-Check ex_3_1_9.
+Print ex_3_1_9.
 
 _5htp.
