@@ -960,8 +960,19 @@ assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)) as H1.
    destruct p; apply bool_set.
 
    assert (∀ A B, isSet (A ≃ B)) as SAB.
-    intros A B x y p q.
+    intros A B.
+    unfold equivalence.
+Check @ex_3_1_5_bis.
+(* @ex_3_1_5_bis
+     : ∀ (A : Type) (B : A → Type),
+       isSet A → (∀ x : A, isSet (B x)) → isSet {x : A & B x} *)
 
+(* for a reason I ignore, ex_3_1_5_bis cannot be applied: universe
+   inconsistency, they say *)
+
+About isequiv.
+
+pose proof (@ex_3_1_5_bis (A → B) isequiv).
 bbb.
 
 Check @prop_trunc_rec.
