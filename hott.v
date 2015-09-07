@@ -924,8 +924,7 @@ assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)) as H1.
  set (x₀ := (existT _ (bool : U) |(eq_refl (bool : U))| : X)) in *.
  assert (notT (isSet X)) as NSX.
  intros r.
-bbb.
 
- pose proof isSet_U_counterex r.
+Print isSet_U_counterex.
 
 _5htp.
