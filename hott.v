@@ -924,7 +924,11 @@ assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)) as H1.
  set (x₀ := (existT _ (bool : U) |(eq_refl (bool : U))| : X)) in *.
  assert (notT (isSet X)) as NSX.
  intros r.
+ assert ((x₀ = x₀) ≃ ((bool : U) = bool)) as s; [ | simpl in s ].
+  eapply equiv_compose; [ apply H2 | apply quasi_inv, univalence2 ].
 
+Check (@idtoeqv_ua (x₀ = x₀) ((bool : U) = bool) s).
+(* idtoeqv_ua s : idtoeqv (ua s) = s *)
 Print isSet_U_counterex.
 
 _5htp.
