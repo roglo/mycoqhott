@@ -347,9 +347,7 @@ Definition ex_3_1_9 : ¬ isSet U :=
     • (ap idtoeqv (r bool bool (ua bool_eq_bool_id) (ua bool_eq_bool_negb)))⁻¹
     • idtoeqv_ua bool_eq_bool_id
   in
-  let ni : negb = id :=
-    f_equal (λ e, Σ_type.pr₁ (pr₂ (Σ_type.pr₂ e))) bni
-  in
+  let ni : negb = id := f_equal (λ e, Σ_type.pr₁ (pr₂ (Σ_type.pr₂ e))) bni in
   Σ_type2.hott_2_12_6 (eq_ind_r (λ b, b true = true) (eq_refl true) ni).
 
 bbb.
