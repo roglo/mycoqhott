@@ -340,15 +340,13 @@ assert (negb true = true) as H1; [ rewrite H; reflexivity | ].
 revert H1; apply Σ_type2.hott_2_12_6.
 Defined.
 
+Definition isSet_U_counterex (r : isSet U) {A B} (p q : A ≃ B) : p = q :=
+ (idtoeqv_ua p)⁻¹ • (ap idtoeqv (r A B (ua q) (ua p)))⁻¹ • idtoeqv_ua q.
+
 Definition ex_3_1_9 : ¬ isSet U :=
   λ r : isSet U,
-  let bni : bool_eq_bool_negb = bool_eq_bool_id :=
-    (idtoeqv_ua bool_eq_bool_negb)⁻¹
-    • (ap idtoeqv (r bool bool (ua bool_eq_bool_id) (ua bool_eq_bool_negb)))⁻¹
-    • idtoeqv_ua bool_eq_bool_id
-  in
   let ni : negb = id :=
-    match bni with
+    match isSet_U_counterex r bool_eq_bool_negb bool_eq_bool_id with
     | eq_refl _ => eq_refl (Σ_type.pr₁ (pr₂ (Σ_type.pr₂ bool_eq_bool_negb)))
     end
   in
