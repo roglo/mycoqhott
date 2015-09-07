@@ -897,21 +897,28 @@ Proof.
 unfold equivalence.
 intros x y p q.
 Check @isProp_isequiv.
+(*
 bbb.
-
 SearchAbout isSet.
-
+*)
 (* tactics from ex_3_1_5_bis... *)
 pose proof Σ_type.hott_2_7_2 _ x y as e.
 destruct x as (fx, ((gx, Hgx), (hx, Hhx))).
 destruct y as (fy, ((gy, Hgy), (hy, Hhy))).
 simpl in p, q, e.
+bbb.
+
 destruct e as (f, ((g, Hg), (h, Hh))).
 unfold "◦", "~~", id in Hg, Hh.
 pose proof Hh p as Hhp.
 pose proof Hh q as Hhq.
 destruct (f p) as (fpa, fpb).
 destruct (f q) as (fqa, fqb).
+destruct Hhp.
+rewrite <- Hhq.
+apply ap.
+destruct fpa.
+simpl.
 bbb.
 
 pose proof r xa ya fpa fqa as Hra.
