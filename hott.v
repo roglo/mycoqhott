@@ -892,9 +892,15 @@ Defined.
 
 (* *)
 
-(*
 Definition isSet_equiv {A B : U} : isSet (A ≃ B).
 Proof.
+intros x y p q.
+destruct x as (fx, Hfx).
+destruct y as (fy, Hfy).
+injection p; intros _ r; destruct r.
+pose proof isProp_isequiv fx Hfx Hfy as Pf; destruct Pf.
+bbb.
+
 unfold equivalence.
 intros x y p q.
 bbb.
@@ -1028,11 +1034,13 @@ assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)) as H1.
    apply PT_elim in p.
    destruct p; apply bool_set.
 
+bbb.
    assert (∀ A B, isSet (A ≃ B)) as SAB.
     intros A B.
     intros x y p q.
     destruct x as (fx, Hfx).
     destruct y as (fy, Hfy).
+    injection p; intros _ r; destruct r.
 bbb.
 
 Check @ex_3_1_5_bis.
