@@ -892,13 +892,27 @@ Defined.
 
 (* equivalence is a set, whenever A and B are, they say... *)
 
+Definition isSet_equiv {A B : U} : isSet (A → B) → isSet (A ≃ B).
+Proof.
+intros SAB.
+unfold equivalence.
+pose proof @ex_3_1_5_bis A (λ _, B).
+simpl in H.
+bbb.
+
 Definition isSet_equiv {A B : U} : isSet (A ≃ B).
 Proof.
+pose proof @ex_3_1_5_bis A (λ _, B) as H.
+simpl in H.
+
 intros x y p q.
 destruct x as (fx, px).
 destruct y as (fy, py).
 injection p; intros _ r; destruct r.
 pose proof isProp_isequiv fx px py as Pf.
+destruct Pf.
+
+bbb.
 destruct q, Pf.
 bbb.
 
@@ -1035,6 +1049,17 @@ assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)) as H1.
    apply PT_elim in p.
    destruct p; apply bool_set.
 
+   assert (∀ x₁ x₂ : X, isSet (x₁ = x₂)) as SX.
+    intros.
+pose proof SAP x₁ as px₁.
+pose proof SAP x₂ as px₂.
+destruct x₁ as (A, x₁).
+destruct x₂ as (B, x₂).
+simpl in px₁, px₂.
+bbb.
+
+intros x y p q.
+injection x; intros _ H; subst x₂₁.
 bbb.
    assert (∀ A B, isSet (A ≃ B)) as SAB.
     intros A B.
