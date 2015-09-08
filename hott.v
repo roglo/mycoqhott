@@ -890,10 +890,20 @@ apply hott_3_3_3.
   intros H x; apply (PT_intro (PT_elim H x)).
 Defined.
 
-(* equivalence is a set, whenever A and B are, they say... *)
+(* equivalence is a set, whenever A and B are *)
 
-Definition isSet_equiv {A B : U} : isSet (A → B) → isSet (A ≃ B).
+Definition isSet_equiv {A B : U} : isSet A → isSet B → isSet (A ≃ B).
 Proof.
+intros SA SB.
+unfold equivalence.
+SearchAbout (isSet (Σ (_ : _), _)).
+apply ex_3_1_5_bis.
+
+Unable to unify "?B" with "isequiv"
+(unable to find a well-typed instantiation for "?B": cannot ensure that
+"(A → B) → Type" is a subtype of "?X322 → Type").
+bbb.
+
 intros SAB.
 intros x y p q.
 (*
