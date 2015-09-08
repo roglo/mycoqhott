@@ -340,7 +340,7 @@ Definition ispType_isSpType {A} n : ispType A n → ispType A (S n) :=
 
 (* "Example 3.1.9. The universe U is not a set." *)
 
-Definition ex_3_1_9_tac : ¬isSet U.
+Definition ex_3_1_9_tac : ¬isSet Type.
 Proof.
 intros r.
 unfold isSet in r.
@@ -355,13 +355,13 @@ assert (negb true = true) as H1; [ rewrite H; reflexivity | ].
 revert H1; apply Σ_type2.hott_2_12_6.
 Defined.
 
-Definition isSet_U_counterex (r : isSet U) {A B} (p q : A ≃ B) : p = q :=
+Definition isSet_Type_counterex (r : isSet Type) {A B} (p q : A ≃ B) : p = q :=
  (idtoeqv_ua p)⁻¹ • ap idtoeqv (r A B (ua p) (ua q)) • idtoeqv_ua q.
 
-Definition ex_3_1_9 : ¬ isSet U :=
-  λ r : isSet U,
+Definition ex_3_1_9 : ¬ isSet Type :=
+  λ r : isSet Type,
   let ni : negb = id :=
-    match isSet_U_counterex r bool_eq_bool_negb bool_eq_bool_id with
+    match isSet_Type_counterex r bool_eq_bool_negb bool_eq_bool_id with
     | eq_refl _ => eq_refl (Σ_type.pr₁ (pr₂ (Σ_type.pr₂ bool_eq_bool_negb)))
     end
   in
@@ -373,7 +373,7 @@ Section hott_3_2_2.
 Import Σ_type.
 Import Π_type.
 
-(* "Theorem 3.2.2. It is not the case that for all A : U we have ¬(¬A)→A." *)
+(* "Theorem 3.2.2. It is not the case that for all A : Type we have ¬(¬A)→A." *)
 
 Definition hott_3_2_2_tac : notT (∀ A, notT (notT A) → A).
 Proof.
@@ -392,7 +392,7 @@ assert (p : pr₁ e (f _ u) = f _ u).
  eapply no_fixpoint_negb, p.
 Defined.
 
-Definition hott_3_2_2 : notT (∀ A : U, notT (notT A) → A)
+Definition hott_3_2_2 : notT (∀ A : Type, notT (notT A) → A)
 :=
   λ f,
   let e := bool_eq_bool_negb in
@@ -407,7 +407,7 @@ Definition hott_3_2_2 : notT (∀ A : U, notT (notT A) → A)
 
 End hott_3_2_2.
 
-(* "Corollary 3.2.7. It is not the case that for all A : U we have A+(¬A)." *)
+(* "Corollary 3.2.7. It is not the case that for all A : Type we have A+(¬A)." *)
 
 Definition hott_3_2_7_tac : notT (∀ A, A + notT A).
 Proof.
@@ -525,14 +525,14 @@ End Lemma_3_3_5.
 (* "3.4 Classical vs. intuitionistic logic" *)
 
 (* "law of excluded middle in homotopy type theory:
-       LEM : Π (A:U), (isProp(A) → (A + ¬A))      (3.4.1)" *)
+       LEM : Π (A:Type), (isProp(A) → (A + ¬A))      (3.4.1)" *)
 
-Definition LEM := Π (A : U), (isProp A → (A + notT A)).
+Definition LEM := Π (A : Type), (isProp A → (A + notT A)).
 
 (* "law of double negation
-       Π (A:U), (isProp A → (¬¬A → A))            (3.4.2)" *)
+       Π (A:Type), (isProp A → (¬¬A → A))            (3.4.2)" *)
 
-Definition LDN := Π (A : U), (isProp A → (notT (notT A) → A)).
+Definition LDN := Π (A : Type), (isProp A → (notT (notT A) → A)).
 
 (* LEM and LDN are logically equivalent (ex 3.18) *)
 
@@ -569,12 +569,12 @@ Defined.
 
 (* "For emphasis, the proper version (3.4.1) may be denoted LEM-₁" *)
 
-Definition LEM_p p := Π (A : U), (ispType A p → (A + notT A)).
-Definition LEM_inf := Π (A : U), (A + notT A).
+Definition LEM_p p := Π (A : Type), (ispType A p → (A + notT A)).
+Definition LEM_inf := Π (A : Type), (A + notT A).
 
 (* "Definition 3.4.3.
       (i) A type A is called decidable if A + ¬A.
-     (ii) Similarly, a type family B : A → U is decidable if
+     (ii) Similarly, a type family B : A → Type is decidable if
               Π(a:A)(B(a) + ¬B(a)).
     (iii) In particular, A has decidable equality if
               Π(a,b:A)((a = b) + ¬(a = b))." *)
@@ -589,11 +589,11 @@ Section hott_3_5.
 
 Import Σ_type.
 
-(* "Lemma 3.5.1. Suppose P : A → U is a type family such that P(x) is
+(* "Lemma 3.5.1. Suppose P : A → Type is a type family such that P(x) is
     a mere proposition for all x : A. If u, v : Σ(x:A) P(x) are such
     that pr₁(u) = pr₁(v), then u = v." *)
 
-Definition hott_3_5_1_my_proof_tac {A} (P : A → U) :
+Definition hott_3_5_1_my_proof_tac {A} (P : A → Type) :
   (Π (x : A), isProp (P x))
   → ∀ u v : (Σ (x : A), P x),
   pr₁ u = pr₁ v
@@ -605,7 +605,7 @@ destruct v as (va, vp); simpl in p.
 eapply compose; [ eapply (pair_eq p), HP | reflexivity ].
 Defined.
 
-Definition hott_3_5_1_my_proof {A} (P : A → U) :
+Definition hott_3_5_1_my_proof {A} (P : A → Type) :
   (Π (x : A), isProp (P x))
   → ∀ u v : (Σ (x : A), P x),
   pr₁ u = pr₁ v
@@ -620,7 +620,7 @@ Definition hott_3_5_1_my_proof {A} (P : A → U) :
 
 (* their proof *)
 
-Definition hott_3_5_1_tac {A} (P : A → U) :
+Definition hott_3_5_1_tac {A} (P : A → Type) :
   (Π (x : A), isProp (P x))
   → ∀ u v : (Σ (x : A), P x),
   pr₁ u = pr₁ v
@@ -632,7 +632,7 @@ destruct H as (f, ((g, Hg), (h, Hh))).
 apply g, (existT _ p), HP.
 Defined.
 
-Definition hott_3_5_1 {A} (P : A → U) :
+Definition hott_3_5_1 {A} (P : A → Type) :
   (Π (x : A), isProp (P x))
   → ∀ u v : (Σ (x : A), P x),
   pr₁ u = pr₁ v
@@ -644,8 +644,8 @@ Definition hott_3_5_1 {A} (P : A → U) :
       g (existT _ p (HP (pr₁ v) (p⁎ (pr₂ u)) (pr₂ v)))
   end.
 
-Definition SetU := {A : U & isSet A}.
-Definition PropU := {A : U & isProp A}.
+Definition SetU := {A : Type & isSet A}.
+Definition PropU := {A : Type & isProp A}.
 
 Definition SetU_equiv_eq A B s t :
   (existT isSet A s = existT isSet B t) ≃ (A = B).
@@ -703,7 +703,7 @@ apply cartesian.pair_eq; simpl.
 split; [ apply HA | apply HB ].
 Defined.
 
-(* "Example 3.6.2. If A is any type and B : A → U is such that for all
+(* "Example 3.6.2. If A is any type and B : A → Type is such that for all
     x : A, the type B(x) is a mere proposition, then Π(x:A) B(x) is a
     mere proposition." *)
 
@@ -780,7 +780,7 @@ Defined.
 
 (* "3.8 The axiom of choice" *)
 
-Definition AC := ∀ X (A : X → U) (P : Π (x : X), (A x → U)),
+Definition AC := ∀ (X : Type) (A : X → Type) (P : Π (x : X), (A x → Type)),
   isSet X
   → (Π (x : X), isSet (A x))
   → (Π (x : X), Π (a : A x), isProp (P x a))
@@ -788,7 +788,7 @@ Definition AC := ∀ X (A : X → U) (P : Π (x : X), (A x → U)),
   → ∥ (Σ (g : Π (x : X), A x), Π (x : X), P x (g x)) ∥.
 
 Definition AC_3_8_3 :=
-  ∀ (X : U) (Y : X → U), isSet X → (Π (x : X), isSet (Y x))
+  ∀ (X : Type) (Y : X → Type), isSet X → (Π (x : X), isSet (Y x))
   → (Π (x : X), ∥ (Y x) ∥) → ∥ (Π (x : X), Y x) ∥.
 
 Definition hott_3_8_2 : AC ≃ AC_3_8_3.
@@ -849,7 +849,7 @@ Definition isProp_Σ_type {A B} :
   end.
 
 Definition AC_3_8_3_equiv :=
-  ∀ (X : U) (Y : X → U), isSet X → (Π (x : X), isSet (Y x))
+  ∀ (X : Type) (Y : X → Type), isSet X → (Π (x : X), isSet (Y x))
   → (Π (x : X), ∥ (Y x) ∥) ≃ ∥ (Π (x : X), Y x) ∥.
 
 Definition AC_equiv_3_8_3_equiv : AC ≃ AC_3_8_3_equiv.
@@ -892,16 +892,10 @@ Defined.
 
 (* equivalence is a set, whenever A and B are *)
 
-Definition isSet_equiv {A B : U} : isSet A → isSet B → isSet (A ≃ B).
+Definition isSet_equiv {A B : Type} : isSet A → isSet B → isSet (A ≃ B).
 Proof.
 intros SA SB.
-unfold equivalence.
-SearchAbout (isSet (Σ (_ : _), _)).
 apply ex_3_1_5_bis.
-
-Unable to unify "?B" with "isequiv"
-(unable to find a well-typed instantiation for "?B": cannot ensure that
-"(A → B) → Type" is a subtype of "?X322 → Type").
 bbb.
 
 intros SAB.
@@ -916,7 +910,7 @@ Check @cartesian.hott_2_6_2.
        (cartesian.pr₂ x = cartesian.pr₂ y) ≃ (x = y) *)
 Check @Σ_type.hott_2_7_2.
 (* @Σ_type.hott_2_7_2
-     : ∀ (A : Type) (P : A → U) (w w' : {x : A & P x}),
+     : ∀ (A : Type) (P : A → Type) (w w' : {x : A & P x}),
        (w = w')
        ≃ {p : Σ_type.pr₁ w = Σ_type.pr₁ w' &
          transport P p (Σ_type.pr₂ w) = Σ_type.pr₂ w'} *)
@@ -924,10 +918,10 @@ unfold equivalence in x, y.
 Check (@Σ_type.hott_2_7_2 (A → B) isequiv).
 
 The term "isequiv" has type "(A → B) → Type"
-while it is expected to have type "(A → B) → U" (universe inconsistency).
+while it is expected to have type "(A → B) → Type" (universe inconsistency).
 bbb.
 
-Definition isSet_equiv {A B : U} : isSet (A ≃ B).
+Definition isSet_equiv {A B : Type} : isSet (A ≃ B).
 Proof.
 pose proof @ex_3_1_5_bis A (λ _, B) as H.
 simpl in H.
@@ -1009,24 +1003,24 @@ Check @ex_3_1_5_bis.
 bbb.
 *)
 
-(* "Lemma 3.8.5. There exists a type X and a family Y : X → U such
+(* "Lemma 3.8.5. There exists a type X and a family Y : X → Type such
     that each Y(x) is a set, but such that (3.8.3) is false." *)
 
 (* If I understand well, the axiom of choice is not compatible with
    families of sets whose father is not a set. *)
 
-Definition hott_3_8_5 : ∃ X (Y : X → U), (∀ x, isSet (Y x))
+Definition hott_3_8_5 : ∃ X (Y : X → Type), (∀ x, isSet (Y x))
   → notT ((Π (x : X), ∥(Y x)∥) → ∥(Π (x : X), Y x)∥).
 Proof.
-set (X := Σ (A : U), ∥((bool : U) = A)∥).
+set (X := Σ (A : Type), ∥((bool : Type) = A)∥).
 simpl in X.
 assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)) as H1.
  intros.
  apply
    (existT _
       (λ H,
-         (λ H2 : Σ_type.pr₁ (existT (λ A0 : U, ∥((bool : U) = A0)∥) A p)
-                ≃ Σ_type.pr₁ (existT (λ A0 : U, ∥((bool : U) = A0)∥) B q),
+         (λ H2 : Σ_type.pr₁ (existT (λ A0 : Type, ∥((bool : Type) = A0)∥) A p)
+                ≃ Σ_type.pr₁ (existT (λ A0 : Type, ∥((bool : Type) = A0)∥) B q),
           H2)
           (idtoeqv (ap Σ_type.pr₁ H)))).
  apply qinv_isequiv.
@@ -1047,13 +1041,13 @@ assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)) as H1.
   intros r.
   rewrite ua_idtoeqv.
   refine (match r with eq_refl _ => _ end); simpl; unfold id.
-  assert (isSet ∥((bool : U) = A)∥) as SA by (apply hott_3_3_4, PT_eq).
+  assert (isSet ∥((bool : Type) = A)∥) as SA by (apply hott_3_3_4, PT_eq).
   assert (PT_eq p p = eq_refl p) as H by apply SA.
   rewrite H; reflexivity.
 
  simpl in H1.
- pose proof H1 bool |(eq_refl (bool : U))| bool |(eq_refl (bool : U))| as H2.
- set (x₀ := (existT _ (bool : U) |(eq_refl (bool : U))| : X)) in *.
+ pose proof H1 bool |(eq_refl (bool : Type))| bool |(eq_refl (bool : Type))| as H2.
+ set (x₀ := (existT _ (bool : Type) |(eq_refl (bool : Type))| : X)) in *.
  assert (notT (isSet X)) as NSX.
   intros r.
   set (p := Σ_type.pr₁ (pr₁ (Σ_type.pr₂ H2)) bool_eq_bool_id).

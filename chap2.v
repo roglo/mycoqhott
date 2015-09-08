@@ -332,7 +332,7 @@ Definition apd {A P} f {x y : A} (p : x = y) : transport P p (f x) = f y :=
 
 (* lemma hott_2_3_5 *)
 
-Definition transportconst {A : U} {x y : A}
+Definition transportconst {A : Type} {x y : A}
   : ∀ B (P := λ _, B) (p : x = y) (b : B), transport P p b = b
   := λ B (P := λ _, B) p b,
      match p return (transport P p b = b) with
@@ -341,7 +341,7 @@ Definition transportconst {A : U} {x y : A}
 Arguments transportconst A%type x y B p b.
 
 (* transportconst
-     : ∀ (A : U) (x y : A) (B : Type) (P:=λ _ : A, B)
+     : ∀ (A : Type) (x y : A) (B : Type) (P:=λ _ : A, B)
        (p : x = y) (b : B), transport P p b = b *)
 
 (* ap
@@ -378,7 +378,7 @@ Definition hott_2_3_8 A B (P := λ _ : A, B) (f : A → B) x y (p : x = y)
 (* Lemma 2.3.9 *)
 
 Definition transport_compose {A x y z} :
-    ∀ (P : A → U) (p : x = y) (q : y = z) (u : P x),
+    ∀ (P : A → Type) (p : x = y) (q : y = z) (u : P x),
     transport P q (transport P p u) = transport P (p • q) u :=
   λ P p q u,
   match q with
@@ -389,14 +389,14 @@ Definition transport_compose {A x y z} :
   end.
 
 Definition hott_2_3_10 {A B x y} :
-    ∀ (f : A → B) (P : B → U) (p : x = y) (u : P (f x)),
+    ∀ (f : A → B) (P : B → Type) (p : x = y) (u : P (f x)),
     transport (P ◦ f) p u = transport P (ap f p) u
  := λ f P p u,
     match p with
     | eq_refl _ => eq_refl (transport P (ap f (eq_refl x)) u)
     end.
 
-Definition hott_2_3_11 {A x y} : ∀ (P Q : A → U) (f : Π (x : A), P x → Q x),
+Definition hott_2_3_11 {A x y} : ∀ (P Q : A → Type) (f : Π (x : A), P x → Q x),
   ∀ (p : x = y) (u : P x), transport Q p (f x u) = f y (transport P p u)
   := λ P Q f p u,
      match p with
@@ -544,7 +544,7 @@ Example ex_2_4_8_ii A : ∀ x y z : A, ∀ (p : x = y),
         (compose_assoc t p p⁻¹)⁻¹ • (t •l compose_invert_r p)
         • (hott_2_1_4_i_1 t)⁻¹).
 
-Example ex_2_4_9_tac A x y : ∀ (p : x = y) (P : A → U), qinv (transport P p).
+Example ex_2_4_9_tac A x y : ∀ (p : x = y) (P : A → Type), qinv (transport P p).
 Proof.
 intros.
 apply (existT _ (transport P (p⁻¹))); split.
@@ -557,7 +557,7 @@ apply (existT _ (transport P (p⁻¹))); split.
  destruct p; reflexivity.
 Qed.
 
-Example ex_2_4_9 A x y : ∀ (p : x = y) (P : A → U), qinv (transport P p) :=
+Example ex_2_4_9 A x y : ∀ (p : x = y) (P : A → Type), qinv (transport P p) :=
   λ p P,
   existT _ (transport P p⁻¹)
   (λ z : P y,
@@ -577,7 +577,7 @@ Definition equiv_prop {A B} isequiv :=
   (isequiv f → qinv f) *
   (∀ e₁ e₂ : isequiv f, e₁ = e₂).
 
-Definition isequiv {A B} f :=
+Definition isequiv {A B : Type} f :=
   ((Σ (g : B → A), (f ◦ g ~~ id)) * (Σ (h : B → A), (h ◦ f ~~ id)))%type.
 
 Definition qinv_isequiv {A B} (f : A → B) : qinv f → isequiv f.
@@ -650,7 +650,7 @@ Admitted. (* proof postponed, they say, to sections §2.6, §2.7 and §4.3...
 bbb.
 *)
 
-Definition equivalence A B := Σ (f : A → B), isequiv f.
+Definition equivalence (A B : Type) := Σ (f : A → B), isequiv f.
 Notation "A ≃ B" := (equivalence A B) (at level 70).
 
 (* Lemma 2.4.12 i *)
@@ -795,8 +795,8 @@ Definition pair_eq {A B} {x y : A * B} :
 
 Notation "'pair⁼'" := pair_eq.
 
-Theorem hott_2_6_2 {A B} : ∀ x y : A * B,
-  (pr₁ x = pr₁ y) * (pr₂ x = pr₂ y) ≃ (x = y).
+Theorem hott_2_6_2 {A B : Type} : ∀ x y : (A * B)%type,
+  ((pr₁ x = pr₁ y) * (pr₂ x = pr₂ y))%type ≃ (x = y).
 Proof.
 intros.
 set (f := hott_2_6_1 x y).
@@ -879,7 +879,7 @@ destruct p, q; simpl.
 destruct x; reflexivity.
 Qed.
 
-Theorem hott_2_6_4 {Z} {A B : Z → U} : ∀ (z w : Z) (p : z = w) x,
+Theorem hott_2_6_4 {Z} {A B : Z → Type} : ∀ (z w : Z) (p : z = w) x,
   transport (λ y, (A y * B y)%type) p x =
   (transport A p (pr₁ x), transport B p (pr₂ x)).
 Proof.
@@ -955,7 +955,7 @@ destruct p as (p, q).
 destruct p, q; reflexivity.
 Defined.
 
-Theorem hott_2_7_2 {A} : ∀ (P : A → U) (w w' : Σ (x : A), P x),
+Theorem hott_2_7_2 {A} : ∀ (P : A → Type) (w w' : Σ (x : A), P x),
   (w = w') ≃ Σ (p : pr₁ w = pr₁ w'), p⁎ (pr₂ w) = pr₂ w'.
 Proof.
 intros.
@@ -990,7 +990,7 @@ Definition pair_uniqueness {A B} (z : {x : A & B x}) :
   let (z₁, z₂) return (z = existT B (pr₁ z) (pr₂ z)) := z in
   eq_refl (existT B z₁ z₂).
 
-Definition pair_eq {A} {P : A → U} {x y : A} {u : P x} {v : P y} :
+Definition pair_eq {A} {P : A → Type} {x y : A} {u : P x} {v : P y} :
   Π (p : x = y), p⁎ u = v → existT _ x u = existT _ y v
 :=
   λ p q,
@@ -1004,12 +1004,12 @@ Definition pair_eq {A} {P : A → U} {x y : A} {u : P x} {v : P y} :
 
 Notation "'pair⁼'" := pair_eq.
 
-Definition pair_eq_def {A} {P : A → U} (x y : A) (u : P x) (p : x = y) :
+Definition pair_eq_def {A} {P : A → Type} (x y : A) (u : P x) (p : x = y) :
   existT P x u = existT P y (p⁎ u)
 :=
   pair_eq p (eq_refl (p⁎ u)).
 
-Definition tfam {A} P (Q : (Σ (x : A), P x) → U) (x : A) :=
+Definition tfam {A} P (Q : (Σ (x : A), P x) → Type) (x : A) :=
   Σ (u : P x), Q (existT P x u).
 
 Definition pair_map {A P Q} {x : A} (a : P x) (b : Q (existT P x a))
@@ -1138,7 +1138,7 @@ End Σ_type.
 
 (* 2.8 The unit type *)
 
-Theorem hott_2_8_1 : ∀ x y : 1, (x = y) ≃ 1.
+Theorem hott_2_8_1 : ∀ x y : 1, (x = y) ≃ 1%type.
 Proof.
 intros.
 destruct x, y.
@@ -1288,7 +1288,7 @@ Notation "'pair⁼'" := pair_eq.
 Notation "'Π' A ( B )" := (λ x, Π (a : A x), B x a) (at level 0, A at level 0).
 Notation "B ^" := (λ w, B (pr₁ w) (pr₂ w)) (at level 0).
 
-Definition hott_2_9_5 {X} {A : X → U} {B : Π (x : X), A x → U} {x y : X}
+Definition hott_2_9_5 {X} {A : X → Type} {B : Π (x : X), A x → Type} {x y : X}
   : ∀ (p : x = y) (f : ∀ a : A x, B x a),
       transport (Π A (B)) p f =
       λ a, transport B^ (pair⁼ p⁻¹ a)⁻¹ (f (transport A p⁻¹ a))
@@ -1297,7 +1297,7 @@ Definition hott_2_9_5 {X} {A : X → U} {B : Π (x : X), A x → U} {x y : X}
      | eq_refl _ => eq_refl _
      end.
 
-Lemma hott_2_9_6_i {X} {A B : X → U} {x y : X} (p : x = y) :
+Lemma hott_2_9_6_i {X} {A B : X → Type} {x y : X} (p : x = y) :
   ∀ (f : A x → B x) (g : A y → B y),
   (transport (λ z, A z → B z) p f = g) ≃
   Π (a : A x), (transport B p (f a) = g (transport A p a)).
@@ -1310,7 +1310,7 @@ apply existT with (x := happly).
 apply extensionality.
 Qed.
 
-Definition hott_2_9_6_ii {X} {A B : X → U} {x y : X} (p : x = y)
+Definition hott_2_9_6_ii {X} {A B : X → Type} {x y : X} (p : x = y)
   : ∀ (f : A x → B x) (g : A y → B y) (a : A x)
       (q : transport (λ z, A z → B z) p f = g),
     transport (λ z, A z → B z) p f (transport A p a) =
@@ -1318,7 +1318,7 @@ Definition hott_2_9_6_ii {X} {A B : X → U} {x y : X} (p : x = y)
   := λ f g a q,
      happly q (transport A p a).
 
-Definition hott_2_9_6_iii {X} {A B : X → U} {x y : X} (p : x = y)
+Definition hott_2_9_6_iii {X} {A B : X → Type} {x y : X} (p : x = y)
   : ∀ (f : A x → B x) (g : A y → B y) (a : A x)
       (q : transport (λ z, A z → B z) p f = g),
     transport (λ z, A z → B z) p f (p⁎ a) =
@@ -1327,7 +1327,7 @@ Proof.
 intros; destruct p; reflexivity.
 Qed.
 
-Definition hott_2_9_6_iv {X} {A B : X → U} {x y : X} (p : x = y)
+Definition hott_2_9_6_iv {X} {A B : X → Type} {x y : X} (p : x = y)
   : ∀ (f : A x → B x) (g : A y → B y) (a : A x)
       (q : transport (λ z, A z → B z) p f = g),
     transport (λ z, A z → B z) p f (p⁎ a) =
@@ -1336,7 +1336,7 @@ Proof.
 intros; destruct p; reflexivity.
 Qed.
 
-Definition hott_2_9_6_v {X} {A B : X → U} {x y : X}
+Definition hott_2_9_6_v {X} {A B : X → Type} {x y : X}
   : ∀ (p : x = y) (f : A x → B x) (g : A y → B y) (a : A x)
       (q : transport (λ z, A z → B z) p f = g),
     transport (λ z, A z → B z) p f (p⁎ a) =
@@ -1345,7 +1345,7 @@ Proof.
 intros; destruct p, q; reflexivity.
 Qed.
 
-Lemma hott_2_9_7 {X} {A : X → U} {B : Π (x : X), A x → U} {x y : X} :
+Lemma hott_2_9_7 {X} {A : X → Type} {B : Π (x : X), A x → Type} {x y : X} :
   ∀ (p : x = y) (f : Π (a : A x), B x a) (g : Π (a : A y), B y a),
   (transport (λ x, ∀ a : A x, B x a) p f = g) ≃
   (Π (a : A x), transport B^ (pair⁼ p a) (f a) = g (transport A p a)).
@@ -1364,7 +1364,7 @@ End Π_type.
 
 (* lemma 2.10.1 *)
 
-Definition idtoeqv_tac {A B : U} : A = B → A ≃ B.
+Definition idtoeqv_tac {A B : Type} : A = B → A ≃ B.
 Proof.
 intros p.
 set (q := transport id p).
@@ -1385,13 +1385,13 @@ Definition isequiv_transport {A B} : ∀ (p : A = B), isequiv (transport id p)
          (reflexivity id))
   end.
 
-Definition idtoeqv {A B : U} : A = B → A ≃ B :=
+Definition idtoeqv {A B : Type} : A = B → A ≃ B :=
   λ p,
   existT isequiv (transport id p) (isequiv_transport p).
 
-Axiom univalence : ∀ A B : U, isequiv (@idtoeqv A B).
+Axiom univalence : ∀ A B : Type, isequiv (@idtoeqv A B).
 
-Theorem univalence2 : ∀ A B : U, (A = B) ≃ (A ≃ B).
+Theorem univalence2 : ∀ A B : Type, (A = B) ≃ (A ≃ B).
 Proof.
 intros.
 pose proof (@univalence A B) as p.
@@ -1482,7 +1482,7 @@ Definition ua_pup {A B}
 
 (* reflexivity *)
 
-Definition idtoeqv_eq_refl (A : U) : eqv_eq_refl A = idtoeqv (eq_refl A) :=
+Definition idtoeqv_eq_refl (A : Type) : eqv_eq_refl A = idtoeqv (eq_refl A) :=
   eq_refl (idtoeqv (eq_refl A)).
 
 Definition ua_eq_refl_tac : ∀ A, eq_refl A = ua (eqv_eq_refl A).
@@ -1568,18 +1568,18 @@ apply apf; [ idtac | reflexivity ].
 apply apf; [ reflexivity | apply ua_inverse ].
 Defined.
 
-Lemma hott_2_10_5_i {A} {B : A → U} {x y : A} : ∀ (p : x = y) (u : B x),
+Lemma hott_2_10_5_i {A} {B : A → Type} {x y : A} : ∀ (p : x = y) (u : B x),
   transport B p u = transport id (ap B p) u.
 Proof.
 intros.
 destruct p; reflexivity.
 Defined.
 
-Lemma hott_2_10_5_ii {A} {B : A → U} {x y : A} : ∀ (p : x = y) (u : B x),
+Lemma hott_2_10_5_ii {A} {B : A → Type} {x y : A} : ∀ (p : x = y) (u : B x),
   transport id (ap B p) u = projT1 (idtoeqv (ap B p)) u.
 Proof. reflexivity. Qed.
 
-Lemma hott_2_10_5 {A} {B : A → U} {x y : A} : ∀ (p : x = y) (u : B x),
+Lemma hott_2_10_5 {A} {B : A → Type} {x y : A} : ∀ (p : x = y) (u : B x),
   transport B p u = projT1 (idtoeqv (ap B p)) u.
 Proof. intros; destruct p; reflexivity. Qed.
 
@@ -1894,10 +1894,10 @@ Defined.
 
 (* Expression 2.12.4 *)
 
-Definition inl_family {A B a₀} (x : A + B) : U := inl a₀ = x.
-Definition inr_family {A B b₀} (x : A + B) : U := inr b₀ = x.
+Definition inl_family {A B a₀} (x : A + B) : Type := inl a₀ = x.
+Definition inr_family {A B b₀} (x : A + B) : Type := inr b₀ = x.
 
-Definition code {A B} a₀ : A + B → U :=
+Definition code {A B} a₀ : A + B → Type :=
   λ x,
   match x with
   | inl a => a₀ = a
@@ -1956,7 +1956,7 @@ Defined.
 
 (* and what about 2.12.2 ? *)
 
-Definition code_r {A B} b₀ : A + B → U :=
+Definition code_r {A B} b₀ : A + B → Type :=
   λ x,
   match x with
   | inl a => 0%type
@@ -2035,7 +2035,7 @@ End Σ_type2.
 
 Module ℕ.
 
-Fixpoint code m n : U :=
+Fixpoint code m n : Type :=
   match (m, n) with
   | (0, 0) => 1%type
   | (S m, 0) => 0%type
@@ -2112,7 +2112,7 @@ Definition Assoc X m :=
   Π (x : X), Π (y : X), Π (z : X), m x (m y z) = m (m x y) z.
 
 Definition SemigroupStr A := Σ (m : A → A → A), Assoc A m.
-Definition Semigroup := Σ (A : U), SemigroupStr A.
+Definition Semigroup := Σ (A : Type), SemigroupStr A.
 
 (* 2.14.1 Lifting equivalences *)
 
@@ -2125,7 +2125,7 @@ Definition Semigroup := Σ (A : U), SemigroupStr A.
    - Lemma 2.3.9 = transport_compose
 *)
 
-Definition ap_equiv_tac {A B} (C : U → U) : A ≃ B → C A ≃ C B.
+Definition ap_equiv_tac {A B} (C : Type → Type) : A ≃ B → C A ≃ C B.
 Proof.
 intros p.
 apply (existT _ (transport C (ua p))), qinv_isequiv.
@@ -2144,18 +2144,18 @@ split; intros g; unfold id; simpl.
   reflexivity.
 Defined.
 
-Definition transp_ap_inv_l {A B} (C : U → U) (e : A ≃ B) (g : C B)
+Definition transp_ap_inv_l {A B} (C : Type → Type) (e : A ≃ B) (g : C B)
 : transport C (ua e) (transport C (ua e)⁻¹ g) = g
 :=
   transport_compose C (ua e)⁻¹ (ua e) g
   • transport_compat ((ua e)⁻¹ • ua e) (eq_refl B) (compose_invert_l (ua e)).
 
-Definition transp_ap_inv_r {A B} (C : U → U) (e : A ≃ B) (g : C A)
+Definition transp_ap_inv_r {A B} (C : Type → Type) (e : A ≃ B) (g : C A)
 :=
   transport_compose C (ua e) (ua e)⁻¹ g
   • transport_compat (ua e • (ua e)⁻¹) (eq_refl A) (compose_invert_r (ua e)).
 
-Definition ap_equiv {A B} (C : U → U) : A ≃ B → C A ≃ C B
+Definition ap_equiv {A B} (C : Type → Type) : A ≃ B → C A ≃ C B
 :=
   λ e,
   existT _ (transport C (ua e))
@@ -2174,14 +2174,14 @@ Definition SemigroupStr_equiv {A B} :
    Theorem 2.7.4, *)
 
 Definition transport_semigroup {A B} (p : A = B) m (a : Assoc A m) :
-  let m' : B → B → B := transport (λ X : U, X → X → X) p m in
+  let m' : B → B → B := transport (λ X : Type, X → X → X) p m in
   let a' : Assoc B m' :=
     transport (λ xu, Assoc (pr₁ xu) (pr₂ xu)) (pair⁼ p (eq_refl m')) a
   in
   transport SemigroupStr p (existT _ m a) = existT _ m' a'.
 Proof.
 apply
-  (@hott_2_7_4 U (λ X, X → X → X) (λ xu, Assoc (pr₁ xu) (pr₂ xu)) A B p m a).
+  (@hott_2_7_4 Type (λ X, X → X → X) (λ xu, Assoc (pr₁ xu) (pr₂ xu)) A B p m a).
 Defined.
 
 (* had formula 2.14.2 *)
@@ -2189,8 +2189,8 @@ Defined.
 (* By applying (2.9.4) twice, we have that m'(b1, b2) is equal to *)
 (* (personal remark: provable also with "destruct p") *)
 
-Definition transport_op_1_tac {A B} (p : A = B) m b₁ b₂ :
-  transport (λ X : U, X → X → X) p m b₁ b₂ =
+Definition transport_op_1_tac {A B : Type} (p : A = B) m b₁ b₂ :
+  transport (λ X : Type, X → X → X) p m b₁ b₂ =
   transport id p (m (transport id p⁻¹ b₁) (transport id p⁻¹ b₂)).
 Proof.
 eapply compose.
@@ -2199,27 +2199,27 @@ eapply compose.
  apply (hap (Π_type.hott_2_9_4 p (m (transport id p⁻¹ b₁)))).
 Defined.
 
-Definition transport_op_1 {A B} (p : A = B) m b₁ b₂ :
-  transport (λ X : U, X → X → X) p m b₁ b₂ =
+Definition transport_op_1 {A B : Type} (p : A = B) m b₁ b₂ :
+  transport (λ X : Type, X → X → X) p m b₁ b₂ =
   transport id p (m (transport id p⁻¹ b₁) (transport id p⁻¹ b₂))
 :=
-  hap (hap (@Π_type.hott_2_9_4 _ _ (λ X : U, X → X) _ _ p m) b₁) b₂
+  hap (hap (@Π_type.hott_2_9_4 _ id (λ X, X → X) _ _ p m) b₁) b₂
   • hap (Π_type.hott_2_9_4 p (m (transport id p⁻¹ b₁))) b₂.
 
 Definition transport_op_2_tac {A B} (p : A = B) m b₁ b₂ :
-  transport (λ X : U, X → X → X) p m b₁ b₂ =
+  transport (λ X : Type, X → X → X) p m b₁ b₂ =
   transport id p (m (transport id p⁻¹ b₁) (transport id p⁻¹ b₂)).
 Proof.
 destruct p; reflexivity.
 Defined.
 
 Definition transport_op_2 {A B} (p : A = B) m b₁ b₂ :
-  transport (λ X : U, X → X → X) p m b₁ b₂ =
+  transport (λ X : Type, X → X → X) p m b₁ b₂ =
   transport id p (m (transport id p⁻¹ b₁) (transport id p⁻¹ b₂))
 :=
   match p in (_ = X) return
     (∀ b₁ b₂ : X,
-     transport (λ X : U, X → X → X) p m b₁ b₂ =
+     transport (λ X : Type, X → X → X) p m b₁ b₂ =
      transport id p (m (transport id p⁻¹ b₁) (transport id p⁻¹ b₂)))
   with
   | eq_refl _ =>
@@ -2232,7 +2232,7 @@ Definition transport_op_2 {A B} (p : A = B) m b₁ b₂ :
 (* Then, because ua is quasi-inverse to transport^(X→X), this is equal to *)
 
 Definition transport_op_tac {A B} (e : A ≃ B) m b₁ b₂ :
-  transport (λ X : U, X → X → X) (ua e) m  b₁ b₂ =
+  transport (λ X : Type, X → X → X) (ua e) m  b₁ b₂ =
   pr₁ e (m (pr₁ e⁻⁻¹ b₁) (pr₁ e⁻⁻¹ b₂)).
 Proof.
 eapply compose; [ eapply transport_op_1 | idtac ].
@@ -2244,7 +2244,7 @@ eapply apf.
 Defined.
 
 Definition transport_op {A B} (e : A ≃ B) m b₁ b₂ :
-  transport (λ X : U, X → X → X) (ua e) m b₁ b₂ =
+  transport (λ X : Type, X → X → X) (ua e) m b₁ b₂ =
   pr₁ e (m (pr₁ e⁻⁻¹ b₁) (pr₁ e⁻⁻¹ b₂))
 :=
   transport_op_1 (ua e) m b₁ b₂
@@ -2297,10 +2297,10 @@ Defined.
   path given by the following steps: *)
 
 Definition pre_hott_2_14_3_tac {A B} (e : A ≃ B) m (a : Assoc A m) b₁ b₂ b₃ :
-  let m' : B → B → B := transport (λ X : U, X → X → X) (ua e) m in
+  let m' : B → B → B := transport (λ X : Type, X → X → X) (ua e) m in
   m' (m' b₁ b₂) b₃ = m' b₁ (m' b₂ b₃).
 Proof.
-simpl; set (m' := transport (λ X : U, X → X → X) (ua e) m).
+simpl; set (m' := transport (λ X : Type, X → X → X) (ua e) m).
 (* m'(m'(b₁, b₂), b₃) = e(m(e⁻¹(m'(b₁, b₂)), e⁻¹(b₃))) *)
 eapply compose; [ apply transport_op | idtac ].
 (*                    = e(m(e⁻¹(e(m(e⁻¹(b₁), e⁻¹(b₂)))), e⁻¹(b₃))) *)
@@ -2318,10 +2318,10 @@ eapply compose; [ eapply invert, transport_op | reflexivity ].
 Defined.
 
 Definition pre_hott_2_14_3 {A B} (e : A ≃ B) m (a : Assoc A m) b₁ b₂ b₃ :
-  let m' : B → B → B := transport (λ X : U, X → X → X) (ua e) m in
+  let m' : B → B → B := transport (λ X : Type, X → X → X) (ua e) m in
   m' (m' b₁ b₂) b₃ = m' b₁ (m' b₂ b₃)
 :=
-  let m' : B → B → B := transport (λ X : U, X → X → X) (ua e) m in
+  let m' : B → B → B := transport (λ X : Type, X → X → X) (ua e) m in
   transport_op e m (m' b₁ b₂) b₃
   • ap (pr₁ e)
       (hap (ap m (ap (pr₁ e⁻⁻¹) (transport_op e m b₁ b₂))) (pr₁ e⁻⁻¹ b₃))
@@ -2344,7 +2344,7 @@ Proof. destruct p; reflexivity. Defined.
    above *)
 
 Definition hott_2_14_3 {A B} (e : A ≃ B) m (a : Assoc A m) :
-  let m' : B → B → B := transport (λ X : U, X → X → X) (ua e) m in
+  let m' : B → B → B := transport (λ X : Type, X → X → X) (ua e) m in
   let a' : Assoc B m' :=
     transport (λ xu, Assoc (pr₁ xu) (pr₂ xu)) (pair⁼ (ua e) (eq_refl m')) a
   in
@@ -2356,13 +2356,13 @@ eapply Π_type.funext; intros b₂.
 eapply Π_type.funext; intros b₃.
 unfold pre_hott_2_14_3.
 subst m'.
-set (m' := transport (λ X : U, X → X → X) (ua e) m : B → B → B) in *.
+set (m' := transport (λ X : Type, X → X → X) (ua e) m : B → B → B) in *.
 simpl in m'.
 do 6 rewrite invert_compose.
 rewrite hott_2_1_4_iii.
 do 5 rewrite compose_assoc.
 set (t := {X : Type & X → X → X}) in *.
-set (u := λ X : U, X → X → X) in *.
+set (u := λ X : Type, X → X → X) in *.
 set (P (xu : t) := Assoc (@pr₁ Type u xu) (@pr₂ Type u xu)) in *.
 set (p := @pair_eq Type u _ _ _ _ (ua e) (eq_refl m')) in a'.
 subst m' a'.
@@ -2399,7 +2399,7 @@ Defined.
 
 (* pr₁ and pr₂ on semigroups *)
 
-(* pr₁ : Semigroup → U *)
+(* pr₁ : Semigroup → Type *)
 (* pr₂ : ∀ x : Semigroup, (SemigroupStr ◦ pr₁) x *)
 
 (* equality in semigroup str *)
@@ -2649,7 +2649,7 @@ Definition hott_2_15_5 {X A B} :
 (* "Just as Σ-types are a generalization of cartesian products, they
     satisfy a generalized version of this universal property. Jumping
     right to the dependently typed version, suppose we have a type X
-    and type families A : X → U and P : Π (x:X) A(x) → U. Then we have
+    and type families A : X → Type and P : Π (x:X) A(x) → Type. Then we have
     a function" *)
 
 Definition hott_2_15_6 {X A} P :
@@ -2711,7 +2711,7 @@ split.
 Defined.
 
 (* "The dependent version of this is formulated for a type family
-    C : A x B → U:" *)
+    C : A x B → Type:" *)
 
 Definition dep_clos_adjun {A B C} :
   (Π (w : A * B), C w) ≃ (Π (x : A), Π (y : B), C (x, y)).
@@ -3145,7 +3145,7 @@ Definition coproduct_map {A B C} f g (x : A + B) : C :=
   match x with inl a => f a | inr b => g b end.
 
 (* OK, but I had to use function extensionality; is it normal? *)
-Definition ex_2_9_tac {X A B} : (A + B → X) ≃ (A → X) * (B → X).
+Definition ex_2_9_tac {X A B : Type} : (A + B → X) ≃ (A → X) * (B → X).
 Proof.
 apply (existT _ (λ f, (f ◦ inl, f ◦ inr))), qinv_isequiv.
 apply (existT _ (λ f x, coproduct_map (pr₁ f) (pr₂ f) x)).
@@ -3155,10 +3155,10 @@ apply Π_type.funext; intros x.
 destruct x as [a| b]; reflexivity.
 Defined.
 
-Definition ex_2_9 {X A B} : (A + B → X) ≃ (A → X) * (B → X)
+Definition ex_2_9 {X A B : Type} : (A + B → X) ≃ (A → X) * (B → X)
 :=
-  existT isequiv (λ f, (f ◦ inl, f ◦ inr))
-    (qinv_isequiv (λ f, (f ◦ inl, f ◦ inr))
+  existT isequiv (λ f : A + B → X, (f ◦ inl, f ◦ inr))
+    (qinv_isequiv (λ f : A + B → X, (f ◦ inl, f ◦ inr))
        (existT _ (λ f x, coproduct_map (pr₁ f) (pr₂ f) x)
           (λ x : (A → X) * (B → X),
            let (f, g) return ((pr₁ x, pr₂ x) = x) := x in
@@ -3216,7 +3216,7 @@ existT isequiv (λ f, (λ a, f (inl a), λ b, f (inr b)))
 End ex_2_9.
 
 (* "Exercise 2.10. Prove that Σ-types are “associative”, in that for
-    any A : U and families B : A → U and C : (Σ (x : A), B x) → U, we
+    any A : Type and families B : A → Type and C : (Σ (x : A), B x) → Type, we
     have
        (Σ (x : A), Σ (y : B x), C (x, y)) ≃ Σ (p : Σ (x : A), B x), C p" *)
 
@@ -3424,14 +3424,14 @@ Defined.
 
 (* "Exercise 2.16. Suppose that rather than function extensionality
     (Axiom 2.9.3), we suppose only the existence of an element
-        funext : Π (A:U), Π (B:A→U), Π (f,g:Π(x:A),B(x)), (f~g) → (f=g)
+        funext : Π (A:Type), Π (B:A→Type), Π (f,g:Π(x:A),B(x)), (f~g) → (f=g)
     (with no relationship to happly assumed). Prove that in fact, this
     is sufficient to imply the whole function extensionality axiom
     (that happly is an equivalence). This is due to Voevodsky; its
     proof is tricky and may require concepts from later chapters." *)
 
 Axiom funext2 :
-  Π (A:U), Π (B:A→U), Π (f:Π(x:A),B x), Π (g:Π(x:A),B x),
+  Π (A:Type), Π (B:A→Type), Π (f:Π(x:A),B x), Π (g:Π(x:A),B x),
   (∀ x, f x = g x) → (f = g).
 
 Definition ex_2_16 {A B} (f g : Π (x : A), B x) : (f = g) ≃ (∀ x, f x = g x).

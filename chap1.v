@@ -189,18 +189,17 @@ Notation "'Σ' ( x : A ) , B" :=
   ({ x : A & B }) (at level 0, x at level 0, B at level 100, only parsing).
 Notation "'Π' ( x : A ) , B" :=
   (∀ x : A, B) (at level 0, x at level 0, B at level 100, only parsing).
-Definition U := Type.
 
 Definition rec₂ C (c₀ c₁ : C) (b : bool) := if b then c₀ else c₁.
 
-Definition ApB A B := Σ (x : bool), rec₂ U A B x.
+Definition ApB A B := Σ (x : bool), rec₂ Type A B x.
 
-Definition ApB_inl (A B : U) (a : A) := existT (rec₂ U A B) true a.
-Definition ApB_inr (A B : U) (b : B) := existT (rec₂ U A B) false b.
+Definition ApB_inl (A B : Type) (a : A) := existT (rec₂ Type A B) true a.
+Definition ApB_inr (A B : Type) (b : B) := existT (rec₂ Type A B) false b.
 
 (* definition by tactics *)
-Definition ind_ApB_1 {A B : U} :
-  Π (C : ApB A B → U),
+Definition ind_ApB_1 {A B : Type} :
+  Π (C : ApB A B → Type),
     (Π  (a : A), C (ApB_inl A B a)) →
     (Π  (b : B), C (ApB_inr A B b)) →
     Π (x : ApB A B), C x.
@@ -211,7 +210,7 @@ destruct b; [ apply HA | apply HB ].
 Qed.
 
 (* same definition, by value *)
-Definition ind_ApB_2 {A B : U} (C : Π (_ : ApB A B), U)
+Definition ind_ApB_2 {A B : Type} (C : Π (_ : ApB A B), Type)
     (HA : Π (a : A), C (ApB_inl A B a))
     (HB : Π (b : B), C (ApB_inr A B b))
     (x : ApB A B) :=
@@ -237,7 +236,7 @@ Definition ind_ApB_2 {A B : U} (C : Π (_ : ApB A B), U)
    types). (This requires the function extensionality axiom, which is
    introduced in §2.9.) *)
 
-Definition AxB' A B := Π (x : bool), rec₂ U A B x.
+Definition AxB' A B := Π (x : bool), rec₂ Type A B x.
 
 Definition AxB'_pair {A B} (a : A) (b : B) : AxB' A B :=
   λ x,
@@ -266,8 +265,8 @@ destruct b; reflexivity.
 Qed.
 
 (* definition by tactics *)
-Definition ind_AxB'_1 {A B : U} :
-  Π (C : AxB' A B → U),
+Definition ind_AxB'_1 {A B : Type} :
+  Π (C : AxB' A B → Type),
     (Π  (x : A), Π  (y : B), C (AxB'_pair x y))
     →  Π (x : AxB' A B), C x.
 Proof.
@@ -277,21 +276,21 @@ rewrite <- Hx; apply H.
 Qed.
 
 (* same definition, by value *)
-Definition ind_AxB'_2 {A B : U} C
+Definition ind_AxB'_2 {A B : Type} C
      (H : Π (x : A), Π (y : B), C (AxB'_pair x y)) x :=
   match AxB'_pair_proj x in (_ = y) return (C y) with
   | eq_refl _ => H (AxB'_pr₁ x) (AxB'_pr₂ x)
   end.
 
 (* ind_AxB'_1
-     : Π (A : U),
-       Π (B : U),
-       Π (C : Π (_ : AxB' A B), U),
+     : Π (A : Type),
+       Π (B : Type),
+       Π (C : Π (_ : AxB' A B), Type),
        Π (_ : Π (x : A), Π (y : B), C (AxB'_pair x y)), Π (x : AxB' A B), C x
 *)
 (* ind_AxB'_2
-     : Π (A : U),
-       Π (B : U),
+     : Π (A : Type),
+       Π (B : Type),
        Π (C : Π (_ : AxB' A B), Type),
        Π (_ : Π (x : A), Π (y : B), C (AxB'_pair x y)), Π (x : AxB' A B), C x
 *)
@@ -302,7 +301,7 @@ Definition ind_AxB'_2 {A B : U} C
 
 (* definition from §1.12.1 *)
 Definition ind_eqA {A} :
-  Π (C : Π (x : A), Π (y : A), (x = y) → U),
+  Π (C : Π (x : A), Π (y : A), (x = y) → Type),
     (Π (x : A), C x x (eq_refl x))
     → Π (x : A), Π (y : A), Π (p : x = y), C x y p
   := λ C c x y p,
@@ -316,7 +315,7 @@ Proof. reflexivity. Qed.
 (* definition from §1.12.1 *)
 Definition ind'_eqA {A} :
   Π (a : A),
-  Π (C : Π (x : A), (a = x) → U), C a (eq_refl a)
+  Π (C : Π (x : A), (a = x) → Type), C a (eq_refl a)
   → Π (x : A), Π (p : a = x), C x p
   := λ a C P x p,
      match p with
@@ -329,7 +328,7 @@ Proof. reflexivity. Qed.
 (* alternative definition from ind_eqA *)
 Definition ind'_eqA_bis {A} :
   Π (a : A),
-  Π (C : Π (x : A), (a = x) → U), C a (eq_refl a)
+  Π (C : Π (x : A), (a = x) → Type), C a (eq_refl a)
   → Π (x : A), Π (p : a = x), C x p.
 Proof.
 Abort. (* not obvious, see that later *)
@@ -355,7 +354,7 @@ Eval vm_compute in (ℕ_exp 2 9).
 Eval vm_compute in (ℕ_tet 2 3).
 *)
 
-Fixpoint ind_ℕ (C : nat → U) P0 Pn n :=
+Fixpoint ind_ℕ (C : nat → Type) P0 Pn n :=
   match n return C n with
   | 0 => P0
   | S n' => Pn n' (ind_ℕ C P0 Pn n')
@@ -388,7 +387,7 @@ Definition pair_succ r := (S (fst r), S (snd r)).
 (* bon, mais après ça, j'arrête cet exo paskeu j'ai déjà fait des
    preuves de ce genre, c'est long et casse-couilles *)
 
-(* Exercise 1.9. Define the type family Fin : ℕ → U mentioned at the
+(* Exercise 1.9. Define the type family Fin : ℕ → Type mentioned at the
    end of §1.3, and the dependent function fmax: Π (n : ℕ) Fin(n + 1)
    mentioned in §1.4. *)
 
@@ -505,7 +504,7 @@ Definition hott_ex_1_13 : (∀ P, orT P (notT P))
 (* Exercise 1.15. Show that indiscernability of identicals follows
    from path induction. *)
 
-Definition path_induction {A} (C : Π (x : A), Π (y : A), Π (p : x = y), U)
+Definition path_induction {A} (C : Π (x : A), Π (y : A), Π (p : x = y), Type)
     (c : Π (x : A), C x x (eq_refl x)) (x y : A) (p : x = y) : C x y p :=
   match p return (C _ _ p) with
   | eq_refl _ => c x
@@ -516,7 +515,7 @@ Theorem path_induction_def : ∀ A (x : A) C c,
 Proof. reflexivity. Qed.
 
 Theorem path_induction_indiscernability {A} :
-  Π (C : A → U), Π (x : A), Π (y : A), x = y → C x → C y.
+  Π (C : A → Type), Π (x : A), Π (y : A), x = y → C x → C y.
 Proof.
 intros C x y p px.
 apply (path_induction (λ x y _, C x → C y) (λ _, id) x y p).
