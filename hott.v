@@ -898,7 +898,8 @@ intros x y p q.
 destruct x as (fx, Hfx).
 destruct y as (fy, Hfy).
 injection p; intros _ r; destruct r.
-pose proof isProp_isequiv fx Hfx Hfy as Pf; destruct Pf.
+pose proof isProp_isequiv fx Hfx Hfy as Pf.
+destruct q, Pf.
 bbb.
 
 unfold equivalence.
