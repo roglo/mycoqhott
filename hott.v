@@ -895,9 +895,26 @@ Defined.
 Definition isSet_equiv {A B : U} : isSet (A → B) → isSet (A ≃ B).
 Proof.
 intros SAB.
-unfold equivalence.
-pose proof @ex_3_1_5_bis A (λ _, B).
-simpl in H.
+intros x y p q.
+(*
+pose proof (Σ_type.pair_eq (ap Σ_type.pr₁ p) (Σ_type.transport_ap p)).
+*)
+Check @cartesian.hott_2_6_2.
+(* @cartesian.hott_2_6_2
+     : ∀ (A B : Type) (x y : A * B),
+       (cartesian.pr₁ x = cartesian.pr₁ y) *
+       (cartesian.pr₂ x = cartesian.pr₂ y) ≃ (x = y) *)
+Check @Σ_type.hott_2_7_2.
+(* @Σ_type.hott_2_7_2
+     : ∀ (A : Type) (P : A → U) (w w' : {x : A & P x}),
+       (w = w')
+       ≃ {p : Σ_type.pr₁ w = Σ_type.pr₁ w' &
+         transport P p (Σ_type.pr₂ w) = Σ_type.pr₂ w'} *)
+unfold equivalence in x, y.
+Check (@Σ_type.hott_2_7_2 (A → B) isequiv).
+
+The term "isequiv" has type "(A → B) → Type"
+while it is expected to have type "(A → B) → U" (universe inconsistency).
 bbb.
 
 Definition isSet_equiv {A B : U} : isSet (A ≃ B).
