@@ -895,10 +895,10 @@ Defined.
 Definition isSet_equiv {A B : U} : isSet (A ≃ B).
 Proof.
 intros x y p q.
-destruct x as (fx, Hfx).
-destruct y as (fy, Hfy).
+destruct x as (fx, px).
+destruct y as (fy, py).
 injection p; intros _ r; destruct r.
-pose proof isProp_isequiv fx Hfx Hfy as Pf.
+pose proof isProp_isequiv fx px py as Pf.
 destruct q, Pf.
 bbb.
 
