@@ -969,6 +969,12 @@ assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)) as H1.
 
    assert (∀ x₁ x₂ : X, isSet (x₁ = x₂)) as SX.
     intros.
+    pose proof SAP x₁ as px₁.
+    pose proof SAP x₂ as px₂.
+    destruct x₁ as (A, x₁).
+    destruct x₂ as (B, x₂).
+    simpl in px₁, px₂.
+
 bbb.
 pose proof SAP x₁ as px₁.
 pose proof SAP x₂ as px₂.
