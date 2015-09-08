@@ -471,7 +471,7 @@ Definition isContractible P := (isProp P * (P ≃ True))%type.
 
 (* "Lemma 3.3.4. Every mere proposition is a set." *)
 
-Definition hott_3_3_4 A : isProp A → isSet A := ispType_isSpType 0.
+Definition isProp_isSet A : isProp A → isSet A := ispType_isSpType 0.
 
 (* "Lemma 3.3.5. For any type A, the types isProp(A) and isSet(A)
     are mere propositions." *)
@@ -485,11 +485,11 @@ Proof.
 intros f g.
 eapply funext; intros x.
 eapply funext; intros y.
-apply (hott_3_3_4 _ f).
+apply (isProp_isSet _ f).
 Defined.
 
 Definition hott_3_3_5_i A : isProp (isProp A) :=
-  λ f g, funext (λ x, funext (λ y, hott_3_3_4 A f x y (f x y) (g x y))).
+  λ f g, funext (λ x, funext (λ y, isProp_isSet A f x y (f x y) (g x y))).
 
 Definition hott_3_3_5_ii_tac A : isProp (isSet A).
 Proof.
@@ -817,7 +817,7 @@ apply hott_3_3_3.
  pose proof (λ A P, ua (quasi_inv (@UnivProp.hott_2_15_7 X A P))) as H3.
  rewrite H3.
  apply (λ S, H X (λ x, Σ (a : A x), P x a) SX S H1); intros x.
- apply ex_3_1_5_bis; [ apply SA | intros y; apply hott_3_3_4, PP ].
+ apply ex_3_1_5_bis; [ apply SA | intros y; apply isProp_isSet, PP ].
 Defined.
 
 Definition isProp_Σ_type_tac {A B} :
@@ -895,113 +895,9 @@ Defined.
 Definition isSet_equiv {A B : Type} : isSet A → isSet B → isSet (A ≃ B).
 Proof.
 intros SA SB.
-apply ex_3_1_5_bis.
-bbb.
-
-intros SAB.
-intros x y p q.
-(*
-pose proof (Σ_type.pair_eq (ap Σ_type.pr₁ p) (Σ_type.transport_ap p)).
-*)
-Check @cartesian.hott_2_6_2.
-(* @cartesian.hott_2_6_2
-     : ∀ (A B : Type) (x y : A * B),
-       (cartesian.pr₁ x = cartesian.pr₁ y) *
-       (cartesian.pr₂ x = cartesian.pr₂ y) ≃ (x = y) *)
-Check @Σ_type.hott_2_7_2.
-(* @Σ_type.hott_2_7_2
-     : ∀ (A : Type) (P : A → Type) (w w' : {x : A & P x}),
-       (w = w')
-       ≃ {p : Σ_type.pr₁ w = Σ_type.pr₁ w' &
-         transport P p (Σ_type.pr₂ w) = Σ_type.pr₂ w'} *)
-unfold equivalence in x, y.
-Check (@Σ_type.hott_2_7_2 (A → B) isequiv).
-
-The term "isequiv" has type "(A → B) → Type"
-while it is expected to have type "(A → B) → Type" (universe inconsistency).
-bbb.
-
-Definition isSet_equiv {A B : Type} : isSet (A ≃ B).
-Proof.
-pose proof @ex_3_1_5_bis A (λ _, B) as H.
-simpl in H.
-
-intros x y p q.
-destruct x as (fx, px).
-destruct y as (fy, py).
-injection p; intros _ r; destruct r.
-pose proof isProp_isequiv fx px py as Pf.
-destruct Pf.
-
-bbb.
-destruct q, Pf.
-bbb.
-
-unfold equivalence.
-intros x y p q.
-bbb.
-Check @isProp_isequiv.
-(* @isProp_isequiv
-     : ∀ (A B : Type) (f : A → B), isProp (isequiv f) *)
-SearchAbout isSet.
-pose proof Σ_type.hott_2_7_2 _ x y as e.
-destruct e as (f, ((g, Hg), (h, Hh))).
-pose proof Hh p as Hhp.
-pose proof Hh q as Hhq.
-unfold "◦", id in Hhp, Hhq.
-pose proof f p as fp.
-pose proof f q as fq.
-destruct fp as (fp, Hfp).
-destruct fq as (fq, Hfq).
-destruct x as (fx, Hfx); simpl in fp, fq.
-destruct y as (fy, Hfy); simpl in fp, fq.
-bbb.
-
-destruct x as (f, ((g, Hg), (h, Hh))).
-Check @Σ_type.hott_2_7_2.
-
-bbb.
-
-pose proof @ex_3_1_6 (A → B) isequiv as H.
-
-bbb.
-
-(* tactics from ex_3_1_5_bis... *)
-pose proof Σ_type.hott_2_7_2 _ x y as e.
-destruct x as (fx, ((gx, Hgx), (hx, Hhx))).
-destruct y as (fy, ((gy, Hgy), (hy, Hhy))).
-simpl in p, q, e.
-bbb.
-
-destruct e as (f, ((g, Hg), (h, Hh))).
-unfold "◦", "~~", id in Hg, Hh.
-pose proof Hh p as Hhp.
-pose proof Hh q as Hhq.
-destruct (f p) as (fpa, fpb).
-destruct (f q) as (fqa, fqb).
-destruct Hhp.
-rewrite <- Hhq.
-apply ap.
-destruct fpa.
-simpl.
-bbb.
-
-pose proof r xa ya fpa fqa as Hra.
-destruct Hhp.
-subst fpa.
-rewrite <- Hhq.
-apply ap, ap, s.
+apply ex_3_1_5_bis; [ apply ex_3_1_6; intros; apply SB | idtac ].
+intros f; apply isProp_isSet, isProp_isequiv.
 Defined.
-bbb.
-
-destruct x as (fx, ((gx, Hgx), (hx, Hhx))).
-destruct y as (fy, ((gy, Hgy), (hy, Hhy))).
-injection p; intros hxy gxy fxy.
-destruct fxy, gxy, hxy.
-
-Check @ex_3_1_5_bis.
-bbb.
-*)
 
 (* "Lemma 3.8.5. There exists a type X and a family Y : X → Type such
     that each Y(x) is a set, but such that (3.8.3) is false." *)
@@ -1041,12 +937,13 @@ assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)) as H1.
   intros r.
   rewrite ua_idtoeqv.
   refine (match r with eq_refl _ => _ end); simpl; unfold id.
-  assert (isSet ∥((bool : Type) = A)∥) as SA by (apply hott_3_3_4, PT_eq).
+  assert (isSet ∥((bool : Type) = A)∥) as SA by (apply isProp_isSet, PT_eq).
   assert (PT_eq p p = eq_refl p) as H by apply SA.
   rewrite H; reflexivity.
 
  simpl in H1.
- pose proof H1 bool |(eq_refl (bool : Type))| bool |(eq_refl (bool : Type))| as H2.
+ pose proof H1 (bool : Type) |(eq_refl (bool : Type))| (bool : Type)
+  |(eq_refl (bool : Type))| as H2.
  set (x₀ := (existT _ (bool : Type) |(eq_refl (bool : Type))| : X)) in *.
  assert (notT (isSet X)) as NSX.
   intros r.
