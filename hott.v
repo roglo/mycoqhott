@@ -890,7 +890,7 @@ apply hott_3_3_3.
   intros H x; apply (PT_intro (PT_elim H x)).
 Defined.
 
-(* *)
+(* equivalence is a set, whenever A and B are, they say... *)
 
 Definition isSet_equiv {A B : U} : isSet (A ≃ B).
 Proof.
