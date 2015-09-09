@@ -998,6 +998,10 @@ assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)) as H1.
       intros (A, p); simpl; apply p.
 
       assert (∀ Ap : X, ∥(x₀ = Ap)∥) as H5.
+intros Ap.
+pose proof H4 Ap as H5.
+bbb.
+
        intros (A, p); subst x₀; simpl.
        set (r := existT (λ A, ∥(2%type = A)∥) 2%type |(eq_refl 2%type)| : X).
        set (s := existT (λ A, ∥(2%type = A)∥) A p : X).
