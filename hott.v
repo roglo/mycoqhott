@@ -9,7 +9,7 @@ Arguments eq_refl [A] x.
 
 Notation "0" := False : type_scope.
 Notation "1" := True : type_scope.
-Notation "2" := (bool : Type) (only parsing) : type_scope.
+Notation "2" := (bool : Type) : type_scope.
 Notation "( x , y ) '_{' P }" := (existT P x y)
   (at level 0, format "'[' ( x ,  y ) _{ P } ']'", only parsing).
 
@@ -736,6 +736,7 @@ Notation "∥ A ∥" := (prop_trunc A) (A at level 0, format "∥ A ∥") : type
 Axiom PT_intro : ∀ A, A → ∥A∥.
 Axiom PT_elim : ∀ A, ∥A∥ → A.
 
+Arguments prop_trunc _%type.
 Arguments PT_intro [A] x.
 Arguments PT_elim [A] x.
 
@@ -988,10 +989,21 @@ assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)) as H1.
     apply univ_imp_eq in H3.
     rewrite H3; assumption.
 
-    assert (∀ Y : X → Type, (∀ x, Y x = (x₀ = x)) → ∀ x, isSet (Y x)).
+    assert (∀ Y : X → Type, (Y = λ x, x₀ = x) → ∀ x, isSet (Y x)).
      intros Y H x.
      pose proof SX x₀ x as p.
+     rewrite H; assumption.
 
+     assert (∀ Ap : X, ∥(2%type = Σ_type.pr₁ Ap)∥) as H3.
+      intros (A, p); simpl; apply p.
+
+      assert (∀ Ap : X, ∥(x₀ = Ap)∥) as H4.
+       intros (A, p); subst x₀; simpl.
+bbb.
+
+       intros Ap.
+       pose proof H3 Ap as q.
+       destruct Ap as (A, p); simpl in q.
 bbb.
 
 _5htp.
