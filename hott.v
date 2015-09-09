@@ -989,21 +989,24 @@ assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)) as H1.
     apply univ_imp_eq in H3.
     rewrite H3; assumption.
 
-    assert (∀ Y : X → Type, (Y = λ x, x₀ = x) → ∀ x, isSet (Y x)).
+    assert (∀ Y : X → Type, (Y = λ x, x₀ = x) → ∀ x, isSet (Y x)) as H3.
      intros Y H x.
      pose proof SX x₀ x as p.
      rewrite H; assumption.
 
-     assert (∀ Ap : X, ∥(2%type = Σ_type.pr₁ Ap)∥) as H3.
+     assert (∀ Ap : X, ∥(2%type = Σ_type.pr₁ Ap)∥) as H4.
       intros (A, p); simpl; apply p.
 
-      assert (∀ Ap : X, ∥(x₀ = Ap)∥) as H4.
+      assert (∀ Ap : X, ∥(x₀ = Ap)∥) as H5.
        intros (A, p); subst x₀; simpl.
-bbb.
-
-       intros Ap.
-       pose proof H3 Ap as q.
-       destruct Ap as (A, p); simpl in q.
+       set (r := existT (λ A, ∥(2%type = A)∥) 2%type |(eq_refl 2%type)| : X).
+       set (s := existT (λ A, ∥(2%type = A)∥) A p : X).
+       pose proof H4 r as Hr; simpl in Hr.
+       pose proof H4 s as Hs; simpl in Hs.
+subst r s.
+apply PT_intro.
+Check @Σ_type.pair_eq.
+eapply (Σ_type.pair_eq).
 bbb.
 
 _5htp.
