@@ -988,4 +988,10 @@ assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)) as H1.
     apply univ_imp_eq in H3.
     rewrite H3; assumption.
 
+    assert (∀ Y : X → Type, (∀ x, Y x = (x₀ = x)) → ∀ x, isSet (Y x)).
+     intros Y H x.
+     pose proof SX x₀ x as p.
+
+bbb.
+
 _5htp.
