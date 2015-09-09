@@ -1003,10 +1003,17 @@ assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)) as H1.
        set (s := existT (λ A, ∥(2%type = A)∥) A p : X).
        pose proof H4 r as Hr; simpl in Hr.
        pose proof H4 s as Hs; simpl in Hs.
+SearchAbout (∥(_ = _)∥).
+bbb.
+
 subst r s.
 apply PT_intro.
 Check @Σ_type.pair_eq.
-eapply (Σ_type.pair_eq).
+apply PT_elim in Hs.
+eapply (Σ_type.pair_eq Hs).
+destruct Hs.
+simpl; unfold id.
+SearchAbout prop_trunc.
 bbb.
 
 _5htp.
