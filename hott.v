@@ -1003,6 +1003,7 @@ assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)) as H1.
        destruct Ap as (A, p); simpl in q.
        set (s := existT (λ A, ∥(2%type = A)∥) A p : X).
 pose proof SX x₀ s as H.
+unfold isSet in H.
 bbb.
 
 pose proof H3 (fun x => (x₀ = x)) (eq_refl _) s as H.
