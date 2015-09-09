@@ -1391,10 +1391,11 @@ Definition idtoeqv {A B : Type} : A = B → A ≃ B :=
 
 Axiom univalence : ∀ A B : Type, isequiv (@idtoeqv A B).
 
-Theorem univalence2 : ∀ A B : Type, (A = B) ≃ (A ≃ B).
+Theorem univalence2 : ∀ A B : Type, (A ≃ B) ≃ (A = B).
 Proof.
 intros.
 pose proof (@univalence A B) as p.
+apply quasi_inv.
 esplit; eassumption.
 Defined.
 

@@ -9,7 +9,7 @@ Arguments eq_refl [A] x.
 
 Notation "0" := False : type_scope.
 Notation "1" := True : type_scope.
-Notation "2" := bool (only parsing) : type_scope.
+Notation "2" := (bool : Type) (only parsing) : type_scope.
 Notation "( x , y ) '_{' P }" := (existT P x y)
   (at level 0, format "'[' ( x ,  y ) _{ P } ']'", only parsing).
 
@@ -899,6 +899,15 @@ apply ex_3_1_5_bis; [ apply ex_3_1_6; intros; apply SB | idtac ].
 intros f; apply isProp_isSet, isProp_isequiv.
 Defined.
 
+(* univalence implies equality *)
+
+Definition univ_imp_eq :  ∀ (A B : Type), A ≃ B → A = B.
+Proof.
+intros A B H.
+pose proof (Σ_type.pr₁ (univalence2 A B) H) as H1.
+assumption.
+Defined.
+
 (* "Lemma 3.8.5. There exists a type X and a family Y : X → Type such
     that each Y(x) is a set, but such that (3.8.3) is false." *)
 
@@ -974,66 +983,9 @@ assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)) as H1.
     destruct x₁ as (A, x₁).
     destruct x₂ as (B, x₂).
     simpl in px₁, px₂.
-
-bbb.
-pose proof SAP x₁ as px₁.
-pose proof SAP x₂ as px₂.
-destruct x₁ as (A, x₁).
-destruct x₂ as (B, x₂).
-simpl in px₁, px₂.
-bbb.
-
-intros x y p q.
-injection x; intros _ H; subst x₂₁.
-bbb.
-   assert (∀ A B, isSet (A ≃ B)) as SAB.
-    intros A B.
-    intros x y p q.
-    destruct x as (fx, Hfx).
-    destruct y as (fy, Hfy).
-    injection p; intros _ r; destruct r.
-bbb.
-
-Check @ex_3_1_5_bis.
-(* @ex_3_1_5_bis
-     : ∀ (A : Type) (B : A → Type),
-       isSet A → (∀ x : A, isSet (B x)) → isSet {x : A & B x} *)
-
-(* for a reason I ignore, ex_3_1_5_bis cannot be applied: universe
-   inconsistency, they say *)
-
-About isequiv.
-
-(* trying to re-execute the tactics of ex_3_1_5_bis *)
-intros x y p q.
-pose proof Σ_type.hott_2_7_2 _ x y as e.
-destruct x as (xa, xb).
-destruct y as (ya, yb); simpl in e.
-destruct e as (f, ((g, Hg), (h, Hh))).
-unfold "◦", "~~", id in Hg, Hh.
-pose proof Hh p as Hhp.
-pose proof Hh q as Hhq.
-destruct (f p) as (fpa, fpb).
-destruct (f q) as (fqa, fqb).
-assert (isSet (A → B)) as r.
- apply ex_3_1_6.
- intros x.
-SearchAbout B.
-Check B.
-
-
-bbb.
-pose proof r xa ya fpa fqa as Hra.
-destruct Hhp.
-subst fpa.
-rewrite <- Hhq.
-apply ap, ap, s.
-bbb.
-Defined.
-
-pose proof (@ex_3_1_5_bis (A → B) isequiv).
-bbb.
-
-Check @prop_trunc_rec.
+    assert (isSet (A ≃ B)) as pAB by (eapply isSet_equiv; assumption).
+    pose proof (H1 A x₁ B x₂) as H3.
+    apply univ_imp_eq in H3.
+    rewrite H3; assumption.
 
 _5htp.
