@@ -998,8 +998,22 @@ assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)) as H1.
       intros (A, p); simpl; apply p.
 
       assert (∀ Ap : X, ∥(x₀ = Ap)∥) as H5.
-intros Ap.
-pose proof H4 Ap as H5.
+       intros Ap.
+       pose proof H4 Ap as q.
+       destruct Ap as (A, p); simpl in q.
+       set (s := existT (λ A, ∥(2%type = A)∥) A p : X).
+pose proof SX x₀ s as H.
+bbb.
+
+pose proof H3 (fun x => (x₀ = x)) (eq_refl _) s as H.
+simpl in H.
+unfold isSet in H.
+bbb.
+
+pose proof H3 (fun x => ∥(x₀ = x)∥).
+assert ((λ x : X, ∥(x₀ = x)∥) = (λ x : X, x₀ = x)) as H5.
+apply Π_type.funext; intros x.
+
 bbb.
 
        intros (A, p); subst x₀; simpl.
