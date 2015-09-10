@@ -954,44 +954,31 @@ assert (H1 : ∀ A p B q, ((existT _ A p:X) = existT _ B q) ≃ (A ≃ B)).
   apply PT_elim in p.
   destruct p; apply bool_set.
 
-  assert (SX : ∀ x₁ x₂ : X, isSet (x₁ = x₂)).
-   intros.
-   pose proof (SAP x₁) as px₁.
-   pose proof (SAP x₂) as px₂.
-   destruct x₁ as (A, x₁).
-   destruct x₂ as (B, x₂).
-   simpl in px₁, px₂.
-   assert (pAB : isSet (A ≃ B)) by (eapply isSet_equiv; assumption).
-   pose proof (H1 A x₁ B x₂) as H3.
-   apply univ_imp_eq in H3.
-   rewrite H3; assumption.
+  set (Y := fun x => x₀ = x:Type); simpl in Y.
+  exists X, Y; intros H7 H8.
+  assert (isProp X) as PX.
+   intros x y.
+   assert (H9 : ∀ x : X, Y x).
+    intros (A, p); subst Y; simpl.
+    apply (Σ_type.pair_eq (PT_elim p)), PT_eq.
 
-   set (Y := fun x => x₀ = x:Type); simpl in Y.
-   exists X, Y; intros H7 H8.
-   assert (NSX : notT (isSet X)).
-    intros r.
-    set (p := Σ_type.pr₁ (pr₁ (Σ_type.pr₂ H2)) bool_eq_bool_id).
-    set (q := Σ_type.pr₁ (pr₁ (Σ_type.pr₂ H2)) bool_eq_bool_negb).
-    pose proof (r x₀ x₀ p q) as s.
-    subst p q.
-    unfold bool_eq_bool_id, bool_eq_bool_negb in s.
-    simpl in s.
-    destruct H2 as (f, ((g, Hg), (h, Hh))); simpl in s.
-    apply (ap f) in s.
-    eapply compose in s; [ symmetry in s | eapply invert, Hg ].
-    eapply compose in s; [ symmetry in s | eapply invert, Hg ].
-    unfold id in s.
-    injection s; intros H _ _.
-    assert (H2 : negb true = true) by (rewrite <- H; reflexivity).
-    revert H2; apply Σ_type2.hott_2_12_6.
+    transitivity x₀; [ symmetry; apply H9 | apply H9 ].
 
-    apply NSX, isProp_isSet.
-    intros x y.
-    assert (H9 : ∀ x : X, Y x).
-     intros (A, p); subst Y; simpl.
-     apply (Σ_type.pair_eq (PT_elim p)), PT_eq.
-
-     transitivity x₀; [ symmetry; apply H9 | apply H9 ].
+   apply isProp_isSet in PX.
+   set (p := Σ_type.pr₁ (pr₁ (Σ_type.pr₂ H2)) bool_eq_bool_id).
+   set (q := Σ_type.pr₁ (pr₁ (Σ_type.pr₂ H2)) bool_eq_bool_negb).
+   pose proof (PX x₀ x₀ p q) as s.
+   subst p q.
+   unfold bool_eq_bool_id, bool_eq_bool_negb in s.
+   simpl in s.
+   destruct H2 as (f, ((g, Hg), (h, Hh))); simpl in s.
+   apply (ap f) in s.
+   eapply compose in s; [ symmetry in s | eapply invert, Hg ].
+   eapply compose in s; [ symmetry in s | eapply invert, Hg ].
+   unfold id in s.
+   injection s; intros H _ _.
+   assert (H2 : negb true = true) by (rewrite <- H; reflexivity).
+   revert H2; apply Σ_type2.hott_2_12_6.
 Defined.
 
 Definition hott_3_8_5 : ∃ X (Y : X → Type), (∀ x, isSet (Y x))
