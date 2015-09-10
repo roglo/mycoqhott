@@ -996,8 +996,13 @@ assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)) as H1.
       assert (∀ Ap : X, ∥(x₀ = Ap)∥) as H5.
 intros Ap.
 pose proof H4 Ap as q.
+pose proof H3 (fun x => (x₀ = x)) (eq_refl _) Ap as r; simpl in r.
+bbb.
+
 subst x₀; simpl.
 apply PT_elim in q; apply PT_intro.
+bbb.
+
 destruct Ap as (A, p); simpl in q.
 apply (Σ_type.pair_eq q).
 unfold transport.
