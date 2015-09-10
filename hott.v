@@ -911,37 +911,44 @@ Defined.
 (* If I understand well, the axiom of choice is not compatible with
    families of sets whose father is not a set. *)
 
+Definition pair_eq_bool_trunc := Σ (A : Type), ∥(ℬ = A)∥.
+
+Definition equiv_eq_pair_trunc A B p q :
+  ((existT _ A p : pair_eq_bool_trunc) = existT _ B q) ≃ (A ≃ B).
+Proof.
+intros; simpl.
+apply
+ (existT _
+    (λ H,
+     (λ
+      H2 : Σ_type.pr₁ (existT (λ A0 : Type, ∥(ℬ = A0)∥) A p)
+           ≃ Σ_type.pr₁ (existT (λ A0 : Type, ∥(ℬ = A0)∥) B q), H2)
+       (idtoeqv (ap Σ_type.pr₁ H)))).
+apply qinv_isequiv.
+apply (existT _ (λ r : A ≃ B, Σ_type.pair_eq (ua r) (PT_eq ((ua r)⁎ p) q))).
+unfold "◦", "~~", id; simpl.
+split.
+ intros r.
+ rewrite <- idtoeqv_ua; f_equal.
+ destruct (ua r); simpl; unfold id.
+ destruct (PT_eq p q); reflexivity.
+
+ intros r.
+ rewrite ua_idtoeqv.
+ refine match r with
+        | eq_refl _ => _
+        end; simpl; unfold id.
+ assert (SA : isSet ∥(ℬ = A)∥) by apply isProp_isSet, PT_eq.
+ assert (H : PT_eq p p = eq_refl p) by apply SA.
+ rewrite H; reflexivity.
+Defined.
+
 Definition hott_3_8_5_tac : ∃ X (Y : X → Type), (∀ x, isSet (Y x))
   → notT ((Π (x : X), ∥(Y x)∥) → ∥(Π (x : X), Y x)∥).
 Proof.
 set (X := Σ (A : Type), ∥(ℬ = A)∥).
-simpl in X.
 assert (H1 : ∀ A p B q, ((existT _ A p:X) = existT _ B q) ≃ (A ≃ B)).
- intros.
- apply
-  (existT _
-     (λ H,
-      (λ
-       H2 : Σ_type.pr₁ (existT (λ A0 : Type, ∥(ℬ = A0)∥) A p)
-            ≃ Σ_type.pr₁ (existT (λ A0 : Type, ∥(ℬ = A0)∥) B q), H2)
-        (idtoeqv (ap Σ_type.pr₁ H)))).
- apply qinv_isequiv.
- apply (existT _ (λ r : A ≃ B, Σ_type.pair_eq (ua r) (PT_eq ((ua r)⁎ p) q))).
- unfold "◦", "~~", id; simpl.
- split.
-  intros r.
-  rewrite <- idtoeqv_ua; f_equal.
-  destruct (ua r); simpl; unfold id.
-  destruct (PT_eq p q); reflexivity.
-
-  intros r.
-  rewrite ua_idtoeqv.
-  refine match r with
-         | eq_refl _ => _
-         end; simpl; unfold id.
-  assert (SA : isSet ∥(ℬ = A)∥) by apply isProp_isSet, PT_eq.
-  assert (H : PT_eq p p = eq_refl p) by apply SA.
-  rewrite H; reflexivity.
+ intros; apply equiv_eq_pair_trunc.
 
  simpl in H1.
  pose proof
