@@ -748,20 +748,17 @@ Arguments PT_eq [A] x y.
 (* "If B is a mere proposition and we have f : A → B, then there is an
     induced g : ∥A∥ → B such that g(|a|) ≡ f(a) for all a : A." *)
 
-Definition prop_trunc_rec {A B} : isProp B →
-  ∀ f : A → B, ∃ g : ∥A∥ → B, ∀ a : A, g |a| = f a.
+Definition prop_trunc_rec_tac {A B} : isProp B →
+  ∀ (f : A → B) a, f (PT_elim |a|) = f a.
 Proof.
-intros PB f.
-exists (f ◦ @PT_elim A); intros a.
+intros PB f a.
 apply PB.
 Defined.
 
-(*
-Definition PT_elim2 : ∀ A, ∥A∥ → A.
-Proof.
-intros A x.
-bbb.
-*)
+Definition prop_trunc_rec {A B} : isProp B →
+  ∀ (f : A → B) a, f (PT_elim |a|) = f a
+:=
+  λ PB f a, PB (f (PT_elim |a|)) (f a).
 
 (* doing the exercise 3.14 in advance, just to see if my definition of
    propositional truncation works *)
@@ -770,11 +767,10 @@ Definition ex_3_14 : LEM → ∀ A, isProp A → (notT (notT A) ≃ ∥A∥).
 Proof.
 intros HLEM A HPA.
 apply (existT _ (λ p, | (pr₁ LEM_LDN HLEM A HPA p) |)), qinv_isequiv.
-apply
-  (existT _ 
-     (λ p (q : notT A),
-      match prop_trunc_rec HPA id with ex_intro _ f _ => q (f p) end)).
-unfold "◦", "~~", id; simpl.
+(*
+assert (∥A∥ → notT (notT A)) as g by (intros p q; destruct (q (PT_elim p))).
+*)
+apply (existT _ (λ p (q : notT A), match q (PT_elim p) return 0 with end)).
 split; [ intros x; destruct (HLEM A HPA); apply PT_eq | ].
 intros f; apply Π_type.funext; intros x; destruct (f x).
 Defined.
@@ -998,17 +994,25 @@ assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)) as H1.
       intros (A, p); simpl; apply p.
 
       assert (∀ Ap : X, ∥(x₀ = Ap)∥) as H5.
+intros (A, p).
+apply PT_intro, (Σ_type.pair_eq (PT_elim p)).
+unfold transport.
+destruct (PT_elim p); simpl; unfold id.
+(*
        intros Ap; subst x₀; simpl.
        pose proof H4 Ap as q.
        destruct Ap as (A, p); simpl in q.
-apply PT_intro.
-apply PT_elim in q.
-apply (Σ_type.pair_eq q).
+apply PT_intro, (Σ_type.pair_eq (PT_elim p)).
 unfold transport.
-destruct q; simpl; unfold id.
-SearchAbout PT_intro.
-set (bb := bool = bool : Type); simpl in bb.
-pose proof @prop_trunc_rec bb ∥bb∥ (@PT_eq bb) (@PT_intro bb).
+destruct (PT_elim p); simpl; unfold id.
+*)
+bbb.
+
+set (bb := (@eq Type bool bool) : Type); simpl in bb.
+pose proof @prop_trunc_rec bb ∥bb∥ (@PT_eq bb) (@PT_intro bb) as g.
+subst bb.
+pose proof g (PT_elim p).
+
 destruct H as (g, Hg).
 Print prop_trunc_rec.
 bbb.
