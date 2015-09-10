@@ -1000,5 +1000,12 @@ assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)) as H1.
        apply PT_intro, (Σ_type.pair_eq (PT_elim p)), PT_eq.
 
        assert (Π (x : X), ∥(Y x)∥) as H6 by (intros x; subst Y; apply H5).
+       exists X, Y; intros H7 H8.
+       pose proof PT_elim (H8 H6) as H9.
+       assert (isProp X) as H10.
+        intros x y.
+        pose proof H9 x as Hx.
+        pose proof H9 y as Hy.
+bbb.
 
 _5htp.
