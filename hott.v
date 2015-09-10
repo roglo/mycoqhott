@@ -998,6 +998,7 @@ intros (A, p).
 apply PT_intro, (Σ_type.pair_eq (PT_elim p)).
 unfold transport.
 destruct (PT_elim p); simpl; unfold id.
+
 (*
        intros Ap; subst x₀; simpl.
        pose proof H4 Ap as q.
