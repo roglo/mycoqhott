@@ -951,6 +951,7 @@ assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)) as H1.
  pose proof H1 (bool : Type) |(eq_refl (bool : Type))| (bool : Type)
   |(eq_refl (bool : Type))| as H2.
  set (x₀ := (existT _ (bool : Type) |(eq_refl (bool : Type))| : X)) in *.
+ simpl in x₀.
  assert (notT (isSet X)) as NSX.
   intros r.
   set (p := Σ_type.pr₁ (pr₁ (Σ_type.pr₂ H2)) bool_eq_bool_id).
@@ -985,18 +986,42 @@ assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)) as H1.
     apply univ_imp_eq in H3.
     rewrite H3; assumption.
 
-    assert (∀ Y : X → Type, (Y = λ x, x₀ = x) → ∀ x, isSet (Y x)) as H3.
-     intros Y H x.
+    set (Y x := x₀ = x : Type); simpl in Y.
+    assert (∀ x, isSet (Y x)) as H3.
+     intros x.
      pose proof SX x₀ x as p.
-     rewrite H; assumption.
+     subst Y; assumption.
 
      assert (∀ Ap : X, ∥(2%type = Σ_type.pr₁ Ap)∥) as H4.
       intros (A, p); simpl; apply p.
 
       assert (∀ Ap : X, ∥(x₀ = Ap)∥) as H5.
+intros (A, p).
+apply PT_intro, (Σ_type.pair_eq (PT_elim p)).
+unfold transport.
+destruct (PT_elim p); simpl; unfold id.
+symmetry.
+bbb.
+
+assert (Π (x : X), ∥(Y x)∥) as H6 by (intros x; subst Y; apply H5).
+
+bbb.
+
 intros Ap.
 pose proof H4 Ap as q.
-pose proof H3 (fun x => (x₀ = x)) (eq_refl _) Ap as r; simpl in r.
+pose proof H3 (λ x, x₀ = x) (eq_refl _) Ap as r; simpl in r.
+apply PT_intro.
+destruct Ap as (A, p); simpl in q.
+subst x₀.
+apply PT_elim in q.
+apply (Σ_type.pair_eq q).
+destruct q; simpl; unfold id.
+  p : ∥(bool = bool)∥
+  r : isSet
+        (existT (λ A : Type, ∥(bool = A)∥) bool |(eq_refl bool)| =
+         existT (λ A : Type, ∥(bool = A)∥) bool p)
+  ============================
+   |(eq_refl bool)| = p
 bbb.
 
 subst x₀; simpl.
