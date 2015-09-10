@@ -914,24 +914,18 @@ Defined.
 Definition hott_3_8_5_tac : ∃ X (Y : X → Type), (∀ x, isSet (Y x))
   → notT ((Π (x : X), ∥(Y x)∥) → ∥(Π (x : X), Y x)∥).
 Proof.
-set (X := Σ (A : Type), ∥((bool : Type) = A)∥).
+set (X := Σ (A : Type), ∥((bool:Type) = A)∥).
 simpl in X.
-assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)) as H1.
+assert (H1 : ∀ A p B q, ((existT _ A p:X) = existT _ B q) ≃ (A ≃ B)).
  intros.
  apply
-   (existT _
-      (λ H,
-         (λ H2 : Σ_type.pr₁ (existT (λ A0 : Type, ∥((bool : Type) = A0)∥) A p)
-                ≃ Σ_type.pr₁ (existT (λ A0 : Type, ∥((bool : Type) = A0)∥) B q),
-          H2)
-          (idtoeqv (ap Σ_type.pr₁ H)))).
+  (existT _
+     (λ H,
+      (λ
+       H2 : Σ_type.pr₁ (existT (λ A0 : Type, ∥((bool:Type) = A0)∥) A p)
+            ≃ Σ_type.pr₁ (existT (λ A0 : Type, ∥((bool:Type) = A0)∥) B q), H2)
+        (idtoeqv (ap Σ_type.pr₁ H)))).
  apply qinv_isequiv.
-(*
- assert ((A ≃ B) → ((existT _ A p : X) = existT _ B q)) as ffff.
-  intros r.
-  apply (Σ_type.pair_eq (ua r)).
-  apply PT_eq.
-*)
  apply (existT _ (λ r : A ≃ B, Σ_type.pair_eq (ua r) (PT_eq ((ua r)⁎ p) q))).
  unfold "◦", "~~", id; simpl.
  split.
@@ -942,61 +936,62 @@ assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)) as H1.
 
   intros r.
   rewrite ua_idtoeqv.
-  refine (match r with eq_refl _ => _ end); simpl; unfold id.
-  assert (isSet ∥((bool : Type) = A)∥) as SA by (apply isProp_isSet, PT_eq).
-  assert (PT_eq p p = eq_refl p) as H by apply SA.
+  refine match r with
+         | eq_refl _ => _
+         end; simpl; unfold id.
+  assert (SA : isSet ∥((bool:Type) = A)∥) by apply isProp_isSet, PT_eq.
+  assert (H : PT_eq p p = eq_refl p) by apply SA.
   rewrite H; reflexivity.
 
  simpl in H1.
- pose proof H1 (bool : Type) |(eq_refl (bool : Type))| (bool : Type)
-  |(eq_refl (bool : Type))| as H2.
- set (x₀ := (existT _ (bool : Type) |(eq_refl (bool : Type))| : X)) in *.
+ pose proof
+  (H1 (bool:Type) |(eq_refl (bool:Type))| (bool:Type) |(eq_refl (bool:Type))|)
+  as H2.
+ set (x₀ := existT _ (bool:Type) |(eq_refl (bool:Type))|:X) in *.
  simpl in x₀.
-bbb.
- assert (notT (isSet X)) as NSX.
-  intros r.
-  set (p := Σ_type.pr₁ (pr₁ (Σ_type.pr₂ H2)) bool_eq_bool_id).
-  set (q := Σ_type.pr₁ (pr₁ (Σ_type.pr₂ H2)) bool_eq_bool_negb).
-  pose proof r x₀ x₀ p q as s.
-  subst p q.
-  unfold bool_eq_bool_id, bool_eq_bool_negb in s.
-  simpl in s.
-  destruct H2 as (f, ((g, Hg), (h, Hh))); simpl in s.
-  apply (ap f) in s.
-  eapply compose in s; [ symmetry in s | eapply invert, Hg ].
-  eapply compose in s; [ symmetry in s | eapply invert, Hg ].
-  unfold id in s.
-  injection s; intros H _ _.
-  assert (negb true = true) as H2 by (rewrite <- H; reflexivity).
-  revert H2; apply Σ_type2.hott_2_12_6.
+ assert (SAP : ∀ Ap : X, isSet (Σ_type.pr₁ Ap)).
+  intros (A, p); simpl.
+  apply PT_elim in p.
+  destruct p; apply bool_set.
 
-  assert (∀ Ap : X, isSet (Σ_type.pr₁ Ap)) as SAP.
-   intros (A, p); simpl.
-   apply PT_elim in p.
-   destruct p; apply bool_set.
+  assert (SX : ∀ x₁ x₂ : X, isSet (x₁ = x₂)).
+   intros.
+   pose proof (SAP x₁) as px₁.
+   pose proof (SAP x₂) as px₂.
+   destruct x₁ as (A, x₁).
+   destruct x₂ as (B, x₂).
+   simpl in px₁, px₂.
+   assert (pAB : isSet (A ≃ B)) by (eapply isSet_equiv; assumption).
+   pose proof (H1 A x₁ B x₂) as H3.
+   apply univ_imp_eq in H3.
+   rewrite H3; assumption.
 
-   assert (∀ x₁ x₂ : X, isSet (x₁ = x₂)) as SX.
-    intros.
-    pose proof SAP x₁ as px₁.
-    pose proof SAP x₂ as px₂.
-    destruct x₁ as (A, x₁).
-    destruct x₂ as (B, x₂).
-    simpl in px₁, px₂.
-    assert (isSet (A ≃ B)) as pAB by (eapply isSet_equiv; assumption).
-    pose proof (H1 A x₁ B x₂) as H3.
-    apply univ_imp_eq in H3.
-    rewrite H3; assumption.
+   set (Y := fun x => x₀ = x:Type); simpl in Y.
+   exists X, Y; intros H7 H8.
+   assert (NSX : notT (isSet X)).
+    intros r.
+    set (p := Σ_type.pr₁ (pr₁ (Σ_type.pr₂ H2)) bool_eq_bool_id).
+    set (q := Σ_type.pr₁ (pr₁ (Σ_type.pr₂ H2)) bool_eq_bool_negb).
+    pose proof (r x₀ x₀ p q) as s.
+    subst p q.
+    unfold bool_eq_bool_id, bool_eq_bool_negb in s.
+    simpl in s.
+    destruct H2 as (f, ((g, Hg), (h, Hh))); simpl in s.
+    apply (ap f) in s.
+    eapply compose in s; [ symmetry in s | eapply invert, Hg ].
+    eapply compose in s; [ symmetry in s | eapply invert, Hg ].
+    unfold id in s.
+    injection s; intros H _ _.
+    assert (H2 : negb true = true) by (rewrite <- H; reflexivity).
+    revert H2; apply Σ_type2.hott_2_12_6.
 
-    set (Y x := x₀ = x : Type); simpl in Y.
-    exists X, Y; intros H7 H8.
     apply NSX, isProp_isSet.
-     intros x y.
-     assert (∀ x : X, Y x) as H9.
-      intros (A, p); subst Y; simpl.
-      apply (Σ_type.pair_eq (PT_elim p)), PT_eq.
+    intros x y.
+    assert (H9 : ∀ x : X, Y x).
+     intros (A, p); subst Y; simpl.
+     apply (Σ_type.pair_eq (PT_elim p)), PT_eq.
 
-      transitivity x₀; [ symmetry; apply H9 | apply H9 ].
-bbb.
+     transitivity x₀; [ symmetry; apply H9 | apply H9 ].
 Defined.
 
 Definition hott_3_8_5 : ∃ X (Y : X → Type), (∀ x, isSet (Y x))
