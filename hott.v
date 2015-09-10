@@ -1006,6 +1006,11 @@ apply PT_elim in q.
 apply (Σ_type.pair_eq q).
 unfold transport.
 destruct q; simpl; unfold id.
+SearchAbout PT_intro.
+set (bb := bool = bool : Type); simpl in bb.
+pose proof @prop_trunc_rec bb ∥bb∥ (@PT_eq bb) (@PT_intro bb).
+destruct H as (g, Hg).
+Print prop_trunc_rec.
 bbb.
 
 About Σ_type.pair_eq.
