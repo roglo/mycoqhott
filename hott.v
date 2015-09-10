@@ -911,7 +911,7 @@ Defined.
 (* If I understand well, the axiom of choice is not compatible with
    families of sets whose father is not a set. *)
 
-Definition hott_3_8_5 : ∃ X (Y : X → Type), (∀ x, isSet (Y x))
+Definition hott_3_8_5_tac : ∃ X (Y : X → Type), (∀ x, isSet (Y x))
   → notT ((Π (x : X), ∥(Y x)∥) → ∥(Π (x : X), Y x)∥).
 Proof.
 set (X := Σ (A : Type), ∥((bool : Type) = A)∥).
@@ -952,6 +952,7 @@ assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)) as H1.
   |(eq_refl (bool : Type))| as H2.
  set (x₀ := (existT _ (bool : Type) |(eq_refl (bool : Type))| : X)) in *.
  simpl in x₀.
+bbb.
  assert (notT (isSet X)) as NSX.
   intros r.
   set (p := Σ_type.pr₁ (pr₁ (Σ_type.pr₂ H2)) bool_eq_bool_id).
@@ -987,25 +988,18 @@ assert (∀ A p B q, ((existT _ A p : X) = existT _ B q) ≃ (A ≃ B)) as H1.
     rewrite H3; assumption.
 
     set (Y x := x₀ = x : Type); simpl in Y.
-    assert (∀ x, isSet (Y x)) as H3.
-     intros x.
-     pose proof SX x₀ x as p.
-     subst Y; assumption.
+    exists X, Y; intros H7 H8.
+    apply NSX, isProp_isSet.
+     intros x y.
+     assert (∀ x : X, Y x) as H9.
+      intros (A, p); subst Y; simpl.
+      apply (Σ_type.pair_eq (PT_elim p)), PT_eq.
 
-     assert (∀ Ap : X, ∥(2%type = Σ_type.pr₁ Ap)∥) as H4.
-      intros (A, p); simpl; apply p.
-
-      assert (∀ Ap : X, ∥(x₀ = Ap)∥) as H5.
-       intros (A, p).
-       apply PT_intro, (Σ_type.pair_eq (PT_elim p)), PT_eq.
-
-       assert (Π (x : X), ∥(Y x)∥) as H6 by (intros x; subst Y; apply H5).
-       exists X, Y; intros H7 H8.
-       pose proof PT_elim (H8 H6) as H9.
-       assert (isProp X) as H10.
-        intros x y.
-        pose proof H9 x as Hx.
-        pose proof H9 y as Hy.
+      transitivity x₀; [ symmetry; apply H9 | apply H9 ].
 bbb.
+Defined.
+
+Definition hott_3_8_5 : ∃ X (Y : X → Type), (∀ x, isSet (Y x))
+  → notT ((Π (x : X), ∥(Y x)∥) → ∥(Π (x : X), Y x)∥).
 
 _5htp.
