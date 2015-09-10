@@ -7,8 +7,9 @@ Require Import chap1.
 (* no default implicit without arguments *)
 Arguments eq_refl [A] x.
 
-Notation "0" := False : type_scope.
-Notation "1" := True : type_scope.
+Notation "⊥" := False.
+Notation "⊤" := True.
+Notation "'ℬ'" := (bool : Type).
 Notation "( x , y ) '_{' P }" := (existT P x y)
   (at level 0, format "'[' ( x ,  y ) _{ P } ']'", only parsing).
 
@@ -1138,12 +1139,12 @@ End Σ_type.
 
 (* 2.8 The unit type *)
 
-Theorem hott_2_8_1 : ∀ x y : 1, (x = y) ≃ 1%type.
+Theorem hott_2_8_1 : ∀ x y : ⊤, (x = y) ≃ ⊤.
 Proof.
 intros.
 destruct x, y.
 set (f := λ _ : I = I, I).
-set (g := λ _ : 1, eq_refl I).
+set (g := λ _ : ⊤, eq_refl I).
 unfold equivalence.
 apply (existT _ f), qinv_isequiv.
 apply (existT _ g); split.
@@ -1158,10 +1159,10 @@ apply (existT _ g); split.
  reflexivity.
 Qed.
 
-Definition unit_intro : 1 := I.
-Definition unit_elim : 1 → 1 := id.
-Definition unit_comp : 1 → 1 := id.
-Definition unit_transport := @transportconst 1 I I.
+Definition unit_intro : ⊤ := I.
+Definition unit_elim : ⊤ → ⊤ := id.
+Definition unit_comp : ⊤ → ⊤ := id.
+Definition unit_transport := @transportconst ⊤ I I.
 
 (* 2.9 Π-types and the function extensionality axiom *)
 
@@ -1881,15 +1882,15 @@ Defined.
 
 (* Expression 2.12.3 *)
 
-Definition inl_inr_equiv {A B} (a : A) (b : B) : inl a = inr b ≃ 0.
+Definition inl_inr_equiv {A B} (a : A) (b : B) : inl a = inr b ≃ ⊥.
 Proof.
-assert (inl a = inr b → 0) as f.
+assert (inl a = inr b → ⊥) as f.
  intros p.
- change (match (inl a : A + B) with inl _ => False | inr _ => 1 end).
+ change (match (inl a : A + B) with inl _ => False | inr _ => ⊤ end).
  rewrite p; constructor.
 
  apply (existT _ f), qinv_isequiv.
- assert (0 → inl a = inr b) as g by (intros H; contradiction).
+ assert (⊥ → inl a = inr b) as g by (intros H; contradiction).
  apply (existT _ g); split; intros x; contradiction.
 Defined.
 
@@ -1902,7 +1903,7 @@ Definition code {A B} a₀ : A + B → Type :=
   λ x,
   match x with
   | inl a => a₀ = a
-  | inr b => 0%type
+  | inr b => ⊥
   end.
 
 (* I did it the reverse way they did: that 2.12.1 and 2.12.3 imply 2.12.5: *)
@@ -1950,7 +1951,7 @@ Defined.
 
 (* 2.12.3 again *)
 
-Definition inl_inr_equiv_bis {A B} (a : A) (b : B) : inl a = inr b ≃ 0.
+Definition inl_inr_equiv_bis {A B} (a : A) (b : B) : inl a = inr b ≃ ⊥.
 Proof.
 eapply equiv_compose; [ apply hott_2_12_5_bis | apply eqv_eq_refl ].
 Defined.
@@ -1960,7 +1961,7 @@ Defined.
 Definition code_r {A B} b₀ : A + B → Type :=
   λ x,
   match x with
-  | inl a => 0%type
+  | inl a => ⊥
   | inr b => b₀ = b
   end.
 
@@ -2002,13 +2003,13 @@ Definition encode_inl_inl {A B} a₀
   := λ a, encode a₀ (inl a).
 
 Definition encode_inl_inr {A B} a₀
-  : ∀ b, (@eq (A + B) (inl a₀) (inr b)) → 0
+  : ∀ b, (@eq (A + B) (inl a₀) (inr b)) → ⊥
   := λ b, encode a₀ (inr b).
 
 (* Remark 2.12.6. In particular, since the two-element type 2 is
    equivalent to 1+1, we have 0₂ ≠ 1₂ *)
 
-Definition bool_unit_unit : bool → 1 + 1 :=
+Definition bool_unit_unit : ℬ → ⊤ + ⊤ :=
   λ b, match b with true => inr I | false => inl I end.
 
 Definition hott_2_12_6 : false ≠ true :=
@@ -2038,9 +2039,9 @@ Module ℕ.
 
 Fixpoint code m n : Type :=
   match (m, n) with
-  | (0, 0) => 1%type
-  | (S m, 0) => 0%type
-  | (0, S n) => 0%type
+  | (0, 0) => ⊤
+  | (S m, 0) => ⊥
+  | (0, S n) => ⊥
   | (S m, S n) => code m n
   end.
 
@@ -2096,7 +2097,7 @@ unfold "◦", "~~", id; simpl.
 split; intros p; [ apply encode_decode | apply decode_encode ].
 Defined.
 
-Definition hott_2_13_2 {m} : S m = 0 → 0%type := encode (S m) 0.
+Definition hott_2_13_2 {m} : S m = 0 → ⊥ := encode (S m) 0.
 
 Definition hott_2_13_3 m n : (S m = S n) → (m = n) :=
   λ p, decode m n (encode (S m) (S n) p).

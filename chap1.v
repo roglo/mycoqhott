@@ -7,7 +7,9 @@ Require Import NPeano.
 (* no default implicit without arguments *)
 Arguments eq_refl [A] x.
 
-Notation "0" := False : type_scope.
+Notation "⊥" := False.
+Notation "⊤" := True.
+Notation "'ℬ'" := (bool : Type).
 Notation "( x , y ) '_{' P }" := (existT P x y)
   (at level 0, format "'[' ( x ,  y ) _{ P } ']'", only parsing).
 

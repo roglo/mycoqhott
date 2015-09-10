@@ -7,9 +7,9 @@ Require Import chap1 chap2.
 (* no default implicit without arguments *)
 Arguments eq_refl [A] x.
 
-Notation "0" := False : type_scope.
-Notation "1" := True : type_scope.
-Notation "2" := (bool : Type) : type_scope.
+Notation "⊥" := False.
+Notation "⊤" := True.
+Notation "'ℬ'" := (bool : Type).
 Notation "( x , y ) '_{' P }" := (existT P x y)
   (at level 0, format "'[' ( x ,  y ) _{ P } ']'", only parsing).
 
@@ -52,7 +52,7 @@ Definition ex_3_1_2 : isSet True :=
 
 (* hott_2_8_1 : ∀ x y : True, (x = y) ≃ True *)
 
-Definition ex_3_1_2_alt_tac : isSet 1.
+Definition ex_3_1_2_alt_tac : isSet ⊤.
 Proof.
 intros x y p q.
 pose proof hott_2_8_1 x y as r.
@@ -77,7 +77,7 @@ Definition ex_3_1_3 : isSet False := λ x y, match x with end.
 
 (* bool is also a set *)
 
-Definition bool_set : isSet 2.
+Definition bool_set : isSet ℬ.
 Proof.
 intros x y p q.
 destruct x, y; try discriminate p.
@@ -396,7 +396,7 @@ Definition hott_3_2_2 : notT (∀ A : Type, notT (notT A) → A)
 :=
   λ f,
   let e := bool_eq_bool_negb in
-  let u (x : notT bool) := x true in
+  let u (x : notT ℬ) := x true in
   let nn A := notT (notT A) in
   no_fixpoint_negb (f bool u)
     ((ua_pcr e (f bool u))⁻¹
@@ -536,14 +536,14 @@ Definition LDN := Π (A : Type), (isProp A → (notT (notT A) → A)).
 
 (* LEM and LDN are logically equivalent (ex 3.18) *)
 
-Definition isProp_notT_tac A : isProp (A → 0).
+Definition isProp_notT_tac A : isProp (A → ⊥).
 Proof.
 intros x y.
 apply Π_type.funext; intros z; destruct (x z).
 Defined.
 
-Definition isProp_notT A : isProp (A → 0) :=
-  λ x y : A → 0, Π_type.funext (λ (z : A), match x z with end).
+Definition isProp_notT A : isProp (A → ⊥) :=
+  λ x y : A → ⊥, Π_type.funext (λ (z : A), match x z with end).
 
 Definition LEM_LDN : (LEM → LDN) * (LDN → LEM).
 Proof.
@@ -770,7 +770,7 @@ apply (existT _ (λ p, | (pr₁ LEM_LDN HLEM A HPA p) |)), qinv_isequiv.
 (*
 assert (∥A∥ → notT (notT A)) as g by (intros p q; destruct (q (PT_elim p))).
 *)
-apply (existT _ (λ p (q : notT A), match q (PT_elim p) return 0 with end)).
+apply (existT _ (λ p (q : notT A), match q (PT_elim p) return ⊥ with end)).
 split; [ intros x; destruct (HLEM A HPA); apply PT_eq | ].
 intros f; apply Π_type.funext; intros x; destruct (f x).
 Defined.
@@ -798,15 +798,15 @@ apply hott_3_3_3.
  intros u v; apply PT_eq.
 
  intros AC X Y SX SY.
- assert (H1 : ∀ x : X, Y x → isProp 1).
+ assert (H1 : ∀ x : X, Y x → isProp ⊤).
   intros _ _ x y.
   apply (Σ_type.pr₁ (quasi_inv (hott_2_8_1 x y))), x.
 
-  assert (∀ Z (z : Z), ∥{_ : Z & X → 1}∥ → ∥Z∥) as H2.
+  assert (∀ Z (z : Z), ∥{_ : Z & X → ⊤}∥ → ∥Z∥) as H2.
    intros Z z H2; apply PT_intro, z.
 
    intros H; apply H2; [ intros x; apply PT_elim, H | ].
-   apply (AC X Y (λ _ _, 1%type) SX SY H1); intros x.
+   apply (AC X Y (λ _ _, ⊤) SX SY H1); intros x.
    apply PT_intro, (existT _ (PT_elim (H x))), I.
 
  unfold AC.
@@ -914,7 +914,7 @@ Defined.
 Definition hott_3_8_5_tac : ∃ X (Y : X → Type), (∀ x, isSet (Y x))
   → notT ((Π (x : X), ∥(Y x)∥) → ∥(Π (x : X), Y x)∥).
 Proof.
-set (X := Σ (A : Type), ∥((bool:Type) = A)∥).
+set (X := Σ (A : Type), ∥(ℬ = A)∥).
 simpl in X.
 assert (H1 : ∀ A p B q, ((existT _ A p:X) = existT _ B q) ≃ (A ≃ B)).
  intros.
@@ -922,8 +922,8 @@ assert (H1 : ∀ A p B q, ((existT _ A p:X) = existT _ B q) ≃ (A ≃ B)).
   (existT _
      (λ H,
       (λ
-       H2 : Σ_type.pr₁ (existT (λ A0 : Type, ∥((bool:Type) = A0)∥) A p)
-            ≃ Σ_type.pr₁ (existT (λ A0 : Type, ∥((bool:Type) = A0)∥) B q), H2)
+       H2 : Σ_type.pr₁ (existT (λ A0 : Type, ∥(ℬ = A0)∥) A p)
+            ≃ Σ_type.pr₁ (existT (λ A0 : Type, ∥(ℬ = A0)∥) B q), H2)
         (idtoeqv (ap Σ_type.pr₁ H)))).
  apply qinv_isequiv.
  apply (existT _ (λ r : A ≃ B, Σ_type.pair_eq (ua r) (PT_eq ((ua r)⁎ p) q))).
@@ -939,15 +939,15 @@ assert (H1 : ∀ A p B q, ((existT _ A p:X) = existT _ B q) ≃ (A ≃ B)).
   refine match r with
          | eq_refl _ => _
          end; simpl; unfold id.
-  assert (SA : isSet ∥((bool:Type) = A)∥) by apply isProp_isSet, PT_eq.
+  assert (SA : isSet ∥(ℬ = A)∥) by apply isProp_isSet, PT_eq.
   assert (H : PT_eq p p = eq_refl p) by apply SA.
   rewrite H; reflexivity.
 
  simpl in H1.
  pose proof
-  (H1 (bool:Type) |(eq_refl (bool:Type))| (bool:Type) |(eq_refl (bool:Type))|)
+  (H1 ℬ |(eq_refl ℬ)| ℬ |(eq_refl ℬ)|)
   as H2.
- set (x₀ := existT _ (bool:Type) |(eq_refl (bool:Type))|:X) in *.
+ set (x₀ := existT _ ℬ |(eq_refl ℬ)|:X) in *.
  simpl in x₀.
  set (Y := fun x => x₀ = x:Type); simpl in Y.
  exists X, Y; intros H7 H8.

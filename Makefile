@@ -9,3 +9,4 @@ clean:
 	coqc $<
 
 chap2.vo: chap1.vo
+hott.vo: chap2.vo
