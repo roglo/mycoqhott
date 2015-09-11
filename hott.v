@@ -734,9 +734,8 @@ Axiom prop_trunc : Type → Type.
 Arguments prop_trunc _%type.
 Notation "∥ A ∥" := (prop_trunc A) (A at level 0, format "∥ A ∥") : type_scope.
 
-Axiom PT_intro : ∀ A, A → ∥A∥.
-Arguments PT_intro [A] x.
-Notation "| x |" := (PT_intro x) (x at level 0, format "| x |").
+Axiom PT : ∀ A, A → ∥A∥.
+Arguments PT [A] x.
 
 Axiom PT_eq : ∀ A, isProp ∥A∥.
 Arguments PT_eq [A] x y.
@@ -744,8 +743,8 @@ Arguments PT_eq [A] x y.
 (* "If B is a mere proposition and we have f : A → B, then there is an
     induced g : ∥A∥ → B such that g(|a|) ≡ f(a) for all a : A." *)
 
-Axiom prop_trunc_rec :
-  ∀ A B, isProp B → ∀ (f : A → B), ∃ g : ∥A∥ → B, ∀ a, g |a| = f a.
+Axiom prop_trunc_rec : ∀ A B, isProp B → ∀ (f : A → B), ∥A∥ → B.
+Axiom prop_trunc_rec_def : ∀ A B p f a, prop_trunc_rec A B p f (PT a) = f a.
 
 (* doing the exercise 3.14 in advance, just to see if my definition of
    propositional truncation works *)
@@ -753,21 +752,9 @@ Axiom prop_trunc_rec :
 Definition ex_3_14 : LEM → ∀ A, isProp A → (notT (notT A) ≃ ∥A∥).
 Proof.
 intros HLEM A HPA.
-apply (existT _ (λ p, | (pr₁ LEM_LDN HLEM A HPA p) |)), qinv_isequiv.
-assert (∥A∥ → notT (notT A)) as g.
- intros p q; apply q.
- pose proof prop_trunc_rec A A HPA id.
- destruct H.
-
-Error: Case analysis on sort Type is not allowed for inductive definition ex.
-
-bbb.
-Focus 2.
-apply (existT _ g).
-
-bbb.
-apply (existT _ (λ p (q : notT A), match q (PT_elim p) return ⊥ with end)).
-split; [ intros x; destruct (HLEM A HPA); apply PT_eq | ].
+apply (existT _ (λ p, PT (pr₁ LEM_LDN HLEM A HPA p))), qinv_isequiv.
+apply (existT _ (λ p q, q (prop_trunc_rec A A HPA id p))); simpl.
+split; [ intros x; apply PT_eq | ].
 intros f; apply Π_type.funext; intros x; destruct (f x).
 Defined.
 
@@ -799,8 +786,9 @@ apply hott_3_3_3.
   apply (Σ_type.pr₁ (quasi_inv (hott_2_8_1 x y))), x.
 
   assert (∀ Z (z : Z), ∥{_ : Z & X → ⊤}∥ → ∥Z∥) as H2.
-   intros Z z H2; apply PT_intro, z.
+   intros Z z H2; apply PT, z.
 
+bbb.
    intros H; apply H2; [ intros x; apply PT_elim, H | ].
    apply (AC X Y (λ _ _, ⊤) SX SY H1); intros x.
    apply PT_intro, (existT _ (PT_elim (H x))), I.
