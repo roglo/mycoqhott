@@ -963,6 +963,8 @@ transitivity x₀; subst x₀.
  destruct y as (C, p); apply (Σ_type.pair_eq (PT_elim p)), PT_eq.
 Defined.
 
+bbb.
+
 Definition what : ∃ X (Y : X → Type), ⊥.
 Proof.
 (* I suspect my PT_elim to be the origin of this contradiction;
