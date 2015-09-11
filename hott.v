@@ -965,6 +965,10 @@ Defined.
 
 Definition what : ∃ X (Y : X → Type), ⊥.
 Proof.
+(* I suspect my PT_elim to be the origin of this contradiction;
+   aim: find the minimum proof that show that. Perhaps theorem
+   isProp_pair_trunc is so corrupted. *)
+bbb.
 set (X := Σ (A : Type), ∥(ℬ = A)∥).
 set (x₀ := existT _ ℬ |(eq_refl ℬ)|:X); simpl in x₀.
 set (Y := λ x, x₀ = x:Type); simpl in Y.
