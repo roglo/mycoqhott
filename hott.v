@@ -766,9 +766,6 @@ Definition ex_3_14 : LEM → ∀ A, isProp A → (notT (notT A) ≃ ∥A∥).
 Proof.
 intros HLEM A HPA.
 apply (existT _ (λ p, | (pr₁ LEM_LDN HLEM A HPA p) |)), qinv_isequiv.
-(*
-assert (∥A∥ → notT (notT A)) as g by (intros p q; destruct (q (PT_elim p))).
-*)
 apply (existT _ (λ p (q : notT A), match q (PT_elim p) return ⊥ with end)).
 split; [ intros x; destruct (HLEM A HPA); apply PT_eq | ].
 intros f; apply Π_type.funext; intros x; destruct (f x).
