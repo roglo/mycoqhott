@@ -731,14 +731,11 @@ End hott_3_6.
 (* "3.7 Propositional truncation" *)
 
 Axiom prop_trunc : Type → Type.
+Arguments prop_trunc _%type.
 Notation "∥ A ∥" := (prop_trunc A) (A at level 0, format "∥ A ∥") : type_scope.
 
 Axiom PT_intro : ∀ A, A → ∥A∥.
-Axiom PT_elim : ∀ A, ∥A∥ → A.
-Arguments prop_trunc _%type.
 Arguments PT_intro [A] x.
-Arguments PT_elim [A] x.
-
 Notation "| x |" := (PT_intro x) (x at level 0, format "| x |").
 
 Axiom PT_eq : ∀ A, isProp ∥A∥.
@@ -747,17 +744,8 @@ Arguments PT_eq [A] x y.
 (* "If B is a mere proposition and we have f : A → B, then there is an
     induced g : ∥A∥ → B such that g(|a|) ≡ f(a) for all a : A." *)
 
-Definition prop_trunc_rec_tac {A B} : isProp B →
-  ∀ (f : A → B) a, f (PT_elim |a|) = f a.
-Proof.
-intros PB f a.
-apply PB.
-Defined.
-
-Definition prop_trunc_rec {A B} : isProp B →
-  ∀ (f : A → B) a, f (PT_elim |a|) = f a
-:=
-  λ PB f a, PB (f (PT_elim |a|)) (f a).
+Axiom prop_trunc_rec :
+  ∀ A B, isProp B → ∀ (f : A → B), ∃ g : ∥A∥ → B, ∀ a, g |a| = f a.
 
 (* doing the exercise 3.14 in advance, just to see if my definition of
    propositional truncation works *)
@@ -766,6 +754,18 @@ Definition ex_3_14 : LEM → ∀ A, isProp A → (notT (notT A) ≃ ∥A∥).
 Proof.
 intros HLEM A HPA.
 apply (existT _ (λ p, | (pr₁ LEM_LDN HLEM A HPA p) |)), qinv_isequiv.
+assert (∥A∥ → notT (notT A)) as g.
+ intros p q; apply q.
+ pose proof prop_trunc_rec A A HPA id.
+ destruct H.
+
+Error: Case analysis on sort Type is not allowed for inductive definition ex.
+
+bbb.
+Focus 2.
+apply (existT _ g).
+
+bbb.
 apply (existT _ (λ p (q : notT A), match q (PT_elim p) return ⊥ with end)).
 split; [ intros x; destruct (HLEM A HPA); apply PT_eq | ].
 intros f; apply Π_type.funext; intros x; destruct (f x).
