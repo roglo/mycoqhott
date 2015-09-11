@@ -963,13 +963,33 @@ transitivity x₀; subst x₀.
  destruct y as (C, p); apply (Σ_type.pair_eq (PT_elim p)), PT_eq.
 Defined.
 
+Definition what : ∃ X (Y : X → Type), ⊥.
+Proof.
+set (X := Σ (A : Type), ∥(ℬ = A)∥).
+set (x₀ := existT _ ℬ |(eq_refl ℬ)|:X); simpl in x₀.
+set (Y := λ x, x₀ = x:Type); simpl in Y.
+exists X, Y.
+assert (PX : isProp X) by apply isProp_pair_trunc.
+apply isProp_isSet in PX.
+destruct equiv_eq_bool_trunc as (f, ((g, Hg), _)).
+pose proof (PX x₀ x₀ (g bool_eq_bool_id) (g bool_eq_bool_negb)) as s.
+unfold bool_eq_bool_id, bool_eq_bool_negb in s; simpl in s.
+apply (ap f) in s.
+eapply compose in s; [ symmetry in s | eapply invert, Hg ].
+eapply compose in s; [ symmetry in s | eapply invert, Hg ].
+apply EqdepFacts.eq_sigT_fst in s.
+pose proof (hap s false) as H2.
+revert H2; apply Σ_type2.hott_2_12_6.
+What. ?????
+
 Definition hott_3_8_5_tac : ∃ X (Y : X → Type),
   notT ((Π (x : X), ∥(Y x)∥) → ∥(Π (x : X), Y x)∥).
 Proof.
 set (X := Σ (A : Type), ∥(ℬ = A)∥).
 set (x₀ := existT _ ℬ |(eq_refl ℬ)|:X); simpl in x₀.
 set (Y := λ x, x₀ = x:Type); simpl in Y.
-exists X, Y; intros H1.
+exists X, Y.
+intros _.
 assert (PX : isProp X) by apply isProp_pair_trunc.
 apply isProp_isSet in PX.
 destruct equiv_eq_bool_trunc as (f, ((g, Hg), _)).
