@@ -997,30 +997,13 @@ ex_intro _ X
       let (f, i) := equiv_eq_bool_trunc in
       let (s, x) := i in
       let (g, Hg) := s in
-      (λ s5 :
-         existT isequiv id
-           (existT (λ g0 : ℬ → bool, id ◦ g0 ~~ id) id
-              (λ H1 : bool, eq_refl ((id ◦ id) H1)),
-           existT (λ h : ℬ → bool, h ◦ id ~~ id) id
-             (λ H1 : bool, eq_refl ((id ◦ id) H1))) =
-         existT isequiv negb
-           (existT (λ g0 : ℬ → bool, negb ◦ g0 ~~ id) negb
-              (λ b : bool,
-               if b as b0 return (negb (negb b0) = b0)
-               then eq_refl true
-               else eq_refl false),
-           existT (λ h : ℬ → bool, h ◦ negb ~~ id) negb
-             (λ b : bool,
-              if b as b0 return (negb (negb b0) = b0)
-              then eq_refl true
-              else eq_refl false)),
-       Σ_type2.hott_2_12_6
+      Σ_type2.hott_2_12_6
           (hap
              (f_equal
                 (λ e0 : ℬ ≃ ℬ,
                  let (x, i0) := e0 in
-                 let (_, s7) := i0 in let (x0, _) := s7 in x0) s5)
-             false))
+                 let (_, s7) := i0 in let (x0, _) := s7 in x0)
+
       (eq_sym
          ((Hg
              (existT isequiv negb
@@ -1043,6 +1026,7 @@ ex_intro _ X
                       (λ H : bool, eq_refl ((id ◦ id) H)))))⁻¹ •
        (ap f
           (isProp_isSet X isProp_pair_trunc x₀ x₀
-              (g bool_eq_bool_id) (g bool_eq_bool_negb))))))))).
+              (g bool_eq_bool_id) (g bool_eq_bool_negb))))))))
+             false))).
 
 bbb.
