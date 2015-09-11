@@ -746,6 +746,8 @@ Arguments PT_eq [A] x y.
 Axiom prop_trunc_rec : ∀ A B, isProp B → ∀ (f : A → B), ∥A∥ → B.
 Axiom prop_trunc_rec_def : ∀ A B p f a, prop_trunc_rec A B p f (PT a) = f a.
 
+Definition PT_elim {A} : isProp A → ∥A∥ → A := λ PA, prop_trunc_rec A A PA id.
+
 (* doing the exercise 3.14 in advance, just to see if my definition of
    propositional truncation works *)
 
@@ -782,6 +784,28 @@ apply hott_3_3_3.
  assert (H1 : ∀ x : X, Y x → isProp ⊤).
   intros _ _ x y.
   apply (Σ_type.pr₁ (quasi_inv (hott_2_8_1 x y))), x.
+
+  assert (H2 : ∀ x : X, ∥{_ : Y x & ⊤}∥).
+   intros x.
+bbb.
+Focus 2.
+  pose proof AC X Y (λ _ _, ⊤) SX SY H1 H2 as H; simpl in H.
+  assert (f : {_ : ∀ x : X, Y x & X → ⊤} → ∥(∀ x : X, Y x)∥).
+   intros H3; apply PT, H3.
+
+   assert (PB : isProp ∥(∀ x : X, Y x)∥) by apply PT_eq.
+   intros H3; apply (prop_trunc_rec _ _ PB f H).
+
+bbb.
+  assert (∀ Z (z : Z), ∥{_ : Z & X → ⊤}∥ → ∥Z∥) as H2.
+   intros Z z H2; apply PT, z.
+
+   intros H; apply H2; [ intros x; apply PT_elim, H | ].
+   apply (AC X Y (λ _ _, ⊤) SX SY H1); intros x.
+   apply PT_intro, (existT _ (PT_elim (H x))), I.
+
+ unfold AC.
+bbb.
 
    assert (H2 : ∀ x : X, ∥{_ : Y x & ⊤}∥).
     intros x.
@@ -831,8 +855,6 @@ Focus 2.
  unfold Top.AC in AC.
 
 bbb.
-
-
 
    intros H; apply H2.
     intros x.
