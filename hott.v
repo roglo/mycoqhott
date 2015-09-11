@@ -967,7 +967,7 @@ assert (PX : isProp X).
   destruct y as (A, p); apply (Σ_type.pair_eq (PT_elim p)), PT_eq.
 
  apply isProp_isSet in PX.
- destruct equiv_eq_bool_trunc as (f, ((g, Hg), (h, Hh))).
+ destruct equiv_eq_bool_trunc as (f, ((g, Hg), _)).
  pose proof (PX x₀ x₀ (g bool_eq_bool_id) (g bool_eq_bool_negb)) as s.
  unfold bool_eq_bool_id, bool_eq_bool_negb in s; simpl in s.
  apply (ap f) in s.
