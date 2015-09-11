@@ -735,7 +735,6 @@ Notation "∥ A ∥" := (prop_trunc A) (A at level 0, format "∥ A ∥") : type
 
 Axiom PT_intro : ∀ A, A → ∥A∥.
 Axiom PT_elim : ∀ A, ∥A∥ → A.
-
 Arguments prop_trunc _%type.
 Arguments PT_intro [A] x.
 Arguments PT_elim [A] x.
@@ -954,6 +953,9 @@ Defined.
 Definition isProp_pair_trunc {A} : isProp (Σ (B : Type), ∥(A = B)∥).
 Proof.
 intros x y.
+Check @Σ_type.pair_eq.
+bbb.
+
 set (X := Σ (B : Type), ∥(A = B)∥).
 set (x₀ := existT _ A |(eq_refl A)|:X); simpl in x₀.
 transitivity x₀; subst x₀.
