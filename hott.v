@@ -779,14 +779,60 @@ apply hott_3_3_3.
  do 5 (apply ex_3_6_2; intros); apply PT_eq.
 
  intros AC X Y SX SY.
-bbb.
-
  assert (H1 : ∀ x : X, Y x → isProp ⊤).
   intros _ _ x y.
   apply (Σ_type.pr₁ (quasi_inv (hott_2_8_1 x y))), x.
 
-  assert (∀ Z (z : Z), ∥{_ : Z & X → ⊤}∥ → ∥Z∥) as H2.
+   assert (H2 : ∀ x : X, ∥{_ : Y x & ⊤}∥).
+    intros x.
+apply PT.
+assert (y : Y x).
+Focus 2.
+apply (existT (λ (_ : Y x), True) (y : Y x) I).
+Focus 2.
+   pose proof AC X Y (λ x a, ⊤) SX SY H1 H2 as H; simpl in H.
+intros HY.
+bbb.
+
+(*
+  assert (H2 : ∀ Z (z : Z), ∥{_ : Z & X → ⊤}∥ → ∥Z∥).
    intros Z z H2; apply PT, z.
+
+   assert (H3 : ∀ x : X, ∥{_ : Y x & ⊤}∥).
+    intros x.
+    apply H2.
+*)
+
+   pose proof AC X Y (λ x a, ⊤) SX SY H1 H3 as H; simpl in H.
+bbb.
+
+   apply PT.
+   apply (existT (λ (_ : Y x), True) (y : Y x) I).
+
+  ============================
+   sigT (fun _ : Y x => True)
+
+bbb.
+
+Focus 2.
+  pose proof AC X Y (λ x a, ⊤) SX SY H1 H2 as H; simpl in H.
+
+  assert (∀ Z (z : Z), ∥{_ : Z & X → ⊤}∥ → ∥Z∥) as H2.
+Focus 2.
+intros Z; apply PT; intros x.
+
+   intros x.
+   apply PT.
+
+Focus 2.
+   intros Z z H2; apply PT, z.
+
+
+ unfold Top.AC in AC.
+
+bbb.
+
+
 
    intros H; apply H2.
     intros x.
