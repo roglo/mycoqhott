@@ -962,19 +962,11 @@ transitivity x₀; subst x₀.
  destruct y as (C, p); apply (Σ_type.pair_eq (PT_elim p)), PT_eq.
 Defined.
 
-bbb.
-
-Definition what : ∃ X (Y : X → Type), ⊥.
+Definition what : ⊥.
 Proof.
-(* I suspect my PT_elim to be the origin of this contradiction;
-   aim: find the minimum proof that show that. Perhaps theorem
-   isProp_pair_trunc is so corrupted. *)
-bbb.
 set (X := Σ (A : Type), ∥(ℬ = A)∥).
-set (x₀ := existT _ ℬ |(eq_refl ℬ)|:X); simpl in x₀.
-set (Y := λ x, x₀ = x:Type); simpl in Y.
-exists X, Y.
 assert (PX : isProp X) by apply isProp_pair_trunc.
+set (x₀ := existT _ ℬ |(eq_refl ℬ)|:X); simpl in x₀.
 apply isProp_isSet in PX.
 destruct equiv_eq_bool_trunc as (f, ((g, Hg), _)).
 pose proof (PX x₀ x₀ (g bool_eq_bool_id) (g bool_eq_bool_negb)) as s.
@@ -986,6 +978,7 @@ apply EqdepFacts.eq_sigT_fst in s.
 pose proof (hap s false) as H2.
 revert H2; apply Σ_type2.hott_2_12_6.
 What. ?????
+bbb.
 
 Definition hott_3_8_5_tac : ∃ X (Y : X → Type),
   notT ((Π (x : X), ∥(Y x)∥) → ∥(Π (x : X), Y x)∥).
