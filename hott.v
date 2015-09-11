@@ -963,13 +963,13 @@ transitivity x₀; subst x₀.
  destruct y as (C, p); apply (Σ_type.pair_eq (PT_elim p)), PT_eq.
 Defined.
 
-Definition hott_3_8_5_tac : ∃ X (Y : X → Type), (∀ x, isSet (Y x))
-  → notT ((Π (x : X), ∥(Y x)∥) → ∥(Π (x : X), Y x)∥).
+Definition hott_3_8_5_tac : ∃ X (Y : X → Type),
+  notT ((Π (x : X), ∥(Y x)∥) → ∥(Π (x : X), Y x)∥).
 Proof.
 set (X := Σ (A : Type), ∥(ℬ = A)∥).
 set (x₀ := existT _ ℬ |(eq_refl ℬ)|:X); simpl in x₀.
 set (Y := λ x, x₀ = x:Type); simpl in Y.
-exists X, Y; intros H1 H2.
+exists X, Y; intros H1.
 assert (PX : isProp X) by apply isProp_pair_trunc.
 apply isProp_isSet in PX.
 destruct equiv_eq_bool_trunc as (f, ((g, Hg), _)).
@@ -979,8 +979,8 @@ apply (ap f) in s.
 eapply compose in s; [ symmetry in s | eapply invert, Hg ].
 eapply compose in s; [ symmetry in s | eapply invert, Hg ].
 apply EqdepFacts.eq_sigT_fst in s.
-pose proof (hap s false) as H3.
-revert H3; apply Σ_type2.hott_2_12_6.
+pose proof (hap s false) as H2.
+revert H2; apply Σ_type2.hott_2_12_6.
 Defined.
 
 Set Printing Depth 100.
