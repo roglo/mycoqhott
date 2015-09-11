@@ -994,11 +994,9 @@ let Y := λ x : X, x₀ = x:Type in
 ex_intro _ X
   (ex_intro _ Y
      (λ _ _,
-       (λ (PX : isSet X),
         let (f, i) := equiv_eq_bool_trunc in
         let (s, x) := i in
-        (let
-         (g, Hg) := s in
+        let (g, Hg) := s in
            (λ s5 :
               existT isequiv id
                 (existT (λ g0 : ℬ → bool, id ◦ g0 ~~ id) id
@@ -1047,7 +1045,8 @@ ex_intro _ X
                            (λ H : bool, eq_refl ((id ◦ id) H)),
                          existT (λ h : ℬ → bool, h ◦ id ~~ id) id
                            (λ H : bool, eq_refl ((id ◦ id) H)))))⁻¹ •
-            (ap f (PX x₀ x₀ (g bool_eq_bool_id) (g bool_eq_bool_negb)))))))))
-          (isProp_isSet X isProp_pair_trunc))).
+            (ap f
+               (isProp_isSet X isProp_pair_trunc x₀ x₀
+                   (g bool_eq_bool_id) (g bool_eq_bool_negb))))))))).
 
 bbb.
