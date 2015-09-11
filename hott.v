@@ -774,19 +774,23 @@ Definition AC_3_8_3 :=
 Definition hott_3_8_2 : AC ≃ AC_3_8_3.
 Proof.
 apply hott_3_3_3.
- do 7 (apply ex_3_6_2; intros).
- intros u v; apply PT_eq.
+ do 7 (apply ex_3_6_2; intros); apply PT_eq.
 
- do 5 (apply ex_3_6_2; intros).
- intros u v; apply PT_eq.
+ do 5 (apply ex_3_6_2; intros); apply PT_eq.
 
  intros AC X Y SX SY.
+bbb.
+
  assert (H1 : ∀ x : X, Y x → isProp ⊤).
   intros _ _ x y.
   apply (Σ_type.pr₁ (quasi_inv (hott_2_8_1 x y))), x.
 
   assert (∀ Z (z : Z), ∥{_ : Z & X → ⊤}∥ → ∥Z∥) as H2.
    intros Z z H2; apply PT, z.
+
+   intros H; apply H2.
+    intros x.
+    eapply prop_trunc_rec.
 
 bbb.
    intros H; apply H2; [ intros x; apply PT_elim, H | ].
