@@ -991,51 +991,31 @@ Definition hott_3_8_5 : ∃ X (Y : X → Type), (∀ x, isSet (Y x))
 let X := {A : Type & ∥(ℬ = A)∥} in
 let x₀ := existT (λ A : Type, ∥(ℬ = A)∥) ℬ |(eq_refl ℬ)|:X in
 let Y := λ x : X, x₀ = x:Type in
-ex_intro
-  (λ X0 : Type,
-   ∃ Y0 : X0 → Type,
-   (∀ x : X0, isSet (Y0 x))
-   → notT ((∀ x : X0, ∥(Y0 x)∥) → ∥(∀ x : X0, Y0 x)∥)) X
-  (ex_intro
-     (λ Y0 : X → Type,
-      (∀ x : X, isSet (Y0 x))
-      → notT ((∀ x : X, ∥(Y0 x)∥) → ∥(∀ x : X, Y0 x)∥)) Y
-     (λ (_ : ∀ x : X, isSet (Y x))
-      (_ : (∀ x : X, ∥(Y x)∥) → ∥(∀ x : X, Y x)∥),
-      (λ PX : isProp X,
-       (λ (PX0 : isSet X) (e:=equiv_eq_bool_trunc),
-        let
-        (f, i) := e in
-        let
-        (s, x) := i in
+ex_intro _ X
+  (ex_intro _ Y
+     (λ _ _,
+       (λ (PX : isSet X),
+        let (f, i) := equiv_eq_bool_trunc in
+        let (s, x) := i in
         (let
          (g, Hg) := s in
-         λ
-         _ : {h
-             : bool ≃ bool
-               → existT (λ A : Type, ∥(ℬ = A)∥) ℬ |(eq_refl ℬ)| =
-                 existT (λ A : Type, ∥(ℬ = A)∥) ℬ |(eq_refl ℬ)| &
-             h ◦ f ~~ id},
-
            (λ s5 :
-              id
-                (existT isequiv id
-                   (existT (λ g0 : ℬ → bool, id ◦ g0 ~~ id) id
-                      (λ H1 : bool, eq_refl ((id ◦ id) H1)),
-                   existT (λ h : ℬ → bool, h ◦ id ~~ id) id
-                     (λ H1 : bool, eq_refl ((id ◦ id) H1)))) =
-              id
-                (existT isequiv negb
-                   (existT (λ g0 : ℬ → bool, negb ◦ g0 ~~ id) negb
-                      (λ b : bool,
-                       if b as b0 return (negb (negb b0) = b0)
-                       then eq_refl true
-                       else eq_refl false),
-                   existT (λ h : ℬ → bool, h ◦ negb ~~ id) negb
-                     (λ b : bool,
-                      if b as b0 return (negb (negb b0) = b0)
-                      then eq_refl true
-                      else eq_refl false))),
+              existT isequiv id
+                (existT (λ g0 : ℬ → bool, id ◦ g0 ~~ id) id
+                   (λ H1 : bool, eq_refl ((id ◦ id) H1)),
+                existT (λ h : ℬ → bool, h ◦ id ~~ id) id
+                  (λ H1 : bool, eq_refl ((id ◦ id) H1))) =
+              existT isequiv negb
+                (existT (λ g0 : ℬ → bool, negb ◦ g0 ~~ id) negb
+                   (λ b : bool,
+                    if b as b0 return (negb (negb b0) = b0)
+                    then eq_refl true
+                    else eq_refl false),
+                existT (λ h : ℬ → bool, h ◦ negb ~~ id) negb
+                  (λ b : bool,
+                   if b as b0 return (negb (negb b0) = b0)
+                   then eq_refl true
+                   else eq_refl false)),
             (((λ H4 _ _ : (λ x : bool, x) = negb,
                (Σ_type2.hott_2_12_6 (hap H4 false)))
               (f_equal
@@ -1067,7 +1047,7 @@ ex_intro
                            (λ H : bool, eq_refl ((id ◦ id) H)),
                          existT (λ h : ℬ → bool, h ◦ id ~~ id) id
                            (λ H : bool, eq_refl ((id ◦ id) H)))))⁻¹ •
-            (ap f  (PX0 x₀ x₀ (g bool_eq_bool_id) (g bool_eq_bool_negb))))))))
-          x) (isProp_isSet X PX)) isProp_pair_trunc)).
+            (ap f (PX x₀ x₀ (g bool_eq_bool_id) (g bool_eq_bool_negb)))))))))
+          (isProp_isSet X isProp_pair_trunc))).
 
 bbb.
