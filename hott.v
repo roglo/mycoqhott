@@ -860,10 +860,11 @@ apply hott_3_3_3.
 
   intros u v; apply PT_eq.
 
-bbb.
-  intros H; apply (PT_intro (λ x, PT_elim (H x))).
+  intros H; apply AC; assumption.
 
-  intros H x; apply (PT_intro (PT_elim H x)).
+  intros H x.
+  pose proof (λ B PB H1, prop_trunc_rec (∀ x : X, Y x) B PB H1 H) as H1.
+  apply H1; [ apply PT_eq | intros H2; apply PT, H2 ].
 
  unfold AC_3_8_3, AC_3_8_3_equiv.
  intros AC X Y SX SY.
@@ -872,9 +873,11 @@ bbb.
 
   intros u v; apply PT_eq.
 
-  intros H; apply (PT_intro (λ x, PT_elim (H x))).
+  intros H; apply AC; assumption.
 
-  intros H x; apply (PT_intro (PT_elim H x)).
+  intros H x.
+  pose proof (λ B PB H1, prop_trunc_rec (∀ x : X, Y x) B PB H1 H) as H1.
+  apply H1; [ apply PT_eq | intros H2; apply PT, H2 ].
 Defined.
 
 (* equivalence is a set, whenever A and B are *)
@@ -934,8 +937,8 @@ split.
 Defined.
 
 Definition equiv_eq_bool_trunc :
-  (existT (λ A, ∥(ℬ = A)∥) ℬ |(eq_refl ℬ)| =
-   existT (λ A, ∥(ℬ = A)∥) ℬ |(eq_refl ℬ)|) ≃
+  (existT (λ A, ∥(ℬ = A)∥) ℬ (PT (eq_refl ℬ)) =
+   existT (λ A, ∥(ℬ = A)∥) ℬ (PT (eq_refl ℬ))) ≃
    (ℬ ≃ ℬ).
 Proof.
 intros; apply equiv_eq_pair_trunc.
@@ -945,9 +948,11 @@ Definition isProp_pair_trunc {A} : isProp (Σ (B : Type), ∥(A = B)∥).
 Proof.
 intros x y.
 set (X := Σ (B : Type), ∥(A = B)∥).
-set (x₀ := existT _ A |(eq_refl A)|:X); simpl in x₀.
+set (x₀ := existT _ A (PT (eq_refl A)):X); simpl in x₀.
 transitivity x₀; subst x₀.
  symmetry.
+ destruct x as (C, p).
+bbb.
  destruct x as (C, p); apply (Σ_type.pair_eq (PT_elim p)), PT_eq.
 
  destruct y as (C, p); apply (Σ_type.pair_eq (PT_elim p)), PT_eq.
