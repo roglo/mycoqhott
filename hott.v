@@ -948,7 +948,7 @@ Definition hott_3_8_5_tac : ∃ X (Y : X → Type), (∀ x, isSet (Y x))
 Proof.
 set (X := Σ (A : Type), ∥(ℬ = A)∥).
 set (x₀ := existT _ ℬ |(eq_refl ℬ)|:X); simpl in x₀.
-set (Y := fun x => x₀ = x:Type); simpl in Y.
+set (Y := λ x, x₀ = x:Type); simpl in Y.
 exists X, Y; intros H7 H8.
 assert (PX : isProp X).
  intros x y.
