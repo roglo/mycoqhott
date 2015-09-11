@@ -952,11 +952,11 @@ set (Y := λ x, x₀ = x:Type); simpl in Y.
 exists X, Y; intros H7 H8.
 assert (PX : isProp X).
  intros x y.
- assert (H9 : ∀ x : X, Y x).
-  intros (A, p); subst Y; simpl.
-  apply (Σ_type.pair_eq (PT_elim p)), PT_eq.
+ transitivity x₀; subst x₀.
+  symmetry.
+  destruct x; apply (Σ_type.pair_eq (PT_elim p)), PT_eq.
 
-  transitivity x₀; [ symmetry; apply H9 | apply H9 ].
+  destruct y; apply (Σ_type.pair_eq (PT_elim p)), PT_eq.
 
  apply isProp_isSet in PX.
  assert (H1 : ∀ A p B q, ((existT _ A p:X) = existT _ B q) ≃ (A ≃ B)).
