@@ -780,7 +780,7 @@ apply hott_3_3_3.
 
  do 5 (apply ex_3_6_2; intros); apply PT_eq.
 
- intros AC X Y SX SY.
+ intros AC X Y SX SY YX.
  unfold Top.AC in AC.
  assert (H1 : ∀ x : X, Y x → isProp ⊤).
   intros _ _ x y.
@@ -788,90 +788,15 @@ apply hott_3_3_3.
 
   assert (H2 : ∀ x : X, ∥{_ : Y x & ⊤}∥).
    intros x.
-   apply (prop_trunc_rec (Y x)); [ apply PT_eq | | ].
-    intros y; apply PT, (existT (λ (_ : Y x), True) (y : Y x) I).
-SearchAbout prop_trunc.
-(*
-  ============================
-   ∥(Y x)∥
-*)
-bbb.
-Focus 2.
-  pose proof AC X Y (λ _ _, ⊤) SX SY H1 H2 as H; simpl in H.
-  assert (f : {_ : ∀ x : X, Y x & X → ⊤} → ∥(∀ x : X, Y x)∥).
-   intros H3; apply PT, H3.
+   apply (prop_trunc_rec (Y x)); [ apply PT_eq | | apply YX ].
+   intros y; apply PT, (existT (λ (_ : Y x), True) (y : Y x) I).
 
-   assert (PB : isProp ∥(∀ x : X, Y x)∥) by apply PT_eq.
-   intros H3; apply (prop_trunc_rec _ _ PB f H).
+   pose proof AC X Y (λ _ _, ⊤) SX SY H1 H2 as H; simpl in H.
+   assert (f : {_ : ∀ x : X, Y x & X → ⊤} → ∥(∀ x : X, Y x)∥).
+    intros H3; apply PT, H3.
 
-bbb.
-  assert (∀ Z (z : Z), ∥{_ : Z & X → ⊤}∥ → ∥Z∥) as H2.
-   intros Z z H2; apply PT, z.
-
-   intros H; apply H2; [ intros x; apply PT_elim, H | ].
-   apply (AC X Y (λ _ _, ⊤) SX SY H1); intros x.
-   apply PT_intro, (existT _ (PT_elim (H x))), I.
-
- unfold AC.
-bbb.
-
-   assert (H2 : ∀ x : X, ∥{_ : Y x & ⊤}∥).
-    intros x.
-apply PT.
-assert (y : Y x).
-Focus 2.
-apply (existT (λ (_ : Y x), True) (y : Y x) I).
-Focus 2.
-   pose proof AC X Y (λ x a, ⊤) SX SY H1 H2 as H; simpl in H.
-intros HY.
-bbb.
-
-(*
-  assert (H2 : ∀ Z (z : Z), ∥{_ : Z & X → ⊤}∥ → ∥Z∥).
-   intros Z z H2; apply PT, z.
-
-   assert (H3 : ∀ x : X, ∥{_ : Y x & ⊤}∥).
-    intros x.
-    apply H2.
-*)
-
-   pose proof AC X Y (λ x a, ⊤) SX SY H1 H3 as H; simpl in H.
-bbb.
-
-   apply PT.
-   apply (existT (λ (_ : Y x), True) (y : Y x) I).
-
-  ============================
-   sigT (fun _ : Y x => True)
-
-bbb.
-
-Focus 2.
-  pose proof AC X Y (λ x a, ⊤) SX SY H1 H2 as H; simpl in H.
-
-  assert (∀ Z (z : Z), ∥{_ : Z & X → ⊤}∥ → ∥Z∥) as H2.
-Focus 2.
-intros Z; apply PT; intros x.
-
-   intros x.
-   apply PT.
-
-Focus 2.
-   intros Z z H2; apply PT, z.
-
-
- unfold Top.AC in AC.
-
-bbb.
-
-   intros H; apply H2.
-    intros x.
-    eapply prop_trunc_rec.
-
-bbb.
-   intros H; apply H2; [ intros x; apply PT_elim, H | ].
-   apply (AC X Y (λ _ _, ⊤) SX SY H1); intros x.
-   apply PT_intro, (existT _ (PT_elim (H x))), I.
+    assert (PB : isProp ∥(∀ x : X, Y x)∥) by apply PT_eq.
+    apply (prop_trunc_rec _ _ PB f H).
 
  unfold AC.
  intros H X A P SX SA PP H1.
@@ -935,6 +860,7 @@ apply hott_3_3_3.
 
   intros u v; apply PT_eq.
 
+bbb.
   intros H; apply (PT_intro (λ x, PT_elim (H x))).
 
   intros H x; apply (PT_intro (PT_elim H x)).
