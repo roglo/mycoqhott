@@ -947,26 +947,23 @@ Definition hott_3_8_5_tac : ∃ X (Y : X → Type), (∀ x, isSet (Y x))
   → notT ((Π (x : X), ∥(Y x)∥) → ∥(Π (x : X), Y x)∥).
 Proof.
 set (X := Σ (A : Type), ∥(ℬ = A)∥).
-assert (H1 : ∀ A p B q, ((existT _ A p:X) = existT _ B q) ≃ (A ≃ B)).
- intros; apply equiv_eq_pair_trunc.
+set (x₀ := existT _ ℬ |(eq_refl ℬ)|:X); simpl in x₀.
+set (Y := fun x => x₀ = x:Type); simpl in Y.
+exists X, Y; intros H7 H8.
+assert (PX : isProp X).
+ intros x y.
+ assert (H9 : ∀ x : X, Y x).
+  intros (A, p); subst Y; simpl.
+  apply (Σ_type.pair_eq (PT_elim p)), PT_eq.
 
- simpl in H1.
- pose proof
-  (H1 ℬ |(eq_refl ℬ)| ℬ |(eq_refl ℬ)|)
-  as H2.
- set (x₀ := existT _ ℬ |(eq_refl ℬ)|:X) in *.
- simpl in x₀.
- set (Y := fun x => x₀ = x:Type); simpl in Y.
- exists X, Y; intros H7 H8.
- assert (isProp X) as PX.
-  intros x y.
-  assert (H9 : ∀ x : X, Y x).
-   intros (A, p); subst Y; simpl.
-   apply (Σ_type.pair_eq (PT_elim p)), PT_eq.
+  transitivity x₀; [ symmetry; apply H9 | apply H9 ].
 
-   transitivity x₀; [ symmetry; apply H9 | apply H9 ].
+ apply isProp_isSet in PX.
+ assert (H1 : ∀ A p B q, ((existT _ A p:X) = existT _ B q) ≃ (A ≃ B)).
+  intros; apply equiv_eq_pair_trunc.
 
-  apply isProp_isSet in PX.
+  simpl in H1.
+  pose proof (H1 ℬ |(eq_refl ℬ)| ℬ |(eq_refl ℬ)|) as H2.
   set (p := Σ_type.pr₁ (pr₁ (Σ_type.pr₂ H2)) bool_eq_bool_id).
   set (q := Σ_type.pr₁ (pr₁ (Σ_type.pr₂ H2)) bool_eq_bool_negb).
   pose proof (PX x₀ x₀ p q) as s.
