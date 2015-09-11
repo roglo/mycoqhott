@@ -953,14 +953,15 @@ Defined.
 Definition isProp_pair_trunc {A} : isProp (Σ (B : Type), ∥(A = B)∥).
 Proof.
 intros x y.
-Check @Σ_type.pair_eq.
-bbb.
-
 set (X := Σ (B : Type), ∥(A = B)∥).
 set (x₀ := existT _ A |(eq_refl A)|:X); simpl in x₀.
 transitivity x₀; subst x₀.
  symmetry.
- destruct x as (C, p); apply (Σ_type.pair_eq (PT_elim p)), PT_eq.
+ destruct x as (C, p).
+pose proof PT_elim p as q.
+bbb.
+
+; apply (Σ_type.pair_eq (PT_elim p)), PT_eq.
 
  destruct y as (C, p); apply (Σ_type.pair_eq (PT_elim p)), PT_eq.
 Defined.
