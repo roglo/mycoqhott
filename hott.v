@@ -1014,19 +1014,13 @@ ex_intro _ X
               if b as b0 return (negb (negb b0) = b0)
               then eq_refl true
               else eq_refl false)),
-       ((λ _ _,
-         (Σ_type2.hott_2_12_6
-            (hap
-               (f_equal
-                  (λ e0 : ℬ ≃ ℬ,
-                   let (x, i0) := e0 in
-                   let (_, s7) := i0 in let (x0, _) := s7 in x0) s5)
-               false)))
-        (f_equal
-           (λ e0 : ℬ ≃ ℬ,
-            let (x, i0) := e0 in
-            let (s6, _) := i0 in let (x0, _) := s6 in x0) s5))
-       (f_equal (λ e0 : ℬ ≃ ℬ, let (x, _) := e0 in x) s5))
+       Σ_type2.hott_2_12_6
+          (hap
+             (f_equal
+                (λ e0 : ℬ ≃ ℬ,
+                 let (x, i0) := e0 in
+                 let (_, s7) := i0 in let (x0, _) := s7 in x0) s5)
+             false))
       (eq_sym
          ((Hg
              (existT isequiv negb
