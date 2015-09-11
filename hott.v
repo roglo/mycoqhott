@@ -969,7 +969,7 @@ Proof.
 set (X := Σ (A : Type), ∥(ℬ = A)∥).
 set (x₀ := existT _ ℬ |(eq_refl ℬ)|:X); simpl in x₀.
 set (Y := λ x, x₀ = x:Type); simpl in Y.
-exists X, Y; intros H7 H8.
+exists X, Y; intros H1 H2.
 assert (PX : isProp X) by apply isProp_pair_trunc.
 apply isProp_isSet in PX.
 destruct equiv_eq_bool_trunc as (f, ((g, Hg), _)).
@@ -978,10 +978,9 @@ unfold bool_eq_bool_id, bool_eq_bool_negb in s; simpl in s.
 apply (ap f) in s.
 eapply compose in s; [ symmetry in s | eapply invert, Hg ].
 eapply compose in s; [ symmetry in s | eapply invert, Hg ].
-unfold id in s.
-injection s; intros H _ _.
-pose proof (hap H false) as H2.
-revert H2; apply Σ_type2.hott_2_12_6.
+apply EqdepFacts.eq_sigT_fst in s.
+pose proof (hap s false) as H3.
+revert H3; apply Σ_type2.hott_2_12_6.
 Defined.
 
 Set Printing Depth 100.
