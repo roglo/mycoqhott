@@ -1048,7 +1048,24 @@ assert (not (isSet X)) as NSX.
    assert (BA : ∀ Ap : X, ∥(ℬ = Σ_type.pr₁ Ap)∥) by (intros (A, p); apply p).
    assert (∀ Ap : X, ∥(x₀ = Ap)∥).
     intros (A, p).
+subst x₀.
+bbb.
+Check (existT (λ A0 : Type, ∥(ℬ = A0)∥) bool (PT_intro (eq_refl ℬ))).
+Check (existT (λ A0 : Type, ∥(ℬ = A0)∥) A p).
+
+existT (λ A0 : Type, ∥(ℬ = A0)∥) A p
+     : {A0 : Type & ∥(bool = A0)∥}
+existT (λ A0 : Type, ∥(ℬ = A0)∥) bool (PT_intro (eq_refl ℬ))
+     : {A0 : Type & ∥(bool = A0)∥}
+bbb.
+
     apply PT_intro.
+    assert (ℬ = A) as q.
+     apply PT_elim.
+     intros x y.
+bbb.
+apply (Σ_type.pair_eq q), PT_eq.
+
 bbb.
 , (Σ_type.pair_eq (PT_elim p)), PT_eq.
 
