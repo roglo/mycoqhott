@@ -1046,28 +1046,25 @@ assert (not (isSet X)) as NSX.
 
    assert (SY : ∀ x, isSet (Y x)) by apply SX.
    assert (BA : ∀ Ap : X, ∥(ℬ = Σ_type.pr₁ Ap)∥) by (intros (A, p); apply p).
-   assert (∀ Ap : X, ∥(x₀ = Ap)∥).
-    intros (A, p).
-subst x₀.
-bbb.
-Check (existT (λ A0 : Type, ∥(ℬ = A0)∥) bool (PT_intro (eq_refl ℬ))).
-Check (existT (λ A0 : Type, ∥(ℬ = A0)∥) A p).
+   assert (Px₀Ap : ∀ Ap : X, ∥(x₀ = Ap)∥).
+    intros (A, p); subst x₀.
+    apply (PT_rec (ℬ = A)); [ apply PT_eq | | assumption ].
+    intros q; destruct q.
+    apply PT_intro, (Σ_type.pair_eq (eq_refl ℬ)), PT_eq.
 
-existT (λ A0 : Type, ∥(ℬ = A0)∥) A p
-     : {A0 : Type & ∥(bool = A0)∥}
-existT (λ A0 : Type, ∥(ℬ = A0)∥) bool (PT_intro (eq_refl ℬ))
-     : {A0 : Type & ∥(bool = A0)∥}
-bbb.
+    intros H1.
+    pose proof H1 Px₀Ap as H2.
+    apply PT_elim in H2.
+     subst Y; simpl in H2.
+     assert (isProp X) as PX.
+      intros x y.
+      transitivity x₀; [ symmetry; apply H2 | apply H2 ].
 
-    apply PT_intro.
-    assert (ℬ = A) as q.
-     apply PT_elim.
-     intros x y.
-bbb.
-apply (Σ_type.pair_eq q), PT_eq.
+      apply isProp_isSet in PX.
+      destruct (NSX PX).
 
-bbb.
-, (Σ_type.pair_eq (PT_elim p)), PT_eq.
+     apply ex_3_6_2; intros x p q.
+     subst Y; simpl in *.
 
 bbb.
     intros Ap.
