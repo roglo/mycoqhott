@@ -1039,12 +1039,10 @@ assert (not (isSet X)) as NSX.
    destruct x₂ as (B, x₂).
    simpl in px₁, px₂.
    assert (isSet (A ≃ B)) as pAB by (eapply isSet_equiv; assumption).
-bbb.
-
-   pose proof (H1 A x₁ B x₂) as H3.
-   apply univ_imp_eq in H3.
-   rewrite H3; assumption.
-About isSet_equiv.
+   pose proof (equiv_eq_pair_trunc A B x₁ x₂) as H1.
+   simpl in H1; apply univ_imp_eq in H1.
+   subst X; unfold pair_eq_bool_trunc in H1.
+   rewrite H1; assumption.
 
 bbb.
 
