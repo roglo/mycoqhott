@@ -1026,31 +1026,12 @@ assert (not (isSet X)) as NSX.
  revert H2; apply Σ_type2.hott_2_12_6.
 
  assert (H1 : ∀ x : X, isSet (Σ_type.pr₁ x)).
-  intros (A, p); simpl.
-intros x y.
-assert (isProp (x = y)); [ | assumption ].
-bbb.
-
-pose proof bool_set as H1.
-unfold isSet in H1.
-pose proof (λ B PB f, prop_trunc_rec (ℬ = A) B PB f p) as H.
-
-pose proof (λ PB f, prop_trunc_rec (ℬ = A) (x = y) PB f p) as H.
-bbb.
-
-intros x y q r.
-Check bool_set.
-
-pose proof (λ B PB f, prop_trunc_rec (ℬ = A) B PB f p) as H.
-
-prop_trunc_rec
-     : ∀ A B : Type, isProp B → (A → B) → ∥A∥ → B
-
-  apply PT_elim in p; [ destruct p; apply bool_set | ].
-  intros q r.
+  intros (A, p) x y; simpl in x, y.
+  assert (isProp (x = y)); [ | assumption ].
+  apply (prop_trunc_rec (ℬ = A)); [ apply hott_3_3_5_i | | assumption ].
+  intros q; destruct q; intros r s; apply bool_set.
 
 bbb.
-
 
 Definition hott_3_8_5_tac : ∃ X (Y : X → Type),
   notT ((Π (x : X), ∥(Y x)∥) → ∥(Π (x : X), Y x)∥).
