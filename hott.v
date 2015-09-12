@@ -1044,6 +1044,8 @@ assert (not (isSet X)) as NSX.
    subst X; unfold pair_eq_bool_trunc in H1.
    rewrite H1; assumption.
 
+   assert (SY : ∀ x, isSet (Y x)) by apply SX.
+
 bbb.
 
 Definition hott_3_8_5_tac : ∃ X (Y : X → Type),
