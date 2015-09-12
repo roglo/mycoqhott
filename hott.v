@@ -1025,11 +1025,26 @@ assert (not (isSet X)) as NSX.
  pose proof (hap s false) as H2.
  revert H2; apply Σ_type2.hott_2_12_6.
 
- assert (H1 : ∀ x : X, isSet (Σ_type.pr₁ x)).
+ assert (SAP : ∀ x : X, isSet (Σ_type.pr₁ x)).
   intros (A, p) x y; simpl in x, y.
   assert (isProp (x = y)); [ | assumption ].
   apply (prop_trunc_rec (ℬ = A)); [ apply hott_3_3_5_i | | assumption ].
   intros q; destruct q; intros r s; apply bool_set.
+
+  assert (SX : ∀ x₁ x₂ : X, isSet (x₁ = x₂)).
+   intros.
+   pose proof SAP x₁ as px₁.
+   pose proof SAP x₂ as px₂.
+   destruct x₁ as (A, x₁).
+   destruct x₂ as (B, x₂).
+   simpl in px₁, px₂.
+   assert (isSet (A ≃ B)) as pAB by (eapply isSet_equiv; assumption).
+bbb.
+
+   pose proof (H1 A x₁ B x₂) as H3.
+   apply univ_imp_eq in H3.
+   rewrite H3; assumption.
+About isSet_equiv.
 
 bbb.
 
