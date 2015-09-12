@@ -730,12 +730,12 @@ End hott_3_6.
 
 (* "3.7 Propositional truncation" *)
 
-Axiom prop_trunc : Type → Type.
-Arguments prop_trunc _%type.
-Notation "∥ A ∥" := (prop_trunc A) (A at level 0, format "∥ A ∥") : type_scope.
+Axiom PT : Type → Type.
+Arguments PT _%type.
+Notation "∥ A ∥" := (PT A) (A at level 0, format "∥ A ∥") : type_scope.
 
-Axiom PT : ∀ A, A → ∥A∥.
-Arguments PT [A] x.
+Axiom PT_intro : ∀ A, A → ∥A∥.
+Arguments PT_intro [A] x.
 
 Axiom PT_eq : ∀ A, isProp ∥A∥.
 Arguments PT_eq [A] x y.
@@ -743,10 +743,10 @@ Arguments PT_eq [A] x y.
 (* "If B is a mere proposition and we have f : A → B, then there is an
     induced g : ∥A∥ → B such that g(|a|) ≡ f(a) for all a : A." *)
 
-Axiom prop_trunc_rec : ∀ A B, isProp B → ∀ (f : A → B), ∥A∥ → B.
-Axiom prop_trunc_rec_def : ∀ A B p f a, prop_trunc_rec A B p f (PT a) = f a.
+Axiom PT_rec : ∀ A B, isProp B → ∀ (f : A → B), ∥A∥ → B.
+Axiom PT_rec_def : ∀ A B p f a, PT_rec A B p f (PT_intro a) = f a.
 
-Definition PT_elim {A} : isProp A → ∥A∥ → A := λ PA, prop_trunc_rec A A PA id.
+Definition PT_elim {A} : isProp A → ∥A∥ → A := λ PA, PT_rec A A PA id.
 
 (* doing the exercise 3.14 in advance, just to see if my definition of
    propositional truncation works *)
@@ -754,8 +754,8 @@ Definition PT_elim {A} : isProp A → ∥A∥ → A := λ PA, prop_trunc_rec A A
 Definition ex_3_14 : LEM → ∀ A, isProp A → (notT (notT A) ≃ ∥A∥).
 Proof.
 intros HLEM A HPA.
-apply (existT _ (λ p, PT (pr₁ LEM_LDN HLEM A HPA p))), qinv_isequiv.
-apply (existT _ (λ p q, q (prop_trunc_rec A A HPA id p))); simpl.
+apply (existT _ (λ p, PT_intro (pr₁ LEM_LDN HLEM A HPA p))), qinv_isequiv.
+apply (existT _ (λ p q, q (PT_rec A A HPA id p))); simpl.
 split; [ intros x; apply PT_eq | ].
 intros f; apply Π_type.funext; intros x; destruct (f x).
 Defined.
@@ -788,15 +788,15 @@ apply hott_3_3_3.
 
   assert (H2 : ∀ x : X, ∥{_ : Y x & ⊤}∥).
    intros x.
-   apply (prop_trunc_rec (Y x)); [ apply PT_eq | | apply YX ].
-   intros y; apply PT, (existT (λ (_ : Y x), True) (y : Y x) I).
+   apply (PT_rec (Y x)); [ apply PT_eq | | apply YX ].
+   intros y; apply PT_intro, (existT (λ (_ : Y x), True) (y : Y x) I).
 
    pose proof AC X Y (λ _ _, ⊤) SX SY H1 H2 as H; simpl in H.
    assert (f : {_ : ∀ x : X, Y x & X → ⊤} → ∥(∀ x : X, Y x)∥).
-    intros H3; apply PT, H3.
+    intros H3; apply PT_intro, H3.
 
     assert (PB : isProp ∥(∀ x : X, Y x)∥) by apply PT_eq.
-    apply (prop_trunc_rec _ _ PB f H).
+    apply (PT_rec _ _ PB f H).
 
  unfold AC.
  intros H X A P SX SA PP H1.
@@ -863,8 +863,8 @@ apply hott_3_3_3.
   intros H; apply AC; assumption.
 
   intros H x.
-  pose proof (λ B PB H1, prop_trunc_rec (∀ x : X, Y x) B PB H1 H) as H1.
-  apply H1; [ apply PT_eq | intros H2; apply PT, H2 ].
+  pose proof (λ B PB H1, PT_rec (∀ x : X, Y x) B PB H1 H) as H1.
+  apply H1; [ apply PT_eq | intros H2; apply PT_intro, H2 ].
 
  unfold AC_3_8_3, AC_3_8_3_equiv.
  intros AC X Y SX SY.
@@ -876,8 +876,8 @@ apply hott_3_3_3.
   intros H; apply AC; assumption.
 
   intros H x.
-  pose proof (λ B PB H1, prop_trunc_rec (∀ x : X, Y x) B PB H1 H) as H1.
-  apply H1; [ apply PT_eq | intros H2; apply PT, H2 ].
+  pose proof (λ B PB H1, PT_rec (∀ x : X, Y x) B PB H1 H) as H1.
+  apply H1; [ apply PT_eq | intros H2; apply PT_intro, H2 ].
 Defined.
 
 (* equivalence is a set, whenever A and B are *)
@@ -937,8 +937,8 @@ split.
 Defined.
 
 Definition equiv_eq_bool_trunc :
-  (existT (λ A, ∥(ℬ = A)∥) ℬ (PT (eq_refl ℬ)) =
-   existT (λ A, ∥(ℬ = A)∥) ℬ (PT (eq_refl ℬ))) ≃
+  (existT (λ A, ∥(ℬ = A)∥) ℬ (PT_intro (eq_refl ℬ)) =
+   existT (λ A, ∥(ℬ = A)∥) ℬ (PT_intro (eq_refl ℬ))) ≃
    (ℬ ≃ ℬ).
 Proof.
 intros; apply equiv_eq_pair_trunc.
@@ -1010,7 +1010,7 @@ Definition hott_3_8_5_tac : ∃ X (Y : X → Type),
   notT ((Π (x : X), ∥(Y x)∥) → ∥(Π (x : X), Y x)∥).
 Proof.
 set (X := Σ (A : Type), ∥(ℬ = A)∥).
-set (x₀ := existT _ ℬ (PT (eq_refl ℬ)):X); simpl in x₀.
+set (x₀ := existT _ ℬ (PT_intro (eq_refl ℬ)):X); simpl in x₀.
 set (Y := λ x, x₀ = x : Type); simpl in Y.
 exists X, Y.
 assert (not (isSet X)) as NSX.
@@ -1028,7 +1028,7 @@ assert (not (isSet X)) as NSX.
  assert (SAP : ∀ x : X, isSet (Σ_type.pr₁ x)).
   intros (A, p) x y; simpl in x, y.
   assert (isProp (x = y)); [ | assumption ].
-  apply (prop_trunc_rec (ℬ = A)); [ apply hott_3_3_5_i | | assumption ].
+  apply (PT_rec (ℬ = A)); [ apply hott_3_3_5_i | | assumption ].
   intros q; destruct q; intros r s; apply bool_set.
 
   assert (SX : ∀ x₁ x₂ : X, isSet (x₁ = x₂)).
@@ -1045,7 +1045,19 @@ assert (not (isSet X)) as NSX.
    rewrite H1; assumption.
 
    assert (SY : ∀ x, isSet (Y x)) by apply SX.
+   assert (BA : ∀ Ap : X, ∥(ℬ = Σ_type.pr₁ Ap)∥) by (intros (A, p); apply p).
+   assert (∀ Ap : X, ∥(x₀ = Ap)∥).
+    intros (A, p).
+    apply PT_intro.
+bbb.
+, (Σ_type.pair_eq (PT_elim p)), PT_eq.
 
+bbb.
+    intros Ap.
+    pose proof BA Ap as q.
+    destruct Ap as (A, p); simpl in q.
+
+    intros (A, p).
 bbb.
 
 Definition hott_3_8_5_tac : ∃ X (Y : X → Type),
