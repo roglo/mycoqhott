@@ -944,68 +944,6 @@ Proof.
 intros; apply equiv_eq_pair_trunc.
 Defined.
 
-(*
-Definition isProp_pair_trunc {A} : isProp (Σ (B : Type), ∥(A = B)∥).
-Proof.
-intros x y.
-set (X := Σ (B : Type), ∥(A = B)∥).
-set (x₀ := existT _ A (PT (eq_refl A)):X); simpl in x₀.
-transitivity x₀; subst x₀.
- symmetry.
- destruct x as (C, p).
- assert (A = C) as q.
-  apply PT_elim; [ | assumption ].
-bbb.
-
- apply (Σ_type.pair_eq q), PT_eq.
-
-bbb.
- destruct x as (C, p); eapply Σ_type.pair_eq, PT_eq.
-
- destruct y as (C, p); eapply Σ_type.pair_eq, PT_eq.
-Defined.
-*)
-
-(*
-Definition hott_3_8_5_tac : ∃ X (Y : X → Type), (∀ x, isSet (Y x))
-  → notT ((Π (x : X), ∥(Y x)∥) → ∥(Π (x : X), Y x)∥).
-Proof.
-set (X := Σ (A : Type), ∥(ℬ = A)∥).
-assert (H1 : ∀ A p B q, ((existT _ A p:X) = existT _ B q) ≃ (A ≃ B)).
- intros; apply equiv_eq_pair_trunc.
-
- simpl in H1.
- pose proof (H1 ℬ (PT (eq_refl ℬ)) ℬ (PT (eq_refl ℬ))) as H2.
- set (x₀ := existT _ ℬ (PT (eq_refl ℬ)):X) in *.
- simpl in x₀.
- set (Y := fun x => x₀ = x:Type); simpl in Y.
- exists X, Y; intros H7 H8.
- assert (isProp X) as PX.
-  intros x y.
-  assert (H9 : ∀ x : X, Y x).
-   intros (A, p); subst Y; simpl.
-   apply (Σ_type.pair_eq (PT_elim p)), PT_eq.
-
-   transitivity x₀; [ symmetry; apply H9 | apply H9 ].
-
-  apply isProp_isSet in PX.
-  set (p := Σ_type.pr₁ (pr₁ (Σ_type.pr₂ H2)) bool_eq_bool_id).
-  set (q := Σ_type.pr₁ (pr₁ (Σ_type.pr₂ H2)) bool_eq_bool_negb).
-  pose proof (PX x₀ x₀ p q) as s.
-  subst p q.
-  unfold bool_eq_bool_id, bool_eq_bool_negb in s.
-  simpl in s.
-  destruct H2 as (f, ((g, Hg), (h, Hh))); simpl in s.
-  apply (ap f) in s.
-  eapply compose in s; [ symmetry in s | eapply invert, Hg ].
-  eapply compose in s; [ symmetry in s | eapply invert, Hg ].
-  unfold id in s.
-  injection s; intros H _ _.
-  assert (H2 : negb true = true) by (rewrite <- H; reflexivity).
-  revert H2; apply Σ_type2.hott_2_12_6.
-Defined.
-*)
-
 Definition hott_3_8_5_tac : ∃ X (Y : X → Type),
   notT ((Π (x : X), ∥(Y x)∥) → ∥(Π (x : X), Y x)∥).
 Proof.
@@ -1054,27 +992,21 @@ assert (not (isSet X)) as NSX.
 
     intros H1.
     pose proof H1 Px₀Ap as H2.
-    apply PT_elim in H2.
-     subst Y; simpl in H2.
-     assert (isProp X) as PX.
-      intros x y.
-      transitivity x₀; [ symmetry; apply H2 | apply H2 ].
+    assert (isProp ⊥) as H3 by (intros x y; contradiction).
+    eapply PT_rec in H3; [ contradiction | | eassumption ].
+    intros H4.
+    subst Y; simpl in H4.
+    assert (PX : isProp X).
+     intros x y.
+     transitivity x₀; [ symmetry; apply H4 | apply H4 ].
 
-      apply isProp_isSet in PX.
-      destruct (NSX PX).
-
-     apply ex_3_6_2; intros x p q.
-     subst Y; simpl in *.
+     apply isProp_isSet in PX.
+     destruct (NSX PX).
+Defined.
 
 bbb.
-    intros Ap.
-    pose proof BA Ap as q.
-    destruct Ap as (A, p); simpl in q.
 
-    intros (A, p).
-bbb.
-
-Definition hott_3_8_5_tac : ∃ X (Y : X → Type),
+Definition old_hott_3_8_5_tac : ∃ X (Y : X → Type),
   notT ((Π (x : X), ∥(Y x)∥) → ∥(Π (x : X), Y x)∥).
 Proof.
 set (X := Σ (A : Type), ∥(ℬ = A)∥).
