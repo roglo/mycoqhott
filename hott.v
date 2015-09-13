@@ -976,68 +976,6 @@ apply (PT_rec (∀ x, Y x)).
  apply PT_intro, (Σ_type.pair_eq (eq_refl ℬ)), PT_eq.
 Defined.
 
-ccc.
-
-Definition initial_good_hott_3_8_5_tac : ∃ X (Y : X → Type),
-  notT ((Π (x : X), ∥(Y x)∥) → ∥(Π (x : X), Y x)∥).
-Proof.
-set (X := Σ (A : Type), ∥(ℬ = A)∥).
-set (x₀ := existT _ ℬ (PT_intro (eq_refl ℬ)):X); simpl in x₀.
-set (Y := λ x, x₀ = x : Type); simpl in Y.
-exists X, Y.
-assert (not (isSet X)) as NSX.
- intros PX.
- destruct equiv_eq_bool_trunc as (f, ((g, Hg), _)).
- pose proof (PX x₀ x₀ (g bool_eq_bool_id) (g bool_eq_bool_negb)) as s.
- unfold bool_eq_bool_id, bool_eq_bool_negb in s; simpl in s.
- apply (ap f) in s.
- eapply compose in s; [ symmetry in s | eapply invert, Hg ].
- eapply compose in s; [ symmetry in s | eapply invert, Hg ].
- apply EqdepFacts.eq_sigT_fst in s.
- pose proof (hap s false) as H2.
- revert H2; apply Σ_type2.hott_2_12_6.
-
- assert (SAP : ∀ x : X, isSet (Σ_type.pr₁ x)).
-  intros (A, p) x y; simpl in x, y.
-  assert (isProp (x = y)); [ | assumption ].
-  apply (PT_rec (ℬ = A)); [ apply hott_3_3_5_i | | assumption ].
-  intros q; destruct q; intros r s; apply bool_set.
-
-  assert (SX : ∀ x₁ x₂ : X, isSet (x₁ = x₂)).
-   intros.
-   pose proof SAP x₁ as px₁.
-   pose proof SAP x₂ as px₂.
-   destruct x₁ as (A, x₁).
-   destruct x₂ as (B, x₂).
-   simpl in px₁, px₂.
-   assert (isSet (A ≃ B)) as pAB by (eapply isSet_equiv; assumption).
-   pose proof (equiv_eq_pair_trunc A B x₁ x₂) as H1.
-   simpl in H1; apply univ_imp_eq in H1.
-   subst X; unfold pair_eq_bool_trunc in H1.
-   rewrite H1; assumption.
-
-   assert (SY : ∀ x, isSet (Y x)) by apply SX.
-   assert (BA : ∀ Ap : X, ∥(ℬ = Σ_type.pr₁ Ap)∥) by (intros (A, p); apply p).
-   assert (Px₀Ap : ∀ Ap : X, ∥(x₀ = Ap)∥).
-    intros (A, p); subst x₀.
-    apply (PT_rec (ℬ = A)); [ apply PT_eq | | assumption ].
-    intros q; destruct q.
-    apply PT_intro, (Σ_type.pair_eq (eq_refl ℬ)), PT_eq.
-
-    intros H1.
-    pose proof H1 Px₀Ap as H2.
-    assert (isProp ⊥) as H3 by (intros x y; contradiction).
-    eapply PT_rec in H3; [ contradiction | | eassumption ].
-    intros H4.
-    subst Y; simpl in H4.
-    assert (PX : isProp X).
-     intros x y.
-     transitivity x₀; [ symmetry; apply H4 | apply H4 ].
-
-     apply isProp_isSet in PX.
-     destruct (NSX PX).
-Defined.
-
 bbb.
 
 Definition old_hott_3_8_5_tac : ∃ X (Y : X → Type),
