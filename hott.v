@@ -102,16 +102,15 @@ Definition ℕ_code_equiv_1_or_0 m n :
 Proof.
 destruct (eq_nat_dec m n) as [H1| H1].
  left; subst m.
- apply (existT _ (λ c, I)), qinv_isequiv.
- apply (existT _ (λ _, ℕ.r n)).
+ exists (λ c, I); apply qinv_isequiv.
+ exists (λ _, ℕ.r n).
  unfold "◦", "~~", id; simpl.
- split; [ intros u; destruct u; reflexivity | ].
- intros c.
+ split; [ intros u; destruct u; reflexivity | intros c ].
  induction n; [ destruct c; reflexivity | apply IHn ].
 
  right.
- apply (existT _ (λ c, H1 (ℕ.decode m n c))), qinv_isequiv.
- apply (existT _ (λ p : False, match p with end)).
+ exists (λ c, H1 (ℕ.decode m n c)); apply qinv_isequiv.
+ exists (λ p : False, match p with end).
  unfold "◦", "~~", id.
  split; [ intros p; destruct p | ].
  intros c; destruct (H1 (ℕ.decode m n c)).
@@ -438,8 +437,8 @@ Definition hott_3_2_7 : notT (∀ A, A + notT A)
 Definition hott_3_3_2_tac P : isProp P → ∀ x₀ : P, P ≃ True.
 Proof.
 intros HP x₀.
-apply (existT _ (λ _, I)), qinv_isequiv.
-apply (existT _ (λ _, x₀)).
+exists (λ _, I); apply qinv_isequiv.
+exists (λ _, x₀).
 split; intros x; [ destruct x; reflexivity | apply HP ].
 Defined.
 
@@ -458,7 +457,7 @@ Definition hott_3_3_3_tac P Q :
   isProp P → isProp Q → (P → Q) → (Q → P) → P ≃ Q.
 Proof.
 intros p q f g.
-apply (existT _ f), qinv_isequiv, (existT _ g).
+exists f; apply qinv_isequiv; exists g.
 split; intros x; [ apply q | apply p ].
 Defined.
 
@@ -650,18 +649,13 @@ Definition PropU := {A : Type & isProp A}.
 Definition SetU_equiv_eq A B s t :
   (existT isSet A s = existT isSet B t) ≃ (A = B).
 Proof.
-apply
-  (existT _
-     (λ p : existT isSet A s = existT isSet B t,
-      match p in (_ = s0) return (let (b, _) := s0 in A = b) with
-      | eq_refl _ => eq_refl A
-      end)).
+exists
+  (λ p : existT isSet A s = existT isSet B t,
+   match p in (_ = s0) return (let (b, _) := s0 in A = b) with
+   | eq_refl _ => eq_refl A
+   end).
 apply qinv_isequiv.
-apply
-  (existT _
-     (λ p,
-      hott_3_5_1 isSet hott_3_3_5_ii (existT isSet A s)
-        (existT isSet B t) p)).
+exists (hott_3_5_1 isSet hott_3_3_5_ii (existT isSet A s) (existT isSet B t)).
 unfold "◦", "~~", id; simpl.
 split.
  intros p.
@@ -754,8 +748,8 @@ Definition PT_elim {A} : isProp A → ∥A∥ → A := λ PA, PT_rec A A PA id.
 Definition ex_3_14 : LEM → ∀ A, isProp A → (notT (notT A) ≃ ∥A∥).
 Proof.
 intros HLEM A HPA.
-apply (existT _ (λ p, PT_intro (pr₁ LEM_LDN HLEM A HPA p))), qinv_isequiv.
-apply (existT _ (λ p q, q (PT_rec A A HPA id p))); simpl.
+exists (λ p, PT_intro (pr₁ LEM_LDN HLEM A HPA p)); apply qinv_isequiv.
+exists (λ p q, q (PT_rec A A HPA id p)); simpl.
 split; [ intros x; apply PT_eq | ].
 intros f; apply Π_type.funext; intros x; destruct (f x).
 Defined.
@@ -910,15 +904,14 @@ Definition equiv_eq_pair_trunc A B p q :
   ((existT _ A p : pair_eq_bool_trunc) = existT _ B q) ≃ (A ≃ B).
 Proof.
 intros; simpl.
-apply
- (existT _
-    (λ H,
-     (λ
-      H2 : Σ_type.pr₁ (existT (λ A0 : Type, ∥(ℬ = A0)∥) A p)
-           ≃ Σ_type.pr₁ (existT (λ A0 : Type, ∥(ℬ = A0)∥) B q), H2)
-       (idtoeqv (ap Σ_type.pr₁ H)))).
+exists
+  (λ H,
+   (λ
+    H2 : Σ_type.pr₁ (existT (λ A0 : Type, ∥(ℬ = A0)∥) A p)
+         ≃ Σ_type.pr₁ (existT (λ A0 : Type, ∥(ℬ = A0)∥) B q), H2)
+     (idtoeqv (ap Σ_type.pr₁ H))).
 apply qinv_isequiv.
-apply (existT _ (λ r : A ≃ B, Σ_type.pair_eq (ua r) (PT_eq ((ua r)⁎ p) q))).
+exists (λ r : A ≃ B, Σ_type.pair_eq (ua r) (PT_eq ((ua r)⁎ p) q)).
 unfold "◦", "~~", id; simpl.
 split.
  intros r.
@@ -944,7 +937,8 @@ Proof.
 intros; apply equiv_eq_pair_trunc.
 Defined.
 
-Definition hott_3_8_5_tac : ∃ X (Y : X → Type),
+Definition hott_3_8_5_tac :
+  Σ (X : Type), Σ (Y : X → Type),
   notT ((Π (x : X), ∥(Y x)∥) → ∥(Π (x : X), Y x)∥).
 Proof.
 set (X := Σ (A : Type), ∥(ℬ = A)∥).
