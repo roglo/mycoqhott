@@ -954,10 +954,10 @@ exists X, Y; intros H1.
 apply (PT_rec (∀ x, Y x)).
  intros x y; contradiction.
 
- intros H4; subst Y; simpl in H4.
+ intros H2; subst Y; simpl in H2.
  assert (PX : isProp X).
   intros x y.
-  transitivity x₀; [ symmetry; apply H4 | apply H4 ].
+  transitivity x₀; [ symmetry; apply H2 | apply H2 ].
 
   apply isProp_isSet in PX.
   destruct equiv_eq_bool_trunc as (f, ((g, Hg), _)).
@@ -967,8 +967,8 @@ apply (PT_rec (∀ x, Y x)).
   eapply compose in s; [ symmetry in s | eapply invert, Hg ].
   eapply compose in s; [ symmetry in s | eapply invert, Hg ].
   apply EqdepFacts.eq_sigT_fst in s.
-  pose proof (hap s false) as H5.
-  revert H5; apply Σ_type2.hott_2_12_6.
+  pose proof (hap s false) as H3.
+  revert H3; apply Σ_type2.hott_2_12_6.
 
  apply H1; intros (A, p); subst x₀.
  apply (PT_rec (ℬ = A)); [ apply PT_eq | | assumption ].
