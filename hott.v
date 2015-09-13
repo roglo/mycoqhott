@@ -741,6 +741,8 @@ Axiom PT_rec : ∀ A B, isProp B → ∀ (f : A → B), ∥A∥ → B.
 Axiom PT_rec_def : ∀ A B p f a, PT_rec A B p f (PT_intro a) = f a.
 
 Definition PT_elim {A} : isProp A → ∥A∥ → A := λ PA, PT_rec A A PA id.
+Definition PT_elim_not {A} : notT A → notT ∥A∥ :=
+  PT_rec A ⊥ (λ x y : ⊥, match x with end).
 
 (* doing the exercise 3.14 in advance, just to see if my definition of
    propositional truncation works *)
@@ -945,9 +947,7 @@ set (X := Σ (A : Type), ∥(ℬ = A)∥).
 set (x₀ := existT _ ℬ (PT_intro (eq_refl ℬ)):X); simpl in x₀.
 set (Y := λ x, x₀ = x : Type); simpl in Y.
 exists X, Y; intros H1.
-apply (PT_rec (∀ x, Y x)).
- intros x y; contradiction.
-
+apply (@PT_elim_not (∀ x, Y x)).
  intros H2; subst Y; simpl in H2.
  assert (PX : isProp X).
   intros x y.
