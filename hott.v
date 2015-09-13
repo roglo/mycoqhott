@@ -1002,4 +1002,6 @@ intros PP PTP x.
 apply PT_elim; [ apply PP | apply PTP ].
 Defined.
 
+(* "3.10 When are propositions truncated?" *)
+
 bbb.
