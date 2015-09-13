@@ -952,13 +952,13 @@ set (x₀ := existT _ ℬ (PT_intro (eq_refl ℬ)):X); simpl in x₀.
 set (Y := λ x, x₀ = x : Type); simpl in Y.
 exists X, Y.
 intros H1.
-assert (Px₀Ap : ∀ Ap : X, ∥(x₀ = Ap)∥).
+assert (H2 : ∥(∀ x : X, Y x)∥).
+ apply H1.
  intros (A, p); subst x₀.
  apply (PT_rec (ℬ = A)); [ apply PT_eq | | assumption ].
  intros q; destruct q.
  apply PT_intro, (Σ_type.pair_eq (eq_refl ℬ)), PT_eq.
 
- pose proof H1 Px₀Ap as H2.
  assert (isProp ⊥) as H3 by (intros x y; contradiction).
  eapply PT_rec in H3; [ contradiction | | eassumption ].
  intros H4; subst Y; simpl in H4.
