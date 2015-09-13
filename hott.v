@@ -976,56 +976,17 @@ apply (PT_rec (∀ x, Y x)).
  apply PT_intro, (Σ_type.pair_eq (eq_refl ℬ)), PT_eq.
 Defined.
 
-bbb.
+(* Set Printing Depth 100. *)
 
-Definition old_hott_3_8_5_tac : ∃ X (Y : X → Type),
-  notT ((Π (x : X), ∥(Y x)∥) → ∥(Π (x : X), Y x)∥).
+(* "3.9 The principle of unique choice" *)
+
+(* Lemma 3.9.1 *)
+
+Definition hott_3_9_1 {P} : isProp P → P ≃ ∥P∥.
 Proof.
-set (X := Σ (A : Type), ∥(ℬ = A)∥).
-set (x₀ := existT _ ℬ (PT (eq_refl ℬ)):X); simpl in x₀.
-set (Y := λ x, x₀ = x : Type); simpl in Y.
-exists X, Y.
-(**)
-intros H1.
-assert (PX : isProp X).
- intros x y.
- assert (H9 : ∀ x : X, Y x).
-  intros (A, p); subst Y; simpl.
-  assert (ℬ = A) as q.
-Check prop_trunc_rec.
-bbb.
-
-   apply PT_elim; [ | assumption ].
-bbb.
-
-Focus 2.
-apply (Σ_type.pair_eq q), PT_eq.
-apply PT_eq.
-
-  apply (Σ_type.pair_eq (PT_elim p)), PT_eq.
-
-  transitivity x₀; [ symmetry; apply H9 | apply H9 ].
-
-Inspect 2.
-
-bbb.
-intros _.
-assert (PX : isProp X) by apply isProp_pair_trunc.
-*)
-Focus 2.
-
-apply isProp_isSet in PX.
-destruct equiv_eq_bool_trunc as (f, ((g, Hg), _)).
-pose proof (PX x₀ x₀ (g bool_eq_bool_id) (g bool_eq_bool_negb)) as s.
-unfold bool_eq_bool_id, bool_eq_bool_negb in s; simpl in s.
-apply (ap f) in s.
-eapply compose in s; [ symmetry in s | eapply invert, Hg ].
-eapply compose in s; [ symmetry in s | eapply invert, Hg ].
-apply EqdepFacts.eq_sigT_fst in s.
-pose proof (hap s false) as H2.
-revert H2; apply Σ_type2.hott_2_12_6.
+intros PP.
+apply hott_3_3_3; [ assumption | apply PT_eq | apply PT_intro | ].
+apply PT_elim; assumption.
 Defined.
-
-Set Printing Depth 100.
 
 bbb.
