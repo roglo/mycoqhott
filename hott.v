@@ -774,8 +774,8 @@ apply hott_3_3_3.
 
  do 5 (apply ex_3_6_2; intros); apply PT_eq.
 
- intros AC X Y SX SY YX.
- unfold Top.AC in AC.
+ intros AC₁ X Y SX SY YX.
+ unfold AC in AC₁; rename AC₁ into AC.
  assert (H1 : ∀ x : X, Y x → isProp ⊤).
   intros _ _ x y.
   apply (Σ_type.pr₁ (quasi_inv (hott_2_8_1 x y))), x.
