@@ -951,6 +951,43 @@ set (X := Σ (A : Type), ∥(ℬ = A)∥).
 set (x₀ := existT _ ℬ (PT_intro (eq_refl ℬ)):X); simpl in x₀.
 set (Y := λ x, x₀ = x : Type); simpl in Y.
 exists X, Y.
+assert (Px₀Ap : ∀ Ap : X, ∥(x₀ = Ap)∥).
+ intros (A, p); subst x₀.
+ apply (PT_rec (ℬ = A)); [ apply PT_eq | | assumption ].
+ intros q; destruct q.
+ apply PT_intro, (Σ_type.pair_eq (eq_refl ℬ)), PT_eq.
+
+ intros H1.
+ pose proof H1 Px₀Ap as H2.
+ assert (isProp ⊥) as H3 by (intros x y; contradiction).
+ eapply PT_rec in H3; [ contradiction | | eassumption ].
+ intros H4.
+ subst Y; simpl in H4.
+ assert (PX : isProp X).
+  intros x y.
+  transitivity x₀; [ symmetry; apply H4 | apply H4 ].
+
+  apply isProp_isSet in PX.
+  destruct equiv_eq_bool_trunc as (f, ((g, Hg), _)).
+  pose proof (PX x₀ x₀ (g bool_eq_bool_id) (g bool_eq_bool_negb)) as s.
+  unfold bool_eq_bool_id, bool_eq_bool_negb in s; simpl in s.
+  apply (ap f) in s.
+  eapply compose in s; [ symmetry in s | eapply invert, Hg ].
+  eapply compose in s; [ symmetry in s | eapply invert, Hg ].
+  apply EqdepFacts.eq_sigT_fst in s.
+  pose proof (hap s false) as H5.
+  revert H5; apply Σ_type2.hott_2_12_6.
+Defined.
+
+ccc.
+
+Definition initial_good_hott_3_8_5_tac : ∃ X (Y : X → Type),
+  notT ((Π (x : X), ∥(Y x)∥) → ∥(Π (x : X), Y x)∥).
+Proof.
+set (X := Σ (A : Type), ∥(ℬ = A)∥).
+set (x₀ := existT _ ℬ (PT_intro (eq_refl ℬ)):X); simpl in x₀.
+set (Y := λ x, x₀ = x : Type); simpl in Y.
+exists X, Y.
 assert (not (isSet X)) as NSX.
  intros PX.
  destruct equiv_eq_bool_trunc as (f, ((g, Hg), _)).
