@@ -737,12 +737,13 @@ Arguments PT_eq [A] x y.
 (* "If B is a mere proposition and we have f : A → B, then there is an
     induced g : ∥A∥ → B such that g(|a|) ≡ f(a) for all a : A." *)
 
-Axiom PT_rec : ∀ A B, isProp B → ∀ (f : A → B), ∥A∥ → B.
-Axiom PT_rec_def : ∀ A B p f a, PT_rec A B p f (PT_intro a) = f a.
+Axiom PT_rec : ∀ A B (f : A → B), isProp B →
+  { g : ∥A∥ → B & ∀ a, g (PT_intro a) = f a }.
 
-Definition PT_elim {A} : isProp A → ∥A∥ → A := λ PA, PT_rec A A PA id.
+Definition PT_elim {A} : isProp A → ∥A∥ → A :=
+  λ PA, Σ_type.pr₁ (PT_rec A A id PA).
 Definition PT_elim_not {A} : notT A → notT ∥A∥ :=
-  PT_rec A ⊥ (λ x y : ⊥, match x with end).
+  λ f, Σ_type.pr₁ (PT_rec A ⊥ f (λ x y : ⊥, match x with end)).
 
 (* doing the exercise 3.14 in advance, just to see if my definition of
    propositional truncation works *)
@@ -751,7 +752,7 @@ Definition ex_3_14 : LEM → ∀ A, isProp A → (notT (notT A) ≃ ∥A∥).
 Proof.
 intros HLEM A HPA.
 exists (λ p, PT_intro (pr₁ LEM_LDN HLEM A HPA p)); apply qinv_isequiv.
-exists (λ p q, q (PT_rec A A HPA id p)); simpl.
+exists (λ p q, q (Σ_type.pr₁ (PT_rec A A id HPA) p)); simpl.
 split; [ intros x; apply PT_eq | ].
 intros f; apply Π_type.funext; intros x; destruct (f x).
 Defined.
@@ -784,7 +785,7 @@ apply hott_3_3_3.
 
   assert (H2 : ∀ x : X, ∥{_ : Y x & ⊤}∥).
    intros x.
-   apply (PT_rec (Y x)); [ apply PT_eq | | apply YX ].
+   apply (PT_rec (Y x)); [ | apply PT_eq | apply YX ].
    intros y; apply PT_intro, (existT (λ (_ : Y x), True) (y : Y x) I).
 
    pose proof AC X Y (λ _ _, ⊤) SX SY H1 H2 as H; simpl in H.
@@ -792,7 +793,7 @@ apply hott_3_3_3.
     intros H3; apply PT_intro, H3.
 
     assert (PB : isProp ∥(∀ x : X, Y x)∥) by apply PT_eq.
-    apply (PT_rec _ _ PB f H).
+    apply (Σ_type.pr₁ (PT_rec _ _ f PB) H).
 
  unfold AC.
  intros H X A P SX SA PP H1.
@@ -859,7 +860,7 @@ apply hott_3_3_3.
   intros H; apply AC; assumption.
 
   intros H x.
-  pose proof (λ B PB H1, PT_rec (∀ x : X, Y x) B PB H1 H) as H1.
+  pose proof (λ B PB H1, Σ_type.pr₁ (PT_rec (∀ x : X, Y x) B H1 PB) H) as H1.
   apply H1; [ apply PT_eq | intros H2; apply PT_intro, H2 ].
 
  unfold AC_3_8_3, AC_3_8_3_equiv.
@@ -872,7 +873,7 @@ apply hott_3_3_3.
   intros H; apply AC; assumption.
 
   intros H x.
-  pose proof (λ B PB H1, PT_rec (∀ x : X, Y x) B PB H1 H) as H1.
+  pose proof (λ B PB H1, Σ_type.pr₁ (PT_rec (∀ x : X, Y x) B H1 PB) H) as H1.
   apply H1; [ apply PT_eq | intros H2; apply PT_intro, H2 ].
 Defined.
 
@@ -965,7 +966,7 @@ apply (@PT_elim_not (∀ x, Y x)).
   revert H3; apply Σ_type2.hott_2_12_6.
 
  apply H1; intros (A, p); subst x₀.
- apply (PT_rec (ℬ = A)); [ apply PT_eq | | assumption ].
+ apply (PT_rec (ℬ = A)); [ | apply PT_eq | assumption ].
  intros q; destruct q.
  apply PT_intro, (Σ_type.pair_eq (eq_refl ℬ)), PT_eq.
 Defined.
