@@ -950,8 +950,7 @@ Proof.
 set (X := Σ (A : Type), ∥(ℬ = A)∥).
 set (x₀ := existT _ ℬ (PT_intro (eq_refl ℬ)):X); simpl in x₀.
 set (Y := λ x, x₀ = x : Type); simpl in Y.
-exists X, Y.
-intros H1.
+exists X, Y; intros H1.
 apply (PT_rec (∀ x, Y x)).
  intros x y; contradiction.
 
@@ -971,8 +970,7 @@ apply (PT_rec (∀ x, Y x)).
   pose proof (hap s false) as H5.
   revert H5; apply Σ_type2.hott_2_12_6.
 
- apply H1.
- intros (A, p); subst x₀.
+ apply H1; intros (A, p); subst x₀.
  apply (PT_rec (ℬ = A)); [ apply PT_eq | | assumption ].
  intros q; destruct q.
  apply PT_intro, (Σ_type.pair_eq (eq_refl ℬ)), PT_eq.
