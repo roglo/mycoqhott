@@ -989,4 +989,17 @@ apply hott_3_3_3; [ assumption | apply PT_eq | apply PT_intro | ].
 apply PT_elim; assumption.
 Defined.
 
+(* "Corollary 3.9.2 (The principle of unique choice). Suppose a type
+    family P : A → U such that
+         (i) For each x, the type P(x) is a mere proposition, and
+        (ii) For each x we have ∥P(x)∥.
+    Then we have ∏ (x:A) P(x)." *)
+
+Definition hott_3_9_2 {A P} :
+  (Π (x : A), isProp (P x)) → (Π (x : A), ∥(P x)∥) → Π (x : A), P x.
+Proof.
+intros PP PTP x.
+apply PT_elim; [ apply PP | apply PTP ].
+Defined.
+
 bbb.
