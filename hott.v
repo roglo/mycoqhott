@@ -999,4 +999,6 @@ Defined.
 
 (* "3.10 When are propositions truncated?" *)
 
+(* "3.11 Contractibility" *)
+
 bbb.
