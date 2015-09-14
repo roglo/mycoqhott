@@ -1211,15 +1211,22 @@ Defined.
 Definition hott_3_11_9_ii {A P} :
   ∀ (p : isContr A), (Σ (x : A), P x) ≃ P (pr₁ p).
 Proof.
+intros (a, p); simpl.
+assert (p' : ∀ x, x = a) by (intros x; apply invert, p).
+clear p; rename p' into p.
 (*
-intros (a, p); simpl.
 assert ((Σ (x : A), P x) → P a) as ffff.
- intros (b, q); simpl.
- apply (transport P (p b)⁻¹), q.
-bbb.
+ intros (b, q).
+ pose proof p b as r.
+ destruct r; apply q.
+Show Proof.
 *)
-intros (a, p); simpl.
-exists (λ q : {x : A & P x}, transport P (p (pr₁ q))⁻¹ (pr₂ q)).
+exists
+  (λ X : {x : A & P x},
+   let (b, q) := X in
+   match p b in (_ = y) return ((∀ x : A, x = y) → P y) with
+   | eq_refl _ => λ _ : ∀ x : A, x = b, q
+   end p).
 apply qinv_isequiv.
 exists (λ q : P a, existT (λ x : A, P x) a q).
 unfold "◦", "~~", id; simpl.
@@ -1227,8 +1234,62 @@ split. Focus 2.
  intros (b, q); simpl.
  destruct (p b); reflexivity.
 
- intros x.
- (* blocked *)
+ intros y.
+(* blocked *)
+(*
+  ============================
+   match p a in (_ = y0) return ((∀ x0 : A, x0 = y0) → P y0) with
+   | eq_refl _ => λ _ : ∀ x : A, x = a, y
+   end p = y
+*)
+
+Restart.
+intros (a, p); simpl.
+assert (p' : ∀ x, x = a) by (intros x; apply invert, p).
+clear p; rename p' into p.
+exists (λ q, eq_rect_r (λ b : A, P b → P a) id (p (pr₁ q)) (pr₂ q)).
+apply qinv_isequiv.
+exists (λ q : P a, existT (λ x : A, P x) a q).
+unfold "◦", "~~", id; simpl.
+split. Focus 2.
+ intros (b, q); simpl.
+ destruct (p b); reflexivity.
+
+ intros y.
+ unfold eq_rect_r; simpl.
+ unfold eq_rect; simpl.
+ unfold eq_sym; simpl.
+(* blocked *)
+(*
+  ============================
+   match
+     match p a in (_ = y0) return (y0 = a) with
+     | eq_refl _ => eq_refl a
+     end in (_ = y0) return (P y0 → P a)
+   with
+   | eq_refl _ => λ x : P a, x
+   end y = y
+*)
+
+Restart.
+intros (a, p); simpl.
+assert (p' : ∀ x, x = a) by (intros x; apply invert, p).
+clear p; rename p' into p.
+exists (λ q : {x : A & P x}, transport P (p (pr₁ q)) (pr₂ q)).
+apply qinv_isequiv.
+exists (λ q : P a, existT (λ x : A, P x) a q).
+unfold "◦", "~~", id; simpl.
+split. Focus 2.
+ intros (b, q); simpl.
+ destruct (p b); reflexivity.
+
+ intros y.
+(* blocked *)
+(*
+  ============================
+   transport P (p a) y = y
+*)
+
 bbb.
 
 End Contr.
