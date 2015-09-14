@@ -1181,7 +1181,9 @@ assert (isProp (P a)) as H; [ | apply H ].
 apply isContr_isProp, p.
 Defined.
 
-Definition hott_3_11_9_ii_supposed {A P} :
+(* difficulties to prove ii... *)
+
+Definition hott_3_11_9_ii_extra_hypothesis {A P} :
   (Π (x : A), isContr (P x))
   → ∀ (p : isContr A), (Σ (x : A), P x) ≃ P (pr₁ p).
 Proof.
@@ -1202,60 +1204,31 @@ Definition hott_3_11_9_ii_logical_equiv {A P} : ∀ (p : isContr A),
 Proof.
 intros (a, p); simpl.
 split.
- intros (b, q).
- apply (transport P (p b)⁻¹), q.
-
- intros q.
- exists a; apply q.
+ intros q; apply (transport P (p (pr₁ q))⁻¹), (pr₂ q).
+ intros q; exists a; apply q.
 Defined.
 
 Definition hott_3_11_9_ii {A P} :
   ∀ (p : isContr A), (Σ (x : A), P x) ≃ P (pr₁ p).
 Proof.
-intros p; generalize p; intros q.
-destruct q as (a, q); simpl.
-apply isContr_isProp in p.
-bbb.
-
-assert (∀ x y : A, P x → P y) as r.
- intros x y r.
- apply (transport P (q y)).
- apply (transport P (q x)⁻¹), r.
-
 (*
-  assert ((Σ (x : A), P x) → P a) as ffff.
-   intros (b, p).
-   eapply r, p.
-Show Proof.
+intros (a, p); simpl.
+assert ((Σ (x : A), P x) → P a) as ffff.
+ intros (b, q); simpl.
+ apply (transport P (p b)⁻¹), q.
+bbb.
 *)
-  exists (λ X : {x : A & P x}, let (b, p) := X in r b a p).
-  apply qinv_isequiv.
-  exists (existT _ a).
-  unfold "◦", "~~", id; simpl.
-  split.
-   intros x.
-   assert (H : isProp (P a)); [ | apply H ].
-   intros u v.
+intros (a, p); simpl.
+exists (λ q : {x : A & P x}, transport P (p (pr₁ q))⁻¹ (pr₂ q)).
+apply qinv_isequiv.
+exists (λ q : P a, existT (λ x : A, P x) a q).
+unfold "◦", "~~", id; simpl.
+split. Focus 2.
+ intros (b, q); simpl.
+ destruct (p b); reflexivity.
 
-bbb.
-
-SearchAbout isContr.
-About equiv_contr.
-equiv_contr : ∀ A B : Type, A ≃ B → isContr A → isContr B
-
-Arguments A, B are implicit and maximally inserted
-Argument scopes are [type_scope type_scope _ _]
-equiv_contr is transparent
-Expands to: Constant Top.Contr.equiv_contr
-
-bbb.
-
-assert (P a → Π (x : A), isContr (P x)).
- intros p x.
- assert (r : P x) by (apply (transport P (q x)), p).
- exists r; intros y.
-
-
+ intros x.
+ (* blocked *)
 bbb.
 
 End Contr.
