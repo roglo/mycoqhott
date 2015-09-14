@@ -1184,30 +1184,51 @@ Defined.
 Definition hott_3_11_9_ii {A P} :
   ∀ (p : isContr A), (Σ (x : A), P x) ≃ P (pr₁ p).
 Proof.
-intros (a, p).
+intros q.
+generalize q; intros p.
+destruct p as (a, p); simpl.
+SearchAbout isContr.
+bbb.
+
+
+assert (∀ x, x = a) as p'.
+intros x; apply invert, p.
+clear p; rename p' into p.
 (*
 assert ((Σ (x : A), P x) → P a) as ffff.
  intros (x, q).
- apply (transport P (p x)⁻¹) in q; assumption.
+ apply (transport P (p x)); assumption.
 Show Proof.
 *)
-exists (λ X : {x : A & P x}, let (x, q) := X in transport P (p x)⁻¹ q).
+exists (λ X : {x : A & P x}, let (x, q) := X in transport P (p x) q).
 apply qinv_isequiv.
 exists (existT _ a).
 unfold "◦", "~~", id; simpl.
 split.
+ intros y.
+SearchAbout transport.
+assert (∀ x : A, P x).
  intros x.
- pose proof (p a) as pa.
+ eapply transport; [ | apply y ].
+ apply invert, p.
+ pose proof @apd A P X a a (p a); simpl in H.
+ set (z := X a) in H.
+ assert (y = z).
+apply isContr_isProp in q.
+apply isProp_isSet in q.
+unfold isSet in q.
 bbb.
 
+pose proof @apd Type id.
+unfold id in H.
+pose proof H id.
+bbb.
 
 pose proof transport P 
 bbb.
 
 pose proof @transport_invert A P (existT _ a x) (existT _ a x) (eq_refl a).
 simpl in H.
-
-
 
 transport B p⁻¹ (pr₂ y) = pr₂ x
 transport P (p a)⁻¹ x = x.
