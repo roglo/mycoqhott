@@ -1061,23 +1061,31 @@ Defined.
 (* "Lemma 3.11.4. For any type A, the type isContr(A) is a mere
     proposition." *)
 
-(* this is my proof; it used the extensionality of functions; perhaps not
-   required? I have to check in the hott book :-) *)
 Definition hott_3_11_4 A : isProp (isContr A).
 Proof.
-intros x y.
-assert (isProp A) as p by (apply isContr_isProp; assumption).
-destruct x as (a, px).
-destruct y as (b, py).
-assert (a = b) as q by apply px.
+intros c c'.
+assert (isProp A) as r by (apply isContr_isProp; assumption).
+destruct c as (a, p).
+destruct c' as (a', p').
+set (q := p a').
 apply (Σ_type.pair_eq q).
 unfold transport.
 destruct q; unfold id.
-apply isProp_isSet in p.
-unfold isSet in p.
-apply Π_type.funext; intros x; apply p.
+apply isProp_isSet in r.
+apply Π_type.funext; intros x; apply r.
 Defined.
 
-(* check the proof above in the hott book! *)
+(* "Corollary 3.11.5. If A is contractible, then so is isContr(A)." *)
+
+Definition hott_3_11_5 A : isContr A → isContr (isContr A).
+Proof.
+intros c.
+apply hott_3_11_3_iii_i, hott_3_11_3_ii_iii.
+split; [ apply hott_3_11_4 | ].
+exists c; constructor.
+Defined.
+
+(* "Lemma 3.11.6. If P : A → U is a type family such that each P(a)
+    is contractible, then ∏ (x:A) P(x) is contractible." *)
 
 bbb.
