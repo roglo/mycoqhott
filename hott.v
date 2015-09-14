@@ -1150,6 +1150,95 @@ Definition hott_3_11_7 A B (r : retraction A B) : isContr A → isContr B
       end
   end.
 
+(* "Lemma 3.11.8. For any A and any a : A, the type Σ (x:A) (a = x)
+    is contractible." *)
+
+Definition hott_3_11_8 {A} : ∀ a : A, isContr (Σ (x : A), a = x).
+Proof.
+intros a.
+exists (existT _ a (eq_refl a)).
+intros (x, p).
+destruct p; reflexivity.
+Defined.
+
+(* "Lemma 3.11.9. Let P : A → U be a type family.
+      (i) If each P(x) is contractible, then ∑(x:A) P(x) is
+          equivalent to A.
+     (ii) If A is contractible with center a, then ∑(x:A) P(x) is
+          equivalent to P(a)." *)
+
+Definition hott_3_11_9_i {A P} :
+  (Π (x : A), isContr (P x)) → (Σ (x : A), P x) ≃ A.
+Proof.
+intros p.
+exists pr₁; apply qinv_isequiv.
+exists (λ a, existT _ a (pr₁ (p a))).
+unfold "◦", "~~", id; simpl.
+split; [ reflexivity | intros x ].
+destruct x as (a, q); simpl.
+apply (pair_eq (eq_refl a)); simpl; unfold id.
+assert (isProp (P a)) as H; [ | apply H ].
+apply isContr_isProp, p.
+Defined.
+
+Definition hott_3_11_9_ii {A P} :
+  ∀ (p : isContr A), (Σ (x : A), P x) ≃ P (pr₁ p).
+Proof.
+intros p.
+bbb.
+
+generalize p; intros q.
+apply isContr_isProp in p.
+assert ((Σ (x : A), P x) → P (pr₁ q)) as ffff.
+ intros (a, r).
+ pose proof p a (pr₁ q) as s.
+ destruct s; apply r.
+
+Show Proof.
+exists
+     (λ X : {x : A & P x},
+      let
+      (a, r) := X in
+      (λ (s : a = pr₁ q) (a0:=pr₁ q),
+       match s in (_ = y) return (P y) with
+       | eq_refl _ => r
+       end) (p a (pr₁ q))).
+apply qinv_isequiv.
+exists (existT _ (pr₁ q)).
+unfold "◦", "~~", id; simpl.
+split.
+ intros x.
+ set (r := p (pr₁ q) (pr₁ q)).
+ simpl in r.
+ destruct q as (a₀, q).
+simpl in r.
+simpl in x.
+destruct r.
+
+ destruct q as (a, q); simpl in x; simpl.
+ set (r := q a).
+
+exists
+   (λ c,
+    let (b, p) as s return (P (pr₁ s)) := q in
+    match p (pr₁ c) in (_ = y) return (P y → P b) with
+    | eq_refl _ => id
+    end (pr₂ c)).
+apply qinv_isequiv.
+exists (existT _ (pr₁ q)).
+unfold "◦", "~~", id; simpl.
+split.
+ intros x.
+ destruct q as (a, q); simpl in x; simpl.
+ set (r := q a).
+
+apply hott_3_3_3.
+SearchAbout (isProp (Σ (_ : _), _)).
+ apply isProp_Σ_type; [ apply isContr_isProp, p | ].
+ intros x.
+ apply isContr_isProp, p.
+
+
 bbb.
 
 End Contr.
