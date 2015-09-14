@@ -1134,19 +1134,19 @@ destruct r as (f, (g, Hg)).
 destruct p as (a, p).
 unfold isContr.
 exists (f a); intros b.
-bbb. (* see book *)
-
-transitivity (f (g b)); [ | apply Hg ].
+eapply compose; [ | apply Hg ].
 apply ap, p.
 Defined.
 
 Definition hott_3_11_7 A B (r : retraction A B) : isContr A → isContr B
 :=
-  λ (p : isContr A),
-  let (f, s) := r in
-  let (g, Hg) := s in
-  let (a, p0) := p in
-  existT (λ a0 : B, ∀ x : B, a0 = x) (f a)
-    (λ b : B, eq_trans (ap f (p0 (g b))) (Hg b)).
+  λ p,
+  match r with
+  | existT _ f (existT _ g Hg)  =>
+      match p with
+      | existT _ a p =>
+          existT (λ b, ∀ y, b = y) (f a) (λ b, ap f (p (g b)) • Hg b)
+      end
+  end.
 
 bbb.
