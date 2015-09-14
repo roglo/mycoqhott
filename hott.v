@@ -1001,4 +1001,68 @@ Defined.
 
 (* "3.11 Contractibility" *)
 
+(* "In Lemma 3.3.2 we observed that a mere proposition which is
+    inhabited must be equivalent to 1, and it is not hard to see
+    that the converse also holds." *)
+
+Definition hott_3_3_2_conv P : ∀ x₀ : P, P ≃ ⊤ → isProp P.
+Proof.
+intros x₀ H x y.
+destruct H as (f, ((g, Hg), (h, Hh))).
+unfold "◦", "~~", id in Hg, Hh.
+do 2 (rewrite <- Hh; symmetry).
+apply ap.
+destruct (f x), (f y); reflexivity.
+Defined.
+
+(* "Definition 3.11.1. A type A is *contractible*, or a *singleton*,
+    if there is a : A, called the *center of contraction*, such that
+    a = x for all x : A. We denote the specified path a = x by contr_x." *)
+
+Definition isContr A := Σ (a : A), Π (x : A), a = x.
+
+(* "Lemma 3.11.3. For a type A, the following are logically
+    equivalent.
+        (i) A is contractible in the sense of Definition 3.11.1.
+       (ii) A is a mere proposition, and there is a point a : A.
+      (iii) A is equivalent to 1." *)
+
+Definition isContr_isProp A : isContr A → isProp A.
+Proof.
+intros p x y.
+destruct p as (a, p).
+transitivity a; [ symmetry; apply p | apply p ].
+Defined.
+
+Definition hott_3_11_3_i_ii A : isContr A → isProp A * Σ (a : A), ⊤.
+Proof.
+intros p.
+split; [ apply isContr_isProp; assumption | ].
+destruct p as (a, p).
+exists a; constructor.
+Defined.
+
+Definition hott_3_11_3_ii_iii A : isProp A * (Σ (a : A), ⊤) → A ≃ ⊤.
+Proof.
+intros (p, (a, _)).
+apply hott_3_3_2; assumption.
+Defined.
+
+Definition hott_3_11_3_iii_i A : A ≃ ⊤ → isContr A.
+Proof.
+intros p.
+apply EqStr.equiv_fun in p.
+destruct p as (f, (g, (Hg, Hh))).
+exists (g I); intros x.
+etransitivity; [ | apply Hg ].
+destruct (f x); reflexivity.
+Defined.
+
+(* "Lemma 3.11.4. For any type A, the type isContr(A) is a mere
+    proposition." *)
+
+Definition hott_3_11_4 A : isProp (isContr A).
+Proof.
+intros x y.
+
 bbb.

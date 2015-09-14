@@ -2278,6 +2278,18 @@ Definition quasi_inv_l_eq_r {A B} (f : A → B) (g h : B → A) :
 :=
   λ Hfg Hhf x, (Hhf (g x))⁻¹ • ap h (Hfg x).
 
+Definition equiv_fun {A B} : A ≃ B
+  → Σ (f : A → B), Σ (g : B → A), (∀ x, g (f x) = x) ∧ (∀ y, f (g y) = y).
+Proof.
+intros p.
+destruct p as (f, ((g, Hg), (h, Hh))).
+exists f, g.
+split; [ intros x | intros y; apply Hg ].
+pose proof quasi_inv_l_eq_r f g h Hg Hh as p.
+unfold "~~" in p.
+etransitivity; [ apply p | apply Hh ].
+Defined.
+
 Definition quasi_inv_comp_l {A B} (e : A ≃ B) : pr₁ e⁻⁻¹ ◦ pr₁ e ~~ id.
 Proof.
 intros x.
