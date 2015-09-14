@@ -1195,11 +1195,28 @@ unfold "◦", "~~", id; simpl.
 split; assumption.
 Defined.
 
+Notation "A ⇔ B" := ((A → B) * (B → A))%type (at level 100).
+
+Definition hott_3_11_9_ii_logical_equiv {A P} : ∀ (p : isContr A),
+  (Σ (x : A), P x) ⇔ P (pr₁ p).
+Proof.
+intros (a, p); simpl.
+split.
+ intros (b, q).
+ apply (transport P (p b)⁻¹), q.
+
+ intros q.
+ exists a; apply q.
+Defined.
+
 Definition hott_3_11_9_ii {A P} :
   ∀ (p : isContr A), (Σ (x : A), P x) ≃ P (pr₁ p).
 Proof.
 intros p; generalize p; intros q.
 destruct q as (a, q); simpl.
+apply isContr_isProp in p.
+bbb.
+
 assert (∀ x y : A, P x → P y) as r.
  intros x y r.
  apply (transport P (q y)).
