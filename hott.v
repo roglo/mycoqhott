@@ -1061,8 +1061,23 @@ Defined.
 (* "Lemma 3.11.4. For any type A, the type isContr(A) is a mere
     proposition." *)
 
+(* this is my proof; it used the extensionality of functions; perhaps not
+   required? I have to check in the hott book :-) *)
 Definition hott_3_11_4 A : isProp (isContr A).
 Proof.
 intros x y.
+assert (isProp A) as p by (apply isContr_isProp; assumption).
+destruct x as (a, px).
+destruct y as (b, py).
+assert (a = b) as q by apply px.
+apply (Σ_type.pair_eq q).
+unfold transport.
+destruct q; unfold id.
+apply isProp_isSet in p.
+unfold isSet in p.
+apply Π_type.funext; intros x; apply p.
+Defined.
+
+(* check the proof above in the hott book! *)
 
 bbb.
