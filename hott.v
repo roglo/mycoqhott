@@ -1001,6 +1001,9 @@ Defined.
 
 (* "3.11 Contractibility" *)
 
+Section Contr.
+Import Σ_type.
+
 (* "In Lemma 3.3.2 we observed that a mere proposition which is
     inhabited must be equivalent to 1, and it is not hard to see
     that the converse also holds." *)
@@ -1068,7 +1071,7 @@ assert (isProp A) as r by (apply isContr_isProp; assumption).
 destruct c as (a, p).
 destruct c' as (a', p').
 set (q := p a').
-apply (Σ_type.pair_eq q).
+apply (pair_eq q).
 unfold transport.
 destruct q; unfold id.
 apply isProp_isSet in r.
@@ -1093,7 +1096,7 @@ Definition hott_3_11_6 {A P} :
 Proof.
 intros p.
 unfold isContr.
-exists (λ a, Σ_type.pr₁ (p a)); intros f.
+exists (λ a, pr₁ (p a)); intros f.
 apply Π_type.funext; intros x.
 pose proof p x as q.
 apply isContr_isProp in q; apply q.
@@ -1119,8 +1122,7 @@ Defined.
 Definition retraction A B :=
   Σ (r : A → B), Σ (s : B → A), Π (y : B), (r (s y) = y).
 
-Definition section {A B} : retraction A B → B → A :=
-  λ r, Σ_type.pr₁ (Σ_type.pr₂ r).
+Definition section {A B} : retraction A B → B → A := λ r, pr₁ (pr₂ r).
 
 Definition retract A : Type := Σ (B : Type), retraction A B.
 
@@ -1130,23 +1132,24 @@ Definition retract A : Type := Σ (B : Type), retraction A B.
 Definition hott_3_11_7_tac A B (r : retraction A B) : isContr A → isContr B.
 Proof.
 intros p.
-destruct r as (f, (g, Hg)).
-destruct p as (a, p).
-unfold isContr.
-exists (f a); intros b.
-eapply compose; [ | apply Hg ].
+destruct r as (r, (s, q)).
+destruct p as (a₀, p).
+exists (r a₀); intros b₀.
+eapply compose; [ | apply (q b₀) ].
 apply ap, p.
 Defined.
 
 Definition hott_3_11_7 A B (r : retraction A B) : isContr A → isContr B
 :=
-  λ p,
+  λ (p : isContr A),
   match r with
-  | existT _ f (existT _ g Hg)  =>
+  | existT _ r (existT _ s q) =>
       match p with
-      | existT _ a p =>
-          existT (λ b, ∀ y, b = y) (f a) (λ b, ap f (p (g b)) • Hg b)
+      | existT _ a₀ p =>
+          existT (λ b, ∀ b₀, b = b₀) (r a₀) (λ b₀, ap r (p (s b₀)) • q b₀)
       end
   end.
 
 bbb.
+
+End Contr.
