@@ -1181,183 +1181,62 @@ assert (isProp (P a)) as H; [ | apply H ].
 apply isContr_isProp, p.
 Defined.
 
+Definition hott_3_11_9_ii_supposed {A P} :
+  (Π (x : A), isContr (P x))
+  → ∀ (p : isContr A), (Σ (x : A), P x) ≃ P (pr₁ p).
+Proof.
+intros p (a, q); simpl.
+eapply equiv_compose; [ apply hott_3_11_9_i, p | ].
+pose proof p a as r; destruct r as (b, r).
+exists (λ _, b).
+apply qinv_isequiv.
+exists (λ _, a).
+unfold "◦", "~~", id; simpl.
+split; assumption.
+Defined.
+
 Definition hott_3_11_9_ii {A P} :
   ∀ (p : isContr A), (Σ (x : A), P x) ≃ P (pr₁ p).
 Proof.
-intros q.
-generalize q; intros p.
-destruct p as (a, p); simpl.
-SearchAbout isContr.
-bbb.
-
-
-assert (∀ x, x = a) as p'.
-intros x; apply invert, p.
-clear p; rename p' into p.
-(*
-assert ((Σ (x : A), P x) → P a) as ffff.
- intros (x, q).
- apply (transport P (p x)); assumption.
-Show Proof.
-*)
-exists (λ X : {x : A & P x}, let (x, q) := X in transport P (p x) q).
-apply qinv_isequiv.
-exists (existT _ a).
-unfold "◦", "~~", id; simpl.
-split.
- intros y.
-SearchAbout transport.
-assert (∀ x : A, P x).
- intros x.
- eapply transport; [ | apply y ].
- apply invert, p.
- pose proof @apd A P X a a (p a); simpl in H.
- set (z := X a) in H.
- assert (y = z).
-apply isContr_isProp in q.
-apply isProp_isSet in q.
-unfold isSet in q.
-bbb.
-
-pose proof @apd Type id.
-unfold id in H.
-pose proof H id.
-bbb.
-
-pose proof transport P 
-bbb.
-
-pose proof @transport_invert A P (existT _ a x) (existT _ a x) (eq_refl a).
-simpl in H.
-
-transport B p⁻¹ (pr₂ y) = pr₂ x
-transport P (p a)⁻¹ x = x.
-
-
-bbb.
-intros p.
-generalize p; intros q.
-apply isContr_isProp in p.
-eapply equiv_compose; [ | eapply hott_3_11_9_i ].
-bbb.
-
-eapply equiv_compose; [ apply hott_3_11_9_i | ].
-intros x.
-bbb.
-
-unfold isSet in p.
+intros p; generalize p; intros q.
 destruct q as (a, q); simpl.
-assert ((Σ (x : A), P x) → P a) as ffff.
- intros (x, r).
+assert (∀ x y : A, P x → P y) as r.
+ intros x y r.
+ apply (transport P (q y)).
+ apply (transport P (q x)⁻¹), r.
 
- rewrite (p x); apply q.
-Show Proof.
-*)
-exists
-   (λ X : {x : A & P x},
-    let (x, q) := X in eq_rect_r (λ a0 : A, P a0) q (p x)).
-apply qinv_isequiv.
-exists (λ q, existT _ a q).
-unfold "◦", "~~", id; simpl.
-split.
- intros x.
- unfold eq_rect_r; simpl.
- unfold eq_rect; simpl.
- unfold eq_sym; simpl.
- refine (match (p a) with eq_refl _ => _ end).
-
-bbb.
-(**)
-assert ((Σ (x : A), P x) → P a) as ffff.
- intros (x, q).
- destruct (p x); apply q.
-Show Proof.
-*)
-exists
-   (λ X : {x : A & P x},
-    let
-    (x, q) := X in
-    let e := p x in
-    match e in (_ = y) return (P y → P a) with
-    | eq_refl _ => λ q0 : P a, q0
-    end q).
-apply qinv_isequiv.
 (*
-assert (P a → Σ (x : A), P x) as gggg.
-intros q.
-exists a; apply q.
-*)
-exists (λ q, existT _ a q).
-unfold "◦", "~~", id; simpl.
-split.
- intros x.
-bbb.
-
-Focus 2.
-intros (x, q); simpl.
-apply (pair_eq (p x)).
-destruct (p x); reflexivity.
-
-bbb.
-
-generalize p; intros q.
-apply isContr_isProp in p.
-(*
-assert ((Σ (x : A), P x) → P (pr₁ q)) as ffff.
- intros (a, r).
- pose proof p a (pr₁ q) as s.
- destruct s; apply r.
+  assert ((Σ (x : A), P x) → P a) as ffff.
+   intros (b, p).
+   eapply r, p.
 Show Proof.
 *)
-exists
-     (λ X : {x : A & P x},
-      let
-      (a, r) := X in
-      (λ (s : a = pr₁ q) (a0:=pr₁ q),
-       match s in (_ = y) return (P y) with
-       | eq_refl _ => r
-       end) (p a (pr₁ q))).
-apply qinv_isequiv.
-exists (existT _ (pr₁ q)).
-unfold "◦", "~~", id; simpl.
-split.
- intros x.
- destruct q as (a, q); simpl in x; simpl.
+  exists (λ X : {x : A & P x}, let (b, p) := X in r b a p).
+  apply qinv_isequiv.
+  exists (existT _ a).
+  unfold "◦", "~~", id; simpl.
+  split.
+   intros x.
+   assert (H : isProp (P a)); [ | apply H ].
+   intros u v.
 
+bbb.
 
-assert (isSet A) as r by (apply isProp_isSet, p).
-unfold isSet in r.
-pose proof r a a.
+SearchAbout isContr.
+About equiv_contr.
+equiv_contr : ∀ A B : Type, A ≃ B → isContr A → isContr B
 
- set (r := p (pr₁ q) (pr₁ q)).
- simpl in r.
- destruct q as (a₀, q).
-simpl in r.
-simpl in x.
-destruct r.
+Arguments A, B are implicit and maximally inserted
+Argument scopes are [type_scope type_scope _ _]
+equiv_contr is transparent
+Expands to: Constant Top.Contr.equiv_contr
 
- destruct q as (a, q); simpl in x; simpl.
- set (r := q a).
+bbb.
 
-exists
-   (λ c,
-    let (b, p) as s return (P (pr₁ s)) := q in
-    match p (pr₁ c) in (_ = y) return (P y → P b) with
-    | eq_refl _ => id
-    end (pr₂ c)).
-apply qinv_isequiv.
-exists (existT _ (pr₁ q)).
-unfold "◦", "~~", id; simpl.
-split.
- intros x.
- destruct q as (a, q); simpl in x; simpl.
- set (r := q a).
-
-apply hott_3_3_3.
-SearchAbout (isProp (Σ (_ : _), _)).
- apply isProp_Σ_type; [ apply isContr_isProp, p | ].
- intros x.
- apply isContr_isProp, p.
+assert (P a → Π (x : A), isContr (P x)).
+ intros p x.
+ assert (r : P x) by (apply (transport P (q x)), p).
+ exists r; intros y.
 
 
 bbb.
