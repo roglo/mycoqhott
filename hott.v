@@ -1088,4 +1088,65 @@ Defined.
 (* "Lemma 3.11.6. If P : A → U is a type family such that each P(a)
     is contractible, then ∏ (x:A) P(x) is contractible." *)
 
+Definition hott_3_11_6 {A P} :
+  (Π (a : A), isContr (P a)) → isContr (Π (x : A), P x).
+Proof.
+intros p.
+unfold isContr.
+exists (λ a, Σ_type.pr₁ (p a)); intros f.
+apply Π_type.funext; intros x.
+pose proof p x as q.
+apply isContr_isProp in q; apply q.
+Defined.
+
+(* "Of course, if A is equivalent to B and A is contractible, then so
+    is B." *)
+
+Definition equiv_contr {A B} : A ≃ B → isContr A → isContr B.
+Proof.
+intros p q.
+apply hott_3_11_3_i_ii, hott_3_11_3_ii_iii in q.
+apply quasi_inv in p.
+eapply equiv_compose in q; [ | apply p ].
+apply hott_3_11_3_iii_i; assumption.
+Defined.
+
+(* "By definition, a *retraction* is a function r : A → B such that
+    there exists a function s : B → A, called its *section*, and a
+    homotopy : ∏ (y:B) (r(s(y)) = y); then we say that B is a
+    *retract* of A." *)
+
+Definition retraction A B :=
+  Σ (r : A → B), Σ (s : B → A), Π (y : B), (r (s y) = y).
+
+Definition section {A B} : retraction A B → B → A :=
+  λ r, Σ_type.pr₁ (Σ_type.pr₂ r).
+
+Definition retract A : Type := Σ (B : Type), retraction A B.
+
+(* "Lemma 3.11.7. If B is a retract of A, and A is contractible, then
+    so is B." *)
+
+Definition hott_3_11_7_tac A B (r : retraction A B) : isContr A → isContr B.
+Proof.
+intros p.
+destruct r as (f, (g, Hg)).
+destruct p as (a, p).
+unfold isContr.
+exists (f a); intros b.
+bbb. (* see book *)
+
+transitivity (f (g b)); [ | apply Hg ].
+apply ap, p.
+Defined.
+
+Definition hott_3_11_7 A B (r : retraction A B) : isContr A → isContr B
+:=
+  λ (p : isContr A),
+  let (f, s) := r in
+  let (g, Hg) := s in
+  let (a, p0) := p in
+  existT (λ a0 : B, ∀ x : B, a0 = x) (f a)
+    (λ b : B, eq_trans (ap f (p0 (g b))) (Hg b)).
+
 bbb.
