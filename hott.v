@@ -1181,10 +1181,10 @@ assert (isProp (P a)) as H; [ | apply H ].
 apply isContr_isProp, p.
 Defined.
 
-Definition hott_3_11_9_ii_tac {A P} (p : isContr A) :
-  (Σ (x : A), P x) ≃ P (pr₁ p).
+Definition hott_3_11_9_ii_tac {A P} (p : isContr A) (a := pr₁ p) :
+  (Σ (x : A), P x) ≃ P a.
 Proof.
-destruct p as (a, p); simpl.
+subst a; destruct p as (a, p); simpl.
 exists (λ q : {x : A & P x}, transport P (p (pr₁ q))⁻¹ (pr₂ q)).
 apply qinv_isequiv.
 exists (λ q : P a, existT (λ x : A, P x) a (transport P (p a) q)).
@@ -1207,10 +1207,11 @@ split.
  apply hap, ap, compose_invert_l.
 Defined.
 
-Definition hott_3_11_9_ii {A P} (p : isContr A) :
-  (Σ (x : A), P x) ≃ P (pr₁ p)
+Definition hott_3_11_9_ii {A P} (p : isContr A) (a := pr₁ p) :
+  (Σ (x : A), P x) ≃ P a
 :=
-  match p with
+  let _ := pr₁ p in
+  match p return (Σ (x : A), P x) ≃ P (pr₁ p) with
   | existT _ a p =>
       existT isequiv
         (λ q, transport P (p (pr₁ q))⁻¹ (pr₂ q))
