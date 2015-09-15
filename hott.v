@@ -1246,6 +1246,9 @@ Definition hott_3_11_9_ii {A P} (p : isContr A) (a := pr₁ p) :
                end)))
   end.
 
+(* "Lemma 3.11.10. A type A is a mere proposition if and only if for
+    all x, y : A, the type x =_{A} y is contractible. *)
+
 bbb.
 
 End Contr.
