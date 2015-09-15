@@ -1204,8 +1204,11 @@ split.
  eapply compose; [ apply transport_compat, compose_assoc |  ].
  eapply compose; [ eapply invert, transport_compose | ].
  destruct (p b)⁻¹; simpl; unfold id.
- rewrite compose_invert_r; reflexivity.
+ eapply (@compose _ _ (transport P (eq_refl a) q)); [ | reflexivity ].
+ apply hap, ap, compose_invert_r.
 Defined.
+
+(* make a version with the proof term, perhaps, that would be awesome *)
 
 bbb.
 
