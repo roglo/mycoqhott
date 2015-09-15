@@ -1275,8 +1275,12 @@ Proof.
 intros AB SA xb yb pb qb.
 apply EqStr.equiv_fun in AB.
 destruct AB as (f, (g, (Hf, Hg))).
+bbb.
+
+(*
 eapply (@compose _ _ (ap id pb)); [ destruct pb; reflexivity | ].
 eapply (@compose _ _ (ap id qb)); [ | destruct qb; reflexivity ].
+*)
 assert (∀ x y (p q : x = y), ap (g ◦ f) p = ap (g ◦ f) q) as p.
  intros x y p q.
  apply SA.
@@ -1286,13 +1290,19 @@ assert (∀ x y (p q : x = y), ap (g ◦ f) p = ap (g ◦ f) q) as p.
  apply invert in q.
  eapply compose in q; [ | eapply invert, ap_composite ].
  apply invert in q.
- assert (ap g pb = ap g qb).
+ assert (∀ pb qb : xb = yb, ap g pb = ap g qb) as r.
+  intros; apply SA.
+
+ assert (ap g pb = ap g qb) as rr.
+  apply SA.
+
+bbb.
   eapply (@compose _ _ (ap (id ◦ g) pb)); [ reflexivity | apply invert ].
   eapply (@compose _ _ (ap (id ◦ g) qb)); [ reflexivity | apply invert ].
-bbb.
-
   assert (gi : g ◦ f = id) by (apply Π_type.funext, Hf).
-  eapply (@compose _ _ (ap ((g ◦ f) ◦ g) pb)); [ reflexivity | ].
+  rewrite <- gi.
+  apply q.
+
 bbb.
 
  eapply invert, compose; [ | apply ap_composite ].
