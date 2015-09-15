@@ -1275,11 +1275,14 @@ Proof.
 intros AB SA x y p q.
 apply EqStr.equiv_fun in AB.
 destruct AB as (f, (g, (Hf, Hg))).
-assert (r : ap g p = ap g q) by apply SA.
-apply (ap (ap f)) in r.
-eapply compose, invert in r; [ | eapply invert, ap_composite ].
-eapply compose, invert in r; [ | eapply invert, ap_composite ].
+assert (r : g x = g y) by (rewrite p; reflexivity).
+assert (s : ap g p = ap g q) by apply SA.
+apply (ap (ap f)) in s.
+eapply compose, invert in s; [ | eapply invert, ap_composite ].
+eapply compose, invert in s; [ | eapply invert, ap_composite ].
 assert (fg : f ◦ g = id) by (apply Π_type.funext; intros z; apply Hg).
+bbb.
+
 Check (ap (f ◦ g) p).
 (* ap (f ◦ g) p : (f ◦ g) x = (f ◦ g) y *)
 Check p.
