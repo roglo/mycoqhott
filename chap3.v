@@ -1272,6 +1272,39 @@ Import Σ_type.
 
 Definition ex_3_1 {A B} : A ≃ B → isSet A → isSet B.
 Proof.
+intros AB SA x y p q.
+apply EqStr.equiv_fun in AB.
+destruct AB as (f, (g, (Hf, Hg))).
+assert (r : ap g p = ap g q) by apply SA.
+apply (ap (ap f)) in r.
+eapply compose, invert in r; [ | eapply invert, ap_composite ].
+eapply compose, invert in r; [ | eapply invert, ap_composite ].
+assert (fg : f ◦ g = id) by (apply Π_type.funext; intros z; apply Hg).
+Check (ap (f ◦ g) p).
+(* ap (f ◦ g) p : (f ◦ g) x = (f ◦ g) y *)
+Check p.
+(* p : x = y *)
+About transport.
+assert (s : g x = g y) by (rewrite p; reflexivity).
+set (P := λ a, a = g y).
+Check (transport P s).
+
+ _ (g x) (g y) _ f).
+Check (@transport A _ (g x) (g y) _ f).
+
+assert (ap (f ◦ g) p = p).
+bbb.
+
+  r : @eq (@eq B (f (g x)) (f (g y))) (@ap B B x y (@composite B A B g f) p)
+        (@ap B B x y (@composite B A B g f) q)
+  fg : @eq (forall _ : B, B) (@composite B A B g f) (@id B)
+  ============================
+   @eq (@eq B x y) p q
+
+rewrite Hg in r.
+
+bbb.
+
 intros AB SA xb yb pb qb.
 apply EqStr.equiv_fun in AB.
 destruct AB as (f, (g, (Hf, Hg))).
