@@ -1,4 +1,4 @@
-all: chap1.vo chap2.vo hott.vo
+all: chap1.vo chap2.vo chap3.vo
 
 clean:
 	rm -f *.vo *.glob
@@ -9,4 +9,4 @@ clean:
 	coqc $<
 
 chap2.vo: chap1.vo
-hott.vo: chap2.vo
+chap3.vo: chap2.vo

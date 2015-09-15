@@ -372,7 +372,8 @@ Section hott_3_2_2.
 Import Σ_type.
 Import Π_type.
 
-(* "Theorem 3.2.2. It is not the case that for all A : Type we have ¬(¬A)→A." *)
+(* "Theorem 3.2.2. It is not the case that for all A : Type we have
+    ¬(¬A)→A." *)
 
 Definition hott_3_2_2_tac : notT (∀ A, notT (notT A) → A).
 Proof.
@@ -1247,8 +1248,17 @@ Definition hott_3_11_9_ii {A P} (p : isContr A) (a := pr₁ p) :
   end.
 
 (* "Lemma 3.11.10. A type A is a mere proposition if and only if for
-    all x, y : A, the type x =_{A} y is contractible. *)
+    all x, y : A, the type x =_{A} y is contractible." *)
 
-bbb.
+Notation "A ⇔ B" := ((A → B) * (B → A))%type (at level 100).
+
+Definition hott_3_11_10 {A} : isProp A ⇔ ∀ x y : A, isContr (x = y).
+Proof.
+split; intros p x y; [ | apply p ].
+exists (p x y); intros q.
+generalize p; intros r.
+apply isProp_isSet in p.
+apply p.
+Defined.
 
 End Contr.
