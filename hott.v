@@ -1181,31 +1181,30 @@ assert (isProp (P a)) as H; [ | apply H ].
 apply isContr_isProp, p.
 Defined.
 
-Definition hott_3_11_9_ii {A P} :
+Definition new_hott_3_11_9_ii {A P} :
   ∀ (p : isContr A), (Σ (x : A), P x) ≃ P (pr₁ p).
 Proof.
 intros (a, p); simpl.
-assert (p' : ∀ x, x = a) by (intros x; apply invert, p).
-clear p; rename p' into p.
-exists (λ q : {x : A & P x}, transport P (p (pr₁ q)) (pr₂ q)).
+exists (λ q : {x : A & P x}, transport P (p (pr₁ q))⁻¹ (pr₂ q)).
 apply qinv_isequiv.
-exists (λ q : P a, existT (λ x : A, P x) a (transport P (p a)⁻¹ q)).
+exists (λ q : P a, existT (λ x : A, P x) a (transport P (p a) q)).
 unfold "◦", "~~", id; simpl.
 split.
  intros x.
  eapply compose; [ apply transport_compose |  ].
- eapply compose; [ apply transport_compat, compose_invert_l |  ].
- reflexivity.
+ eapply compose; [ apply transport_compat, compose_invert_r | reflexivity ].
 
  intros (b, q); simpl.
- apply (pair_eq (p b)⁻¹).
+ apply (pair_eq (p b)).
  eapply compose; [ apply transport_compose |  ].
  eapply compose; [ apply transport_compose |  ].
  eapply compose; [ apply transport_compat, compose_assoc |  ].
  eapply compose; [ eapply invert, transport_compose | ].
- destruct (p b)⁻¹; simpl; unfold id.
+ set (x := (p b)⁻¹).
+ set (y := p b).
+ destruct y; simpl; subst x; unfold id.
  eapply (@compose _ _ (transport P (eq_refl a) q)); [ | reflexivity ].
- apply hap, ap, compose_invert_r.
+ apply hap, ap, compose_invert_l.
 Defined.
 
 (* make a version with the proof term, perhaps, that would be awesome *)
