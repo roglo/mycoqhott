@@ -1272,15 +1272,60 @@ Import Σ_type.
 
 Definition ex_3_1 {A B} : A ≃ B → isSet A → isSet B.
 Proof.
-intros AB SA x y p q.
+intros AB SA xb yb pb qb.
+apply EqStr.equiv_fun in AB.
+destruct AB as (f, (g, (Hf, Hg))).
+eapply (@compose _ _ (ap id pb)); [ destruct pb; reflexivity | ].
+eapply (@compose _ _ (ap id qb)); [ | destruct qb; reflexivity ].
+assert (∀ x y (p q : x = y), ap (g ◦ f) p = ap (g ◦ f) q) as p.
+ intros x y p q.
+ apply SA.
+
+ pose proof p (g xb) (g yb) (ap g pb) (ap g qb) as q.
+ eapply compose in q; [ | eapply invert, ap_composite ].
+ apply invert in q.
+ eapply compose in q; [ | eapply invert, ap_composite ].
+ apply invert in q.
+Check (ap g pb).
+
+bbb.
+
+ eapply invert, compose; [ | apply ap_composite ].
+ eapply invert, compose; [ | apply ap_composite ].
+ apply ap, ap.
+
+SearchAbout (ap (_ ◦ _)).
+Focus 2.
+Check (ap f (ap g pb)).
+
+
+assert (pb = ap (f ◦ g) pb).
+eapply (@compose _ _ (ap (f ◦ g) pb)).
+ 
+
+assert (p : ap g pb = ap g qb) by apply SA.
+SearchAbout (ap _ _ = ap _ _).
+bbb.
+
+set (P := λ x, xb = x).
+assert (P xb) as p by (subst P; reflexivity).
+assert (P yb) as q by (subst P; simpl; apply pb).
+assert (transport P pb p = q).
+Focus 2.
+subst P; simpl in p, q.
+bbb.
+
 unfold isSet in SA.
 apply EqStr.equiv_fun in AB.
 destruct AB as (f, (g, (Hf, Hg))).
-bbb.
-
-assert (r : g x = g y) by (apply ap, p).
-assert (s : g x = g y) by (apply ap, q).
-pose proof (SA (g x) (g y) r s) as t.
+set (xa := g xb).
+set (ya := g yb).
+assert (pa : xa = ya) by (apply ap, pb).
+assert (qa : xa = ya) by (apply ap, qb).
+set (p := SA xa ya pa qa).
+subst xa xb.
+subst pa.
+destruct qa.
 bbb.
 
 About isequiv.
