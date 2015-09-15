@@ -1286,8 +1286,13 @@ assert (∀ x y (p q : x = y), ap (g ◦ f) p = ap (g ◦ f) q) as p.
  apply invert in q.
  eapply compose in q; [ | eapply invert, ap_composite ].
  apply invert in q.
-Check (ap g pb).
+ assert (ap g pb = ap g qb).
+  eapply (@compose _ _ (ap (id ◦ g) pb)); [ reflexivity | apply invert ].
+  eapply (@compose _ _ (ap (id ◦ g) qb)); [ reflexivity | apply invert ].
+bbb.
 
+  assert (gi : g ◦ f = id) by (apply Π_type.funext, Hf).
+  eapply (@compose _ _ (ap ((g ◦ f) ◦ g) pb)); [ reflexivity | ].
 bbb.
 
  eapply invert, compose; [ | apply ap_composite ].
