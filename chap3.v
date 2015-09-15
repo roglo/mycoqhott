@@ -379,7 +379,7 @@ Definition hott_3_2_2_tac : notT (∀ A, notT (notT A) → A).
 Proof.
 intros f.
 set (e := bool_eq_bool_negb).
-set (u (g : notT bool) := g true).
+set (u := (λ g, g true) : notT (notT bool)); simpl in u.
 set (nn A := notT (notT A)).
 assert (p : pr₁ e (f _ u) = f _ u).
  eapply compose; [ eapply invert, ua_pcr | ].
