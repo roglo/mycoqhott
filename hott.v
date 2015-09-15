@@ -1181,10 +1181,10 @@ assert (isProp (P a)) as H; [ | apply H ].
 apply isContr_isProp, p.
 Defined.
 
-Definition new_hott_3_11_9_ii {A P} :
-  ∀ (p : isContr A), (Σ (x : A), P x) ≃ P (pr₁ p).
+Definition hott_3_11_9_ii_tac {A P} (p : isContr A) :
+  (Σ (x : A), P x) ≃ P (pr₁ p).
 Proof.
-intros (a, p); simpl.
+destruct p as (a, p); simpl.
 exists (λ q : {x : A & P x}, transport P (p (pr₁ q))⁻¹ (pr₂ q)).
 apply qinv_isequiv.
 exists (λ q : P a, existT (λ x : A, P x) a (transport P (p a) q)).
@@ -1207,7 +1207,43 @@ split.
  apply hap, ap, compose_invert_l.
 Defined.
 
-(* make a version with the proof term, perhaps, that would be awesome *)
+Definition hott_3_11_9_ii {A P} (p : isContr A) :
+  (Σ (x : A), P x) ≃ P (pr₁ p)
+:=
+  match p with
+  | existT _ a p =>
+      existT isequiv
+        (λ q, transport P (p (pr₁ q))⁻¹ (pr₂ q))
+        (qinv_isequiv (λ q : {x : A & P x}, transport P (p (pr₁ q))⁻¹ (pr₂ q))
+           (existT _
+              (λ q, existT P a (transport P (p a) q))
+              (λ x,
+               transport_compose P (p a) (p a)⁻¹ x
+               • transport_compat (p a • (p a)⁻¹) (eq_refl a)
+                   (compose_invert_r (p a)),
+               λ x,
+               match x return
+                 existT P a
+                   (transport P (p a) (transport P (p (pr₁ x))⁻¹ (pr₂ x)))
+                 = x
+               with
+               | existT _ b q =>
+                   pair⁼ (p b)
+                     (transport_compose P (p a) (p b) (transport P (p b)⁻¹ q)
+                      • transport_compose P (p b)⁻¹ (p a • p b) q
+                      • transport_compat ((p b)⁻¹ • (p a • p b))
+                           ((p b)⁻¹ • p a • p b)
+                           (compose_assoc (p b)⁻¹ (p a) (p b))
+                      • (transport_compose P ((p b)⁻¹ • p a) (p b) q)⁻¹
+                      • match p b as e in (_ = y) return
+                          (∀ q,
+                           transport P e (transport P ((p y)⁻¹ • p a) q) = q)
+                        with
+                        | eq_refl _ =>
+                            hap (ap (transport P) (compose_invert_l (p a)))
+                        end q)
+               end)))
+  end.
 
 bbb.
 
