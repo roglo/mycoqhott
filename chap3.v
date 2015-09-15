@@ -378,14 +378,13 @@ Import Π_type.
 Definition hott_3_2_2_tac : notT (∀ A, notT (notT A) → A).
 Proof.
 intros f.
-set (e := bool_eq_bool_negb).
 set (u := (λ g, g true) : notT (notT bool)); simpl in u.
 set (nn A := notT (notT A)).
-assert (p : pr₁ e (f _ u) = f _ u).
+assert (p : pr₁ bool_eq_bool_negb (f _ u) = f _ u).
  eapply compose; [ eapply invert, ua_pcr | ].
- eapply compose; [ | apply (happly (apd f (ua e))) ].
+ eapply compose; [ | apply (happly (apd f (ua bool_eq_bool_negb))) ].
  eapply invert, compose.
-  apply (happly (@hott_2_9_4 _ nn id _ _ (ua e) (f bool)) u).
+  apply (happly (@hott_2_9_4 _ nn id _ _ (ua bool_eq_bool_negb) (f bool)) u).
 
   apply ap, ap, funext; intros g; destruct (g true).
 
