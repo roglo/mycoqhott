@@ -1262,3 +1262,35 @@ apply p.
 Defined.
 
 End Contr.
+
+(* "Exercises" *)
+
+(* "Exercise 3.1. Prove that if A ≃ B and A is a set, then so is B." *)
+
+Section ex_3_1.
+Import Σ_type.
+
+Definition ex_3_1 {A B} : A ≃ B → isSet A → isSet B.
+Proof.
+intros AB SA x y p q.
+unfold isSet in SA.
+apply EqStr.equiv_fun in AB.
+destruct AB as (f, (g, (Hf, Hg))).
+bbb.
+
+assert (r : g x = g y) by (apply ap, p).
+assert (s : g x = g y) by (apply ap, q).
+pose proof (SA (g x) (g y) r s) as t.
+bbb.
+
+About isequiv.
+(*
+isequiv : ∀ A B : Type, (A → B) → Type
+Arguments A, B are implicit and maximally inserted
+*)
+destruct r as (f, ((g, Hg), (h, Hh))).
+unfold isSet in s.
+Check (s (g x) (g y)).
+bbb.
+
+End ex_3_1.
