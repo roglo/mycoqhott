@@ -407,7 +407,8 @@ Definition hott_3_2_2 : notT (∀ A : Type, notT (notT A) → A)
 
 End hott_3_2_2.
 
-(* "Corollary 3.2.7. It is not the case that for all A : Type we have A+(¬A)." *)
+(* "Corollary 3.2.7. It is not the case that for all A : Type we have
+    A+(¬A)." *)
 
 Definition hott_3_2_7_tac : notT (∀ A, A + notT A).
 Proof.
