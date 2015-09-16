@@ -1328,7 +1328,18 @@ Definition ex_3_2 {A B} : isSet A → isSet B → isSet (A + B).
 Proof.
 intros SA SB x y p q.
 destruct x as [x| x].
+ set (P (y : A + B) := inl x = y : Type); simpl in P.
+(* λ y : A + B, inl x = y : A + B → Type *)
+ assert (s : ∀ (r : inl x = y), transport P r (eq_refl (inl x)) = r).
+  intros r; destruct r; reflexivity.
+
+  eapply compose; [ eapply invert, s | ].
+  eapply compose; [ | eapply s ].
+bbb.
  destruct y as [y| y]; [ | destruct (encode_inl_inr x y p) ].
+  set (P := λ z, inl x = (inl z : A + B)); simpl in P.
+  set (r := @inl_inversion A B x y p).
+  Check (transport P r).
 bbb.
   set (P := λ q, p = q : Type); simpl in P.
   pose proof (@transport (inl x = inl y) P p q) as r.
@@ -1340,6 +1351,17 @@ bbb.
   pose proof SA x y as s.
   Check (@transport A P x y r).
 bbb.
+ assert (s : ∀ r, transport P p⁻¹ r = eq_refl (inl x)).
+  intros r.
+Check (eq_refl (inl x)).
+
+ assert (s : transport P p⁻¹ p = transport P p⁻¹ q).
+  destruct q; simpl.
+
+bbb.
+ Check (transport P p (eq_refl (inl x)) = p).
+ Check (transport P q (eq_refl (inl x)) = q).
+*)
 
 Print encode_inl_inr.
 (* encode_inl_inr = 
