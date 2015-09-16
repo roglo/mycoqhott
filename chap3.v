@@ -1273,6 +1273,25 @@ Import Σ_type.
 Definition ex_3_1 {A B} : A ≃ B → isSet A → isSet B.
 Proof.
 intros AB SA x y p q.
+assert (pap : ∀ (p : x = y), p = ap id p).
+ intros t; destruct t; reflexivity.
+
+ eapply compose; [ eapply pap | apply invert ].
+ eapply compose; [ eapply pap | apply invert ].
+ apply EqStr.equiv_fun in AB.
+ destruct AB as (f, (g, (Hf, Hg))).
+ assert (fg : f ◦ g = id) by (apply Π_type.funext; intros z; apply Hg).
+ set (P := λ (u : B → B), u x = u y).
+ assert (∀ p, ap id p = transport P fg (ap (f ◦ g) p)) as h.
+  intros t; rewrite fg; reflexivity.
+
+  eapply compose; [ apply h | apply invert ].
+  eapply compose; [ apply h | apply invert ].
+bbb.
+  apply SA.
+
+bbb.
+intros AB SA x y p q.
 apply EqStr.equiv_fun in AB.
 destruct AB as (f, (g, (Hf, Hg))).
 assert (r : g x = g y) by (rewrite p; reflexivity).
@@ -1281,155 +1300,20 @@ apply (ap (ap f)) in s.
 eapply compose, invert in s; [ | eapply invert, ap_composite ].
 eapply compose, invert in s; [ | eapply invert, ap_composite ].
 assert (fg : f ◦ g = id) by (apply Π_type.funext; intros z; apply Hg).
-Check (f ◦ g).
-Check (id : B → B).
-About ap.
-bbb.
+assert (pi : ∀ (p : x = y), p = ap id p).
+ intros t; destruct t; reflexivity.
 
-Check (ap (f ◦ g)).
-Check (ap (id : B → B)).
-Check (ap (f ◦ g) = ap (id : B → B)).
+ set (P := λ (u : B → B), u x = u y).
+ assert (∀ p, ap id p = transport P fg (ap (f ◦ g) p)) as h.
+  intros t; rewrite fg; reflexivity.
 
-Check (ap (f ◦ g) p).
-Check (ap (f ◦ g) : x = y → _).
-bbb.
+  eapply compose; [ eapply pi | ].
+  eapply compose; [ apply h | apply invert ].
+  eapply compose; [ eapply pi | ].
+  eapply compose; [ apply h | apply invert ].
+  destruct s; reflexivity.
+Defined.
 
-Check (f ◦ g).
-(* f ◦ g : B → B *)
-Check id.
-Check (f ◦ g = id : Type).
-Check (@ap B B x y (f ◦ g)).
-(* ap (f ◦ g) : x = y → (f ◦ g) x = (f ◦ g) y *)
-Check (@ap B B x y id).
-(* ap id : x = y → id x = id y *)
-About apd.
-(* apd :
-∀ (A : Type) (P : A → Type) (f : ∀ x : A, P x) (x y : A) 
-(p : x = y), transport P p (f x) = f y
-Arguments A, P, x, y are implicit and maximally inserted
-*)
-About transport.
-(*
-transport : ∀ (A : Type) (P : A → Type) (x y : A), x = y → P x → P y
-Arguments A, x, y are implicit and maximally inserted
-*)
-set (P := λ a, a = g y : Type).
-Check P.
-assert (t : g x = g y) by (rewrite p; reflexivity).
-Check (transport P t).
-
-About ap.
-ap : ∀ (A B : Type) (x y : A) (f : A → B), x = y → f x = f y
-Arguments A, B, x, y are implicit and maximally inserted
-Check (ap (f ◦ g)).
-Check (ap id).
-Check (ap (f ◦ g) = ap id).
-bbb.
-
-Check (ap (f ◦ g) p).
-(* ap (f ◦ g) p : (f ◦ g) x = (f ◦ g) y *)
-Check (ap id p).
-(* p : id x = id y *)
-About transport.
-assert (s : g x = g y) by (rewrite p; reflexivity).
-set (P := λ a, a = g y).
-Check (transport P s).
-
- _ (g x) (g y) _ f).
-Check (@transport A _ (g x) (g y) _ f).
-
-assert (ap (f ◦ g) p = p).
-bbb.
-
-  r : @eq (@eq B (f (g x)) (f (g y))) (@ap B B x y (@composite B A B g f) p)
-        (@ap B B x y (@composite B A B g f) q)
-  fg : @eq (forall _ : B, B) (@composite B A B g f) (@id B)
-  ============================
-   @eq (@eq B x y) p q
-
-rewrite Hg in r.
-
-bbb.
-
-intros AB SA xb yb pb qb.
-apply EqStr.equiv_fun in AB.
-destruct AB as (f, (g, (Hf, Hg))).
-bbb.
-
-(*
-eapply (@compose _ _ (ap id pb)); [ destruct pb; reflexivity | ].
-eapply (@compose _ _ (ap id qb)); [ | destruct qb; reflexivity ].
-*)
-assert (∀ x y (p q : x = y), ap (g ◦ f) p = ap (g ◦ f) q) as p.
- intros x y p q.
- apply SA.
-
- pose proof p (g xb) (g yb) (ap g pb) (ap g qb) as q.
- eapply compose in q; [ | eapply invert, ap_composite ].
- apply invert in q.
- eapply compose in q; [ | eapply invert, ap_composite ].
- apply invert in q.
- assert (∀ pb qb : xb = yb, ap g pb = ap g qb) as r.
-  intros; apply SA.
-
- assert (ap g pb = ap g qb) as rr.
-  apply SA.
-
-bbb.
-  eapply (@compose _ _ (ap (id ◦ g) pb)); [ reflexivity | apply invert ].
-  eapply (@compose _ _ (ap (id ◦ g) qb)); [ reflexivity | apply invert ].
-  assert (gi : g ◦ f = id) by (apply Π_type.funext, Hf).
-  rewrite <- gi.
-  apply q.
-
-bbb.
-
- eapply invert, compose; [ | apply ap_composite ].
- eapply invert, compose; [ | apply ap_composite ].
- apply ap, ap.
-
-SearchAbout (ap (_ ◦ _)).
-Focus 2.
-Check (ap f (ap g pb)).
-
-
-assert (pb = ap (f ◦ g) pb).
-eapply (@compose _ _ (ap (f ◦ g) pb)).
- 
-
-assert (p : ap g pb = ap g qb) by apply SA.
-SearchAbout (ap _ _ = ap _ _).
-bbb.
-
-set (P := λ x, xb = x).
-assert (P xb) as p by (subst P; reflexivity).
-assert (P yb) as q by (subst P; simpl; apply pb).
-assert (transport P pb p = q).
-Focus 2.
-subst P; simpl in p, q.
-bbb.
-
-unfold isSet in SA.
-apply EqStr.equiv_fun in AB.
-destruct AB as (f, (g, (Hf, Hg))).
-set (xa := g xb).
-set (ya := g yb).
-assert (pa : xa = ya) by (apply ap, pb).
-assert (qa : xa = ya) by (apply ap, qb).
-set (p := SA xa ya pa qa).
-subst xa xb.
-subst pa.
-destruct qa.
-bbb.
-
-About isequiv.
-(*
-isequiv : ∀ A B : Type, (A → B) → Type
-Arguments A, B are implicit and maximally inserted
-*)
-destruct r as (f, ((g, Hg), (h, Hh))).
-unfold isSet in s.
-Check (s (g x) (g y)).
 bbb.
 
 End ex_3_1.
