@@ -1340,8 +1340,29 @@ intros (z, (b, r)); simpl.
 destruct r; reflexivity.
 Defined.
 
+Definition isSet_A_mult_1 {A} : isSet A → isSet (A * ⊤).
+Proof.
+apply ex_3_1.
+exists (λ a, (a, I)); apply qinv_isequiv; exists AxB_pr₁.
+unfold "~~"; split; [ intros (a, i); destruct i | ]; apply eq_refl.
+Defined.
+
+Definition isSet_A_plus_0 {A} : isSet A → isSet (A + ⊥).
+Proof.
+apply ex_3_1.
+exists inl; apply qinv_isequiv.
+exists
+  (λ (x : A + ⊥), match x with inl a => a | inr b => match b with end end).
+unfold "◦", "~~", id; simpl.
+split; intros x; [ | apply eq_refl ].
+destruct x as [a| b]; [ apply eq_refl | destruct b ].
+Defined.
+
 Definition ex_3_2 {A B} : isSet A → isSet B → isSet (A + B).
 Proof.
+intros SA SB.
+bbb.
+
 intros SA SB x y p q.
 destruct x as [x| x].
  set (P (y : A + B) := inl x = y : Type); simpl in P.
