@@ -1322,7 +1322,23 @@ End ex_3_1.
 (* "Exercise 3.2. Prove that if A and B are sets, then so is A + B." *)
 
 Section ex_3_2.
+Import Σ_type.
 Import Σ_type2.
+
+(* not sure it is useful *)
+Definition isSet_proj A B :
+  isSet A → isSet (Σ (z : A+B), Σ (x:A), inl x = z).
+Proof.
+intros SA x y p q.
+eapply ex_3_1; [ | apply SA ].
+exists (λ a, existT _ (inl a) (existT _ a (eq_refl (inl a)))).
+apply qinv_isequiv.
+exists (λ (s : Σ (_ : A+B), Σ (_ : A), _), pr₁ (pr₂ s)).
+unfold "◦", "~~", id; simpl.
+split; [ | intros z; reflexivity ].
+intros (z, (b, r)); simpl.
+destruct r; reflexivity.
+Defined.
 
 Definition ex_3_2 {A B} : isSet A → isSet B → isSet (A + B).
 Proof.
@@ -1335,8 +1351,6 @@ destruct x as [x| x].
 
   eapply compose; [ eapply invert, s | ].
   eapply compose; [ | eapply s ].
-  destruct y as [y| y].
-Check (transport P q (eq_refl (inl x))).
 
 bbb.
  destruct y as [y| y]; [ | destruct (encode_inl_inr x y p) ].
