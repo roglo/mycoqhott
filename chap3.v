@@ -297,8 +297,8 @@ Defined.
 
 Definition hott_3_1_8 {A} : isSet A → is1Type A :=
   λ f x y p q r s,
-  compose_cancel_l (f x y p p) r s
-    (compose_insert (f x y p) r • (compose_insert (f x y p) s)⁻¹).
+  let g := f x y p in
+  compose_cancel_l (g p) r s (compose_insert g r • (compose_insert g s)⁻¹).
 
 End lemma_3_1_8.
 
