@@ -1283,10 +1283,42 @@ eapply compose, invert in s; [ | eapply invert, ap_composite ].
 assert (fg : f ◦ g = id) by (apply Π_type.funext; intros z; apply Hg).
 bbb.
 
+Check (f ◦ g).
+(* f ◦ g : B → B *)
+Check id.
+Check (f ◦ g = id : Type).
+Check (@ap B B x y (f ◦ g)).
+(* ap (f ◦ g) : x = y → (f ◦ g) x = (f ◦ g) y *)
+Check (@ap B B x y id).
+(* ap id : x = y → id x = id y *)
+About apd.
+(* apd :
+∀ (A : Type) (P : A → Type) (f : ∀ x : A, P x) (x y : A) 
+(p : x = y), transport P p (f x) = f y
+Arguments A, P, x, y are implicit and maximally inserted
+*)
+About transport.
+(*
+transport : ∀ (A : Type) (P : A → Type) (x y : A), x = y → P x → P y
+Arguments A, x, y are implicit and maximally inserted
+*)
+set (P := λ a, a = g y : Type).
+Check P.
+assert (t : g x = g y) by (rewrite p; reflexivity).
+Check (transport P t).
+
+About ap.
+ap : ∀ (A B : Type) (x y : A) (f : A → B), x = y → f x = f y
+Arguments A, B, x, y are implicit and maximally inserted
+Check (ap (f ◦ g)).
+Check (ap id).
+Check (ap (f ◦ g) = ap id).
+bbb.
+
 Check (ap (f ◦ g) p).
 (* ap (f ◦ g) p : (f ◦ g) x = (f ◦ g) y *)
-Check p.
-(* p : x = y *)
+Check (ap id p).
+(* p : id x = id y *)
 About transport.
 assert (s : g x = g y) by (rewrite p; reflexivity).
 set (P := λ a, a = g y).
