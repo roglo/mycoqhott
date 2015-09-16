@@ -1329,6 +1329,11 @@ Proof.
 intros SA SB x y p q.
 destruct x as [x| x].
  destruct y as [y| y]; [ | destruct (encode_inl_inr x y p) ].
+  set (s := encode x (inl y) p).
+  unfold code, encode in s; simpl in s.
+  unfold code in s.
+  set (P (z : A + B) := match z with inl a => x = a | inr _ => False end).
+  Check (transport P p (eq_refl x)).
 bbb.
   set (P := λ q, p = q : Type); simpl in P.
   pose proof (@transport (inl x = inl y) P p q) as r.
