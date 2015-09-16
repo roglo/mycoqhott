@@ -1335,6 +1335,9 @@ destruct x as [x| x].
 
   eapply compose; [ eapply invert, s | ].
   eapply compose; [ | eapply s ].
+  destruct y as [y| y].
+Check (transport P q (eq_refl (inl x))).
+
 bbb.
  destruct y as [y| y]; [ | destruct (encode_inl_inr x y p) ].
   set (P := λ z, inl x = (inl z : A + B)); simpl in P.
