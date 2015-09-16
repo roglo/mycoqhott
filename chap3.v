@@ -1328,8 +1328,34 @@ Definition ex_3_2 {A B} : isSet A → isSet B → isSet (A + B).
 Proof.
 intros SA SB x y p q.
 destruct x as [x| x].
- destruct y as [y| y].
+ destruct y as [y| y]; [ | destruct (encode_inl_inr x y p) ].
+  pose proof SA x y as s.
+bbb.
   pose proof @inl_inversion A B x y p as r.
+  set (P := λ y, x = y : Type); simpl in P.
+  Check (@transport A P x y r).
+
+bbb.
+
+Print encode_inl_inr.
+(* encode_inl_inr = 
+λ (A B : Type) (a₀ : A) (b : B), encode a₀ (inr b)
+     : ∀ (A B : Type) (a₀ : A) (b : B), inl a₀ = inr b → ⊥
+*)
+Print encode.
+
+  set (s := encode x (inl y) p).
+  unfold code, encode in s; simpl in s.
+bbb.
+
+  pose proof @inl_inversion A B x y p as r.
+  unfold isSet in SA.
+  pose proof SA x y r.
+bbb.
+
+bbb.
+
+
 bbb.
 
 End ex_3_2.
