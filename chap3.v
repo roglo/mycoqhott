@@ -1281,6 +1281,17 @@ apply (ap (ap f)) in s.
 eapply compose, invert in s; [ | eapply invert, ap_composite ].
 eapply compose, invert in s; [ | eapply invert, ap_composite ].
 assert (fg : f ◦ g = id) by (apply Π_type.funext; intros z; apply Hg).
+Check (f ◦ g).
+Check (id : B → B).
+About ap.
+bbb.
+
+Check (ap (f ◦ g)).
+Check (ap (id : B → B)).
+Check (ap (f ◦ g) = ap (id : B → B)).
+
+Check (ap (f ◦ g) p).
+Check (ap (f ◦ g) : x = y → _).
 bbb.
 
 Check (f ◦ g).
