@@ -1358,9 +1358,37 @@ split; intros x; [ | apply eq_refl ].
 destruct x as [a| b]; [ apply eq_refl | destruct b ].
 Defined.
 
+Definition SubType A B := Σ (z : A + B), Σ (x : A), inl x = z.
+
+Definition equiv_subtype A B : A ≃ SubType A B.
+Proof.
+exists (λ a, existT _ (inl a) (existT _ a (eq_refl (inl a)))).
+apply qinv_isequiv.
+exists (λ s : SubType A B, pr₁ (pr₂ s)).
+unfold "◦", "~~", id; simpl.
+split; [ intros (z, (x, p)); destruct p | ]; apply eq_refl.
+Defined.
+
 Definition ex_3_2 {A B} : isSet A → isSet B → isSet (A + B).
 Proof.
 intros SA SB.
+assert (SSA : isSet (SubType A B)).
+ eapply ex_3_1; [ apply equiv_subtype | apply SA ].
+
+ intros x y p q.
+ destruct x as [x| x].
+  destruct y as [y| y].
+   set (f a := existT _ (inl a) (existT _ a (eq_refl (inl a))) : SubType A B).
+   simpl in f.
+bbb.
+
+intros SA SB x y p q.
+destruct x as [a| a].
+ destruct y as [b| b].
+Check @ex_3_1.
+  pose proof isSet_A_plus_0 SA as SA0.
+  unfold isSet in SA0.
+Set Printing Implicit. Show.
 bbb.
 
 intros SA SB x y p q.
