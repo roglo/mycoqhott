@@ -1273,24 +1273,18 @@ Import Σ_type.
 Definition ex_3_1 {A B} : A ≃ B → isSet A → isSet B.
 Proof.
 intros AB SA x y p q.
-assert (pap : ∀ (p : x = y), p = ap id p).
- intros t; destruct t; reflexivity.
+apply (@compose _ _ (ap id p)); [ destruct p; reflexivity | apply invert ].
+apply (@compose _ _ (ap id q)); [ destruct q; reflexivity | apply invert ].
+destruct AB as (f, ((g, fg), _)).
+apply Π_type.funext in fg.
+assert (r : ∀ p, ap id p = transport (λ u, u x = u y) fg (ap (f ◦ g) p)).
+ intros t; rewrite fg; reflexivity.
 
- eapply compose; [ eapply pap | apply invert ].
- eapply compose; [ eapply pap | apply invert ].
- apply EqStr.equiv_fun in AB.
- destruct AB as (f, (g, (Hf, Hg))).
- assert (fg : f ◦ g = id) by (apply Π_type.funext; intros z; apply Hg).
- set (P := λ (u : B → B), u x = u y).
- assert (∀ p, ap id p = transport P fg (ap (f ◦ g) p)) as h.
-  intros t; rewrite fg; reflexivity.
-
-  eapply compose; [ apply h | apply invert ].
-  eapply compose; [ apply h | apply invert ].
-  apply ap.
-  eapply invert, compose; [ | eapply ap_composite ].
-  eapply invert, compose; [ | eapply ap_composite ].
-  apply ap, SA.
+ eapply compose; [ apply r | apply invert ].
+ eapply compose; [ apply r | apply invert, ap ].
+ eapply invert, compose; [ | eapply ap_composite ].
+ eapply invert, compose; [ | eapply ap_composite ].
+ apply ap, SA.
 Defined.
 
 bbb.
