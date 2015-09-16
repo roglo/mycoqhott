@@ -1332,7 +1332,6 @@ destruct x as [x| x].
 bbb.
   set (P := λ q, p = q : Type); simpl in P.
   pose proof (@transport (inl x = inl y) P p q) as r.
-
 bbb.
   set (P := λ y, x = y : Type); simpl in P.
   pose proof @inl_inversion A B x y p as r.
@@ -1340,7 +1339,6 @@ bbb.
 bbb.
   pose proof SA x y as s.
   Check (@transport A P x y r).
-
 bbb.
 
 Print encode_inl_inr.
