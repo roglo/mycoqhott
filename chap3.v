@@ -1270,22 +1270,49 @@ End Contr.
 Section ex_3_1.
 Import Σ_type.
 
-Definition ex_3_1 {A B} : A ≃ B → isSet A → isSet B.
+Definition ex_3_1_tac {A B} : A ≃ B → isSet A → isSet B.
 Proof.
 intros AB SA x y p q.
 apply (@compose _ _ (ap id p)); [ destruct p; reflexivity | apply invert ].
-apply (@compose _ _ (ap id q)); [ destruct q; reflexivity | apply invert ].
+apply (@compose _ _ (ap id q)); [ destruct q; reflexivity | ].
 destruct AB as (f, ((g, fg), _)).
 apply Π_type.funext in fg.
 assert (r : ∀ p, ap id p = transport (λ u, u x = u y) fg (ap (f ◦ g) p)).
  intros t; rewrite fg; reflexivity.
 
  eapply compose; [ apply r | apply invert ].
- eapply compose; [ apply r | apply invert, ap ].
- eapply invert, compose; [ | eapply ap_composite ].
- eapply invert, compose; [ | eapply ap_composite ].
+ eapply compose; [ apply r | apply ap ].
+ eapply compose; [ eapply invert | eapply ap_composite ].
+ eapply compose; [ | eapply ap_composite ].
  apply ap, SA.
 Defined.
+
+Definition ex_3_1 {A B} : A ≃ B → isSet A → isSet B
+:=
+  λ (AB : A ≃ B) (SA : isSet A) (x y : B) (p q : x = y),
+  match p return (p = ap id p) with
+  | eq_refl _ => eq_refl (ap id (eq_refl x))
+  end
+  • (match q  return (q = ap id q) with
+     | eq_refl _ => eq_refl (ap id (eq_refl x))
+     end
+     • (let (f, i) := AB in
+        let (s, x0) := i in
+        let (g, fg) := s in
+        let fg0 := Π_type.funext fg in
+        let r t :=
+           EqdepFacts.internal_eq_rew_r_dep
+             (λ (y0 : B → B) (fg1 : y0 = id),
+              ap id t = transport (λ u : B → B, u x = u y) fg1 (ap y0 t))
+             (eq_refl
+                (transport (λ u : B → B, u x = u y) (eq_refl id) (ap id t)))
+             fg0
+        in 
+        r q
+        • (r p
+           • ap (transport (λ u : B → B, u x = u y) fg0)
+               ((ap (ap f) (SA (g x) (g y) (ap g q) (ap g p))
+                 • ap_composite g f p)⁻¹ • ap_composite g f q))⁻¹))⁻¹.
 
 bbb.
 
