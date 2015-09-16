@@ -1329,11 +1329,11 @@ Proof.
 intros SA SB x y p q.
 destruct x as [x| x].
  destruct y as [y| y]; [ | destruct (encode_inl_inr x y p) ].
+bbb.
   set (P := λ q, p = q : Type); simpl in P.
   pose proof (@transport (inl x = inl y) P p q) as r.
 
 bbb.
-
   set (P := λ y, x = y : Type); simpl in P.
   pose proof @inl_inversion A B x y p as r.
   Check (transport P r (eq_refl x)).
