@@ -1345,7 +1345,6 @@ Proof.
 intros SA SB x y p q.
 destruct x as [x| x].
  set (P (y : A + B) := inl x = y : Type); simpl in P.
-(* λ y : A + B, inl x = y : A + B → Type *)
  assert (s : ∀ (r : inl x = y), transport P r (eq_refl (inl x)) = r).
   intros r; destruct r; reflexivity.
 
