@@ -1317,6 +1317,8 @@ Definition ex_3_1 {A B} : A ≃ B → isSet A → isSet B
         end
   end.
 
-bbb.
-
 End ex_3_1.
+
+(* "Exercise 3.2. Prove that if A and B are sets, then so is A + B." *)
+
+bbb.
