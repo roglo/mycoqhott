@@ -1278,7 +1278,7 @@ apply (@compose _ _ (ap id q)); [ destruct q; reflexivity | ].
 destruct AB as (f, ((g, fg), _)).
 apply Π_type.funext in fg.
 assert (r : ∀ p, ap id p = transport (λ u, u x = u y) fg (ap (f ◦ g) p)).
- intros t; rewrite fg; reflexivity.
+ intros r; destruct fg; reflexivity.
 
  eapply compose; [ apply r | apply invert ].
  eapply compose; [ apply r | apply ap ].
