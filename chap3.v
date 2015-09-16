@@ -1321,4 +1321,15 @@ End ex_3_1.
 
 (* "Exercise 3.2. Prove that if A and B are sets, then so is A + B." *)
 
+Section ex_3_2.
+Import Σ_type2.
+
+Definition ex_3_2 {A B} : isSet A → isSet B → isSet (A + B).
+Proof.
+intros SA SB x y p q.
+destruct x as [x| x].
+ destruct y as [y| y].
+  pose proof @inl_inversion A B x y p as r.
 bbb.
+
+End ex_3_2.
