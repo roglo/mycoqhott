@@ -1287,31 +1287,10 @@ assert (pap : ∀ (p : x = y), p = ap id p).
 
   eapply compose; [ apply h | apply invert ].
   eapply compose; [ apply h | apply invert ].
-bbb.
-  apply SA.
-
-bbb.
-intros AB SA x y p q.
-apply EqStr.equiv_fun in AB.
-destruct AB as (f, (g, (Hf, Hg))).
-assert (r : g x = g y) by (rewrite p; reflexivity).
-assert (s : ap g p = ap g q) by apply SA.
-apply (ap (ap f)) in s.
-eapply compose, invert in s; [ | eapply invert, ap_composite ].
-eapply compose, invert in s; [ | eapply invert, ap_composite ].
-assert (fg : f ◦ g = id) by (apply Π_type.funext; intros z; apply Hg).
-assert (pi : ∀ (p : x = y), p = ap id p).
- intros t; destruct t; reflexivity.
-
- set (P := λ (u : B → B), u x = u y).
- assert (∀ p, ap id p = transport P fg (ap (f ◦ g) p)) as h.
-  intros t; rewrite fg; reflexivity.
-
-  eapply compose; [ eapply pi | ].
-  eapply compose; [ apply h | apply invert ].
-  eapply compose; [ eapply pi | ].
-  eapply compose; [ apply h | apply invert ].
-  destruct s; reflexivity.
+  apply ap.
+  eapply invert, compose; [ | eapply ap_composite ].
+  eapply invert, compose; [ | eapply ap_composite ].
+  apply ap, SA.
 Defined.
 
 bbb.
