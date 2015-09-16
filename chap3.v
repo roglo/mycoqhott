@@ -1329,10 +1329,11 @@ Proof.
 intros SA SB x y p q.
 destruct x as [x| x].
  destruct y as [y| y]; [ | destruct (encode_inl_inr x y p) ].
-  pose proof SA x y as s.
-bbb.
-  pose proof @inl_inversion A B x y p as r.
   set (P := λ y, x = y : Type); simpl in P.
+  pose proof @inl_inversion A B x y p as r.
+  Check (transport P r (eq_refl x)).
+bbb.
+  pose proof SA x y as s.
   Check (@transport A P x y r).
 
 bbb.
@@ -1351,11 +1352,6 @@ bbb.
   pose proof @inl_inversion A B x y p as r.
   unfold isSet in SA.
   pose proof SA x y r.
-bbb.
-
-bbb.
-
-
 bbb.
 
 End ex_3_2.
