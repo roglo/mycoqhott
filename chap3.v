@@ -1273,13 +1273,13 @@ Import Σ_type.
 Definition ex_3_1_tac {A B} : A ≃ B → isSet A → isSet B.
 Proof.
 intros AB SA x y p q.
-apply (@compose _ _ (ap id p)); [ destruct p; reflexivity | apply invert ].
-apply (@compose _ _ (ap id q)); [ destruct q; reflexivity | ].
 destruct AB as (f, ((g, fg), _)).
 apply Π_type.funext in fg.
 assert (r : ∀ p, ap id p = transport (λ u, u x = u y) fg (ap (f ◦ g) p)).
- intros r; destruct fg; reflexivity.
+ intros t; destruct fg; reflexivity.
 
+ apply (@compose _ _ (ap id p)); [ destruct p; reflexivity | apply invert ].
+ apply (@compose _ _ (ap id q)); [ destruct q; reflexivity | ].
  eapply compose; [ apply r | apply invert ].
  eapply compose; [ apply r | apply ap ].
  eapply compose; [ eapply invert | eapply ap_composite ].
@@ -1308,9 +1308,9 @@ Definition ex_3_1 {A B} : A ≃ B → isSet A → isSet B
       end
       • r p
       • ap (transport (λ u : B → B, u x = u y) fg)
-         ((ap_composite g f p)⁻¹
-          • (ap (ap f) (SA (g x) (g y) (ap g q) (ap g p)))⁻¹
-          • ap_composite g f q)
+          ((ap_composite g f p)⁻¹
+           • (ap (ap f) (SA (g x) (g y) (ap g q) (ap g p)))⁻¹
+           • ap_composite g f q)
       • (r q)⁻¹
       • match q return (ap id q = q) with
         | eq_refl _ => eq_refl (ap id (eq_refl x))
