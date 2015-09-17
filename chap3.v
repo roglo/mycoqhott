@@ -1369,6 +1369,7 @@ unfold "◦", "~~", id; simpl.
 split; [ intros (z, (x, p)); destruct p | ]; apply eq_refl.
 Defined.
 
+(*
 Definition sum_eq {A B} (x y : A + B) :
   match x with
   | inl a => match y with inl a' => a = a' | inr b' => ⊥ end
@@ -1402,13 +1403,37 @@ destruct x as [x| x].
  destruct y as [y| y]; [ apply r | destruct r ].
  destruct y as [y| y]; [ destruct r | apply r ].
 Defined.
+*)
+
+Definition to_subtype A B : A → SubType A B :=
+  λ a, existT _ (inl a) (existT _ a (eq_refl (inl a))).
+
+Definition of_subtype A B : SubType A B → A + B := pr₁.
+
+(*
+Definition of_subtype A B : SubType A B → A + B :=
+  λ s, inl (pr₁ (pr₂ s)).
+*)
 
 Definition ex_3_2 {A B} : isSet A → isSet B → isSet (A + B).
 Proof.
 intros SA SB x y p q.
-apply glop.
-destruct x as [x| x].
- destruct y as [y| y].
+assert (SSA : isSet (SubType A B)).
+ eapply ex_3_1; [ apply equiv_subtype | apply SA ].
+
+ destruct x as [x| x].
+  destruct y as [y| y].
+   unfold SubType in SSA.
+   unfold isSet in SSA.
+   set (zx := to_subtype A B x).
+   set (zy := to_subtype A B y).
+   pose proof SSA zx zy as H1.
+   assert (H : ∀ p q : (inl x : A + B) = inl y, p = q); [ | apply H ].
+    intros r s.
+    assert (of_subtype A B zx = of_subtype A B zy).
+     apply ap.
+Focus 2.
+subst zx zy.
 bbb.
 
   intros r s.
