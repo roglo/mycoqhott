@@ -297,8 +297,8 @@ Defined.
 
 Definition hott_3_1_8 {A} : isSet A → is1Type A :=
   λ f x y p q r s,
-  compose_cancel_l (f x y p p) r s
-    (compose_insert (f x y p) r • (compose_insert (f x y p) s)⁻¹).
+  let g := f x y p in
+  compose_cancel_l (g p) r s (compose_insert g r • (compose_insert g s)⁻¹).
 
 End lemma_3_1_8.
 
@@ -1322,18 +1322,119 @@ End ex_3_1.
 (* "Exercise 3.2. Prove that if A and B are sets, then so is A + B." *)
 
 Section ex_3_2.
+Import Σ_type.
 Import Σ_type2.
+
+(* not sure it is useful *)
+Definition isSet_proj A B :
+  isSet A → isSet (Σ (z : A+B), Σ (x:A), inl x = z).
+Proof.
+intros SA x y p q.
+eapply ex_3_1; [ | apply SA ].
+exists (λ a, existT _ (inl a) (existT _ a (eq_refl (inl a)))).
+apply qinv_isequiv.
+exists (λ (s : Σ (_ : A+B), Σ (_ : A), _), pr₁ (pr₂ s)).
+unfold "◦", "~~", id; simpl.
+split; [ | intros z; reflexivity ].
+intros (z, (b, r)); simpl.
+destruct r; reflexivity.
+Defined.
+
+Definition isSet_A_mult_1 {A} : isSet A → isSet (A * ⊤).
+Proof.
+apply ex_3_1.
+exists (λ a, (a, I)); apply qinv_isequiv; exists AxB_pr₁.
+unfold "~~"; split; [ intros (a, i); destruct i | ]; apply eq_refl.
+Defined.
+
+Definition isSet_A_plus_0 {A} : isSet A → isSet (A + ⊥).
+Proof.
+apply ex_3_1.
+exists inl; apply qinv_isequiv.
+exists
+  (λ (x : A + ⊥), match x with inl a => a | inr b => match b with end end).
+unfold "◦", "~~", id; simpl.
+split; intros x; [ | apply eq_refl ].
+destruct x as [a| b]; [ apply eq_refl | destruct b ].
+Defined.
+
+Definition SubType A B := Σ (z : A + B), Σ (x : A), inl x = z.
+
+Definition equiv_subtype A B : A ≃ SubType A B.
+Proof.
+exists (λ a, existT _ (inl a) (existT _ a (eq_refl (inl a)))).
+apply qinv_isequiv.
+exists (λ s : SubType A B, pr₁ (pr₂ s)).
+unfold "◦", "~~", id; simpl.
+split; [ intros (z, (x, p)); destruct p | ]; apply eq_refl.
+Defined.
 
 Definition ex_3_2 {A B} : isSet A → isSet B → isSet (A + B).
 Proof.
+intros SA SB.
+assert (SSA : isSet (SubType A B)).
+ eapply ex_3_1; [ apply equiv_subtype | apply SA ].
+
+ intros x y p q.
+ destruct x as [x| x].
+  destruct y as [y| y]; [ | destruct (encode_inl_inr x y p) ].
+   set (d := encode_inl_inl x y p).
+set (P q := p = q : Type).
+Check (@transport (inl x = inl y) P (eq_refl (inl x))).
+(* transport P : p = q → P p → P q *)
+
+   set (f a := existT _ (inl a) (existT _ a (eq_refl (inl a))) : SubType A B).
+   simpl in f.
+bbb.
+
+   unfold encode_inl_inl in d.
+SearchAbout encode.
+pose proof @encode_decode A B x (inl y) as H.
+unfold "◦", "~~", id in H.
+simpl in H.
+pose proof H d.
+destruct d.
+simpl in H0.
+
+   unfold encode in d.
+
+SearchAbout code.
+About hott_2_12_5.
+   
+bbb.
+bbb.
+
+intros SA SB x y p q.
+destruct x as [a| a].
+ destruct y as [b| b].
+Check @ex_3_1.
+  pose proof isSet_A_plus_0 SA as SA0.
+  unfold isSet in SA0.
+Set Printing Implicit. Show.
+bbb.
+
 intros SA SB x y p q.
 destruct x as [x| x].
+ set (P (y : A + B) := inl x = y : Type); simpl in P.
+ assert (s : ∀ (r : inl x = y), transport P r (eq_refl (inl x)) = r).
+  intros r; destruct r; reflexivity.
+
+  eapply compose; [ eapply invert, s | ].
+  eapply compose; [ | eapply s ].
+
+bbb.
  destruct y as [y| y]; [ | destruct (encode_inl_inr x y p) ].
+<<<<<<< HEAD
   set (s := encode x (inl y) p).
   unfold code, encode in s; simpl in s.
   unfold code in s.
   set (P (z : A + B) := match z with inl a => x = a | inr _ => False end).
   Check (transport P p (eq_refl x)).
+=======
+  set (P := λ z, inl x = (inl z : A + B)); simpl in P.
+  set (r := @inl_inversion A B x y p).
+  Check (transport P r).
+>>>>>>> 149abc63ec08c7046286f3d02b50e46bf13db9ff
 bbb.
   set (P := λ q, p = q : Type); simpl in P.
   pose proof (@transport (inl x = inl y) P p q) as r.
@@ -1345,6 +1446,17 @@ bbb.
   pose proof SA x y as s.
   Check (@transport A P x y r).
 bbb.
+ assert (s : ∀ r, transport P p⁻¹ r = eq_refl (inl x)).
+  intros r.
+Check (eq_refl (inl x)).
+
+ assert (s : transport P p⁻¹ p = transport P p⁻¹ q).
+  destruct q; simpl.
+
+bbb.
+ Check (transport P p (eq_refl (inl x)) = p).
+ Check (transport P q (eq_refl (inl x)) = q).
+*)
 
 Print encode_inl_inr.
 (* encode_inl_inr = 
