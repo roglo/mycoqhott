@@ -1371,6 +1371,18 @@ Defined.
 
 Definition ex_3_2 {A B} : isSet A → isSet B → isSet (A + B).
 Proof.
+intros SA SB x y p q.
+destruct x as [x| x].
+ destruct y as [y| y]; [ | destruct (encode_inl_inr x y p) ].
+  set (s := encode x (inl y) p).
+  unfold code, encode in s; simpl in s.
+  unfold code in s.
+  set (P (z : A + B) := match z with inl a => x = a | inr _ => False end).
+  Check (transport P p (eq_refl x)).
+bbb.
+
+Definition ex_3_2 {A B} : isSet A → isSet B → isSet (A + B).
+Proof.
 intros SA SB.
 assert (SSA : isSet (SubType A B)).
  eapply ex_3_1; [ apply equiv_subtype | apply SA ].
@@ -1380,6 +1392,8 @@ assert (SSA : isSet (SubType A B)).
   destruct y as [y| y]; [ | destruct (encode_inl_inr x y p) ].
    set (d := encode_inl_inl x y p).
 set (P q := p = q : Type).
+bbb.
+
 Check (@transport (inl x = inl y) P (eq_refl (inl x))).
 (* transport P : p = q → P p → P q *)
 
@@ -1424,17 +1438,11 @@ destruct x as [x| x].
 
 bbb.
  destruct y as [y| y]; [ | destruct (encode_inl_inr x y p) ].
-<<<<<<< HEAD
   set (s := encode x (inl y) p).
   unfold code, encode in s; simpl in s.
   unfold code in s.
   set (P (z : A + B) := match z with inl a => x = a | inr _ => False end).
   Check (transport P p (eq_refl x)).
-=======
-  set (P := λ z, inl x = (inl z : A + B)); simpl in P.
-  set (r := @inl_inversion A B x y p).
-  Check (transport P r).
->>>>>>> 149abc63ec08c7046286f3d02b50e46bf13db9ff
 bbb.
   set (P := λ q, p = q : Type); simpl in P.
   pose proof (@transport (inl x = inl y) P p q) as r.
