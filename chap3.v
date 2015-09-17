@@ -1369,11 +1369,55 @@ unfold "◦", "~~", id; simpl.
 split; [ intros (z, (x, p)); destruct p | ]; apply eq_refl.
 Defined.
 
+Definition sum_eq {A B} (x y : A + B) :
+  match x with
+  | inl a => match y with inl a' => a = a' | inr b' => ⊥ end
+  | inr b => match y with inl a' => ⊥ | inr b' => b = b' end
+  end
+  → x = y.
+Proof.
+intros p.
+destruct x as [x| x].
+ destruct y as [y| y]; [ apply ap, p | destruct p ].
+ destruct y as [y| y]; [ destruct p | apply ap, p ].
+Defined.  
+
+Definition glop {A B} (x y : A + B) (p q : x = y) :
+  match x with
+  | inl a =>
+      match y with
+      | inl a' => isProp ((inl a : A + B) = inl a')
+      | inr b' => ⊥
+      end
+  | inr b =>
+      match y with
+      | inl a' => ⊥
+      | inr b' => isProp ((inr b : A + B) = inr b')
+      end
+  end
+  → p = q.
+Proof.
+intros r.
+destruct x as [x| x].
+ destruct y as [y| y]; [ apply r | destruct r ].
+ destruct y as [y| y]; [ destruct r | apply r ].
+Defined.
+
 Definition ex_3_2 {A B} : isSet A → isSet B → isSet (A + B).
 Proof.
 intros SA SB x y p q.
+apply glop.
+destruct x as [x| x].
+ destruct y as [y| y].
+bbb.
+
+  intros r s.
+bbb.
+
 destruct x as [x| x].
  destruct y as [y| y]; [ | destruct (encode_inl_inr x y p) ].
+bbb.
+
   set (s := encode x (inl y) p).
   unfold code, encode in s; simpl in s.
   unfold code in s.
