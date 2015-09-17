@@ -1377,9 +1377,31 @@ assert (SSA : isSet (SubType A B)).
 
  intros x y p q.
  destruct x as [x| x].
-  destruct y as [y| y].
+  destruct y as [y| y]; [ | destruct (encode_inl_inr x y p) ].
+   set (d := encode_inl_inl x y p).
+set (P q := p = q : Type).
+Check (@transport (inl x = inl y) P (eq_refl (inl x))).
+(* transport P : p = q → P p → P q *)
+
    set (f a := existT _ (inl a) (existT _ a (eq_refl (inl a))) : SubType A B).
    simpl in f.
+bbb.
+
+   unfold encode_inl_inl in d.
+SearchAbout encode.
+pose proof @encode_decode A B x (inl y) as H.
+unfold "◦", "~~", id in H.
+simpl in H.
+pose proof H d.
+destruct d.
+simpl in H0.
+
+   unfold encode in d.
+
+SearchAbout code.
+About hott_2_12_5.
+   
+bbb.
 bbb.
 
 intros SA SB x y p q.
