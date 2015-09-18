@@ -1403,3 +1403,18 @@ apply hott_3_3_3.
  eapply compose; [ | apply q ].
  eapply invert, q.
 Defined.
+
+(* "Exercise 3.6. Show that if A is a mere proposition, then so is
+     A + (¬A). Thus, there is no need to insert a propositional
+     truncation in (3.4.1)." *)
+
+Definition ex_3_6 {A} : isProp A → isProp (A + ¬A).
+Proof.
+intros p x y.
+destruct x as [x| x].
+ destruct y as [y| y]; [ apply ap, p | destruct (y x) ].
+ destruct y as [y| y]; [ destruct (x y) | apply ap ].
+ unfold isProp in p.
+bbb.
+
+
