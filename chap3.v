@@ -1358,3 +1358,14 @@ End ex_3_2.
 (* "Exercise 3.3. Prove that if A is a set and B : A → U is a type
     family such that B (x) is a set for all x : A, then ∑ (x:A) B(x)
     is a set." *)
+
+(* already done in 3.1.5 *)
+Definition ex_3_3 {A B} : isSet A → (Π (x : A), isSet (B x))
+  → isSet (Σ (x : A), B x).
+Proof.
+intros SA SB.
+apply ex_3_1_5_bis; assumption.
+Defined.
+
+(* "Exercise 3.4. Show that A is a mere proposition if and only if
+    A → A is contractible." *)
