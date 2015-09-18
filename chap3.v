@@ -1378,3 +1378,11 @@ split; intros p.
  destruct p as (f, p).
  intros x y.
 bbb.
+ assert (q : ∀ x, f x = id x) by (apply hap, p); unfold id in q.
+ set (g := (λ _ : A, y)); simpl in g.
+ assert (gf : g y = f y) by (apply hap, invert, p).
+ assert (gxfy : g x = f y) by (subst g; simpl; apply gf).
+ eapply compose; [ eapply invert, q | ].
+ eapply compose; [ | apply q ].
+
+bbb.
