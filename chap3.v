@@ -1323,130 +1323,35 @@ End ex_3_1.
 
 Section ex_3_2.
 Import Σ_type.
-Import Σ_type2.
-
-(* not sure it is useful *)
-Definition isSet_proj A B :
-  isSet A → isSet (Σ (z : A+B), Σ (x:A), inl x = z).
-Proof.
-intros SA x y p q.
-eapply ex_3_1; [ | apply SA ].
-exists (λ a, existT _ (inl a) (existT _ a (eq_refl (inl a)))).
-apply qinv_isequiv.
-exists (λ (s : Σ (_ : A+B), Σ (_ : A), _), pr₁ (pr₂ s)).
-unfold "◦", "~~", id; simpl.
-split; [ | intros z; reflexivity ].
-intros (z, (b, r)); simpl.
-destruct r; reflexivity.
-Defined.
-
-Definition isSet_A_mult_1 {A} : isSet A → isSet (A * ⊤).
-Proof.
-apply ex_3_1.
-exists (λ a, (a, I)); apply qinv_isequiv; exists AxB_pr₁.
-unfold "~~"; split; [ intros (a, i); destruct i | ]; apply eq_refl.
-Defined.
-
-Definition isSet_A_plus_0 {A} : isSet A → isSet (A + ⊥).
-Proof.
-apply ex_3_1.
-exists inl; apply qinv_isequiv.
-exists
-  (λ (x : A + ⊥), match x with inl a => a | inr b => match b with end end).
-unfold "◦", "~~", id; simpl.
-split; intros x; [ | apply eq_refl ].
-destruct x as [a| b]; [ apply eq_refl | destruct b ].
-Defined.
-
-Definition SubType A B := Σ (z : A + B), Σ (x : A), inl x = z.
-
-Definition equiv_subtype A B : A ≃ SubType A B.
-Proof.
-exists (λ a, existT _ (inl a) (existT _ a (eq_refl (inl a)))).
-apply qinv_isequiv.
-exists (λ s : SubType A B, pr₁ (pr₂ s)).
-unfold "◦", "~~", id; simpl.
-split; [ intros (z, (x, p)); destruct p | ]; apply eq_refl.
-Defined.
-
-(*
-Definition sum_eq {A B} (x y : A + B) :
-  match x with
-  | inl a => match y with inl a' => a = a' | inr b' => ⊥ end
-  | inr b => match y with inl a' => ⊥ | inr b' => b = b' end
-  end
-  → x = y.
-Proof.
-intros p.
-destruct x as [x| x].
- destruct y as [y| y]; [ apply ap, p | destruct p ].
- destruct y as [y| y]; [ destruct p | apply ap, p ].
-Defined.  
-
-Definition glop {A B} (x y : A + B) (p q : x = y) :
-  match x with
-  | inl a =>
-      match y with
-      | inl a' => isProp ((inl a : A + B) = inl a')
-      | inr b' => ⊥
-      end
-  | inr b =>
-      match y with
-      | inl a' => ⊥
-      | inr b' => isProp ((inr b : A + B) = inr b')
-      end
-  end
-  → p = q.
-Proof.
-intros r.
-destruct x as [x| x].
- destruct y as [y| y]; [ apply r | destruct r ].
- destruct y as [y| y]; [ destruct r | apply r ].
-Defined.
-*)
-
-Definition to_subtype A B : A → SubType A B :=
-  λ a, existT _ (inl a) (existT _ a (eq_refl (inl a))).
-
-Definition of_subtype A B : SubType A B → A + B := pr₁.
-
-(*
-Definition of_subtype A B : SubType A B → A + B :=
-  λ s, inl (pr₁ (pr₂ s)).
-*)
 
 Definition ex_3_2 {A B} : isSet A → isSet B → isSet (A + B).
 Proof.
 intros SA SB x y p q.
 destruct x as [x| x].
  destruct y as [y| y]; [ | discriminate p ].
-About inl_eq_equiv.
-  set (e := @inl_eq_equiv A B x y).
-  assert (pr₁ (fst (pr₂ e)) (pr₁ e p) = pr₁ (fst (pr₂ e)) (pr₁ e q)) as r.
-   pose proof (pr₂ (snd (pr₂ e))) as g; simpl in g.
-   subst e; simpl.
-   unfold "◦", "~~", id in g.
-bbb.
+  set (e := @Σ_type2.inl_eq_equiv A B x y).
+  assert (r : ∀ p, pr₁ (fst (pr₂ e)) (pr₁ e p) = p).
+   intros r.
+   destruct e as (f, ((g, Hg), (h, Hh))); simpl in *.
+   pose proof EqStr.quasi_inv_l_eq_r f g h Hg Hh as H.
+   eapply compose; [ apply H | apply Hh ].
 
-assert (SSA : isSet (SubType A B)).
- eapply ex_3_1; [ apply equiv_subtype | apply SA ].
+   eapply compose; [ eapply invert | apply r ].
+   eapply compose; [ eapply invert | apply r ].
+   apply ap, SA.
 
- destruct x as [x| x].
-  destruct y as [y| y].
-   unfold SubType in SSA.
-   unfold isSet in SSA.
-   set (zx := to_subtype A B x).
-   set (zy := to_subtype A B y).
-   pose proof SSA zx zy as H1.
-   assert (H : ∀ p q : (inl x : A + B) = inl y, p = q); [ | apply H ].
-    intros r s.
-    assert (of_subtype A B zx = of_subtype A B zy).
-     apply ap.
-Abort.
-(* I cannot manage to make this proof, I give up for the moment; yet
-   it is not complicated; Pierre Pradic gave me the link in the Web
-   http://paste.isomorphis.me/Ui5&ln where this proof is done; it
-   seems simple. *)
+ destruct y as [y| y]; [ discriminate p | ].
+  set (e := @Σ_type2.inr_eq_equiv A B x y).
+  assert (r : ∀ p, pr₁ (fst (pr₂ e)) (pr₁ e p) = p).
+   intros r.
+   destruct e as (f, ((g, Hg), (h, Hh))); simpl in *.
+   pose proof EqStr.quasi_inv_l_eq_r f g h Hg Hh as H.
+   eapply compose; [ apply H | apply Hh ].
+
+   eapply compose; [ eapply invert | apply r ].
+   eapply compose; [ eapply invert | apply r ].
+   apply ap, SB.
+Defined.
 
 End ex_3_2.
 
