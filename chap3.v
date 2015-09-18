@@ -10,6 +10,7 @@ Arguments eq_refl [A] x.
 Notation "⊥" := False.
 Notation "⊤" := True.
 Notation "'ℬ'" := (bool : Type).
+Notation "A ⇔ B" := ((A → B) * (B → A))%type (at level 100).
 Notation "( x , y ) '_{' P }" := (existT P x y)
   (at level 0, format "'[' ( x ,  y ) _{ P } ']'", only parsing).
 
@@ -1250,8 +1251,6 @@ Definition hott_3_11_9_ii {A P} (p : isContr A) (a := pr₁ p) :
 (* "Lemma 3.11.10. A type A is a mere proposition if and only if for
     all x, y : A, the type x =_{A} y is contractible." *)
 
-Notation "A ⇔ B" := ((A → B) * (B → A))%type (at level 100).
-
 Definition hott_3_11_10 {A} : isProp A ⇔ ∀ x y : A, isContr (x = y).
 Proof.
 split; intros p x y; [ | apply p ].
@@ -1369,3 +1368,13 @@ Defined.
 
 (* "Exercise 3.4. Show that A is a mere proposition if and only if
     A → A is contractible." *)
+
+Definition ex_3_4 {A} : isProp A ⇔ isContr (A → A).
+Proof.
+split; intros p.
+ exists id; intros f.
+ apply Π_type.funext; intros; apply p.
+
+ destruct p as (f, p).
+ intros x y.
+bbb.
