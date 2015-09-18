@@ -1383,3 +1383,23 @@ split; intros p.
  eapply (@compose _ _ (h x)); [ destruct (p h) | apply eq_refl ].
  apply eq_refl.
 Defined.
+
+(* "Exercise 3.5. Show that isProp A ≃ (A → isContr A)." *)
+
+Definition ex_3_5 {A} : isProp A ≃ (A → isContr A).
+Proof.
+apply hott_3_3_3.
+ apply hott_3_3_5_i.
+
+ apply isPropImp, hott_3_11_4.
+
+ intros p a.
+ exists a; intros b; apply p.
+
+ intros f x y.
+ destruct (f x) as (a, p).
+ destruct (f y) as (b, q).
+ eapply compose; [ | apply p ].
+ eapply compose; [ | apply q ].
+ eapply invert, q.
+Defined.
