@@ -1376,13 +1376,18 @@ split; intros p.
  apply Π_type.funext; intros; apply p.
 
  destruct p as (f, p).
+ assert (q : ∀ g, f = g) by apply p; clear p; rename q into p.
  intros x y.
 bbb.
+
  assert (q : ∀ x, f x = id x) by (apply hap, p); unfold id in q.
- set (g := (λ _ : A, y)); simpl in g.
- assert (gf : g y = f y) by (apply hap, invert, p).
- assert (gxfy : g x = f y) by (subst g; simpl; apply gf).
  eapply compose; [ eapply invert, q | ].
  eapply compose; [ | apply q ].
+ set (g := (λ _ : A, y)); simpl in g.
+ assert (gf : g x = g y)
+ assert (gf : g y = f y) by (apply hap, invert, p).
+ assert (gxfy : g x = f y) by (subst g; simpl; apply gf).
+ subst g; simpl in gf, gxfy.
+
 
 bbb.
