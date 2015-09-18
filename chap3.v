@@ -1432,123 +1432,14 @@ assert (SSA : isSet (SubType A B)).
     intros r s.
     assert (of_subtype A B zx = of_subtype A B zy).
      apply ap.
-Focus 2.
-subst zx zy.
-bbb.
-
-  intros r s.
-bbb.
-
-destruct x as [x| x].
- destruct y as [y| y]; [ | destruct (encode_inl_inr x y p) ].
-bbb.
-
-  set (s := encode x (inl y) p).
-  unfold code, encode in s; simpl in s.
-  unfold code in s.
-  set (P (z : A + B) := match z with inl a => x = a | inr _ => False end).
-  Check (transport P p (eq_refl x)).
-bbb.
-
-Definition ex_3_2 {A B} : isSet A → isSet B → isSet (A + B).
-Proof.
-intros SA SB.
-assert (SSA : isSet (SubType A B)).
- eapply ex_3_1; [ apply equiv_subtype | apply SA ].
-
- intros x y p q.
- destruct x as [x| x].
-  destruct y as [y| y]; [ | destruct (encode_inl_inr x y p) ].
-   set (d := encode_inl_inl x y p).
-set (P q := p = q : Type).
-bbb.
-
-Check (@transport (inl x = inl y) P (eq_refl (inl x))).
-(* transport P : p = q → P p → P q *)
-
-   set (f a := existT _ (inl a) (existT _ a (eq_refl (inl a))) : SubType A B).
-   simpl in f.
-bbb.
-
-   unfold encode_inl_inl in d.
-SearchAbout encode.
-pose proof @encode_decode A B x (inl y) as H.
-unfold "◦", "~~", id in H.
-simpl in H.
-pose proof H d.
-destruct d.
-simpl in H0.
-
-   unfold encode in d.
-
-SearchAbout code.
-About hott_2_12_5.
-   
-bbb.
-bbb.
-
-intros SA SB x y p q.
-destruct x as [a| a].
- destruct y as [b| b].
-Check @ex_3_1.
-  pose proof isSet_A_plus_0 SA as SA0.
-  unfold isSet in SA0.
-Set Printing Implicit. Show.
-bbb.
-
-intros SA SB x y p q.
-destruct x as [x| x].
- set (P (y : A + B) := inl x = y : Type); simpl in P.
- assert (s : ∀ (r : inl x = y), transport P r (eq_refl (inl x)) = r).
-  intros r; destruct r; reflexivity.
-
-  eapply compose; [ eapply invert, s | ].
-  eapply compose; [ | eapply s ].
-
-bbb.
- destruct y as [y| y]; [ | destruct (encode_inl_inr x y p) ].
-  set (s := encode x (inl y) p).
-  unfold code, encode in s; simpl in s.
-  unfold code in s.
-  set (P (z : A + B) := match z with inl a => x = a | inr _ => False end).
-  Check (transport P p (eq_refl x)).
-bbb.
-  set (P := λ q, p = q : Type); simpl in P.
-  pose proof (@transport (inl x = inl y) P p q) as r.
-bbb.
-  set (P := λ y, x = y : Type); simpl in P.
-  pose proof @inl_inversion A B x y p as r.
-  Check (transport P r (eq_refl x)).
-bbb.
-  pose proof SA x y as s.
-  Check (@transport A P x y r).
-bbb.
- assert (s : ∀ r, transport P p⁻¹ r = eq_refl (inl x)).
-  intros r.
-Check (eq_refl (inl x)).
-
- assert (s : transport P p⁻¹ p = transport P p⁻¹ q).
-  destruct q; simpl.
-
-bbb.
- Check (transport P p (eq_refl (inl x)) = p).
- Check (transport P q (eq_refl (inl x)) = q).
-*)
-
-Print encode_inl_inr.
-(* encode_inl_inr = 
-λ (A B : Type) (a₀ : A) (b : B), encode a₀ (inr b)
-     : ∀ (A B : Type) (a₀ : A) (b : B), inl a₀ = inr b → ⊥
-*)
-Print encode.
-
-  set (s := encode x (inl y) p).
-  unfold code, encode in s; simpl in s.
-bbb.
-
-  pose proof @inl_inversion A B x y p as r.
-  unfold isSet in SA.
-  pose proof SA x y r.
-bbb.
+Abort.
+(* I cannot manage to make this proof, I give up for the moment; yet
+   it is not complicated; Pierre Pradic gave me the link in the Web
+   http://paste.isomorphis.me/Ui5&ln where this proof is done; it
+   seems simple. *)
 
 End ex_3_2.
+
+(* "Exercise 3.3. Prove that if A is a set and B : A → U is a type
+    family such that B (x) is a set for all x : A, then ∑ (x:A) B(x)
+    is a set." *)
