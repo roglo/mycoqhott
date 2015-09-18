@@ -1418,6 +1418,8 @@ Definition of_subtype A B : SubType A B → A + B :=
 Definition ex_3_2 {A B} : isSet A → isSet B → isSet (A + B).
 Proof.
 intros SA SB x y p q.
+bbb.
+
 assert (SSA : isSet (SubType A B)).
  eapply ex_3_1; [ apply equiv_subtype | apply SA ].
 
