@@ -1420,7 +1420,12 @@ Proof.
 intros SA SB x y p q.
 destruct x as [x| x].
  destruct y as [y| y]; [ | discriminate p ].
-  assert (r : inl_inversion x y p = inl_inversion x y q) by apply SA.
+About inl_eq_equiv.
+  set (e := @inl_eq_equiv A B x y).
+  assert (pr₁ (fst (pr₂ e)) (pr₁ e p) = pr₁ (fst (pr₂ e)) (pr₁ e q)) as r.
+   pose proof (pr₂ (snd (pr₂ e))) as g; simpl in g.
+   subst e; simpl.
+   unfold "◦", "~~", id in g.
 bbb.
 
 assert (SSA : isSet (SubType A B)).
