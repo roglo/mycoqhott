@@ -1328,28 +1328,32 @@ Proof.
 intros SA SB x y p q.
 destruct x as [x| x].
  destruct y as [y| y]; [ | discriminate p ].
-  set (e := @Σ_type2.inl_eq_equiv A B x y).
-  assert (r : ∀ p, pr₁ (fst (pr₂ e)) (pr₁ e p) = p).
-   intros r.
-   destruct e as (f, ((g, Hg), (h, Hh))); simpl in *.
-   pose proof EqStr.quasi_inv_l_eq_r f g h Hg Hh as H.
-   eapply compose; [ apply H | apply Hh ].
+ set (e := @Σ_type2.inl_eq_equiv A B x y).
+ set (f := pr₁ e).
+ set (g := pr₁ (fst (pr₂ e))).
+ assert (r : ∀ p, g (f p) = p).
+  intros r; subst f g.
+  destruct e as (f, ((g, Hg), (h, Hh))); simpl in *.
+  pose proof EqStr.quasi_inv_l_eq_r f g h Hg Hh as H.
+  eapply compose; [ apply H | apply Hh ].
 
-   eapply compose; [ eapply invert | apply r ].
-   eapply compose; [ eapply invert | apply r ].
-   apply ap, SA.
+  eapply compose; [ eapply invert | apply r ].
+  eapply compose; [ eapply invert | apply r ].
+  apply ap, SA.
 
  destruct y as [y| y]; [ discriminate p | ].
-  set (e := @Σ_type2.inr_eq_equiv A B x y).
-  assert (r : ∀ p, pr₁ (fst (pr₂ e)) (pr₁ e p) = p).
-   intros r.
-   destruct e as (f, ((g, Hg), (h, Hh))); simpl in *.
-   pose proof EqStr.quasi_inv_l_eq_r f g h Hg Hh as H.
-   eapply compose; [ apply H | apply Hh ].
+ set (e := @Σ_type2.inr_eq_equiv A B x y).
+ set (f := pr₁ e).
+ set (g := pr₁ (fst (pr₂ e))).
+ assert (r : ∀ p, g (f p) = p).
+  intros r; subst f g.
+  destruct e as (f, ((g, Hg), (h, Hh))); simpl in *.
+  pose proof EqStr.quasi_inv_l_eq_r f g h Hg Hh as H.
+  eapply compose; [ apply H | apply Hh ].
 
-   eapply compose; [ eapply invert | apply r ].
-   eapply compose; [ eapply invert | apply r ].
-   apply ap, SB.
+  eapply compose; [ eapply invert | apply r ].
+  eapply compose; [ eapply invert | apply r ].
+  apply ap, SB.
 Defined.
 
 End ex_3_2.
