@@ -678,6 +678,8 @@ End hott_3_5.
        SetUi → SetUi+1,              (3.5.3)
        PropUi → PropUi+1.            (3.5.4)" *)
 
+bbb.
+
 (* ok, but I don't know how to program the hierarchy of universes in Coq;
    and the following axiom cannot be written either *)
 
