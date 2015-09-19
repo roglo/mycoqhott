@@ -1414,12 +1414,11 @@ Defined.
 
 Definition ex_3_6 {A} : isProp A → isProp (A + ¬A).
 Proof.
-intros p x y.
+intros SA x y.
 destruct x as [x| x].
- destruct y as [y| y]; [ apply ap, p | destruct (y x) ].
- destruct y as [y| y]; [ destruct (x y) | apply ap ].
- unfold isProp in p.
- apply Π_type.funext; intros a; destruct (x a).
+ destruct y as [y| y]; [ apply ap, SA | destruct (y x) ].
+ destruct y as [y| y]; [ destruct (x y) | ].
+ apply ap, Π_type.funext; intros a; destruct (x a).
 Defined.
 
 (* "Exercise 3.7. More generally, show that if A and B are mere
@@ -1427,5 +1426,14 @@ Defined.
 
 Definition ex_3_7 {A B} : isProp A → isProp B → notT (A * B) → isProp (A + B).
 Proof.
-intros SA SB NAB.
+intros SA SB NAB x y.
+destruct x as [x| x].
+ destruct y as [y| y]; [ apply ap, SA | destruct (NAB (x, y)) ].
+ destruct y as [y| y]; [ destruct (NAB (y, x)) | apply ap, SB ].
+Defined.
+
+(* "Exercise 3.8. Assuming that some type isequiv(f) satisfies
+    conditions (i)–(iii) of §2.4, show that the type ∥qinv(f)∥
+    satisfies the same conditions and is equivalent to isequiv(f)." *)
+
 bbb.
