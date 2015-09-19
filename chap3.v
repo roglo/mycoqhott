@@ -1415,6 +1415,13 @@ destruct x as [x| x].
  destruct y as [y| y]; [ apply ap, p | destruct (y x) ].
  destruct y as [y| y]; [ destruct (x y) | apply ap ].
  unfold isProp in p.
+ apply Π_type.funext; intros a; destruct (x a).
+Defined.
+
+(* "Exercise 3.7. More generally, show that if A and B are mere
+    propositions and ¬(A×B), then A+B is also a mere proposition." *)
+
+Definition ex_3_7 {A B} : isProp A → isProp B → notT (A * B) → isProp (A + B).
+Proof.
+intros SA SB NAB.
 bbb.
-
-
