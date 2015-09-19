@@ -1480,3 +1480,32 @@ End ex_3_8.
 
 (* "Exercise 3.9. Show that if LEM holds, then the type
     Prop : ≡ ∑ (A:U) isProp(A) is equivalent to 2." *)
+
+Definition ex_3_9 : LEM → (Σ (A : Type), isProp A) ≃ ℬ.
+Proof.
+intros lem.
+set
+  (f := λ p : {A : Type & isProp A},
+   match p with
+   | existT _ A PA => match lem A PA with inl _ => true | inr _ => false end
+   end).
+exists f; apply qinv_isequiv.
+set
+  (g x y :=
+   match x return (x = y) with I => match y with I => eq_refl I end end).
+set (h (x y : ⊥) := match x return x = y with end).
+exists
+  (λ b : bool,
+   if b then existT (λ A : Type, isProp A) ⊤ g
+   else existT (λ A : Type, isProp A) ⊥ h).
+unfold "◦", "~~", id; simpl.
+split.
+ intros b; destruct b; simpl.
+  destruct (lem ⊤ g) as [x| x]; [ apply eq_refl | destruct x; constructor ].
+  destruct (lem ⊥ h) as [x| x]; [ destruct x | reflexivity ].
+
+ intros (A, PA); simpl.
+ destruct (lem A PA) as [a| b].
+bbb.
+
+End ex_3_9.
