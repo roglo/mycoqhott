@@ -1481,6 +1481,11 @@ End ex_3_8.
 (* "Exercise 3.9. Show that if LEM holds, then the type
     Prop : ≡ ∑ (A:U) isProp(A) is equivalent to 2." *)
 
+Definition uip_refl_True : ∀ p : I = I, p = eq_refl I.
+Proof.
+intros p; refine (match p with eq_refl _ => _ end); reflexivity.
+Defined.
+
 Definition ex_3_9 : LEM → (Σ (A : Type), isProp A) ≃ ℬ.
 Proof.
 intros lem.
@@ -1506,6 +1511,29 @@ split.
 
  intros (A, PA); simpl.
  destruct (lem A PA) as [a| b].
-bbb.
+  assert (p : ⊤ ≃ A) by (apply quasi_inv, hott_3_3_2; [ apply PA | apply a]).
+  eapply (Σ_type.pair_eq (ua p)).
+  destruct (ua p); simpl; unfold id; simpl.
+  apply Π_type.funext; intros x.
+  apply Π_type.funext; intros y.
+  destruct x, y.
+  subst g; simpl.
+  set (u := PA I I); simpl in u.
+  refine (match u with eq_refl _ => _ end).
+  apply eq_refl.
+
+  assert (p : ⊥ ≃ A).
+   exists (λ a : ⊥, match a with end); apply qinv_isequiv; exists b.
+   unfold "◦", "~~", id.
+   split; [ intros a; destruct (b a) | intros x; destruct x ].
+
+   eapply (Σ_type.pair_eq (ua p)).
+   destruct (ua p); simpl; unfold id; simpl.
+   apply Π_type.funext; intros x; destruct x.
+Defined.
 
 End ex_3_9.
+
+(* "Exercise 3.10. Show that if U_{i+1} satisfies LEM, then the
+    canonical inclusion Prop_{U_{i}} → Prop_{U+{i+1}} is an
+    equivalence." *)
