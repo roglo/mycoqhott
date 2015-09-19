@@ -1436,4 +1436,22 @@ Defined.
     conditions (i)–(iii) of §2.4, show that the type ∥qinv(f)∥
     satisfies the same conditions and is equivalent to isequiv(f)." *)
 
+Definition ex_3_8_i {A B} :
+  ∀ f : A → B,
+  (qinv f → ∥(qinv f)∥) *
+  (∥(qinv f)∥ → qinv f) *
+  (∀ e₁ e₂ : ∥(qinv f)∥, e₁ = e₂).
+Proof.
+intros f.
+split.
+ split; [ apply PT_intro | ].
+ apply PT_elim; intros x y.
+
+bbb.
+
+Definition ex_3_8_ii {A B} (isequ : (A → B) → Type) :
+  equiv_prop isequ
+  → ∀ f : A → B, isequ f ≃ ∥(qinv f)∥.
+Proof.
+
 bbb.
