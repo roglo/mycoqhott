@@ -1461,7 +1461,22 @@ Definition ex_3_8_ii {A B} (isequiv : (A → B) → Type) :
   equiv_prop isequiv
   → ∀ f : A → B, isequiv f ≃ ∥(qinv f)∥.
 Proof.
+intros p f.
+pose proof p f as H.
+destruct H as ((qi, iq), pf).
+pose proof ex_3_8_i isequiv p f as H.
+destruct H as ((qf, fq), pq).
+apply hott_3_3_3.
+ intros e₁ e₂; apply pf.
 
-bbb.
+ intros e₁ e₂; apply pq.
+
+ intros r; apply qf, iq, r.
+
+ intros r; apply qi, fq, r.
+Defined.
 
 End ex_3_8.
+
+(* "Exercise 3.9. Show that if LEM holds, then the type
+    Prop : ≡ ∑ (A:U) isProp(A) is equivalent to 2." *)
