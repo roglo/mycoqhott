@@ -1608,8 +1608,20 @@ Definition ex_3_12 : LEM → ∀ A, ∥(∥A∥ → A)∥ :=
     In the absence of univalence, this axiom is consistent. However,
     show that it implies the axiom of choice (3.8.1)." *)
 
+(* according to hott_3_8_2, AC ≃ AC_3_8_3, but hott_3_8_2 uses ua *)
+(* according to AC_equiv_3_8_3_equiv, AC ≃ AC_3_8_3_equiv, but
+   AC_equiv_3_8_3_equiv uses AC_3_8_3 that uses ua *)
+
+(* So this exercise, which is said to be in a context where univalence
+   is not set, is not allowed to use these lemmas; the definition of
+   AC must remain the initial one. *)
+
 Definition ex_3_13 : (Π (A : Type), A + notT A) → AC.
 Proof.
 intros lem.
 intros X A P SX SA PXA T.
+destruct (lem ∥(Σ (g : Π (x : X), A x), Π (x : X), P x (g x))∥) as [p| p].
+ assumption.
+
+ exfalso.
 bbb.
