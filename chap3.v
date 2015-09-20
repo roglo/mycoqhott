@@ -1601,3 +1601,15 @@ Definition ex_3_12 : LEM → ∀ A, ∥(∥A∥ → A)∥ :=
           match NPA (λ x y, match H (PT_intro (λ _, x)) with end) with end
       end
   end.
+
+(* "Exercise 3.13. We showed in Corollary 3.2.7 that the following
+    naive form of LEM is inconsistent with univalence:
+                 Π (A : U) (A + (¬A))
+    In the absence of univalence, this axiom is consistent. However,
+    show that it implies the axiom of choice (3.8.1)." *)
+
+Definition ex_3_13 : (Π (A : Type), A + notT A) → AC.
+Proof.
+intros lem.
+intros X A P SX SA PXA T.
+bbb.
