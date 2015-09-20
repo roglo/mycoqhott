@@ -1620,6 +1620,19 @@ Definition ex_3_13 : (Π (A : Type), A + notT A) → AC.
 Proof.
 intros lem.
 intros X A P SX SA PXA T.
+assert (g : ∀ x : X, A x).
+ intros x.
+ destruct (lem (Σ (a : A x), P x a)) as [p| p].
+  destruct p as (a, p); apply a.
+
+  exfalso; apply p.
+  destruct (lem (isProp (A x))) as [q| q].
+   apply PT_elim; [ | apply T ].
+   apply isProp_Σ_type; [ apply q | apply PXA ].
+
+   exfalso; apply q; intros a b.
+
+bbb.
 destruct (lem ∥(Σ (g : Π (x : X), A x), Π (x : X), P x (g x))∥) as [p| p].
  assumption.
 
