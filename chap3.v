@@ -678,12 +678,10 @@ End hott_3_5.
        SetUi → SetUi+1,              (3.5.3)
        PropUi → PropUi+1.            (3.5.4)" *)
 
-bbb.
-
 (* ok, but I don't know how to program the hierarchy of universes in Coq;
    and the following axiom cannot be written either *)
 
-(* "Axiom 3.5.5 (Propositional resizing). The map PropUi ! PropUi+1 is
+(* "Axiom 3.5.5 (Propositional resizing). The map PropUi → PropUi+1 is
     an equivalence." *)
 
 (* "3.6 The logic of mere propositions" *)
@@ -1534,8 +1532,32 @@ split.
    apply Π_type.funext; intros x; destruct x.
 Defined.
 
-End ex_3_9.
-
 (* "Exercise 3.10. Show that if U_{i+1} satisfies LEM, then the
     canonical inclusion Prop_{U_{i}} → Prop_{U+{i+1}} is an
     equivalence." *)
+
+(* don't know how to define Prop_{i} in Coq... *)
+
+(* "Exercise 3.11. Show that it is not the case that for all A : U we
+    have ∥A∥ → A. (However, there can be particular types for which
+    ∥A∥ → A. Exercise 3.8 implies that qinv (f) is such.)" *)
+
+(* With the recursion principle of ∥A∥ (§3.7) that we defined as
+   "PT_rec", we can define the case A≡B and f≡id, resulting on the
+   existence of the function g of type isProp A → ∥A∥ → A. Therefore,
+   if A is a mere proposition, we indeed have ∥A∥ → A. We named
+   this particular case "PT_elim". *)
+
+(* Print PT_rec.
+*** [ PT_rec :
+∀ (A B : Type) (f : A → B),
+isProp B → {g : ∥A∥ → B & ∀ a : A, g (PT_intro a) = f a} ] *)
+
+(* Print PT_elim.
+PT_elim =
+λ (A : Type) (PA : isProp A), Σ_type.pr₁ (PT_rec A A id PA)
+     : ∀ A : Type, isProp A → ∥A∥ → A *)
+
+(* and since ∥qinv f∥ ≃ isequiv f (exercise 3.8), there is a function
+   of type ∥qinv f∥ → isequiv f. But by the property (ii) of isequiv
+   in §2.4, we have isequiv f → qinv f. So ∥qinv f∥ → qinv f. *)
