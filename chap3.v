@@ -1567,17 +1567,17 @@ PT_elim =
     choice, which can fail in the absence of LEM; see [KECA13].)" *)
 
 (* very strange proof; in the case when A is not a mere proposition,
-   we artifially create an element of A in the following steps:
+   we artifially create an element of A by the following steps:
    - using LEM to save the opposite of the goal in the hypotheses, as H
    - the new goal is then the contradiction ⊥
    - putting isProp A as new goal by applying notT (isProp A)
-   - introducing then x et y as elements of A → got it! actually two: x and y
+   - introducing then x et y as elements of A
    - setting it is a contradiction (exfalso)
    - putting H back as goal
-   When we have a value x of type A, the proof is done by PT_intro
-   and intros. *)
+   Since we have values of type A, x and y, in the hypotheses, we can
+   prove A, therefore ∥A∥→A, therefore ∥(∥A∥→A)∥. *)
 
-Definition ex_3_12 : LEM → ∀ A, ∥(∥A∥ → A)∥.
+Definition ex_3_12_tac : LEM → ∀ A, ∥(∥A∥ → A)∥.
 Proof.
 intros lem A.
 pose proof hott_3_3_5_i A as PPA.
@@ -1585,7 +1585,19 @@ pose proof lem (isProp A) PPA as H.
 destruct H as [PA| NPA]; [ apply PT_intro, PT_elim, PA; assumption | ].
 pose proof lem _ (@PT_eq (∥A∥ → A)) as H.
 destruct H as [H| H]; [ apply H | exfalso ].
-apply NPA; clear NPA; intros x y.
+apply NPA; intros x y.
 exfalso; apply H.
 apply PT_intro; intros; apply x.
 Defined.
+
+Definition ex_3_12 : LEM → ∀ A, ∥(∥A∥ → A)∥ :=
+  λ (lem : LEM) (A : Type),
+  match lem (isProp A) (hott_3_3_5_i A) with
+  | inl PA => PT_intro (PT_elim PA)
+  | inr NPA =>
+      match lem ∥(∥A∥ → A)∥ (@PT_eq (∥A∥ → A)) with
+      | inl H => H
+      | inr H =>
+          match NPA (λ x y, match H (PT_intro (λ _, x)) with end) with end
+      end
+  end.
