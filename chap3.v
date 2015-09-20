@@ -1572,7 +1572,6 @@ intros lem A.
 pose proof hott_3_3_5_i A as PPA.
 pose proof lem (isProp A) PPA as H.
 destruct H as [PA| NPA]; [ apply PT_intro, PT_elim, PA; assumption | ].
-pose proof PT_rec as H.
 bbb.
 
 Definition toto {A} : LEM → notT (isProp A) → A.
