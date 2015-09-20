@@ -1561,3 +1561,12 @@ PT_elim =
 (* and since ∥qinv f∥ ≃ isequiv f (exercise 3.8), there is a function
    of type ∥qinv f∥ → isequiv f. But by the property (ii) of isequiv
    in §2.4, we have isequiv f → qinv f. So ∥qinv f∥ → qinv f. *)
+
+(* "Exercise 3.12. Show that if LEM holds, then for all A : U we have
+    ∥(∥A∥ → A)∥. (This property is a very simple form of the axiom of
+    choice, which can fail in the absence of LEM; see [KECA13].)" *)
+
+Definition ex_3_12 : LEM → ∀ A, ∥(∥A∥ → A)∥.
+Proof.
+intros lem A.
+bbb.
