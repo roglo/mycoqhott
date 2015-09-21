@@ -1757,3 +1757,9 @@ split.
  destruct (lem A) as [a| na]; [ | destruct (nna na) ].
  apply Π_type.funext; intros na; destruct (nna na).
 Defined.
+
+(* "Exercise 3.15. Show that if we assume propositional resizing as in
+    §3.5, then the type
+          Π (P : Prop), (A → P) → P
+    has the same universal property as ∥A∥. Thus, we can also define
+    the propositional truncation in this case." *)
