@@ -747,18 +747,6 @@ Definition PT_elim {A} : isProp A → ∥A∥ → A :=
 Definition PT_elim_not {A} : notT A → notT ∥A∥ :=
   λ f, Σ_type.pr₁ (PT_rec A ⊥ f (λ x y : ⊥, match x with end)).
 
-(* doing the exercise 3.14 in advance, just to see if my definition of
-   propositional truncation works *)
-
-Definition ex_3_14 : LEM → ∀ A, isProp A → (notT (notT A) ≃ ∥A∥).
-Proof.
-intros HLEM A HPA.
-exists (λ p, PT_intro (pr₁ LEM_LDN HLEM A HPA p)); apply qinv_isequiv.
-exists (λ p q, q (Σ_type.pr₁ (PT_rec A A id HPA) p)); simpl.
-split; [ intros x; apply PT_eq | ].
-intros f; apply Π_type.funext; intros x; destruct (f x).
-Defined.
-
 (* "3.8 The axiom of choice" *)
 
 Definition AC := ∀ (X : Type) (A : X → Type) (P : Π (x : X), (A x → Type)),
@@ -1714,4 +1702,29 @@ destruct (lem _ (hott_3_3_5_i A)) as [PA| NPA].
 Defined.
 
 Definition ex_3_14 : LEM → ∀ A, notT (notT A) ≃ ∥A∥.
+Proof.
+intros lem A.
+destruct (lem _ (hott_3_3_5_i A)) as [PA| NPA].
+ exists (λ p, PT_intro (pr₁ LEM_LDN lem A PA p)); apply qinv_isequiv.
+ exists (λ p q, q (Σ_type.pr₁ (PT_rec A A id PA) p)); simpl.
+ split; [ intros x; apply PT_eq | ].
+ intros f; apply Π_type.funext; intros x; destruct (f x).
+
+ assert (f : notT (notT A) → ∥A∥).
+  intros nna.
+  apply PT_intro.
+  unfold LEM in lem.
+  (* wrong if A is not a Prop; cf 3.2.2 *)
+Abort.
+
+(* version where hypothesis "isProp A" has been added *)
+Definition ex_3_14 : LEM → ∀ A, isProp A → (notT (notT A) ≃ ∥A∥).
+Proof.
+intros HLEM A HPA.
+exists (λ p, PT_intro (pr₁ LEM_LDN HLEM A HPA p)); apply qinv_isequiv.
+exists (λ p q, q (Σ_type.pr₁ (PT_rec A A id HPA) p)); simpl.
+split; [ intros x; apply PT_eq | ].
+intros f; apply Π_type.funext; intros x; destruct (f x).
+Defined.
+
 bbb.
