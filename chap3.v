@@ -1817,6 +1817,9 @@ Abort.
     Observe that if we assume instead that each Y(x) is a set, then
     (3.11.11) becomes equivalent to the axiom of choice (3.8.3)." *)
 
+Section ex_3_16.
+Import Σ_type.
+
 Definition ex_3_16_i {X Y} : isSet X → (Π (x : X), isProp (Y x))
   → LEM → (Π (x : X), notT (notT (Y x))) ≃ notT (notT (Π (x : X), Y x)).
 Proof.
@@ -1839,17 +1842,21 @@ Defined.
 Definition ex_3_16_ii :
   LEM
   → (∀ X Y, isSet X → (Π (x : X), isSet (Y x))
-     → ((Π (x : X), notT (notT (Y x))) ≃ notT (notT (Π (x : X), Y x))))
+     → (Π (x : X), notT (notT (Y x))) ≃ notT (notT (Π (x : X), Y x)))
     ≃ AC_3_8_3.
 Proof.
 intros lem.
 assert
   ((∀ X Y, isSet X → (Π (x : X), isSet (Y x))
-    → ((Π (x : X), notT (notT (Y x))) ≃ notT (notT (Π (x : X), Y x))))
+    → (Π (x : X), notT (notT (Y x))) ≃ notT (notT (Π (x : X), Y x)))
    → AC_3_8_3) as ffff.
  intros p X Y SX SY q.
- apply PT_intro; intros x.
- pose proof p X Y SX SY as H.
- pose proof (Σ_type.pr₁ H) as H1.
+ apply PT_intro; intro x.
+ destruct (lem _ (hott_3_3_5_i (Y x))) as [PY| NPY].
+  apply PT_elim; [ apply PY | apply q ].
 
 bbb.
+  exfalso; apply NPY; intros a b.
+bbb.
+
+End ex_3_16.
