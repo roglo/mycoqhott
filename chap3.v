@@ -1616,39 +1616,42 @@ Definition ex_3_12 : LEM → ∀ A, ∥(∥A∥ → A)∥ :=
    is not set, is not allowed to use these lemmas; the definition of
    AC must remain the initial one. *)
 
-Definition ex_3_13 : (Π (A : Type), A + notT A) → AC.
+Definition ex_3_13_tac : (Π (A : Type), A + notT A) → AC.
 Proof.
 intros lem.
 intros X A P SX SA PXA T.
-assert (g : ∀ x : X, A x).
- intros x.
- destruct (lem (Σ (a : A x), P x a)) as [p| p].
-  destruct p as (a, p); apply a.
+clear SX SA PXA. (* not used hypotheses *)
+apply PT_intro.
+exists
+   (λ (x : X),
+    match lem (Σ (a : A x), P x a) with
+    | inl (existT _ a _) => a
+    | inr p => match PT_elim_not p (T x) with end
+    end).
+intros x.
+destruct (lem (Σ (a : A x), P x a)) as [(a, p)| p]; [ apply p | ].
+destruct (PT_elim_not p (T x)).
+Defined.
 
-  exfalso; apply p.
-  destruct (lem (isProp (A x))) as [q| q].
-   apply PT_elim; [ | apply T ].
-   apply isProp_Σ_type; [ apply q | apply PXA ].
-
-   exfalso; apply q; intros a b.
-   unfold isSet in SA.
-   pose proof SA x a b.
-   destruct (lem (a = b)) as [s| s]; [ apply s | ].
-   destruct (lem (P x a)) as [r| r].
-    exfalso; apply p; exists a; apply r.
-
-bbb.
-   exfalso; apply p; clear p.
-   destruct (lem (P x a)) as [r| r]; [ exists a; apply r | ].
-   pose proof T x as s.
-bbb.
-   exists a.
-
-   pose proof PXA x a.
-   unfold isProp in H.
-bbb.
-destruct (lem ∥(Σ (g : Π (x : X), A x), Π (x : X), P x (g x))∥) as [p| p].
- assumption.
-
- exfalso.
-bbb.
+Definition ex_3_13 : (Π (A : Type), A + notT A) → AC
+:=
+  λ lem X A P _ _ _ T,
+  PT_intro
+    (existT (λ g : ∀ x : X, A x, ∀ x : X, P x (g x))
+       (λ x : X,
+        match lem {a : A x & P x a} with
+        | inl (existT _ a _) => a
+        | inr p => match PT_elim_not p (T x) return (A x) with end
+        end)
+       (λ (x : X),
+        let s := lem {a : A x & P x a} in
+        match s return
+          (P x
+             match s with
+             | inl (existT _ a _) => a
+             | inr p => match PT_elim_not p (T x) return (A x) with end
+             end)
+        with
+        | inl (existT _ a p) => p
+        | inr p => match PT_elim_not p (T x) with end
+        end)).
