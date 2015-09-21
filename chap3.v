@@ -1718,7 +1718,9 @@ destruct (lem _ (hott_3_3_5_i A)) as [PA| NPA].
 Abort.
 
 (* version where hypothesis "isProp A" has been added *)
-Definition ex_3_14 : LEM → ∀ A, isProp A → (notT (notT A) ≃ ∥A∥).
+(* but not satisfactory since when A is a mere proposition, ∥A∥ is
+   not interesting at all *)
+Definition ex_3_14_not_satis : LEM → ∀ A, isProp A → (notT (notT A) ≃ ∥A∥).
 Proof.
 intros HLEM A HPA.
 exists (λ p, PT_intro (pr₁ LEM_LDN HLEM A HPA p)); apply qinv_isequiv.
@@ -1727,4 +1729,31 @@ split; [ intros x; apply PT_eq | ].
 intros f; apply Π_type.funext; intros x; destruct (f x).
 Defined.
 
-bbb.
+(* version with naive version of LEM, instead of normal LEM *)
+Definition ex_3_14 : (Π (A : Type), A + notT A) → ∀ A, notT (notT A) ≃ ∥A∥.
+Proof.
+intros lem A.
+exists
+  (λ nna : notT (notT A),
+   PT_intro
+     (match lem A with
+      | inl a => a
+      | inr na => match nna na return A with end
+      end)).
+apply qinv_isequiv.
+exists
+  (λ (x : ∥A∥),
+   match lem A with
+   | inl a => λ (na : notT A), match na a with end
+   | inr na => match PT_elim_not na x with end
+   end).
+unfold "◦", "~~", id; simpl.
+split.
+ intros x.
+ destruct (lem A) as [a| na]; [ apply PT_eq | ].
+ destruct (PT_elim_not na x).
+
+ intros nna.
+ destruct (lem A) as [a| na]; [ | destruct (nna na) ].
+ apply Π_type.funext; intros na; destruct (nna na).
+Defined.
