@@ -1763,3 +1763,57 @@ Defined.
           Π (P : Prop), (A → P) → P
     has the same universal property as ∥A∥. Thus, we can also define
     the propositional truncation in this case." *)
+
+(*
+PT_intro: ∀ A : Type, A → ∥A∥
+PT_eq: ∀ A : Type, isProp ∥A∥
+PT_rec:
+  ∀ (A B : Type) (f : A → B),
+  isProp B → Σ (g : ∥A∥ → B), ∀ a : A, g (PT_intro a) = f a
+*)
+
+Definition APP A := Π (P : Type), isProp P → (A → P) → P.
+
+Definition APP_intro {A} : A → APP A.
+Proof.
+intros a P PP p; apply p, a.
+Defined.
+
+Definition APP_eq {A} : isProp (APP A).
+Proof.
+intros f g.
+apply Π_type.funext; intros P.
+apply Π_type.funext; intros PP.
+apply Π_type.funext; intros h.
+apply PP.
+Defined.
+
+Definition APP_rec {A B} (f : A → B) :
+  isProp B → Σ (g : APP A → B), ∀ a : A, g (APP_intro a) = f a.
+Proof.
+intros PB.
+exists (λ (g : APP A), g B PB f).
+intros a; apply eq_refl.
+Defined.
+
+Definition ex_3_15 {A} : APP A ≃ ∥A∥.
+Proof.
+exists (λ g : APP A, g ∥A∥ (@PT_eq A) (@PT_intro A)).
+apply qinv_isequiv.
+assert (∥A∥ → APP A) as g.
+ intros x P PP i.
+ exfalso; revert x.
+ pose proof (@APP_rec P P id PP) as R.
+ destruct R as (h, R); unfold id in R.
+ (* Seems not working; perhaps they are not equivalent? This is indeed
+    possible, since the wording of this exercise does not say they are. *)
+Abort.
+
+(* "Exercise 3.16. Assuming LEM, show that double negation commutes
+    with universal quantification of mere propositions over sets. That
+    is, show that if X is a set and each Y(x) is a mere proposition,
+    then LEM implies
+          (Π (x:X) ¬¬Y(x)) ≃ ¬¬ (Π (x:X) Y(x))
+
+    Observe that if we assume instead that each Y(x) is a set, then
+    (3.11.11) becomes equivalent to the axiom of choice (3.8.3)." *)
