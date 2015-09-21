@@ -740,7 +740,7 @@ Arguments PT_eq [A] x y.
     induced g : ∥A∥ → B such that g(|a|) ≡ f(a) for all a : A." *)
 
 Axiom PT_rec : ∀ A B (f : A → B), isProp B →
-  { g : ∥A∥ → B & ∀ a, g (PT_intro a) = f a }.
+  Σ (g : ∥A∥ → B), ∀ a, g (PT_intro a) = f a.
 
 Definition PT_elim {A} : isProp A → ∥A∥ → A :=
   λ PA, Σ_type.pr₁ (PT_rec A A id PA).
@@ -1667,12 +1667,19 @@ PT_intro: ∀ A : Type, A → ∥A∥
 PT_eq: ∀ A : Type, isProp ∥A∥
 PT_rec:
   ∀ (A B : Type) (f : A → B),
-  isProp B → {g : ∥A∥ → B & ∀ a : A, g (PT_intro a) = f a}
+  isProp B → Σ (g : ∥A∥ → B), ∀ a : A, g (PT_intro a) = f a
 *)
 
-Definition DN_intro : ∀ A : Type, A → notT (notT A).
+Definition DN_intro {A} : A → notT (notT A).
 Proof.
-intros A a p; destruct (p a).
+intros a p; destruct (p a).
+Defined.
+
+(* no need to LEM, but uses function extensionality *)
+Definition DN_eq₀ {A} : isProp (notT (notT A)).
+Proof.
+intros x y.
+apply Π_type.funext; intros a; destruct (x a).
 Defined.
 
 Definition DN_eq : LEM → ∀ A : Type, isProp (notT (notT A)).
@@ -1681,12 +1688,30 @@ intros lem A x y.
 unfold LEM in lem.
 destruct (lem _ (hott_3_3_5_i A)) as [p| p].
  apply (isPropNot (isPropNot p)).
-bbb.
+
+Abort. (* blocked; perhaps DN_eq₀ is the only solution? *)
 
 Definition DN_rec : LEM
   → ∀ A B (f : A → B), isProp B
-  → { g : notT (notT A) → B & ∀ a, g (DN_intro a) = f a }.
-bbb.
+  → Σ (g : notT (notT A) → B), ∀ a, g (DN_intro a) = f a.
+Proof.
+intros lem A B f PB.
+unfold LEM in lem.
+destruct (lem _ (hott_3_3_5_i A)) as [PA| NPA].
+ destruct (lem A PA) as [a| na].
+  exists (λ _, f a).
+  intros a'; apply PB.
+
+  exists (λ nna : notT (notT A), match nna na return B with end).
+  intros a; destruct (na a).
+
+ destruct (lem B PB) as [b| nb].
+  exists (λ _, b).
+  intros a; apply PB.
+
+  exfalso; apply NPA; intros a.
+  destruct (nb (f a)).
+Defined.
 
 Definition ex_3_14 : LEM → ∀ A, notT (notT A) ≃ ∥A∥.
 bbb.
