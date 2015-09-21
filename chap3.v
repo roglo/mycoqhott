@@ -1855,8 +1855,14 @@ assert
  destruct (lem _ (hott_3_3_5_i (Y x))) as [PY| NPY].
   apply PT_elim; [ apply PY | apply q ].
 
+  assert (r : ∀ x : X, notT (notT (Y x))).
+   intros x' nx'.
+   apply PT_elim_not in nx'.
+   destruct (nx' (q x')).
+
+   pose proof pr₁ (p X Y SX SY) r as s.
 bbb.
-  exfalso; apply NPY; intros a b.
+   exfalso; apply s; intros t.
 bbb.
 
 End ex_3_16.
