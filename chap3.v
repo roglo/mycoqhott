@@ -1631,7 +1631,21 @@ assert (g : ∀ x : X, A x).
    apply isProp_Σ_type; [ apply q | apply PXA ].
 
    exfalso; apply q; intros a b.
+   unfold isSet in SA.
+   pose proof SA x a b.
+   destruct (lem (a = b)) as [s| s]; [ apply s | ].
+   destruct (lem (P x a)) as [r| r].
+    exfalso; apply p; exists a; apply r.
 
+bbb.
+   exfalso; apply p; clear p.
+   destruct (lem (P x a)) as [r| r]; [ exists a; apply r | ].
+   pose proof T x as s.
+bbb.
+   exists a.
+
+   pose proof PXA x a.
+   unfold isProp in H.
 bbb.
 destruct (lem ∥(Σ (g : Π (x : X), A x), Π (x : X), P x (g x))∥) as [p| p].
  assumption.
