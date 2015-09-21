@@ -1655,3 +1655,38 @@ Definition ex_3_13 : (Π (A : Type), A + notT A) → AC
         | inl (existT _ a p) => p
         | inr p => match PT_elim_not p (T x) with end
         end)).
+
+(* "Exercise 3.14. Show that assuming LEM, the double negation ¬¬A
+    has the same universal property as the propositional truncation
+    ∥A∥, and is therefore equivalent to it. Thus, under LEM, the
+    propositional truncation can be defined rather than taken as a
+    separate type former." *)
+
+(*
+PT_intro: ∀ A : Type, A → ∥A∥
+PT_eq: ∀ A : Type, isProp ∥A∥
+PT_rec:
+  ∀ (A B : Type) (f : A → B),
+  isProp B → {g : ∥A∥ → B & ∀ a : A, g (PT_intro a) = f a}
+*)
+
+Definition DN_intro : ∀ A : Type, A → notT (notT A).
+Proof.
+intros A a p; destruct (p a).
+Defined.
+
+Definition DN_eq : LEM → ∀ A : Type, isProp (notT (notT A)).
+Proof.
+intros lem A x y.
+unfold LEM in lem.
+destruct (lem _ (hott_3_3_5_i A)) as [p| p].
+ apply (isPropNot (isPropNot p)).
+bbb.
+
+Definition DN_rec : LEM
+  → ∀ A B (f : A → B), isProp B
+  → { g : notT (notT A) → B & ∀ a, g (DN_intro a) = f a }.
+bbb.
+
+Definition ex_3_14 : LEM → ∀ A, notT (notT A) ≃ ∥A∥.
+bbb.
