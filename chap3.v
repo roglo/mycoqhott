@@ -1814,6 +1814,33 @@ Abort.
     is, show that if X is a set and each Y(x) is a mere proposition,
     then LEM implies
           (Π (x:X) ¬¬Y(x)) ≃ ¬¬ (Π (x:X) Y(x))
-
     Observe that if we assume instead that each Y(x) is a set, then
     (3.11.11) becomes equivalent to the axiom of choice (3.8.3)." *)
+
+Definition ex_3_16_i {X Y} : isSet X → (Π (x : X), isProp (Y x))
+  → LEM → (Π (x : X), notT (notT (Y x))) ≃ notT (notT (Π (x : X), Y x)).
+Proof.
+intros SX PY lem.
+apply hott_3_3_3.
+ apply ex_3_6_2; intros x; apply isPropNot, isPropNot, PY.
+
+ apply isPropNot, isPropNot, ex_3_6_2, PY.
+
+ intros NNY NY; apply NY; intros x.
+ destruct (lem (Y x) (PY x)) as [p| p]; [ apply p | ].
+ destruct (NNY x p).
+
+ intros NNY x q; apply q.
+ destruct (lem (Y x) (PY x)) as [p| p]; [ apply p | ].
+ exfalso; apply NNY; intros r.
+ destruct (p (r x)).
+Defined.
+
+Definition ex_3_16_ii {X Y} : isSet X → (Π (x : X), isSet (Y x))
+  → LEM
+  → ((Π (x : X), notT (notT (Y x))) ≃ notT (notT (Π (x : X), Y x))) ≃ AC.
+Proof.
+intros SX SY lem.
+apply hott_3_3_3.
+
+bbb.
