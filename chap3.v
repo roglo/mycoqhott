@@ -1978,12 +1978,23 @@ unfold isDecidableFamily in DP.
      : ∀ (A B : Type) (f : A → B),
        isProp B → {g : ∥A∥ → B & ∀ a : A, g (PT_intro a) = f a}
 *)
-assert (f : (Σ (n : nat), P n) → ∥nat∥).
- intros (n, _); apply PT_intro, n.
+assert (f : (Σ (n : nat), P n) → ∥nat∥) by (intros (n, _); apply PT_intro, n).
+pose proof PT_rec (Σ (n : nat), P n) ∥nat∥ f (PT_eq _) as q.
+destruct q as (g, q).
+pose proof g p as r.
 
- pose proof PT_rec (Σ (n : nat), P n) ∥nat∥ f (PT_eq _) as q.
- destruct q as (g, q).
- pose proof g p as r.
+assert (f' : {n : nat & P n} → ∃ n, P n).
+ intros (n, s); exists n; apply s.
+
+ pose proof PT_rec {n : nat & P n} (∃ n, P n) f'.
+bbb.
+
+pose proof PT_rec nat (isDecidableFamily nat P).
+assert (f' : nat → isDecidableFamily nat P).
+ intros _ b; unfold isDecidableFamily; apply DP.
+
+ pose proof PT_rec nat (isDecidableFamily nat P) f'.
+
 bbb.
 
 pose proof (PT_eq (Σ (n : nat), P n)) as r.
