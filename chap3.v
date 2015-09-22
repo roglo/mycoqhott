@@ -1970,6 +1970,9 @@ Definition ex_3_19 {P} : isDecidableFamily nat P
 Proof.
 intros DP PP p.
 unfold isDecidableFamily in DP.
+destruct (DP 0) as [q| q]; [ exists 0; apply q | clear q ].
+destruct (DP 1) as [q| q]; [ exists 1; apply q | clear q ].
+destruct (DP 2) as [q| q]; [ exists 2; apply q | clear q ].
 bbb.
 Check (PT_rec {n : nat & P n} (P 0)).
 
