@@ -1846,6 +1846,7 @@ Definition ex_3_16_ii :
     ≃ AC_3_8_3.
 Proof.
 intros lem.
+(*
 assert
   ((∀ X Y, isSet X → (Π (x : X), isSet (Y x))
     → (Π (x : X), notT (notT (Y x))) ≃ notT (notT (Π (x : X), Y x)))
@@ -1864,6 +1865,71 @@ assert
    pose proof pr₁ (p X Y SX SY) s as t.
    exfalso; apply t; intros u.
    apply r, PT_intro, u.
-bbb.
+Show Proof.
+*)
+exists
+  (λ p X Y SX SY q,
+   match lem ∥(∀ x : X, Y x)∥ (@PT_eq (∀ x : X, Y x)) with
+   | inl r => r
+   | inr r =>
+       match
+         (r
+            (PT_intro
+               (λ x,
+                match lem (isProp (Y x)) (hott_3_3_5_i (Y x)) with
+                | inl PY => PT_elim PY (q x)
+                | inr _ =>
+                    match
+                      (((pr₁ (p X Y SX SY)
+                           (λ x' nx',
+                            match PT_elim_not nx' (q x') return ⊥ with end)
+                           (λ u, r (PT_intro u)))) : ⊥)
+                    with end
+                end)))
+       with end
+   end).
+apply qinv_isequiv.
+assert
+  (AC_3_8_3
+   → (∀ X Y, isSet X → (Π (x : X), isSet (Y x))
+     → (Π (x : X), notT (notT (Y x))) ≃ notT (notT (Π (x : X), Y x))))
+  as gggg.
+ intros ac X Y SX SY.
+ pose proof ac X Y SX SY as p.
+ assert (isProp (∀ x : X, ∥(Y x)∥)) as q.
+  apply ex_3_6_2; intros x; apply PT_eq.
+
+  destruct (lem (∀ x : X, ∥(Y x)∥) q) as [r| r].
+   pose proof p r as s.
+(*
+   assert ((∀ x : X, notT (notT (Y x))) → notT (notT (∀ x : X, Y x))) as ffff.
+    intros t u; apply u; intros x.
+    apply PT_elim_not in u; destruct (u s).
+   Show Proof.
+*)
+   exists (λ _ u, u (λ x, match PT_elim_not u s with end)).
+   apply qinv_isequiv.
+(*
+   assert (notT (notT (∀ x : X, Y x)) → (∀ x : X, notT (notT (Y x)))) as ffff.
+    intros t x u; apply u.
+    apply PT_elim_not in u; destruct (u (r x)).
+   Show Proof.
+*)
+   exists (λ _ x u, u (match PT_elim_not u (r x) with end)).
+   unfold "◦", "~~", id; simpl.
+   split.
+    intros x; apply Π_type.funext; intros nx; destruct (x nx).
+
+    intros f; apply Π_type.funext; intros x.
+    apply Π_type.funext; intros nx; destruct (f x nx).
+
+   assert ((∀ x : X, notT (notT (Y x))) → notT (notT (∀ x : X, Y x))) as ffff.
+    intros t u; apply u; intros x.
+    pose proof t x as v.
+    exfalso; apply v; intros w.
+(* well, the proof seems not trivial; it is perhaps the reason why the
+   wording of this exercise says "observe that" instead of "prove that";
+   I give up. *)
+Abort.
 
 End ex_3_16.
