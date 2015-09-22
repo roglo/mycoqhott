@@ -1933,3 +1933,9 @@ assert
 Abort.
 
 End ex_3_16.
+
+(* "Exercise 3.17. Show that the rules for the propositional
+    truncation given in §3.7 are sufficient to imply the following
+    induction principle: for any type family B:∥A∥→U such that each
+    B(x) is a mere proposition, if for every a:A we have B(|a|), then
+    for every x:∥A∥ we have B(x)." *)
