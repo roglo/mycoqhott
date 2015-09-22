@@ -744,7 +744,7 @@ Axiom PT_rec : ∀ A B (f : A → B), isProp B →
 
 Definition PT_elim {A} : isProp A → ∥A∥ → A :=
   λ PA, Σ_type.pr₁ (PT_rec A A id PA).
-Definition PT_elim_not {A} : notT A → notT ∥A∥ :=
+Definition PT_intro_not {A} : notT A → notT ∥A∥ :=
   λ f, Σ_type.pr₁ (PT_rec A ⊥ f (λ x y : ⊥, match x with end)).
 
 (* "3.8 The axiom of choice" *)
@@ -938,7 +938,7 @@ set (X := Σ (A : Type), ∥(ℬ = A)∥).
 set (x₀ := existT _ ℬ (PT_intro (eq_refl ℬ)):X); simpl in x₀.
 set (Y := λ x, x₀ = x : Type); simpl in Y.
 exists X, Y; intros H1.
-apply (@PT_elim_not (∀ x, Y x)).
+apply (@PT_intro_not (∀ x, Y x)).
  intros H2; subst Y; simpl in H2.
  assert (PX : isProp X).
   intros x y.
@@ -1614,11 +1614,11 @@ exists
    (λ (x : X),
     match lem (Σ (a : A x), P x a) with
     | inl (existT _ a _) => a
-    | inr p => match PT_elim_not p (T x) with end
+    | inr p => match PT_intro_not p (T x) with end
     end).
 intros x.
 destruct (lem (Σ (a : A x), P x a)) as [(a, p)| p]; [ apply p | ].
-destruct (PT_elim_not p (T x)).
+destruct (PT_intro_not p (T x)).
 Defined.
 
 Definition ex_3_13 : (Π (A : Type), A + notT A) → AC
@@ -1629,7 +1629,7 @@ Definition ex_3_13 : (Π (A : Type), A + notT A) → AC
        (λ x : X,
         match lem {a : A x & P x a} with
         | inl (existT _ a _) => a
-        | inr p => match PT_elim_not p (T x) return (A x) with end
+        | inr p => match PT_intro_not p (T x) return (A x) with end
         end)
        (λ (x : X),
         let s := lem {a : A x & P x a} in
@@ -1637,11 +1637,11 @@ Definition ex_3_13 : (Π (A : Type), A + notT A) → AC
           (P x
              match s with
              | inl (existT _ a _) => a
-             | inr p => match PT_elim_not p (T x) return (A x) with end
+             | inr p => match PT_intro_not p (T x) return (A x) with end
              end)
         with
         | inl (existT _ a p) => p
-        | inr p => match PT_elim_not p (T x) with end
+        | inr p => match PT_intro_not p (T x) with end
         end)).
 
 (* "Exercise 3.14. Show that assuming LEM, the double negation ¬¬A
@@ -1745,13 +1745,13 @@ exists
   (λ (x : ∥A∥),
    match lem A with
    | inl a => λ (na : notT A), match na a with end
-   | inr na => match PT_elim_not na x with end
+   | inr na => match PT_intro_not na x with end
    end).
 unfold "◦", "~~", id; simpl.
 split.
  intros x.
  destruct (lem A) as [a| na]; [ apply PT_eq | ].
- destruct (PT_elim_not na x).
+ destruct (PT_intro_not na x).
 
  intros nna.
  destruct (lem A) as [a| na]; [ | destruct (nna na) ].
@@ -1859,7 +1859,7 @@ assert
 
   assert (s : ∀ x : X, notT (notT (Y x))).
    intros x' nx'.
-   apply PT_elim_not in nx'.
+   apply PT_intro_not in nx'.
    destruct (nx' (q x')).
 
    pose proof pr₁ (p X Y SX SY) s as t.
@@ -1882,7 +1882,7 @@ exists
                     match
                       (((pr₁ (p X Y SX SY)
                            (λ x' nx',
-                            match PT_elim_not nx' (q x') return ⊥ with end)
+                            match PT_intro_not nx' (q x') return ⊥ with end)
                            (λ u, r (PT_intro u)))) : ⊥)
                     with end
                 end)))
@@ -1904,18 +1904,18 @@ assert
 (*
    assert ((∀ x : X, notT (notT (Y x))) → notT (notT (∀ x : X, Y x))) as ffff.
     intros t u; apply u; intros x.
-    apply PT_elim_not in u; destruct (u s).
+    apply PT_intro_not in u; destruct (u s).
    Show Proof.
 *)
-   exists (λ _ u, u (λ x, match PT_elim_not u s with end)).
+   exists (λ _ u, u (λ x, match PT_intro_not u s with end)).
    apply qinv_isequiv.
 (*
    assert (notT (notT (∀ x : X, Y x)) → (∀ x : X, notT (notT (Y x)))) as ffff.
     intros t x u; apply u.
-    apply PT_elim_not in u; destruct (u (r x)).
+    apply PT_intro_not in u; destruct (u (r x)).
    Show Proof.
 *)
-   exists (λ _ x u, u (match PT_elim_not u (r x) with end)).
+   exists (λ _ x u, u (match PT_intro_not u (r x) with end)).
    unfold "◦", "~~", id; simpl.
    split.
     intros x; apply Π_type.funext; intros nx; destruct (x nx).
@@ -1970,6 +1970,8 @@ Definition ex_3_19 {P} : isDecidableFamily nat P
 Proof.
 intros DP PP p.
 unfold isDecidableFamily in DP.
+bbb.
+
 (* PT_eq
      : ∀ A : Type, isProp ∥A∥
    PT_intro
@@ -1977,62 +1979,14 @@ unfold isDecidableFamily in DP.
    PT_rec
      : ∀ (A B : Type) (f : A → B),
        isProp B → {g : ∥A∥ → B & ∀ a : A, g (PT_intro a) = f a}
+   PT_elim
+     = λ (A : Type) (PA : isProp A), Σ_type.pr₁ (PT_rec A A id PA)
+     : ∀ A : Type, isProp A → ∥A∥ → A
+   PT_intro_not
+     = λ (A : Type) (f : notT A),
+       pr₁ (PT_rec A ⊥ f (λ x y : ⊥, match x as x0 return (x0 = y) with end))
+     : ∀ A : Type, notT A → notT ∥A∥
 *)
-assert (f : (Σ (n : nat), P n) → ∥nat∥) by (intros (n, _); apply PT_intro, n).
-pose proof PT_rec (Σ (n : nat), P n) ∥nat∥ f (PT_eq _) as q.
-destruct q as (g, q).
-pose proof g p as r.
-
-assert (f' : {n : nat & P n} → ∃ n, P n).
- intros (n, s); exists n; apply s.
-
- pose proof PT_rec {n : nat & P n} (∃ n, P n) f'.
-bbb.
-
-pose proof PT_rec nat (isDecidableFamily nat P).
-assert (f' : nat → isDecidableFamily nat P).
- intros _ b; unfold isDecidableFamily; apply DP.
-
- pose proof PT_rec nat (isDecidableFamily nat P) f'.
-
-bbb.
-
-pose proof (PT_eq (Σ (n : nat), P n)) as r.
-unfold isProp in r.
-bbb.
-
-assert (∥(Σ (n : nat), P n)∥ → ∥∥).
-
-bbb.
-
-destruct (DP 0) as [q| q0]; [ exists 0; apply q | ].
-destruct (DP 1) as [q| q1]; [ exists 1; apply q | ].
-destruct (DP 2) as [q| q2]; [ exists 2; apply q | ].
-pose proof (PT_rec {n : nat & P n}).
-pose proof (PT_rec {n : nat & P n} ∥(P 0)∥).
-Check PT_eq.
-assert (f : (Σ (n : nat), P n) → ∥(P 0)∥).
- intros (n, s).
- induction n; [ apply s | ].
- apply IHn.
- destruct (DP n) as [t| t]; [ apply t | ].
-
-
-assert (q : isProp (Σ (n : nat), P n)).
- intros (a, r) (b, s).
-
-bbb.
-
-destruct (DP 0) as [q| q]; [ exists 0; apply q | ].
-pose proof PP 0 as r.
-exfalso; apply q.
-Check PT_rec.
-Check (PT_rec (Σ (n : nat), P n) (P 0)).
-assert (f : (Σ (n : nat), P n) → P 0).
- intros (n, s).
- induction n; [ apply s | ].
- apply IHn.
- destruct (DP n) as [t| t]; [ apply t | ].
 
 bbb.
 
