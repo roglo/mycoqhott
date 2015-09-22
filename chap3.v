@@ -734,7 +734,7 @@ Axiom PT_intro : ∀ A, A → ∥A∥.
 Arguments PT_intro [A] x.
 
 Axiom PT_eq : ∀ A, isProp ∥A∥.
-Arguments PT_eq [A] x y.
+(* Arguments PT_eq [A] x y. *)
 
 (* "If B is a mere proposition and we have f : A → B, then there is an
     induced g : ∥A∥ → B such that g(|a|) ≡ f(a) for all a : A." *)
@@ -904,13 +904,13 @@ exists
          ≃ Σ_type.pr₁ (existT (λ A0 : Type, ∥(ℬ = A0)∥) B q), H2)
      (idtoeqv (ap Σ_type.pr₁ H))).
 apply qinv_isequiv.
-exists (λ r : A ≃ B, Σ_type.pair_eq (ua r) (PT_eq ((ua r)⁎ p) q)).
+exists (λ r : A ≃ B, Σ_type.pair_eq (ua r) (PT_eq _ ((ua r)⁎ p) q)).
 unfold "◦", "~~", id; simpl.
 split.
  intros r.
  rewrite <- idtoeqv_ua; f_equal.
  destruct (ua r); simpl; unfold id.
- destruct (PT_eq p q); reflexivity.
+ destruct (PT_eq _ p q); reflexivity.
 
  intros r.
  rewrite ua_idtoeqv.
@@ -918,7 +918,7 @@ split.
         | eq_refl _ => _
         end; simpl; unfold id.
  assert (SA : isSet ∥(ℬ = A)∥) by apply isProp_isSet, PT_eq.
- assert (H : PT_eq p p = eq_refl p) by apply SA.
+ assert (H : PT_eq _ p p = eq_refl p) by apply SA.
  rewrite H; reflexivity.
 Defined.
 
@@ -1571,7 +1571,7 @@ intros lem A.
 pose proof hott_3_3_5_i A as PPA.
 pose proof lem (isProp A) PPA as H.
 destruct H as [PA| NPA]; [ apply PT_intro, PT_elim, PA; assumption | ].
-pose proof lem _ (@PT_eq (∥A∥ → A)) as H.
+pose proof lem _ (PT_eq (∥A∥ → A)) as H.
 destruct H as [H| H]; [ apply H | exfalso ].
 apply NPA; intros x y.
 exfalso; apply H.
@@ -1583,7 +1583,7 @@ Definition ex_3_12 : LEM → ∀ A, ∥(∥A∥ → A)∥ :=
   match lem (isProp A) (hott_3_3_5_i A) with
   | inl PA => PT_intro (PT_elim PA)
   | inr NPA =>
-      match lem ∥(∥A∥ → A)∥ (@PT_eq (∥A∥ → A)) with
+      match lem ∥(∥A∥ → A)∥ (PT_eq (∥A∥ → A)) with
       | inl H => H
       | inr H =>
           match NPA (λ x y, match H (PT_intro (λ _, x)) with end) with end
@@ -1798,7 +1798,7 @@ Defined.
 
 Definition ex_3_15 {A} : APP A ≃ ∥A∥.
 Proof.
-exists (λ g : APP A, g ∥A∥ (@PT_eq A) (@PT_intro A)).
+exists (λ g : APP A, g ∥A∥ (PT_eq A) (@PT_intro A)).
 apply qinv_isequiv.
 assert (∥A∥ → APP A) as g.
  intros x P PP i.
@@ -1852,7 +1852,7 @@ assert
     → (Π (x : X), notT (notT (Y x))) ≃ notT (notT (Π (x : X), Y x)))
    → AC_3_8_3) as ffff.
  intros p X Y SX SY q.
- destruct (lem _ (@PT_eq (∀ x : X, Y x))) as [r| r]; [ apply r | ].
+ destruct (lem _ (PT_eq (∀ x : X, Y x))) as [r| r]; [ apply r | ].
  exfalso; apply r, PT_intro; intro x.
  destruct (lem _ (hott_3_3_5_i (Y x))) as [PY| NPY].
   apply PT_elim; [ apply PY | apply q ].
@@ -1869,7 +1869,7 @@ Show Proof.
 *)
 exists
   (λ p X Y SX SY q,
-   match lem ∥(∀ x : X, Y x)∥ (@PT_eq (∀ x : X, Y x)) with
+   match lem ∥(∀ x : X, Y x)∥ (PT_eq (∀ x : X, Y x)) with
    | inl r => r
    | inr r =>
        match
@@ -1947,7 +1947,7 @@ intros PB BA x.
 assert (f : A → B x).
  intros a.
  pose proof BA a as s.
- destruct (PT_eq x (PT_intro a)); apply s.
+ destruct (PT_eq _ x (PT_intro a)); apply s.
 
  destruct (PT_rec A (B x) f (PB x)) as (g, s).
  apply g, x.
@@ -1970,11 +1970,40 @@ Definition ex_3_19 {P} : isDecidableFamily nat P
 Proof.
 intros DP PP p.
 unfold isDecidableFamily in DP.
-destruct (DP 0) as [q| q]; [ exists 0; apply q | clear q ].
-destruct (DP 1) as [q| q]; [ exists 1; apply q | clear q ].
-destruct (DP 2) as [q| q]; [ exists 2; apply q | clear q ].
+remember 0 as n; clear Heqn.
+destruct (DP n) as [q| q]; [ exists n; apply q | ].
+
 bbb.
-Check (PT_rec {n : nat & P n} (P 0)).
+
+destruct (DP 0) as [q| q]; [ exists 0; apply q | ].
+(* PT_eq
+     : ∀ A : Type, isProp ∥A∥
+   PT_intro
+     : ∀ A : Type, A → ∥A∥
+   PT_rec
+     : ∀ (A B : Type) (f : A → B),
+       isProp B → {g : ∥A∥ → B & ∀ a : A, g (PT_intro a) = f a}
+*)
+pose proof (PT_eq (Σ (n : nat), P n)) as r.
+unfold isProp in r.
+bbb.
+
+assert (∥(Σ (n : nat), P n)∥ → ∥∥).
+
+bbb.
+
+destruct (DP 0) as [q| q0]; [ exists 0; apply q | ].
+destruct (DP 1) as [q| q1]; [ exists 1; apply q | ].
+destruct (DP 2) as [q| q2]; [ exists 2; apply q | ].
+pose proof (PT_rec {n : nat & P n}).
+pose proof (PT_rec {n : nat & P n} ∥(P 0)∥).
+Check PT_eq.
+assert (f : (Σ (n : nat), P n) → ∥(P 0)∥).
+ intros (n, s).
+ induction n; [ apply s | ].
+ apply IHn.
+ destruct (DP n) as [t| t]; [ apply t | ].
+
 
 assert (q : isProp (Σ (n : nat), P n)).
  intros (a, r) (b, s).
