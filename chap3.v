@@ -1970,12 +1970,6 @@ Definition ex_3_19 {P} : isDecidableFamily nat P
 Proof.
 intros DP PP p.
 unfold isDecidableFamily in DP.
-remember 0 as n; clear Heqn.
-destruct (DP n) as [q| q]; [ exists n; apply q | ].
-
-bbb.
-
-destruct (DP 0) as [q| q]; [ exists 0; apply q | ].
 (* PT_eq
      : ∀ A : Type, isProp ∥A∥
    PT_intro
@@ -1984,6 +1978,14 @@ destruct (DP 0) as [q| q]; [ exists 0; apply q | ].
      : ∀ (A B : Type) (f : A → B),
        isProp B → {g : ∥A∥ → B & ∀ a : A, g (PT_intro a) = f a}
 *)
+assert (f : (Σ (n : nat), P n) → ∥nat∥).
+ intros (n, _); apply PT_intro, n.
+
+ pose proof PT_rec (Σ (n : nat), P n) ∥nat∥ f (PT_eq _) as q.
+ destruct q as (g, q).
+ pose proof g p as r.
+bbb.
+
 pose proof (PT_eq (Σ (n : nat), P n)) as r.
 unfold isProp in r.
 bbb.
