@@ -1963,3 +1963,43 @@ Proof. apply LEM_LDN. Defined.
 (* "Exercise 3.19. Suppose P:ℕ→U is a decidable family of mere
     propositions. Prove that
          ∥Σ (n:ℕ) P(n)∥ → Σ (n:ℕ) P(n)." *)
+
+Definition ex_3_19 {P} : isDecidableFamily nat P
+  → (Π (a : nat), isProp (P a))
+  → ∥(Σ (n : nat), P n)∥ → Σ (n : nat), P n.
+Proof.
+intros DP PP p.
+unfold isDecidableFamily in DP.
+Check (PT_rec {n : nat & P n} (P 0)).
+bbb.
+
+assert (q : isProp (Σ (n : nat), P n)).
+ intros (a, r) (b, s).
+
+bbb.
+
+destruct (DP 0) as [q| q]; [ exists 0; apply q | ].
+pose proof PP 0 as r.
+exfalso; apply q.
+Check PT_rec.
+Check (PT_rec (Σ (n : nat), P n) (P 0)).
+assert (f : (Σ (n : nat), P n) → P 0).
+ intros (n, s).
+ induction n; [ apply s | ].
+ apply IHn.
+ destruct (DP n) as [t| t]; [ apply t | ].
+
+bbb.
+
+(* reminder *)
+
+(* "Definition 3.4.3.
+      (i) A type A is called decidable if A + ¬A.
+     (ii) Similarly, a type family B : A → Type is decidable if
+              Π(a:A)(B(a) + ¬B(a)).
+    (iii) In particular, A has decidable equality if
+              Π(a,b:A)((a = b) + ¬(a = b))." *)
+
+Definition isDecidable A := (A + notT A)%type.
+Definition isDecidableFamily A B := Π (a : A), (B a + notT (B a)).
+Definition hasDecidableEq A := Π (a : A), Π (b : A), ((a = b) + notT (a = b)).
