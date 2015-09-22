@@ -1953,3 +1953,13 @@ assert (f : A → B x).
  apply g, x.
 Defined.
 
+(* "Exercise 3.18. Show that the law of excluded middle (3.4.1) and
+    the law of double negation (3.4.2) are logically equivalent." *)
+
+(* already done *)
+Definition ex_3_18 : LEM ⇔ LDN.
+Proof. apply LEM_LDN. Defined.
+
+(* "Exercise 3.19. Suppose P:ℕ→U is a decidable family of mere
+    propositions. Prove that
+         ∥Σ (n:ℕ) P(n)∥ → Σ (n:ℕ) P(n)." *)
