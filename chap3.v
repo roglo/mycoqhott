@@ -1944,6 +1944,12 @@ Definition ex_3_17 {A B} : (Π (x : ∥A∥), isProp (B x))
   → (Π (a : A), B (PT_intro a)) → (Π (x : ∥A∥), B x).
 Proof.
 intros PB BA x.
-pose proof PB x as p.
-apply PT_elim; [ apply p | ].
-bbb.
+assert (f : A → B x).
+ intros a.
+ pose proof BA a as s.
+ destruct (PT_eq x (PT_intro a)); apply s.
+
+ destruct (PT_rec A (B x) f (PB x)) as (g, s).
+ apply g, x.
+Defined.
+
