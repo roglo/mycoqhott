@@ -1965,7 +1965,7 @@ Proof. apply LEM_LDN. Defined.
          ∥Σ (n:ℕ) P(n)∥ → Σ (n:ℕ) P(n)." *)
 
 Definition ex_3_19 {P} : isDecidableFamily nat P
-  → (Π (a : nat), isProp (P a))
+  → (Π (n : nat), isProp (P n))
   → ∥(Σ (n : nat), P n)∥ → Σ (n : nat), P n.
 Proof.
 intros DP PP p.
