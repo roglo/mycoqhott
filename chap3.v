@@ -1975,6 +1975,12 @@ assert (q : notT (∀ n, notT (P n))).
  apply PT_intro_not; intros (n, r).
  destruct (q n r).
 
+ assert (s : ∀ a B, notT (P a → B) → P a * notT B).
+  intros a B r.
+  split; [ | intros s; apply r; intros t; apply s ].
+  destruct (DP a) as [s| s]; [ apply s | ].
+  exfalso; apply r; intros t; destruct (s t).
+
 bbb.
 remember 0 as m; clear Heqm.
 destruct (DP m) as [q| q]; [ exists m; apply q | ].
