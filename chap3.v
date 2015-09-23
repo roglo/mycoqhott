@@ -1981,7 +1981,7 @@ assert (q : notT (∀ n, notT (P n))).
   destruct (DP n) as [s| s]; [ apply s | ].
   exfalso; apply r; intros t; destruct (s t).
 
-  assert (ldn : ∀ n, notT (notT (P n)) → P n).
+  assert (dn : ∀ n, notT (notT (P n)) → P n).
    intros n t.
    destruct (DP n) as [u| u]; [ apply u | destruct (t u) ].
 bbb.
