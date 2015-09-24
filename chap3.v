@@ -1979,7 +1979,7 @@ Fixpoint first_such (P : nat → Type) (DP : isDecidableFamily nat P)
   | 0 => existT _ n pn
   | S max' =>
       match DP m with
-      | inl p => existT _ m p
+      | inl pm => existT _ m pm
       | inr _ => first_such P DP n pn max' (S m)
       end
   end.
