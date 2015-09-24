@@ -1973,6 +1973,7 @@ Proof.
 intros m n; simpl; apply eq_refl.
 Qed.
 
+(*
 Fixpoint first_such (P : nat → Type) (DP : isDecidableFamily nat P)
     n (pn : P n) max m :=
   match max with
@@ -1983,15 +1984,38 @@ Fixpoint first_such (P : nat → Type) (DP : isDecidableFamily nat P)
       | inr _ => first_such P DP n pn max' (S m)
       end
   end.
+*)
 
-Definition toto : ∀ P DP m n max a (pn : P n),
-  max + m = n
-  → a < pr₁ (first_such P DP n pn max m)
+Fixpoint first_such (P : nat → Type) (DP : isDecidableFamily nat P) max m :=
+  match max with
+  | 0 => 0
+  | S max' =>
+      match DP m with
+      | inl _ => m
+      | inr _ => first_such P DP max' (S m)
+      end
+  end.
+
+Definition toto : ∀ P DP m max a,
+  a < first_such P DP max m
   → notT (P a).
 Proof.
-intros P DP m n max a pn Hm Ha.
-revert m max Hm Ha.
+intros P DP m max a Ha.
+revert m a Ha.
+induction max; intros; simpl in Ha.
+ exfalso; revert Ha; apply Nat.nlt_0_r.
+
+ destruct (DP m) as [p| p].
+vvv.
+
+intros P DP m n max a pn Hm Hmax Ha.
+revert m max Hm Hmax Ha.
 induction max; intros; simpl in Hm, Ha; subst.
+ exfalso; apply Hmax, eq_refl.
+
+ clear Hmax.
+ destruct (DP m) as [p| p].
+
 bbb.
 
 Definition exist_not_exist_lt {P} (DP : isDecidableFamily nat P) :
