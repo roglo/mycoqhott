@@ -1965,7 +1965,7 @@ Proof. apply LEM_LDN. Defined.
          ∥Σ (n:ℕ) P(n)∥ → Σ (n:ℕ) P(n)." *)
 
 Fixpoint search max (P : nat → Type)
-   (DP : Π (n : nat), P n + notT (P n)) (n : nat) :=
+    (DP : Π (n : nat), P n + notT (P n)) (n : nat) :=
   match max with
   | 0 => 0
   | S m =>
