@@ -1988,6 +1988,28 @@ assert (q : notT (∀ n, notT (P n))).
    assert (dn : notT (notT {n : nat & P n})).
     intros t; apply PT_intro_not in t; destruct (t p).
 
+    assert
+      (r : Π (n : nat),
+           (Π (m : nat), m < n → notT (P m)) +
+           (Σ (m : nat), (m < n) * P m)%type).
+     intros n.
+     induction n.
+      left; intros m contr.
+      exfalso; revert contr; apply Nat.nlt_0_r.
+
+      destruct IHn as [IHn| (m, (Hm, Pm))].
+       destruct (DP n) as [r| r].
+        right; exists n; split; [ | apply r ].
+        apply Nat.lt_succ_diag_r.
+
+        left; intros m Hm.
+        destruct (lt_dec m n) as [t| t]; [ apply IHn, t | ].
+        apply Nat.nlt_ge in t; apply le_S_n in Hm.
+        apply Nat.le_antisymm in t; [ | apply Hm ].
+        destruct t; apply r.
+
+       right; exists m; split; [ | apply Pm ].
+       apply Nat.lt_lt_succ_r, Hm.
 bbb.
 remember 0 as m; clear Heqm.
 destruct (DP m) as [q| q]; [ exists m; apply q | ].
