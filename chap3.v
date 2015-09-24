@@ -1964,6 +1964,17 @@ Proof. apply LEM_LDN. Defined.
     propositions. Prove that
          ∥Σ (n:ℕ) P(n)∥ → Σ (n:ℕ) P(n)." *)
 
+Fixpoint search max (P : nat → Type)
+   (DP : Π (n : nat), P n + notT (P n)) (n : nat) :=
+  match max with
+  | 0 => 0
+  | S m =>
+      match DP n with
+      | inl _ => n
+      | inr _ => search m P DP (S n)
+      end
+  end.
+
 Definition ex_3_19 {P} : isDecidableFamily nat P
   → (Π (n : nat), isProp (P n))
   → ∥(Σ (n : nat), P n)∥ → Σ (n : nat), P n.
