@@ -1997,15 +1997,21 @@ Fixpoint first_such (P : nat → Type) (DP : isDecidableFamily nat P) max m :=
   end.
 
 Definition toto : ∀ P DP m max a,
-  a < first_such P DP max m
+  m < a < first_such P DP max m
   → notT (P a).
 Proof.
-intros P DP m max a Ha.
-revert m a Ha.
+intros P DP m max a (Hm, Ha).
+revert a m Hm Ha.
 induction max; intros; simpl in Ha.
  exfalso; revert Ha; apply Nat.nlt_0_r.
 
  destruct (DP m) as [p| p].
+  apply Nat.nle_gt in Ha.
+  exfalso; apply Ha, Nat.lt_le_incl, Hm.
+
+  destruct (lt_dec a (first_such P DP max m)) as [H1| H1].
+   eapply IHmax; eassumption.
+
 vvv.
 
 intros P DP m n max a pn Hm Hmax Ha.
