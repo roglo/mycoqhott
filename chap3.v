@@ -2010,6 +2010,14 @@ assert (q : notT (∀ n, notT (P n))).
 
        right; exists m; split; [ | apply Pm ].
        apply Nat.lt_lt_succ_r, Hm.
+
+     assert
+       (PT_ap :
+        ∀ A B (f : A → B), isProp B
+        → Σ (g : ∥A∥ → B),  ∀ (x y : ∥A∥), g x = g y).
+      intros A B f PB.
+      destruct (PT_rec A B f PB) as (g, t).
+      exists g; intros x y; apply PB.
 bbb.
 remember 0 as m; clear Heqm.
 destruct (DP m) as [q| q]; [ exists m; apply q | ].
