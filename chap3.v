@@ -1964,6 +1964,89 @@ Proof. apply LEM_LDN. Defined.
     propositions. Prove that
          ∥Σ (n:ℕ) P(n)∥ → Σ (n:ℕ) P(n)." *)
 
+Section ex_3_19.
+Import Σ_type.
+
+Theorem fold_minus : ∀ m n,
+  match n with 0 => S m | S n' => m - n' end = S m - n.
+Proof.
+intros m n; simpl; apply eq_refl.
+Qed.
+
+Fixpoint first_such (P : nat → Type) (DP : isDecidableFamily nat P)
+    n (pn : P n) max m :=
+  match max with
+  | 0 => existT _ n pn
+  | S max' =>
+      match DP m with
+      | inl p => existT _ m p
+      | inr _ => first_such P DP n pn max' (S m)
+      end
+  end.
+
+Definition toto : ∀ P DP m n max a (pn : P n),
+  max + m = n
+  → a < pr₁ (first_such P DP n pn max m)
+  → notT (P a).
+Proof.
+intros P DP m n max a pn Hm Ha.
+revert m max Hm Ha.
+induction max; intros; simpl in Hm, Ha; subst.
+bbb.
+
+Definition exist_not_exist_lt {P} (DP : isDecidableFamily nat P) :
+  (Σ (n : nat), P n) ⇔
+  (Σ (n : nat), (P n * Π (m : nat), m < n → notT (P m))%type).
+Proof.
+split; intros p.
+ destruct p as (n, p).
+ set (x := first_such P DP n p n 0).
+ exists (pr₁ x).
+ split; [ apply (pr₂ x) | ].
+ intros m Hm.
+ subst x.
+bbb.
+ revert n p Hm.
+ induction m; intros; simpl in Hm.
+  destruct n; simpl in Hm.
+   exfalso; revert Hm; apply Nat.nlt_0_r.
+
+   destruct (DP 0) as [q| q]; [ simpl in Hm | apply q ].
+   exfalso; revert Hm; apply Nat.nlt_0_r.
+
+  destruct n; simpl in Hm.
+   exfalso; revert Hm; apply Nat.nlt_0_r.
+
+   destruct (DP 0) as [q| q]; [ simpl in Hm | ].
+    exfalso; revert Hm; apply Nat.nlt_0_r.
+bbb.
+
+; [ simpl in Hm | apply q ].
+   exfalso; revert Hm; apply Nat.nlt_0_r.
+bbb.
+
+Require Import Program.Wf.
+
+Program Fixpoint search (P : nat → Type) (DP : isDecidableFamily nat P)
+    (PP : Π (n : nat), isProp (P n)) m (p : ∥(Σ (n : nat), m ≤ n → P n)∥) n
+    (mn := S m - n) {wf lt mn} : {n : nat & P n}
+ :=
+  match DP n with
+  | inl p => existT _ n p
+  | inr _ => search P DP PP m p (S n)
+  end.
+
+Obligation 1.
+Proof.
+rewrite fold_minus.
+rewrite fold_minus in search.
+induction n; [ rewrite Nat.sub_0_r; apply Nat.lt_succ_r, le_refl | simpl ].
+destruct m; [ simpl | ].
+ pose proof search P DP PP 0 p (S n).
+ simpl in X.
+
+bbb.
+
 Fixpoint search max (P : nat → Type)
     (DP : Π (n : nat), P n + notT (P n)) (n : nat) :=
   match max with
@@ -1974,6 +2057,14 @@ Fixpoint search max (P : nat → Type)
       | inr _ => search m P DP (S n)
       end
   end.
+
+Definition ex_3_19_exist {P} : isDecidableFamily nat P
+  → (Π (n : nat), isProp (P n))
+  → (∃ n, P n) → Σ (n : nat), P n.
+Proof.
+intros DP PP p.
+destruct p.
+bbb.
 
 Definition ex_3_19 {P} : isDecidableFamily nat P
   → (Π (n : nat), isProp (P n))
@@ -2055,6 +2146,8 @@ intros (a, r) (b, s).
        pr₁ (PT_rec A ⊥ f (λ x y : ⊥, match x as x0 return (x0 = y) with end))
      : ∀ A : Type, notT A → notT ∥A∥
 *)
+
+End ex_3_19.
 
 bbb.
 
