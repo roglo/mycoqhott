@@ -6,7 +6,7 @@ clean:
 .SUFFIXES: .v .vo
 
 .v.vo:
-	coqc $<
+	coqc -indices-matter $<
 
 chap2.vo: chap1.vo
 chap3.vo: chap2.vo
