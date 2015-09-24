@@ -2029,6 +2029,9 @@ assert (q : notT (∀ n, notT (P n))).
       intros A B f PB.
       destruct (PT_rec A B f PB) as (g, t).
       exists g; intros x y; apply PB.
+
+assert (Σ (m : nat), (P m * Π (n : nat), n < m → notT (P n))%type).
+
 bbb.
 remember 0 as m; clear Heqm.
 destruct (DP m) as [q| q]; [ exists m; apply q | ].
