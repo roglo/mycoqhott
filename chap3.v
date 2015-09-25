@@ -2000,6 +2000,38 @@ apply PT_elim in p.
   pose proof q n Hmn as H; destruct (H pm).
 Defined.
 
+Definition toto P i :=
+  ∥(Σ (n : nat), (P n * ∀ m, i ≤ m ∧ m < n → notT (P m))%type)∥.
+
+Definition titi_tac {P} : ∀ i, toto P i → toto P (S i).
+Proof.
+unfold toto; intros i p.
+apply PT_intro.
+apply PT_elim in p.
+ destruct p as (n, (p, q)).
+ exists n; split; [ apply p | ].
+ intros m (Hi, Hm); apply q.
+ split; [ apply Nat.lt_le_incl, Hi | apply Hm ].
+
+ intros (m, (pm, q)) (n, (pn, r)).
+ destruct (lt_eq_lt_dec m n) as [[Hmn| Hmn] | Hmn].
+  destruct (le_dec i m) as [Him| Him].
+   pose proof r m (conj Him Hmn) as H. destruct (H pm).
+
+   apply Nat.nle_gt in Him.
+bbb.
+
+   subst m.
+   apply (pair_eq (eq_refl n)); simpl; unfold id.
+   apply split_pair_eq.
+   split; [ apply PP | ].
+   apply Π_type.funext; intros m.
+   apply Π_type.funext; intros s.
+   apply isPropNot, PP.
+
+  pose proof q n Hmn as H; destruct (H pm).
+Defined.
+
 Definition ex_3_19 {P} : isDecidableFamily nat P
   → (Π (n : nat), isProp (P n))
   → ∥(Σ (n : nat), P n)∥ → Σ (n : nat), P n.
