@@ -2001,24 +2001,33 @@ apply PT_elim in p.
 Defined.
 
 Definition toto P i :=
-  ∥(Σ (n : nat), (P n * ∀ m, i ≤ m ∧ m < n → notT (P m))%type)∥.
+  ∥(Σ (n : nat), (P n * ∀ m, i ≤ m → m < n → notT (P m))%type)∥.
 
-Definition titi_tac {P} : ∀ i, toto P i → toto P (S i).
+Definition titi_tac {P} : isDecidableFamily nat P
+  → ∀ i, toto P i → toto P (S i).
 Proof.
-unfold toto; intros i p.
+unfold toto; intros DP i p.
 apply PT_intro.
 apply PT_elim in p.
  destruct p as (n, (p, q)).
  exists n; split; [ apply p | ].
- intros m (Hi, Hm); apply q.
- split; [ apply Nat.lt_le_incl, Hi | apply Hm ].
+ intros m Hi Hm; apply q; [ apply Nat.lt_le_incl, Hi | apply Hm ].
 
  intros (m, (pm, q)) (n, (pn, r)).
  destruct (lt_eq_lt_dec m n) as [[Hmn| Hmn] | Hmn].
+  clear p; induction i.
+   pose proof r m (Nat.le_0_l m) Hmn as H; destruct (H pm).
+
+   destruct (DP i) as [s| s].
+bbb.
+   eapply IHi.
+
   destruct (le_dec i m) as [Him| Him].
-   pose proof r m (conj Him Hmn) as H. destruct (H pm).
+   pose proof r m Him Hmn as H; destruct (H pm).
 
    apply Nat.nle_gt in Him.
+   destruct (lt_dec i n) as [Hin| Hin].
+    pose proof r i (le_refl i) Hin as H.
 bbb.
 
    subst m.
