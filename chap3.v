@@ -1996,6 +1996,7 @@ Fixpoint first_such (P : nat → Type) (DP : isDecidableFamily nat P) max m :=
       end
   end.
 
+(*
 Definition toto : ∀ P DP m max a,
   m < a < first_such P DP max m
   → notT (P a).
@@ -2011,7 +2012,6 @@ induction max; intros; simpl in Ha.
 
   destruct (lt_dec a (first_such P DP max m)) as [H1| H1].
    eapply IHmax; eassumption.
-
 vvv.
 
 intros P DP m n max a pn Hm Hmax Ha.
@@ -2023,18 +2023,31 @@ induction max; intros; simpl in Hm, Ha; subst.
  destruct (DP m) as [p| p].
 
 bbb.
+*)
 
-Definition exist_not_exist_lt {P} (DP : isDecidableFamily nat P) :
+Definition first_such_P : ∀ P DP max m (n := first_such P DP max m),
+  n ≠ 0 → P n.
+Proof.
+intros P DP max m n Hn.
+subst n.
+revert m Hn.
+induction max; intros; simpl.
+ destruct Hn; apply eq_refl.
+
+ simpl in Hn.
+ destruct (DP m) as [p| p]; [ apply p | apply IHmax, Hn ].
+Defined.
+
+Definition not_exist_lt_exit {P} (DP : isDecidableFamily nat P) :
   (Σ (n : nat), P n) ⇔
   (Σ (n : nat), (P n * Π (m : nat), m < n → notT (P m))%type).
 Proof.
 split; intros p.
  destruct p as (n, p).
- set (x := first_such P DP n p n 0).
- exists (pr₁ x).
- split; [ apply (pr₂ x) | ].
- intros m Hm.
- subst x.
+ exists (first_such P DP n 0).
+bbb.
+  apply first_such_P.
+
 bbb.
  revert n p Hm.
  induction m; intros; simpl in Hm.
