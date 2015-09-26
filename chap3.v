@@ -2010,27 +2010,25 @@ Defined.
 
 Fixpoint smaller_such_that P (DP : isDecidableFamily nat P) n :=
   match n with
-  | 0 => 0
+  | 0 => None
   | S n' =>
       match DP n' with
-      | inl _ => n'
+      | inl _ => Some n'
       | inr _ => smaller_such_that P DP n'
       end
   end.
 
-Definition tutu {P} (DP : isDecidableFamily nat P) n (p : P n) :
-  0 < smaller_such_that P DP n → P (smaller_such_that P DP n).
+Definition smaller_such_that_prop {P} (DP : isDecidableFamily nat P) m n :
+  smaller_such_that P DP m = Some n → P n.
 Proof.
-intros Hn.
-induction n; [ apply p | simpl ].
-destruct (DP n) as [q| q]; [ apply q | ].
-destruct n.
- simpl in Hn; destruct (DP 0); apply Nat.nlt_0_r in Hn; destruct Hn.
+intros p.
+revert n p.
+induction m; intros; [ discriminate p | ].
+simpl in p.
+destruct (DP m) as [q| q]; [ injection p; intros; subst m; apply q | ].
+apply IHm, p.
+Defined.
 
- simpl in Hn, IHn; simpl.
- destruct (DP n) as [r| r]; [ apply r | ].
- destruct (DP (S n)) as [s| s].
-  clear Hn.
 bbb.
 
 Fixpoint smallest_such_that P (DP : isDecidableFamily nat P) n :=
