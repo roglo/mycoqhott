@@ -2016,7 +2016,7 @@ Definition search P (DP : isDecidableFamily nat P)
 Admitted.
 *)
 
-Require Import Program.Wf.
+Require Import Recdef.
 
 Definition more_not_prop P
       (q : Σ (i : nat), ∀ k, k < i → notT (P k)) (npi : notT (P (pr₁ q)))
