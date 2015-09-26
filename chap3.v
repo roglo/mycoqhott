@@ -2008,27 +2008,46 @@ apply PT_elim in p.
   destruct (q n Hmn pn).
 Defined.
 
-Fixpoint first_having_prop_after {P} (DP : isDecidableFamily nat P)
-    (p : Σ (n : nat), P n) m max
-  :=
-    match max with
-    | 0 => 0
-    | S max' =>
-        match DP m with
-        | inl pm => m
-        | inr np => first_having_prop_after DP p (S m) max'
-        end
-    end.
+Fixpoint first_having_prop P (DP : isDecidableFamily nat P) m n :=
+  match m with
+  | 0 => 0
+  | S m' =>
+      match DP n with
+      | inl _ => 0
+      | inr _ => S (first_having_prop P DP m' (S n))
+      end
+  end.
 
-Definition first_having_prop {P} DP (p : Σ (n : nat), P n) :=
-  first_having_prop_after DP p 0 (S (pr₁ p)).
+bbb.
 
-(*
-Definition tutu {P} (DP : isDecidableFamily nat P) (p : Σ (n : nat), P n)
-  : (Σ (n : nat), (P n * ∀ m, m < n → notT (P m))%type) :=
-  match pr₁ p with
-  | 0 => exists _ 0 (pr₂ p) ...
-*)
+Definition tutu {P} (DP : isDecidableFamily nat P) m n (p : P m) :
+  n ≤ m → P (first_having_prop P DP m n).
+Proof.
+intros q; revert n p q.
+induction m; intros.
+ apply Nat.le_0_r in q; symmetry in q; destruct q; apply p.
+
+ simpl.
+ destruct (DP n) as [r| r].
+bbb.
+
+ destruct (eq_nat_dec n (S m)) as [r| r].
+  symmetry in r; destruct r; clear q.
+  destruct (DP (S m)); [ | destruct (n p) ].
+vvv.
+
+ pose proof IHm n p (Nat.lt_
+
+ destruct (DP n) as [r| r].
+ destruct n; [ apply p | simpl ].
+bbb.
+
+Definition tutu {P} (DP : isDecidableFamily nat P) n (p : P n) :
+  P (first_having_prop P DP n n).
+Proof.
+induction n; [ apply p | simpl ].
+destruct (DP (S n)) as [q| q]; [ | destruct (q p) ].
+bbb.
 
 Definition tutu {P} (DP : isDecidableFamily nat P) (p : Σ (n : nat), P n) m
     max : pr₁ p < max → P (first_having_prop_after DP p m max).
