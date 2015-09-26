@@ -16,6 +16,14 @@ Notation "( x , y ) '_{' P }" := (existT P x y)
 
 Open Scope nat_scope.
 
+Theorem Nat_le_neq_lt : ∀ a b, a ≤ b → a ≠ b → a < b.
+Proof.
+intros a b Hab Hnab.
+apply le_lt_eq_dec in Hab.
+destruct Hab as [Hle| Heq]; [ assumption | idtac ].
+exfalso; apply Hnab; assumption.
+Qed.
+
 (* Chapter 3 - Sets and logic *)
 
 (* 3.1 Sets and n-types *)
@@ -2000,31 +2008,46 @@ apply PT_elim in p.
   destruct (q n Hmn pn).
 Defined.
 
-(**)
+(*
 Definition search P (DP : isDecidableFamily nat P)
     (PP : ∀ n : nat, isProp (P n)) (p : ∥{n : nat & P n}∥)
     (q : Σ (i : nat), ∀ k, k < i → notT (P k))
   : {n : nat & (P n * (∀ m : nat, m < n → notT (P m)))%type}.
 Admitted.
-(*
+*)
 
 Require Import Program.Wf.
 
-Definition glop P (q : Σ (i : nat), ∀ k, k < i → notT (P k))
-      (npi : notT (P (pr₁ q)))
+Definition more_not_prop P
+      (q : Σ (i : nat), ∀ k, k < i → notT (P k)) (npi : notT (P (pr₁ q)))
   : Σ (i : nat), ∀ k, k < i → notT (P k).
-Admitted.
+Proof.
+destruct q as (i, q); simpl in npi.
+exists (S i).
+intros k Hk.
+destruct (eq_nat_dec k i) as [p| p]; [ destruct p; apply npi | ].
+apply q, Nat_le_neq_lt; [ | apply p ].
+apply le_S_n, Hk.
+Defined.
 
-Fixpoint search P (DP : isDecidableFamily nat P)
+Function search P (DP : isDecidableFamily nat P)
     (PP : ∀ n : nat, isProp (P n)) (p : ∥{n : nat & P n}∥)
     (q : Σ (i : nat), ∀ k, k < i → notT (P k))
   : Σ (n : nat), (P n * (∀ m : nat, m < n → notT (P m)))%type :=
   match DP (pr₁ q) with
   | inl pi => existT _ (pr₁ q) (pi, pr₂ q)
-  | inr npi => search P DP PP p (glop P q npi)
+  | inr npi => search P DP PP p (more_not_prop P q npi)
   end.
-bbb.
+
+(*
+Toplevel input, characters 0-371:
+Error: Cannot guess decreasing argument of fix.
+
+I must prove that "more_not_prop P q npi < q" for some definition of "<".
+and add {wf that_lt q}. The order must be well founded.
 *)
+
+bbb.
 
 Definition not_prop_upto {P} : isDecidableFamily nat P
   → (Π (n : nat), isProp (P n))
