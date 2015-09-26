@@ -2008,6 +2008,98 @@ apply PT_elim in p.
   destruct (q n Hmn pn).
 Defined.
 
+Fixpoint first_having_prop_after {P} (DP : isDecidableFamily nat P)
+    (p : Σ (n : nat), P n) m max
+  :=
+    match max with
+    | 0 => 0
+    | S max' =>
+        match DP m with
+        | inl pm => m
+        | inr np => first_having_prop_after DP p (S m) max'
+        end
+    end.
+
+Definition first_having_prop {P} DP (p : Σ (n : nat), P n) :=
+  first_having_prop_after DP p 0 (S (pr₁ p)).
+
+(*
+Definition tutu {P} (DP : isDecidableFamily nat P) (p : Σ (n : nat), P n)
+  : (Σ (n : nat), (P n * ∀ m, m < n → notT (P m))%type) :=
+  match pr₁ p with
+  | 0 => exists _ 0 (pr₂ p) ...
+*)
+
+Definition tutu {P} (DP : isDecidableFamily nat P) (p : Σ (n : nat), P n) m
+    max : pr₁ p < max → P (first_having_prop_after DP p m max).
+Proof.
+intros Hm.
+revert p m Hm.
+induction max; intros; [ apply Nat.nlt_0_r in Hm; destruct Hm | simpl ].
+destruct (DP m) as [q| q]; [ apply q | ].
+destruct (eq_nat_dec (pr₁ p) max) as [r| r].
+ destruct p as (n, p); simpl in Hm, r.
+ destruct r.
+bbb.
+
+ clear Hm.
+ destruct n; [ apply p | simpl ].
+
+apply IHmax.
+
+bbb.
+
+Definition titi {P} (DP : isDecidableFamily nat P) (p : Σ (n : nat), P n) :
+  P (first_having_prop DP p).
+Proof.
+bbb.
+
+Definition toto {P} : isDecidableFamily nat P
+  → (Σ (n : nat), P n)
+  → (Σ (n : nat), (P n * ∀ m, m < n → notT (P m))%type).
+Proof.
+intros DP np.
+exists (first_having_prop DP np).
+split.
+bbb.
+ destruct np as (n, p); simpl.
+
+ induction n.
+  unfold first_having_prop; simpl.
+  destruct (DP 0); apply p.
+
+  remember (S n) as sn.
+  unfold first_having_prop; simpl; subst sn.
+  destruct (DP 0) as [q| q]; [ apply q | ].
+bbb.
+
+Print Wf_nat.
+induction n as (n, IHn) using Wf_nat.lt_wf_rec.
+ destruct n.
+  exists 0; split; [ apply p | ].
+  intros m Hm; apply Nat.nlt_0_r in Hm; destruct Hm.
+
+  destruct (DP n) as [q| q].
+   apply IHn with (m := n); [ apply Nat.lt_succ_diag_r | apply q ].
+
+bbb.
+   exists (S n); split; [ apply p | intros m Hm ].
+   intros pm.
+   pose proof IHn m Hm pm as H.
+   destruct H as (a, (pa, np)).
+   destruct (lt_eq_lt_dec m a) as [[Hma| Hma]| Hma].
+    apply (np m); assumption.
+
+    subst a.
+
+
+    apply Nat.nlt_ge in Hma.
+
+bbb.
+  destruct (DP n) as [q| q]; [ apply IHn, q | ].
+ exists (S n); split; [ apply p | intros m Hm ].
+bbb.
+
 (*
 Definition search P (DP : isDecidableFamily nat P)
     (PP : ∀ n : nat, isProp (P n)) (p : ∥{n : nat & P n}∥)
