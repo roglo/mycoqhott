@@ -2019,13 +2019,18 @@ Fixpoint smaller_such_that P (DP : isDecidableFamily nat P) n :=
   end.
 
 Definition tutu {P} (DP : isDecidableFamily nat P) n (p : P n) :
-  P (smaller_such_that P DP n).
+  0 < smaller_such_that P DP n → P (smaller_such_that P DP n).
 Proof.
-intros.
+intros Hn.
 induction n; [ apply p | simpl ].
 destruct (DP n) as [q| q]; [ apply q | ].
 destruct n.
- simpl in IHn; simpl.
+ simpl in Hn; destruct (DP 0); apply Nat.nlt_0_r in Hn; destruct Hn.
+
+ simpl in Hn, IHn; simpl.
+ destruct (DP n) as [r| r]; [ apply r | ].
+ destruct (DP (S n)) as [s| s].
+  clear Hn.
 bbb.
 
 Fixpoint smallest_such_that P (DP : isDecidableFamily nat P) n :=
