@@ -2000,13 +2000,35 @@ apply PT_elim in p.
   destruct (q n Hmn pm).
 Defined.
 
+(*
+Definition search i P (DP : isDecidableFamily nat P)
+    (PP : ∀ n : nat, isProp (P n)) (p : ∥{n : nat & P n}∥)
+    (q : ∀ k, k < i → notT (P k))
+  : {n : nat & (P n * (∀ m : nat, m < n → notT (P n)))%type}.
+Admitted.
+*)
+
+Program Fixpoint search i P (DP : isDecidableFamily nat P)
+    (PP : ∀ n : nat, isProp (P n)) (p : ∥{n : nat & P n}∥)
+    (q : ∀ k, k < i → notT (P k))
+  : {n : nat & (P n * (∀ m : nat, m < n → notT (P n)))%type} :=
+  match DP i with
+  | inl pi => existT _ i (pi, q)
+  | inr npi => search (S i) P DP PP p (q : ∀ k, k < S i → notT (P k))
+  end.
+
+bbb.
+
 Definition not_prop_upto {P} : isDecidableFamily nat P
   → (Π (n : nat), isProp (P n))
   → ∥(Σ (n : nat), P n)∥
   → ∥(Σ (n : nat), (P n * (∀ m : nat, m < n → notT (P n)))%type)∥.
 Proof.
 intros DP PP p.
-bbb.
+apply PT_intro.
+apply (search 0); try assumption.
+intros k Hk; apply Nat.nlt_0_r in Hk; destruct Hk.
+Defined.
 
 Definition ex_3_19 {P} : isDecidableFamily nat P
   → (Π (n : nat), isProp (P n))
@@ -2014,6 +2036,9 @@ Definition ex_3_19 {P} : isDecidableFamily nat P
 Proof.
 intros DP PP p.
 apply ex_3_19_lemma; [ apply DP | apply PP | ].
+apply not_prop_upto; assumption.
+Defined.
+
 bbb.
 
 Definition toto P k := ∥(Σ (n : nat), (P n * ∀ m, m ≤ k → notT (P m))%type)∥.
