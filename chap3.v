@@ -2023,12 +2023,56 @@ Definition smaller_such_that_prop {P} (DP : isDecidableFamily nat P) m n :
 Proof.
 intros p.
 revert n p.
-induction m; intros; [ discriminate p | ].
-simpl in p.
+induction m; intros; [ discriminate p | simpl in p ].
 destruct (DP m) as [q| q]; [ injection p; intros; subst m; apply q | ].
 apply IHm, p.
 Defined.
 
+Fixpoint smallest_such_that P (DP : isDecidableFamily nat P) m n :=
+  match m with
+  | 0 => None
+  | S m' =>
+      match smaller_such_that P DP n with
+      | None => None
+      | Some n' =>
+          match smallest_such_that P DP m' n' with
+          | None => Some n'
+          | Some n'' => Some n''
+          end
+      end
+  end.
+
+Definition smallest_such_that_prop {P} (DP : isDecidableFamily nat P) m n a :
+  smallest_such_that P DP m n = Some a → P a.
+Proof.
+intros p.
+revert n a p.
+induction m; intros; [ discriminate p | simpl in p ].
+remember (smaller_such_that P DP n) as u eqn:Hu; symmetry in Hu.
+destruct u as [n'| ]; [ | discriminate p ].
+remember (smallest_such_that P DP m n') as v eqn:Hv; symmetry in Hv.
+destruct v as [n''| ].
+ injection p; clear p; intros; subst a.
+ eapply IHm, Hv.
+
+ injection p; clear p; intros; subst a.
+ eapply smaller_such_that_prop, Hu.
+Defined.
+
+Definition smallest_such_that_not_prop {P} DP m n a :
+  smallest_such_that P DP m n = Some a → ∀ b, b < a → notT (P b).
+Proof.
+intros p b Hba.
+revert n a b p Hba.
+induction m; intros; [ discriminate p | simpl in p ].
+remember (smaller_such_that P DP n) as u eqn:Hu; symmetry in Hu.
+destruct u as [n'| ]; [ | discriminate p ].
+remember (smallest_such_that P DP m n') as v eqn:Hv; symmetry in Hv.
+destruct v as [n''| ].
+ injection p; clear p; intros; subst a.
+ eapply IHm; [ eapply Hv | apply Hba ].
+
+ injection p; clear p; intros; subst a.
 bbb.
 
 Fixpoint smallest_such_that P (DP : isDecidableFamily nat P) n :=
