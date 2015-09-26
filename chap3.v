@@ -2013,10 +2013,41 @@ Fixpoint first_having_prop P (DP : isDecidableFamily nat P) m n :=
   | 0 => 0
   | S m' =>
       match DP n with
-      | inl _ => 0
-      | inr _ => S (first_having_prop P DP m' (S n))
+      | inl _ => n
+      | inr _ => first_having_prop P DP m' (S n)
       end
   end.
+
+Definition tutu {P} (DP : isDecidableFamily nat P) m n (p : P m) :
+  n ≤ m → P (first_having_prop P DP m n).
+Proof.
+intros q.
+revert n p q.
+induction m as (m, IHm) using Wf_nat.lt_wf_rec; intros.
+destruct m.
+ apply Nat.le_0_r in q; symmetry in q; destruct q; apply p.
+
+ simpl.
+ destruct (DP n) as [r| r]; [ apply r | ].
+ destruct (DP m) as [s| s].
+  apply IHm; [ apply Nat.lt_succ_diag_r | apply s | ].
+bbb.
+
+ destruct (eq_nat_dec n (S m)) as [s| s].
+  symmetry in s; destruct s; apply Nat.lt_succ_diag_r.
+
+bbb.
+
+ apply Nat.le_0_r in q; symmetry in q; destruct q; apply p.
+
+ simpl.
+ destruct (DP n) as [r| r]; [ apply r | ].
+ induction n.
+
+bbb.
+
+ destruct (DP m) as [s| s].
+  apply IHm; [ apply s | ].
 
 bbb.
 
