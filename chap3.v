@@ -2008,6 +2008,59 @@ apply PT_elim in p.
   destruct (q n Hmn pn).
 Defined.
 
+Fixpoint smallest_such_that P (DP : isDecidableFamily nat P) n :=
+  match n with
+  | 0 => None
+  | S n' =>
+      match DP n' with
+      | inl _ =>
+          match smallest_such_that P DP n' with
+          | Some n'' => Some n''
+          | None => Some n'
+          end
+      | inr _ =>
+          smallest_such_that P DP n'
+      end
+  end.
+
+Definition first_such_that P (DP : isDecidableFamily nat P) n :=
+  match smallest_such_that P DP n with
+  | Some n' => n'
+  | None => n
+  end.
+
+Definition tutu {P} (DP : isDecidableFamily nat P) n (p : P n) :
+  P (first_such_that P DP n).
+Proof.
+unfold first_such_that; simpl.
+remember (smallest_such_that P DP n) as u eqn:Hu; symmetry in Hu.
+destruct u as [m| ]; [ | apply p ].
+revert m Hu.
+induction n; intros; [ discriminate Hu | ].
+simpl in Hu.
+destruct (DP n) as [q| q].
+ remember (smallest_such_that P DP n) as v eqn:Hv in Hu; symmetry in Hv.
+ destruct v as [a| ].
+  injection Hu; clear Hu; intros; subst a.
+  apply IHn; assumption.
+
+  injection Hu; clear Hu; intros; subst m; apply q.
+
+ clear IHn.
+ revert m Hu.
+ induction n; intros; [ discriminate Hu | ].
+ simpl in Hu.
+ destruct (DP n) as [r| r].
+  remember (smallest_such_that P DP n) as v eqn:Hv in Hu; symmetry in Hv.
+  destruct v as [a| ].
+   injection Hu; clear Hu; intros; subst a.
+bbb.
+
+   apply IHn; assumption.
+
+  injection Hu; clear Hu; intros; subst m; apply q.
+bbb.
+
 Fixpoint first_having_prop P (DP : isDecidableFamily nat P) m n :=
   match m with
   | 0 => 0
