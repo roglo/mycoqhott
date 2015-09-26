@@ -2059,6 +2059,13 @@ intros (m, q).
 Print Acc.
 constructor.
 intros (n, r) s; simpl in s.
+constructor; intros.
+constructor; intros.
+constructor; intros.
+constructor; intros.
+constructor; intros.
+constructor; intros.
+unfold R in *; simpl in *.
 bbb.
 
 (*
