@@ -1975,7 +1975,7 @@ Qed.
 
 Definition ex_3_19_lemma {P} : isDecidableFamily nat P
   → (Π (n : nat), isProp (P n))
-  → ∥(Σ (n : nat), (P n * ∀ m, m < n → notT (P n))%type)∥ → Σ (n : nat), P n.
+  → ∥(Σ (n : nat), (P n * ∀ m, m < n → notT (P m))%type)∥ → Σ (n : nat), P n.
 Proof.
 intros DP PP p.
 unfold isDecidableFamily in DP.
@@ -1987,7 +1987,7 @@ apply PT_elim in p.
  destruct q as (m, (pm, q)).
  destruct r as (n, (pn, r)).
  destruct (lt_eq_lt_dec m n) as [[Hmn| Hmn] | Hmn].
-  destruct (r m Hmn pn).
+  destruct (r m Hmn pm).
 
   subst m.
   apply (pair_eq (eq_refl n)); simpl; unfold id.
@@ -1997,37 +1997,44 @@ apply PT_elim in p.
   apply Π_type.funext; intros s.
   apply isPropNot, PP.
 
-  destruct (q n Hmn pm).
+  destruct (q n Hmn pn).
 Defined.
 
-(*
-Definition search i P (DP : isDecidableFamily nat P)
+(**)
+Definition search P (DP : isDecidableFamily nat P)
     (PP : ∀ n : nat, isProp (P n)) (p : ∥{n : nat & P n}∥)
-    (q : ∀ k, k < i → notT (P k))
-  : {n : nat & (P n * (∀ m : nat, m < n → notT (P n)))%type}.
+    (q : Σ (i : nat), ∀ k, k < i → notT (P k))
+  : {n : nat & (P n * (∀ m : nat, m < n → notT (P m)))%type}.
 Admitted.
-*)
+(*
 
-Program Fixpoint search i P (DP : isDecidableFamily nat P)
+Require Import Program.Wf.
+
+Definition glop P (q : Σ (i : nat), ∀ k, k < i → notT (P k))
+      (npi : notT (P (pr₁ q)))
+  : Σ (i : nat), ∀ k, k < i → notT (P k).
+Admitted.
+
+Fixpoint search P (DP : isDecidableFamily nat P)
     (PP : ∀ n : nat, isProp (P n)) (p : ∥{n : nat & P n}∥)
-    (q : ∀ k, k < i → notT (P k))
-  : {n : nat & (P n * (∀ m : nat, m < n → notT (P n)))%type} :=
-  match DP i with
-  | inl pi => existT _ i (pi, q)
-  | inr npi => search (S i) P DP PP p (q : ∀ k, k < S i → notT (P k))
+    (q : Σ (i : nat), ∀ k, k < i → notT (P k))
+  : Σ (n : nat), (P n * (∀ m : nat, m < n → notT (P m)))%type :=
+  match DP (pr₁ q) with
+  | inl pi => existT _ (pr₁ q) (pi, pr₂ q)
+  | inr npi => search P DP PP p (glop P q npi)
   end.
-
 bbb.
+*)
 
 Definition not_prop_upto {P} : isDecidableFamily nat P
   → (Π (n : nat), isProp (P n))
   → ∥(Σ (n : nat), P n)∥
-  → ∥(Σ (n : nat), (P n * (∀ m : nat, m < n → notT (P n)))%type)∥.
+  → ∥(Σ (n : nat), (P n * (∀ m : nat, m < n → notT (P m)))%type)∥.
 Proof.
 intros DP PP p.
 apply PT_intro.
-apply (search 0); try assumption.
-intros k Hk; apply Nat.nlt_0_r in Hk; destruct Hk.
+apply search; try assumption.
+exists 0; intros k Hk; apply Nat.nlt_0_r in Hk; destruct Hk.
 Defined.
 
 Definition ex_3_19 {P} : isDecidableFamily nat P
