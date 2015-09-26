@@ -2056,7 +2056,17 @@ apply Nat.lt_succ_diag_r.
 intros P p.
 unfold well_founded; simpl.
 intros (m, q).
-Print Acc.
+induction m.
+ constructor.
+ intros (n, r) s; simpl in s.
+ clear q.
+ constructor; intros; simpl in H.
+ destruct y as (i, t); simpl in H.
+ constructor; intros; destruct y; simpl in H0.
+
+bbb.
+
+unfold R.
 constructor.
 intros (n, r) s; simpl in s.
 constructor; intros.
