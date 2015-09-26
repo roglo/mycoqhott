@@ -2030,14 +2030,36 @@ apply q, Nat_le_neq_lt; [ | apply p ].
 apply le_S_n, Hk.
 Defined.
 
+Definition R P (p : ∥{n : nat & P n}∥)
+  (q1 : Σ (i : nat), ∀ k, k < i → notT (P k))
+  (q2 : Σ (i : nat), ∀ k, k < i → notT (P k)) : Prop.
+Proof.
+destruct q1 as (m1, q1).
+destruct q2 as (m2, q2).
+apply (m2 < m1).
+Defined.
+
 Function search P (DP : isDecidableFamily nat P)
     (PP : ∀ n : nat, isProp (P n)) (p : ∥{n : nat & P n}∥)
-    (q : Σ (i : nat), ∀ k, k < i → notT (P k))
+    (q : Σ (i : nat), ∀ k, k < i → notT (P k)) {wf (R P p) q}
   : Σ (n : nat), (P n * (∀ m : nat, m < n → notT (P m)))%type :=
   match DP (pr₁ q) with
   | inl pi => existT _ (pr₁ q) (pi, pr₂ q)
   | inr npi => search P DP PP p (more_not_prop P q npi)
   end.
+Proof.
+intros P DP n p q npi HDP.
+unfold R; simpl.
+destruct q as (m2, q); simpl.
+apply Nat.lt_succ_diag_r.
+
+intros P p.
+unfold well_founded; simpl.
+intros (m, q).
+Print Acc.
+constructor.
+intros (n, r) s; simpl in s.
+bbb.
 
 (*
 Toplevel input, characters 0-371:
