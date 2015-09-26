@@ -2059,6 +2059,14 @@ destruct v as [n''| ].
  eapply smaller_such_that_prop, Hu.
 Defined.
 
+Definition no_smallest_such_that_not_prop {P} DP m n :
+  n < m → smallest_such_that P DP m n = None → ∀ b, b < n → notT (P b).
+Proof.
+intros p q b Hbn.
+revert n b p q Hbn.
+induction m; intros; [ apply Nat.nlt_0_r in p; destruct p | ].
+bbb.
+
 Definition smallest_such_that_not_prop {P} DP m n a :
   smallest_such_that P DP m n = Some a → ∀ b, b < a → notT (P b).
 Proof.
@@ -2073,6 +2081,11 @@ destruct v as [n''| ].
  eapply IHm; [ eapply Hv | apply Hba ].
 
  injection p; clear p; intros; subst a.
+ eapply no_smallest_such_that_not_prop; [ | eassumption | eassumption ].
+bbb.
+
+Defined.
+
 bbb.
 
 Fixpoint smallest_such_that P (DP : isDecidableFamily nat P) n :=
