@@ -2008,6 +2008,26 @@ apply PT_elim in p.
   destruct (q n Hmn pn).
 Defined.
 
+Fixpoint smaller_such_that P (DP : isDecidableFamily nat P) n :=
+  match n with
+  | 0 => 0
+  | S n' =>
+      match DP n' with
+      | inl _ => n'
+      | inr _ => smaller_such_that P DP n'
+      end
+  end.
+
+Definition tutu {P} (DP : isDecidableFamily nat P) n (p : P n) :
+  P (smaller_such_that P DP n).
+Proof.
+intros.
+induction n; [ apply p | simpl ].
+destruct (DP n) as [q| q]; [ apply q | ].
+destruct n.
+ simpl in IHn; simpl.
+bbb.
+
 Fixpoint smallest_such_that P (DP : isDecidableFamily nat P) n :=
   match n with
   | 0 => None
