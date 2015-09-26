@@ -1987,7 +1987,7 @@ apply PT_elim in p.
  destruct q as (m, (pm, q)).
  destruct r as (n, (pn, r)).
  destruct (lt_eq_lt_dec m n) as [[Hmn| Hmn] | Hmn].
-  pose proof r m Hmn as H; destruct (H pn).
+  destruct (r m Hmn pn).
 
   subst m.
   apply (pair_eq (eq_refl n)); simpl; unfold id.
@@ -1997,24 +1997,43 @@ apply PT_elim in p.
   apply Π_type.funext; intros s.
   apply isPropNot, PP.
 
-  pose proof q n Hmn as H; destruct (H pm).
+  destruct (q n Hmn pm).
 Defined.
 
-Definition toto P i :=
-  ∥(Σ (n : nat), (P n * ∀ m, i ≤ m → m < n → notT (P m))%type)∥.
+Definition not_prop_upto {P} : isDecidableFamily nat P
+  → (Π (n : nat), isProp (P n))
+  → ∥(Σ (n : nat), P n)∥
+  → ∥(Σ (n : nat), (P n * (∀ m : nat, m < n → notT (P n)))%type)∥.
+Proof.
+intros DP PP p.
+bbb.
+
+Definition ex_3_19 {P} : isDecidableFamily nat P
+  → (Π (n : nat), isProp (P n))
+  → ∥(Σ (n : nat), P n)∥ → Σ (n : nat), P n.
+Proof.
+intros DP PP p.
+apply ex_3_19_lemma; [ apply DP | apply PP | ].
+bbb.
+
+Definition toto P k := ∥(Σ (n : nat), (P n * ∀ m, m ≤ k → notT (P m))%type)∥.
 
 Definition titi_tac {P} : isDecidableFamily nat P
-  → ∀ i, toto P i → toto P (S i).
+  → ∀ k, toto P (S k) → toto P k.
 Proof.
-unfold toto; intros DP i p.
+unfold toto; intros DP k p.
 apply PT_intro.
 apply PT_elim in p.
  destruct p as (n, (p, q)).
  exists n; split; [ apply p | ].
- intros m Hi Hm; apply q; [ apply Nat.lt_le_incl, Hi | apply Hm ].
+ intros m Hk; apply q, Nat.le_le_succ_r, Hk.
 
  intros (m, (pm, q)) (n, (pn, r)).
  destruct (lt_eq_lt_dec m n) as [[Hmn| Hmn] | Hmn].
+bbb.
+  pose proof r m Hmn as H; destruct (H pn).
+
+bbb.
   clear p; induction i.
    pose proof r m (Nat.le_0_l m) Hmn as H; destruct (H pm).
 
@@ -2040,14 +2059,6 @@ bbb.
 
   pose proof q n Hmn as H; destruct (H pm).
 Defined.
-
-Definition ex_3_19 {P} : isDecidableFamily nat P
-  → (Π (n : nat), isProp (P n))
-  → ∥(Σ (n : nat), P n)∥ → Σ (n : nat), P n.
-Proof.
-intros DP PP p.
-apply ex_3_19_lemma; [ apply DP | apply PP | ].
-bbb.
 
 Fixpoint first_such (P : nat → Type) (DP : isDecidableFamily nat P) max m :=
   match max with
