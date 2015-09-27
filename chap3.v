@@ -1972,18 +1972,19 @@ Proof. apply LEM_LDN. Defined.
     propositions. Prove that
          ∥Σ (n:ℕ) P(n)∥ → Σ (n:ℕ) P(n)." *)
 
+(* return 0 if not enough iterations, else S n for n *)
 Fixpoint first_such_that P (DP : isDecidableFamily nat P) m n :=
   match m with
-  | 0 => None
+  | 0 => 0
   | S m' =>
       match DP n with
-      | inl _ => Some n
+      | inl _ => S n
       | inr _ => first_such_that P DP m' (S n)
       end
   end.
 
 Definition first_such_that_prop P (DP : isDecidableFamily nat P) m n a :
-  first_such_that P DP (S n) a = Some m
+  first_such_that P DP (S n) a = S m
   → P m * ∀ b, a ≤ b → b < m → notT (P b).
 Proof.
 intros p; simpl in p.
@@ -2012,7 +2013,7 @@ destruct (DP a) as [q| q].
 Defined.
 
 Definition no_first_such_that_prop P (DP : isDecidableFamily nat P) n a :
-  first_such_that P DP (S n) a = None
+  first_such_that P DP (S n) a = 0
   → notT (P (a + n)).
 Proof.
 intros p; simpl in p.
@@ -2031,12 +2032,12 @@ Definition smallest_such_that P : isDecidableFamily nat P
 Proof.
 intros DP (n, p).
 remember (first_such_that P DP (S n) 0) as x eqn:Hx; symmetry in Hx.
-destruct x as [m| ].
+destruct x as [| m].
+ apply no_first_such_that_prop in Hx; destruct (Hx p).
+
  exists m; apply first_such_that_prop in Hx.
  destruct Hx as (q, r); split; [ apply q | intros a Ha ].
  apply r; [ apply Nat.le_0_l | apply Ha ].
-
- apply no_first_such_that_prop in Hx; destruct (Hx p).
 Defined.
 
 Definition isProp_first_such_that P (PP : Π (n : nat), isProp (P n)) :
