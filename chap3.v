@@ -2125,6 +2125,10 @@ split.
  apply cartesian.pair_eq; simpl.
  split.
   unfold "◦", "~~", id; simpl.
+  assert
+    (r : PT_elim
+          (λ q r, (Hh q)⁻¹ • ap h (PT_eq P (PT_intro q) (PT_intro r)) • Hh r)
+     = g).
 
 bbb.
 
