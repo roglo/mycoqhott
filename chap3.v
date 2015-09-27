@@ -2122,4 +2122,7 @@ apply hott_3_3_3.
  apply ap, PT_eq.
 Defined.
 
-bbb.
+(* "Exercise 3.22. As in classical set theory, the finite version of
+    the axiom of choice is a theorem. Prove that the axiom of choice
+    (3.8.1) holds when X is a finite type Fin(n) (as defined in
+    Exercise 1.9)." *)
