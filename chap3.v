@@ -2067,8 +2067,7 @@ Proof.
 intros DP PP p.
 set (f := smallest_such_that P DP).
 set (PB := isProp_first_such_that P PP).
-set (q := PT_rec _ _ f PB).
-destruct (Σ_type.pr₁ q p) as (n, (pn, _)).
+destruct (Σ_type.pr₁ (PT_rec _ _ f PB) p) as (n, (pn, _)).
 exists n; apply pn.
 Defined.
 
