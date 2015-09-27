@@ -1972,15 +1972,6 @@ Proof. apply LEM_LDN. Defined.
     propositions. Prove that
          ∥Σ (n:ℕ) P(n)∥ → Σ (n:ℕ) P(n)." *)
 
-Section ex_3_19.
-Import Σ_type.
-
-Theorem fold_minus : ∀ m n,
-  match n with 0 => S m | S n' => m - n' end = S m - n.
-Proof.
-intros m n; simpl; apply eq_refl.
-Qed.
-
 Definition isProp_first_such_that P (PP : Π (n : nat), isProp (P n)) :
   isProp (Σ (n : nat), (P n * (∀ m : nat, m < n → notT (P m)))%type).
 Proof.
@@ -1991,7 +1982,7 @@ destruct (lt_eq_lt_dec m n) as [[Hmn| Hmn] | Hmn].
  destruct (r m Hmn pm).
 
  subst m.
- apply (pair_eq (eq_refl n)); simpl; unfold id.
+ apply (Σ_type.pair_eq (eq_refl n)); simpl; unfold id.
  apply split_pair_eq.
  split; [ apply PP | ].
  apply Π_type.funext; intros m.
@@ -2062,25 +2053,17 @@ Defined.
 
 Definition no_first_such_that_not_prop P (DP : isDecidableFamily nat P) n a :
   first_such_that P DP (S n) a = None
-  → a ≤ n
-  → notT (P n).
+  → notT (P (a + n)).
 Proof.
-intros p Ha; simpl in p.
+intros p; simpl in p.
 destruct (DP a) as [q| q]; [ discriminate p | ].
-revert a p q Ha.
-induction n; intros; [ apply Nat.le_0_r in Ha; destruct Ha; apply q | ].
+revert a p q.
+induction n; intros; [ rewrite Nat.add_0_r; apply q | ].
 simpl in p.
 destruct (DP (S a)) as [r| r]; [ discriminate p | ].
-destruct n.
- simpl in p.
- destruct a; [ apply r | ].
- destruct a; [ apply q | ].
- apply Nat.succ_le_mono in Ha; destruct (Nat.nle_succ_0 a Ha).
-
- simpl in p.
- destruct (DP (S (S a))) as [s| s]; [ discriminate p | ].
-
-bbb.
+rewrite <- Nat.add_succ_comm.
+apply IHn; [ apply p | apply r ].
+Defined.
 
 Definition smallest_such_that P : isDecidableFamily nat P
   → (Σ (n : nat), P n)
@@ -2092,200 +2075,8 @@ destruct x as [m| ].
  exists m; split; [ eapply first_such_that_prop, Hx | intros a Ha ].
  eapply first_such_that_not_prop; [ apply Hx | apply Nat.le_0_l | apply Ha ].
 
- apply no_first_such_that_not_prop in Hx; [ destruct (Hx p) | ].
- apply Nat.le_0_l.
-
-bbb.
-Inspect 2.
-
- simpl in Hx.
-
- destruct (DP 0) as [| q]; [ discriminate Hx | ].
-
-
-
- destruct (DP n) as [| q]; [ discriminate Hx | destruct (q p) ].
-bbb.
-
-(* previous version which works *)
-
-Fixpoint smaller_such_that P (DP : isDecidableFamily nat P) n :=
-  match n with
-  | 0 => None
-  | S n' =>
-      match DP n' with
-      | inl _ => Some n'
-      | inr _ => smaller_such_that P DP n'
-      end
-  end.
-
-Fixpoint smallest_such_that P (DP : isDecidableFamily nat P) m n :=
-  match m with
-  | 0 => None
-  | S m' =>
-      match smaller_such_that P DP n with
-      | None => Some None
-      | Some n' =>
-          match smallest_such_that P DP m' n' with
-          | None => None
-          | Some None => Some (Some n')
-          | Some (Some n'') => Some (Some n'')
-          end
-      end
-  end.
-
-Definition smaller_such_that_prop {P} (DP : isDecidableFamily nat P) m n :
-  smaller_such_that P DP m = Some n → P n.
-Proof.
-intros p.
-revert n p.
-induction m; intros; [ discriminate p | simpl in p ].
-destruct (DP m) as [q| q]; [ injection p; intros; subst m; apply q | ].
-apply IHm, p.
-Defined.
-
-Definition smallest_such_that_prop {P} (DP : isDecidableFamily nat P) m n a :
-  smallest_such_that P DP m n = Some (Some a) → P a.
-Proof.
-intros p.
-revert n a p.
-induction m; intros; [ discriminate p | simpl in p ].
-remember (smaller_such_that P DP n) as u eqn:Hu; symmetry in Hu.
-destruct u as [n'| ]; [ | discriminate p ].
-remember (smallest_such_that P DP m n') as v eqn:Hv; symmetry in Hv.
-destruct v as [[n''| ]| ].
- injection p; clear p; intros; subst a.
- eapply IHm, Hv.
-
- injection p; clear p; intros; subst a.
- eapply smaller_such_that_prop, Hu.
-
- discriminate p.
-Defined.
-
-Definition smaller_smallest P DP m n :
-  n < m
-  → smaller_such_that P DP n = None
-  → smallest_such_that P DP m n = Some None.
-Proof.
-intros p q.
-revert n p q.
-induction m; intros; [ apply Nat.nlt_0_r in p; destruct p | simpl ].
-rewrite q; reflexivity.
-Defined.
-
-Definition no_smaller_such_that_not_prop {P} DP n :
-  smaller_such_that P DP n = None → ∀ m, m < n → notT (P m).
-Proof.
-intros p m q.
-revert m q.
-induction n; intros; [ apply Nat.nlt_0_r in q; destruct q | simpl in p ].
-destruct (DP n) as [r| r]; [ discriminate p | ].
-destruct (lt_dec m n) as [s| s]; [ apply IHn; assumption | ].
-apply Nat.nlt_ge in s.
-apply Nat.succ_le_mono, Nat.le_antisymm in q; [ | apply s ].
-destruct q; apply r.
-Defined.
-
-Definition no_smallest_such_that_not_prop {P} DP m n :
-  smallest_such_that P DP m n = Some None → ∀ b, b < n → notT (P b).
-Proof.
-intros p b Hbn.
-revert n b p Hbn.
-induction m; intros; [ discriminate p | simpl in p ].
-remember (smaller_such_that P DP n) as u eqn:Hu; symmetry in Hu.
-destruct u as [n'| ].
- destruct (smallest_such_that P DP m n') as [v| ]; [ | discriminate p ].
- destruct v; discriminate p.
-
- eapply no_smaller_such_that_not_prop; [ apply Hu | apply Hbn ].
-Defined.
-
-Definition smallest_such_that_prop_not {P} DP m n a :
-  smallest_such_that P DP m n = Some (Some a) → ∀ b, b < a → notT (P b).
-Proof.
-intros p b Hba.
-revert n a b p Hba.
-induction m; intros; [ discriminate p | simpl in p ].
-remember (smaller_such_that P DP n) as u eqn:Hu; symmetry in Hu.
-destruct u as [n'| ]; [ | discriminate p ].
-remember (smallest_such_that P DP m n') as v eqn:Hv; symmetry in Hv.
-destruct v as [[n''| ]| ].
- injection p; clear p; intros; subst a.
- eapply IHm; [ eapply Hv | apply Hba ].
-
- injection p; clear p; intros; subst a.
- eapply no_smallest_such_that_not_prop; [ apply Hv | apply Hba ].
-
- discriminate p.
-Defined.
-
-Definition smaller_smaller P DP m n :
-  smaller_such_that P DP m = Some n → n < m.
-Proof.
-intros p.
-revert n p.
-induction m; intros; [ discriminate p | simpl in p ].
-destruct (DP m) as [q| q].
- injection p; clear p; intros; subst m.
- apply Nat.lt_succ_diag_r.
-
- apply Nat.lt_lt_succ_r, IHm, p.
-Defined.
-
-Definition smallest_not_enough_iter P DP m n :
-  smallest_such_that P DP m n = None → m ≤ n.
-Proof.
-intros p.
-revert n p.
-induction m; intros; [ apply Nat.le_0_l | ].
-simpl in p.
-remember (smaller_such_that P DP n) as u eqn:Hu; symmetry in Hu.
-destruct u as [n'| ]; [ | discriminate p ].
-remember (smallest_such_that P DP m n') as v eqn:Hv; symmetry in Hv.
-destruct v as [on| ]; [ destruct on; discriminate p | clear p ].
-destruct n; [ discriminate Hu | ].
-apply le_n_S.
-simpl in Hu.
-destruct (DP n) as [p| p].
- injection Hu; clear Hu; intros; subst n'.
- apply IHm, Hv.
-
- apply smaller_smaller in Hu.
- apply IHm in Hv.
- eapply Nat.le_trans; [ apply Hv | ].
- apply Nat.lt_le_incl, Hu.
-Defined.
-
-Definition first_such_that P : isDecidableFamily nat P
-  → (Σ (n : nat), P n)
-  → (Σ (n : nat), (P n * ∀ m, m < n → notT (P m))%type).
-Proof.
-intros DP (n, p).
-remember (smallest_such_that P DP (S n) n) as u eqn:Hu; symmetry in Hu.
-destruct u as [[m| ]| ].
- exists m.
- split; [ eapply smallest_such_that_prop, Hu | ].
- intros a Ha.
- eapply smallest_such_that_prop_not; [ apply Hu | apply Ha ].
-
- exists n.
- split; [ apply p | ].
- intros m Hm.
- eapply no_smallest_such_that_not_prop; [ apply Hu | apply Hm ].
-
- simpl in Hu.
- remember (smaller_such_that P DP n) as v eqn:Hv; symmetry in Hv.
- destruct v as [n'| ].
-  remember (smallest_such_that P DP n n') as w eqn:Hw; symmetry in Hw.
-  destruct w as [on| ]; [ destruct on; discriminate Hu | clear Hu ].
-
-  apply smaller_smaller in Hv.
-  apply smallest_not_enough_iter in Hw.
-  apply Nat.nlt_ge in Hw.
-  destruct (Hw Hv).
-
- discriminate Hu.
+ apply no_first_such_that_not_prop in Hx.
+ destruct (Hx p).
 Defined.
 
 Definition ex_3_19 {P} : isDecidableFamily nat P
@@ -2296,11 +2087,9 @@ Proof.
 intros DP PP p.
 apply ex_3_19_lemma; [ apply DP | apply PP | ].
 pose proof (isProp_first_such_that P PP) as PF.
-pose proof (PT_rec _ _ (first_such_that P DP) PF) as q.
+pose proof (PT_rec _ _ (smallest_such_that P DP) PF) as q.
 destruct q as (g, q).
 apply PT_intro, g, p.
 Defined.
-
-End ex_3_19.
 
 bbb.
