@@ -2059,13 +2059,50 @@ destruct v as [n''| ].
  eapply smaller_such_that_prop, Hu.
 Defined.
 
+Definition smaller_smallest P DP m n :
+  n < m
+  → smaller_such_that P DP n = None
+  → smallest_such_that P DP m n = None.
+Proof.
+intros p q.
+revert n p q.
+induction m; intros; [ apply Nat.nlt_0_r in p; destruct p | simpl ].
+rewrite q; reflexivity.
+Defined.
+
+Definition no_smaller_such_that_not_prop {P} DP n :
+  smaller_such_that P DP n = None → ∀ m, m < n → notT (P m).
+Proof.
+intros p m q.
+revert m q.
+induction n; intros; [ apply Nat.nlt_0_r in q; destruct q | simpl in p ].
+destruct (DP n) as [r| r]; [ discriminate p | ].
+destruct (lt_dec m n) as [s| s]; [ apply IHn; assumption | ].
+apply Nat.nlt_ge in s.
+apply Nat.succ_le_mono, Nat.le_antisymm in q; [ | apply s ].
+destruct q; apply r.
+Defined.
+
 Definition no_smallest_such_that_not_prop {P} DP m n :
   n < m → smallest_such_that P DP m n = None → ∀ b, b < n → notT (P b).
 Proof.
 intros p q b Hbn.
 revert n b p q Hbn.
-induction m; intros; [ apply Nat.nlt_0_r in p; destruct p | ].
-bbb.
+induction m; intros; [ apply Nat.nlt_0_r in p; destruct p | simpl in q ].
+remember (smaller_such_that P DP n) as u eqn:Hu; symmetry in Hu.
+destruct u as [n'| ].
+ destruct (smallest_such_that P DP m n'); discriminate q.
+
+ clear q.
+ destruct (lt_dec n m) as [q| q].
+  eapply IHm; [ apply q | | eapply Hbn ].
+  apply smaller_smallest; [ apply q | apply Hu ].
+
+  apply Nat.succ_le_mono in p.
+  apply Nat.nlt_ge, Nat.le_antisymm in q; [ | apply p ].
+  subst n; clear p.
+  eapply no_smaller_such_that_not_prop; [ apply Hu | apply Hbn ].
+Defined.
 
 Definition smallest_such_that_not_prop {P} DP m n a :
   smallest_such_that P DP m n = Some a → ∀ b, b < a → notT (P b).
