@@ -2129,6 +2129,7 @@ split.
     (r : PT_elim
           (λ q r, (Hh q)⁻¹ • ap h (PT_eq P (PT_intro q) (PT_intro r)) • Hh r)
      = g).
+  unfold PT_elim; simpl.
 
 bbb.
 
