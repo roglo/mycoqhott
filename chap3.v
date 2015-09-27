@@ -2024,16 +2024,6 @@ Fixpoint smaller_such_that P (DP : isDecidableFamily nat P) n :=
       end
   end.
 
-Definition smaller_such_that_prop {P} (DP : isDecidableFamily nat P) m n :
-  smaller_such_that P DP m = Some n → P n.
-Proof.
-intros p.
-revert n p.
-induction m; intros; [ discriminate p | simpl in p ].
-destruct (DP m) as [q| q]; [ injection p; intros; subst m; apply q | ].
-apply IHm, p.
-Defined.
-
 Fixpoint smallest_such_that P (DP : isDecidableFamily nat P) m n :=
   match m with
   | 0 => None
@@ -2048,6 +2038,16 @@ Fixpoint smallest_such_that P (DP : isDecidableFamily nat P) m n :=
           end
       end
   end.
+
+Definition smaller_such_that_prop {P} (DP : isDecidableFamily nat P) m n :
+  smaller_such_that P DP m = Some n → P n.
+Proof.
+intros p.
+revert n p.
+induction m; intros; [ discriminate p | simpl in p ].
+destruct (DP m) as [q| q]; [ injection p; intros; subst m; apply q | ].
+apply IHm, p.
+Defined.
 
 Definition smallest_such_that_prop {P} (DP : isDecidableFamily nat P) m n a :
   smallest_such_that P DP m n = Some (Some a) → P a.
@@ -2195,7 +2195,8 @@ Defined.
 
 Definition ex_3_19 {P} : isDecidableFamily nat P
   → (Π (n : nat), isProp (P n))
-  → ∥(Σ (n : nat), P n)∥ → Σ (n : nat), P n.
+  → ∥(Σ (n : nat), P n)∥
+  → Σ (n : nat), P n.
 Proof.
 intros DP PP p.
 apply ex_3_19_lemma; [ apply DP | apply PP | ].
