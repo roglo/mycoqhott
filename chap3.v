@@ -2033,19 +2033,18 @@ Fixpoint smallest_such_that P (DP : isDecidableFamily nat P) m n :=
   | 0 => None
   | S m' =>
       match smaller_such_that P DP n with
-      | None => None
+      | None => Some None
       | Some n' =>
-(* faux : si ça répond None, ça peut vouloir dire que m' est insuffisant *)
           match smallest_such_that P DP m' n' with
-bbb.
-          | None => Some n'
-          | Some n'' => Some n''
+          | None => None
+          | Some None => Some (Some n')
+          | Some (Some n'') => Some (Some n'')
           end
       end
   end.
 
 Definition smallest_such_that_prop {P} (DP : isDecidableFamily nat P) m n a :
-  smallest_such_that P DP m n = Some a → P a.
+  smallest_such_that P DP m n = Some (Some a) → P a.
 Proof.
 intros p.
 revert n a p.
@@ -2053,18 +2052,20 @@ induction m; intros; [ discriminate p | simpl in p ].
 remember (smaller_such_that P DP n) as u eqn:Hu; symmetry in Hu.
 destruct u as [n'| ]; [ | discriminate p ].
 remember (smallest_such_that P DP m n') as v eqn:Hv; symmetry in Hv.
-destruct v as [n''| ].
+destruct v as [[n''| ]| ].
  injection p; clear p; intros; subst a.
  eapply IHm, Hv.
 
  injection p; clear p; intros; subst a.
  eapply smaller_such_that_prop, Hu.
+
+ discriminate p.
 Defined.
 
 Definition smaller_smallest P DP m n :
   n < m
   → smaller_such_that P DP n = None
-  → smallest_such_that P DP m n = None.
+  → smallest_such_that P DP m n = Some None.
 Proof.
 intros p q.
 revert n p q.
@@ -2086,28 +2087,21 @@ destruct q; apply r.
 Defined.
 
 Definition no_smallest_such_that_not_prop {P} DP m n :
-  n < m → smallest_such_that P DP m n = None → ∀ b, b < n → notT (P b).
+  smallest_such_that P DP m n = Some None → ∀ b, b < n → notT (P b).
 Proof.
-intros p q b Hbn.
-revert n b p q Hbn.
-induction m; intros; [ apply Nat.nlt_0_r in p; destruct p | simpl in q ].
+intros p b Hbn.
+revert n b p Hbn.
+induction m; intros; [ discriminate p | simpl in p ].
 remember (smaller_such_that P DP n) as u eqn:Hu; symmetry in Hu.
 destruct u as [n'| ].
- destruct (smallest_such_that P DP m n'); discriminate q.
+ destruct (smallest_such_that P DP m n') as [v| ]; [ | discriminate p ].
+ destruct v; discriminate p.
 
- clear q.
- destruct (lt_dec n m) as [q| q].
-  eapply IHm; [ apply q | | eapply Hbn ].
-  apply smaller_smallest; [ apply q | apply Hu ].
-
-  apply Nat.succ_le_mono in p.
-  apply Nat.nlt_ge, Nat.le_antisymm in q; [ | apply p ].
-  subst n; clear p.
-  eapply no_smaller_such_that_not_prop; [ apply Hu | apply Hbn ].
+ eapply no_smaller_such_that_not_prop; [ apply Hu | apply Hbn ].
 Defined.
 
-Definition smallest_such_that_not_prop {P} DP m n a :
-  smallest_such_that P DP m n = Some a → ∀ b, b < a → notT (P b).
+Definition smallest_such_that_prop_not {P} DP m n a :
+  smallest_such_that P DP m n = Some (Some a) → ∀ b, b < a → notT (P b).
 Proof.
 intros p b Hba.
 revert n a b p Hba.
@@ -2115,43 +2109,85 @@ induction m; intros; [ discriminate p | simpl in p ].
 remember (smaller_such_that P DP n) as u eqn:Hu; symmetry in Hu.
 destruct u as [n'| ]; [ | discriminate p ].
 remember (smallest_such_that P DP m n') as v eqn:Hv; symmetry in Hv.
-destruct v as [n''| ].
+destruct v as [[n''| ]| ].
  injection p; clear p; intros; subst a.
  eapply IHm; [ eapply Hv | apply Hba ].
 
  injection p; clear p; intros; subst a.
-bbb.
+ eapply no_smallest_such_that_not_prop; [ apply Hv | apply Hba ].
 
- destruct (lt_eq_lt_dec n' m) as [[p| p]| p].
-  eapply no_smallest_such_that_not_prop; eassumption.
-
-  subst n'.
-  destruct m; [ apply Nat.nlt_0_r in Hba; destruct Hba | ].
-  simpl in Hv.
-  destruct (DP m) as [p| p].
-   remember (smallest_such_that P DP m m) as w eqn:Hw; symmetry in Hw.
-   destruct w; discriminate Hv.
-
-   remember (smaller_such_that P DP m) as w eqn:Hw; symmetry in Hw.
-   destruct w as [n'| ].
-    destruct (smallest_such_that P DP m n'); discriminate Hv.
-
-    clear Hv.
-    destruct (lt_dec b m) as [q| q].
-     eapply no_smaller_such_that_not_prop; eassumption.
-
-     apply Nat.succ_le_mono in Hba.
-     apply Nat.nlt_ge, Nat.le_antisymm in q; [ | apply Hba ].
-     subst b; apply p.
-
-  simpl.
-
-bbb.
-  eapply no_smallest_such_that_not_prop; eassumption.
-  apply Nat.nlt_ge in p.
-bbb.
-
+ discriminate p.
 Defined.
+
+Definition smaller_smaller P DP m n :
+  smaller_such_that P DP m = Some n → n < m.
+Proof.
+intros p.
+revert n p.
+induction m; intros; [ discriminate p | simpl in p ].
+destruct (DP m) as [q| q].
+ injection p; clear p; intros; subst m.
+ apply Nat.lt_succ_diag_r.
+
+ apply Nat.lt_lt_succ_r, IHm, p.
+Defined.
+
+Definition smallest_not_enough_iter P DP m n :
+  smallest_such_that P DP m n = None → m ≤ n.
+Proof.
+intros p.
+revert n p.
+induction m; intros; [ apply Nat.le_0_l | ].
+simpl in p.
+remember (smaller_such_that P DP n) as u eqn:Hu; symmetry in Hu.
+destruct u as [n'| ]; [ | discriminate p ].
+remember (smallest_such_that P DP m n') as v eqn:Hv; symmetry in Hv.
+destruct v as [on| ]; [ destruct on; discriminate p | clear p ].
+destruct n; [ discriminate Hu | ].
+apply le_n_S.
+simpl in Hu.
+destruct (DP n) as [p| p].
+ injection Hu; clear Hu; intros; subst n'.
+ apply IHm, Hv.
+
+ apply smaller_smaller in Hu.
+ apply IHm in Hv.
+ eapply Nat.le_trans; [ apply Hv | ].
+ apply Nat.lt_le_incl, Hu.
+Defined.
+
+Definition first_such_that P : isDecidableFamily nat P
+  → (Σ (n : nat), P n)
+  → (Σ (n : nat), (P n * ∀ m, m < n → notT (P m))%type).
+Proof.
+intros DP (n, p).
+remember (smallest_such_that P DP (S n) n) as u eqn:Hu; symmetry in Hu.
+destruct u as [[m| ]| ].
+ exists m.
+ split; [ eapply smallest_such_that_prop, Hu | ].
+ intros a Ha.
+ eapply smallest_such_that_prop_not; [ apply Hu | apply Ha ].
+
+ exists n.
+ split; [ apply p | ].
+ intros m Hm.
+ eapply no_smallest_such_that_not_prop; [ apply Hu | apply Hm ].
+
+ simpl in Hu.
+ remember (smaller_such_that P DP n) as v eqn:Hv; symmetry in Hv.
+ destruct v as [n'| ].
+  remember (smallest_such_that P DP n n') as w eqn:Hw; symmetry in Hw.
+  destruct w as [on| ]; [ destruct on; discriminate Hu | clear Hu ].
+
+  apply smaller_smaller in Hv.
+  apply smallest_not_enough_iter in Hw.
+  apply Nat.nlt_ge in Hw.
+  destruct (Hw Hv).
+
+ discriminate Hu.
+Defined.
+
+Check first_such_that.
 
 bbb.
 
