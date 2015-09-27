@@ -1972,26 +1972,6 @@ Proof. apply LEM_LDN. Defined.
     propositions. Prove that
          ∥Σ (n:ℕ) P(n)∥ → Σ (n:ℕ) P(n)." *)
 
-Definition isProp_first_such_that P (PP : Π (n : nat), isProp (P n)) :
-  isProp (Σ (n : nat), (P n * (∀ m : nat, m < n → notT (P m)))%type).
-Proof.
-intros q r.
-destruct q as (m, (pm, q)).
-destruct r as (n, (pn, r)).
-destruct (lt_eq_lt_dec m n) as [[Hmn| Hmn] | Hmn].
- destruct (r m Hmn pm).
-
- subst m.
- apply (Σ_type.pair_eq (eq_refl n)); simpl; unfold id.
- apply split_pair_eq.
- split; [ apply PP | ].
- apply Π_type.funext; intros m.
- apply Π_type.funext; intros s.
- apply isPropNot, PP.
-
- destruct (q n Hmn pn).
-Defined.
-
 Fixpoint first_such_that P (DP : isDecidableFamily nat P) m n :=
   match m with
   | 0 => None
@@ -2057,6 +2037,26 @@ destruct x as [m| ].
  apply r; [ apply Nat.le_0_l | apply Ha ].
 
  apply no_first_such_that_prop in Hx; destruct (Hx p).
+Defined.
+
+Definition isProp_first_such_that P (PP : Π (n : nat), isProp (P n)) :
+  isProp (Σ (n : nat), (P n * (∀ m : nat, m < n → notT (P m)))%type).
+Proof.
+intros q r.
+destruct q as (m, (pm, q)).
+destruct r as (n, (pn, r)).
+destruct (lt_eq_lt_dec m n) as [[Hmn| Hmn] | Hmn].
+ destruct (r m Hmn pm).
+
+ subst m.
+ apply (Σ_type.pair_eq (eq_refl n)); simpl; unfold id.
+ apply split_pair_eq.
+ split; [ apply PP | ].
+ apply Π_type.funext; intros m.
+ apply Π_type.funext; intros s.
+ apply isPropNot, PP.
+
+ destruct (q n Hmn pn).
 Defined.
 
 Definition ex_3_19 {P} : isDecidableFamily nat P
