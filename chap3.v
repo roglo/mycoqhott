@@ -2126,3 +2126,16 @@ Defined.
     the axiom of choice is a theorem. Prove that the axiom of choice
     (3.8.1) holds when X is a finite type Fin(n) (as defined in
     Exercise 1.9)." *)
+
+Definition ex_3_22 n :
+  ∀ (X := Fin n) (A : X → Type) (P : Π (x : X), (A x → Type)),
+  isSet X
+  → (Π (x : X), isSet (A x))
+  → (Π (x : X), Π (a : A x), isProp (P x a))
+  → (Π (x : X), ∥ (Σ (a : A x), P x a) ∥)
+  → ∥ (Σ (g : Π (x : X), A x), Π (x : X), P x (g x)) ∥.
+Proof.
+intros X A P SX SA PP T.
+subst X.
+(* Inductive Fin (n : nat) : Set :=  elem : ∀ i : nat, i < n → Fin n *)
+bbb.
