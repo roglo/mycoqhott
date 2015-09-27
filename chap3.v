@@ -2118,7 +2118,35 @@ destruct v as [n''| ].
  eapply IHm; [ eapply Hv | apply Hba ].
 
  injection p; clear p; intros; subst a.
- eapply no_smallest_such_that_not_prop; [ | eassumption | eassumption ].
+bbb.
+
+ destruct (lt_eq_lt_dec n' m) as [[p| p]| p].
+  eapply no_smallest_such_that_not_prop; eassumption.
+
+  subst n'.
+  destruct m; [ apply Nat.nlt_0_r in Hba; destruct Hba | ].
+  simpl in Hv.
+  destruct (DP m) as [p| p].
+   remember (smallest_such_that P DP m m) as w eqn:Hw; symmetry in Hw.
+   destruct w; discriminate Hv.
+
+   remember (smaller_such_that P DP m) as w eqn:Hw; symmetry in Hw.
+   destruct w as [n'| ].
+    destruct (smallest_such_that P DP m n'); discriminate Hv.
+
+    clear Hv.
+    destruct (lt_dec b m) as [q| q].
+     eapply no_smaller_such_that_not_prop; eassumption.
+
+     apply Nat.succ_le_mono in Hba.
+     apply Nat.nlt_ge, Nat.le_antisymm in q; [ | apply Hba ].
+     subst b; apply p.
+
+  simpl.
+
+bbb.
+  eapply no_smallest_such_that_not_prop; eassumption.
+  apply Nat.nlt_ge in p.
 bbb.
 
 Defined.
