@@ -2137,5 +2137,25 @@ Definition ex_3_22 n :
 Proof.
 intros X A P SX SA PP T.
 subst X.
+apply PT_intro.
+assert (g : ∀ x : Fin n, A x).
+ intros x.
+bbb.
+
+Focus 2.
+ exists g.
+ intros x.
+
+bbb.
+induction n.
+ assert (g : ∀ x : Fin 0, A x).
+  intros x; destruct x as (i, lt); exfalso.
+  apply Nat.nlt_0_r in lt; destruct lt.
+
+  exists g.
+  intros x; destruct x as (i, lt); exfalso.
+  apply Nat.nlt_0_r in lt; destruct lt.
+
+(* fmax : ∀ n : nat, Fin (n + 1) *)
 (* Inductive Fin (n : nat) : Set :=  elem : ∀ i : nat, i < n → Fin n *)
 bbb.
