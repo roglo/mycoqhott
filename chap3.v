@@ -2066,8 +2066,11 @@ Definition ex_3_19 {P} : isDecidableFamily nat P
 Proof.
 intros DP PP p.
 set (f := smallest_such_that P DP).
+set (A := Σ (n : nat), P n).
+set (B := Σ (n : nat), (P n * (∀ m : nat, m < n → notT (P m)))%type).
 set (PB := isProp_first_such_that P PP).
-destruct (Σ_type.pr₁ (PT_rec _ _ f PB) p) as (n, (pn, _)).
+set (g := Σ_type.pr₁ (PT_rec A B f PB)).
+destruct (g p) as (n, (pn, _)).
 exists n; apply pn.
 Defined.
 
