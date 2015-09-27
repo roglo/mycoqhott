@@ -2059,7 +2059,7 @@ destruct (lt_eq_lt_dec m n) as [[Hmn| Hmn] | Hmn].
  destruct (q n Hmn pn).
 Defined.
 
-Definition ex_3_19 {P} : isDecidableFamily nat P
+Definition ex_3_19_tac P : isDecidableFamily nat P
   → (Π (n : nat), isProp (P n))
   → ∥(Σ (n : nat), P n)∥
   → Σ (n : nat), P n.
@@ -2073,5 +2073,17 @@ set (g := Σ_type.pr₁ (PT_rec A B f PB)).
 destruct (g p) as (n, (pn, _)).
 exists n; apply pn.
 Defined.
+
+Definition ex_3_19 P : isDecidableFamily nat P
+  → (Π (n : nat), isProp (P n))
+  → ∥(Σ (n : nat), P n)∥
+  → Σ (n : nat), P n
+:=
+  λ DP PP p,
+  let f := smallest_such_that P DP in
+  let PB := isProp_first_such_that P PP in
+  match Σ_type.pr₁ (PT_rec _ _ f PB) p with
+  | existT _ n (pn, _) => existT P n pn
+  end.
 
 bbb.
