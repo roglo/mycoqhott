@@ -2017,41 +2017,34 @@ Fixpoint first_such_that P (DP : isDecidableFamily nat P) m n :=
 
 Definition first_such_that_prop P (DP : isDecidableFamily nat P) m n a :
   first_such_that P DP (S n) a = Some m
-  → P m.
+  → P m * ∀ b, a ≤ b → b < m → notT (P b).
 Proof.
 intros p; simpl in p.
-destruct (DP a) as [q| q]; [ injection p; intros; subst a; apply q | ].
-revert m a p q.
-induction n; intros; [ discriminate p | simpl in p ].
-destruct (DP (S a)) as [r| r]; [ injection p; intros; subst m; apply r | ].
-eapply IHn; [ apply p | apply r ].
-Defined.
-
-Definition first_such_that_not_prop P (DP : isDecidableFamily nat P) m n a :
-  first_such_that P DP (S n) a = Some m
-  → ∀ b, a ≤ b → b < m → notT (P b).
-Proof.
-intros p b Ha Hb; simpl in p.
 destruct (DP a) as [q| q].
  injection p; intros; subst a.
+ split; [ apply q | intros b Ha Hb ].
  apply Nat.nlt_ge in Ha; destruct (Ha Hb).
 
- revert m a p q Ha Hb.
+ revert m a p q.
  induction n; intros; [ discriminate p | simpl in p ].
  destruct (DP (S a)) as [r| r].
   injection p; intros; subst m.
+  split; [ apply r | intros b Ha Hb ].
   apply Nat.succ_le_mono, Nat.le_antisymm in Hb; [ | apply Ha ].
   destruct Hb; apply q.
 
-  destruct (le_dec (S a) b) as [s| s].
-   eapply IHn; [ apply p | apply r | apply s | apply Hb ].
+  eapply IHn in p; [ | apply r ].
+  destruct p as (p, s).
+  split; [ apply p | intros b Ha Hb ].
+  destruct (le_dec (S a) b) as [t| t].
+   apply s; [ apply t | apply Hb ].
 
-   apply Nat.nle_gt in s.
-   apply Nat.succ_le_mono, Nat.le_antisymm in s; [ | apply Ha ].
-   destruct s; apply q.
+   apply Nat.nle_gt in t.
+   apply Nat.succ_le_mono, Nat.le_antisymm in t; [ | apply Ha ].
+   destruct t; apply q.
 Defined.
 
-Definition no_first_such_that_not_prop P (DP : isDecidableFamily nat P) n a :
+Definition no_first_such_that_prop P (DP : isDecidableFamily nat P) n a :
   first_such_that P DP (S n) a = None
   → notT (P (a + n)).
 Proof.
@@ -2072,11 +2065,11 @@ Proof.
 intros DP (n, p).
 remember (first_such_that P DP (S n) 0) as x eqn:Hx; symmetry in Hx.
 destruct x as [m| ].
- exists m; split; [ eapply first_such_that_prop, Hx | intros a Ha ].
- eapply first_such_that_not_prop; [ apply Hx | apply Nat.le_0_l | apply Ha ].
+ exists m; apply first_such_that_prop in Hx.
+ destruct Hx as (q, r); split; [ apply q | intros a Ha ].
+ apply r; [ apply Nat.le_0_l | apply Ha ].
 
- apply no_first_such_that_not_prop in Hx.
- destruct (Hx p).
+ apply no_first_such_that_prop in Hx; destruct (Hx p).
 Defined.
 
 Definition ex_3_19 {P} : isDecidableFamily nat P
