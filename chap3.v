@@ -2035,7 +2035,9 @@ Fixpoint smallest_such_that P (DP : isDecidableFamily nat P) m n :=
       match smaller_such_that P DP n with
       | None => None
       | Some n' =>
+(* faux : si ça répond None, ça peut vouloir dire que m' est insuffisant *)
           match smallest_such_that P DP m' n' with
+bbb.
           | None => Some n'
           | Some n'' => Some n''
           end
