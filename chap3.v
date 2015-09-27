@@ -2087,4 +2087,7 @@ Definition ex_3_19 P : isDecidableFamily nat P
   | existT _ n (pn, _) => existT P n pn
   end.
 
+(* "Exercise 3.20. Prove Lemma 3.11.9(ii): if A is contractible with
+    center a, then Σ (x:A) P(x) is equivalent to P(a)." *)
+
 bbb.
