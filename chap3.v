@@ -1992,19 +1992,6 @@ destruct (lt_eq_lt_dec m n) as [[Hmn| Hmn] | Hmn].
  destruct (q n Hmn pn).
 Defined.
 
-Definition ex_3_19_lemma {P} : isDecidableFamily nat P
-  → (Π (n : nat), isProp (P n))
-  → ∥(Σ (n : nat), (P n * ∀ m, m < n → notT (P m))%type)∥ → Σ (n : nat), P n.
-Proof.
-intros DP PP p.
-unfold isDecidableFamily in DP.
-apply PT_elim in p.
- destruct p as (n, (p, _)).
- exists n; apply p.
-
- apply isProp_first_such_that, PP.
-Defined.
-
 Fixpoint first_such_that P (DP : isDecidableFamily nat P) m n :=
   match m with
   | 0 => None
@@ -2078,11 +2065,11 @@ Definition ex_3_19 {P} : isDecidableFamily nat P
   → Σ (n : nat), P n.
 Proof.
 intros DP PP p.
-apply ex_3_19_lemma; [ apply DP | apply PP | ].
-pose proof (isProp_first_such_that P PP) as PF.
-pose proof (PT_rec _ _ (smallest_such_that P DP) PF) as q.
-destruct q as (g, q).
-apply PT_intro, g, p.
+set (PF := isProp_first_such_that P PP).
+set (q := PT_rec _ _ (smallest_such_that P DP) PF).
+destruct q as (g, _).
+destruct (g p) as (n, (pn, _)).
+exists n; apply pn.
 Defined.
 
 bbb.
