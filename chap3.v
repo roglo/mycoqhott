@@ -2100,6 +2100,35 @@ Definition ex_3_19 P : isDecidableFamily nat P
 
 Definition ex_3_21 P : isProp P ≃ (P ≃ ∥P∥).
 Proof.
+exists
+  (λ p,
+   existT isequiv (PT_intro (A:=P))
+     (qinv_isequiv (PT_intro (A:=P))
+        (existT _ (PT_elim p)
+           (λ x, PT_eq P (PT_intro (PT_elim p x)) x,
+            λ x, p (PT_elim p (PT_intro x)) x)))).
+apply qinv_isequiv.
+exists
+  (λ (p : P ≃ ∥P∥) q r,
+   match p with
+   | existT _ f (_, existT _ h Hh) =>
+       (Hh q)⁻¹ • ap h (PT_eq P (f q) (f r)) • Hh r
+   end).
+simpl; unfold "◦", "~~", id; simpl.
+assert (PP : isProp (P → ∥P∥)) by (apply isPropImp, PT_eq).
+split.
+ intros x.
+ destruct x as (f, ((g, Hg), (h, Hh))); simpl.
+ assert (q : PT_intro (A := P) = f) by apply PP.
+ apply (Σ_type.pair_eq q).
+ destruct q; simpl; unfold id.
+ apply cartesian.pair_eq; simpl.
+ split.
+  unfold "◦", "~~", id; simpl.
+
+bbb.
+
+
 exists hott_3_9_1.
 apply qinv_isequiv.
 exists
@@ -2112,5 +2141,6 @@ unfold hott_3_9_1, hott_3_3_3; simpl.
 unfold "◦", "~~", id; simpl.
 split.
  intros x.
+ destruct x as (f, ((g, Hg), (h, Hh))); simpl.
 
 bbb.
