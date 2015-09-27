@@ -2100,52 +2100,26 @@ Definition ex_3_19 P : isDecidableFamily nat P
 
 Definition ex_3_21 P : isProp P ≃ (P ≃ ∥P∥).
 Proof.
-exists
-  (λ p,
-   existT isequiv (PT_intro (A:=P))
-     (qinv_isequiv (PT_intro (A:=P))
-        (existT _ (PT_elim p)
-           (λ x, PT_eq P (PT_intro (PT_elim p x)) x,
-            λ x, p (PT_elim p (PT_intro x)) x)))).
-apply qinv_isequiv.
-exists
-  (λ (p : P ≃ ∥P∥) q r,
-   match p with
-   | existT _ f (_, existT _ h Hh) =>
-       (Hh q)⁻¹ • ap h (PT_eq P (f q) (f r)) • Hh r
-   end).
-simpl; unfold "◦", "~~", id; simpl.
-assert (PP : isProp (P → ∥P∥)) by (apply isPropImp, PT_eq).
-split.
- intros x.
- destruct x as (f, ((g, Hg), (h, Hh))); simpl.
- assert (q : PT_intro (A := P) = f) by apply PP.
- apply (Σ_type.pair_eq q).
- destruct q; simpl; unfold id.
- apply cartesian.pair_eq; simpl.
- split.
-  unfold "◦", "~~", id; simpl.
-  assert
-    (r : PT_elim
-          (λ q r, (Hh q)⁻¹ • ap h (PT_eq P (PT_intro q) (PT_intro r)) • Hh r)
-     = g).
-  unfold PT_elim; simpl.
+apply hott_3_3_3.
+ apply hott_3_3_5_i.
 
-bbb.
+ intros p q.
+ destruct p as (f, p).
+ destruct q as (g, q).
+ assert (PP : isProp (P → ∥P∥)) by (apply isPropImp, PT_eq).
+ assert (f = g) by apply PP; subst g.
+ destruct (equivalence_isequiv f) as (r, s).
+ assert (p = q) by apply s; subst q.
+ reflexivity.
 
+ apply hott_3_9_1.
 
-exists hott_3_9_1.
-apply qinv_isequiv.
-exists
-  (λ (p : P ≃ ∥P∥) q r,
-   match p with
-   | existT _ f (_, existT _ h Hh) =>
-       (Hh q)⁻¹ • ap h (PT_eq P (f q) (f r)) • Hh r
-   end).
-unfold hott_3_9_1, hott_3_3_3; simpl.
-unfold "◦", "~~", id; simpl.
-split.
- intros x.
- destruct x as (f, ((g, Hg), (h, Hh))); simpl.
+ intros p q r.
+ destruct p as (f, (_, (h, Hh))).
+ unfold "◦", "~~", id in Hh.
+ eapply compose; [ eapply invert | apply Hh ].
+ eapply compose; [ eapply invert | apply Hh ].
+ apply ap, PT_eq.
+Defined.
 
 bbb.
