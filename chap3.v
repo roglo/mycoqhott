@@ -975,12 +975,16 @@ Defined.
 
 (* Lemma 3.9.1 *)
 
-Definition hott_3_9_1 {P} : isProp P → P ≃ ∥P∥.
+Definition hott_3_9_1_tac {P} : isProp P → P ≃ ∥P∥.
 Proof.
 intros PP.
 apply hott_3_3_3; [ assumption | apply PT_eq | apply PT_intro | ].
 apply PT_elim; assumption.
 Defined.
+
+Definition hott_3_9_1 {P} : isProp P → P ≃ ∥P∥ :=
+  λ (PP : isProp P),
+  hott_3_3_3 P ∥P∥ PP (PT_eq P) (PT_intro (A:=P)) (PT_elim PP).
 
 (* "Corollary 3.9.2 (The principle of unique choice). Suppose a type
     family P : A → U such that
@@ -2089,5 +2093,24 @@ Definition ex_3_19 P : isDecidableFamily nat P
 
 (* "Exercise 3.20. Prove Lemma 3.11.9(ii): if A is contractible with
     center a, then Σ (x:A) P(x) is equivalent to P(a)." *)
+
+(* already done: see hott_3_11_9_ii *)
+
+(* "Exercise 3.21. Prove that isProp(P) ≃ (P ≃ ∥P∥)." *)
+
+Definition ex_3_21 P : isProp P ≃ (P ≃ ∥P∥).
+Proof.
+exists hott_3_9_1.
+apply qinv_isequiv.
+exists
+  (λ (p : P ≃ ∥P∥) q r,
+   match p with
+   | existT _ f (_, existT _ h Hh) =>
+       (Hh q)⁻¹ • ap h (PT_eq P (f q) (f r)) • Hh r
+   end).
+unfold hott_3_9_1, hott_3_3_3; simpl.
+unfold "◦", "~~", id; simpl.
+split.
+ intros x.
 
 bbb.
