@@ -2127,7 +2127,7 @@ Defined.
     (3.8.1) holds when X is a finite type Fin(n) (as defined in
     Exercise 1.9)." *)
 
-(*
+(**)
 Definition ex_3_22_AC_3_8_3 n :
   ∀ (X := Fin n) (Y : X → Type),
   isSet X
@@ -2136,9 +2136,35 @@ Definition ex_3_22_AC_3_8_3 n :
   → ∥(Π (x : X), Y x)∥.
 Proof.
 intros X Y SX SY T; subst X.
-clear SX.
+clear SX; apply PT_intro; intros x.
+induction n.
+ destruct x as (i, ilt); exfalso.
+ apply Nat.nlt_0_r in ilt; destruct ilt.
 
-apply PT_intro; intros x.
+ set
+   (Yn (x : Fin n) :=
+    match x with
+    | elem _ i ilt => Y (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
+    end).
+ set
+   (SYn (x : Fin n) :=
+    match x return (isSet (Yn x)) with
+    | elem _ i ilt => SY (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
+    end).
+ set
+   (Tn (x : Fin n) :=
+    match x return ∥(Yn x)∥ with
+    | elem _ i ilt => T (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
+    end).
+ set (H := IHn Yn SYn Tn).
+ subst Yn SYn Tn; simpl in H.
+bbb.
+
+ destruct x as (i, ilt).
+ destruct (lt_dec i n) as [p| p].
+  set (q := H (elem n i p)).
+  subst Yn; simpl in q.
+
 bbb.
 *)
 
@@ -2223,9 +2249,27 @@ induction n; intros.
   apply A; econstructor; apply lti.
 
   assert (Pn : ∀ x : Fin n, An x → Type) by (intros x a; apply An, x).
-  pose proof IHn An Pn.
   assert (PPn : ∀ (x : Fin n) (a : An x), isProp (Pn x a)).
    intros x a.
+Focus 2.
+   assert (Tn : ∀ x : Fin n, ∥{a : An x & Pn x a}∥).
+Focus 2.
+    pose proof IHn An Pn PPn Tn as p.
+    destruct p as (g, p).
+    assert (gn : ∀ x : Fin (S n), A x).
+     intros x.
+bbb.
+     assert (y : Fin n).
+      destruct n.
+
+bbb.
+
+      destruct x as (i, ilt).
+      destruct (lt_dec i n) as [q| q]; [ econstructor; apply q | ].
+      apply Nat.nlt_ge in q.
+      apply Nat.succ_le_mono, Nat.le_antisymm in ilt; [ | apply q ].
+      subst i.
+      destruct n.
 bbb.
 
  set (x := elem (S n) 0 (Nat.lt_0_succ n)).
