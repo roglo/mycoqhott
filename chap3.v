@@ -2174,7 +2174,7 @@ x = y ≡
 *)
 assert (p : existT (λ n, Fin n → Type) n Yn = existT _ (S n) Y).
 Focus 2.
-Check
+apply
   (@transport
      (Σ (n : nat), Fin n → Type)
      (λ z, ∀ x : Fin (Σ_type.pr₁ z), Σ_type.pr₂ z x)
