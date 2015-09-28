@@ -2204,10 +2204,9 @@ bbb.
 *)
 
 intros X A P SX SA PP T.
-revert A P SA PP T.
-subst X; clear SX.
+subst X; clear SX SA; apply PT_intro.
+revert A P PP T.
 induction n; intros.
- apply PT_intro.
  assert (g : ∀ x : Fin 0, A x).
   destruct x as (i, lt); exfalso.
   apply Nat.nlt_0_r in lt; destruct lt.
@@ -2216,8 +2215,17 @@ induction n; intros.
   destruct x as (i, lt); exfalso.
   apply Nat.nlt_0_r in lt; destruct lt.
 
- apply PT_intro.
  (* construire g à partir du g produit par IHn *)
+ assert (An : Fin n → Type).
+  intros x.
+  destruct x as (i, lti).
+  apply Nat.lt_lt_succ_r in lti.
+  apply A; econstructor; apply lti.
+
+  assert (Pn : ∀ x : Fin n, An x → Type) by (intros x a; apply An, x).
+  pose proof IHn An Pn.
+  assert (PPn : ∀ (x : Fin n) (a : An x), isProp (Pn x a)).
+   intros x a.
 bbb.
 
  set (x := elem (S n) 0 (Nat.lt_0_succ n)).
