@@ -2127,7 +2127,7 @@ Defined.
     (3.8.1) holds when X is a finite type Fin(n) (as defined in
     Exercise 1.9)." *)
 
-(**)
+(*
 Definition ex_3_22_AC_3_8_3 n :
   ∀ (X := Fin n) (Y : X → Type),
   isSet X
@@ -2160,28 +2160,9 @@ induction n.
  subst Yn SYn Tn; simpl in H.
  pose proof T x.
 bbb.
-
- destruct x as (i, ilt).
- destruct (lt_dec i n) as [p| p].
-  set (q := H (elem n i p)).
-  subst Yn; simpl in q.
-
-bbb.
 *)
 
 (*
-Definition toto a b (p q : a ≤ b) : p = q.
-Proof.
-bbb.
-*)
-
-(*
-Definition toto (p q : 0 ≤ 0) : p = q.
-Proof.
-change (match 0 with 0 => p = q | S _ => True end).
-
-bbb.
-
 Definition isProp_Fin_1 : isProp (Fin 1).
 Proof.
 intros (a, p) (b, q).
@@ -2210,26 +2191,6 @@ Definition ex_3_22 n :
   → (Π (x : X), ∥ (Σ (a : A x), P x a) ∥)
   → ∥ (Σ (g : Π (x : X), A x), Π (x : X), P x (g x)) ∥.
 Proof.
-(*
-intros X A P SX SA PP T.
-subst X.
-destruct n.
- apply PT_intro.
- assert (g : ∀ x : Fin 0, A x).
-  destruct x as (i, lt); exfalso.
-  apply Nat.nlt_0_r in lt; destruct lt.
-
-  exists g; intros x.
-  destruct x as (i, lt); exfalso.
-  apply Nat.nlt_0_r in lt; destruct lt.
-
- destruct n.
- assert (g : ∀ x : Fin 1, A x).
-bbb.
-    assert (p = le_n 1).
-    apply Nat.lt_1_r in p.
-*)
-
 intros X A P SX SA PP T.
 subst X; clear SX SA; apply PT_intro.
 revert A P PP T.
@@ -2243,15 +2204,22 @@ induction n; intros.
   apply Nat.nlt_0_r in lt; destruct lt.
 
  (* construire g à partir du g produit par IHn *)
- assert (An : Fin n → Type).
-  intros x.
-  destruct x as (i, lti).
-  apply Nat.lt_lt_succ_r in lti.
-  apply A; econstructor; apply lti.
-
-  assert (Pn : ∀ x : Fin n, An x → Type) by (intros x a; apply An, x).
+  set
+    (An (x : Fin n) :=
+     match x with
+     | elem _ i lti => A (elem (S n) i (Nat.lt_lt_succ_r i n lti))
+     end).
+  set (Pn := λ (x : Fin n) (_ : An x), An x).
   assert (PPn : ∀ (x : Fin n) (a : An x), isProp (Pn x a)).
    intros x a.
+   subst Pn; simpl.
+   subst An; simpl.
+   destruct x as (i, ilt).
+bbb.
+
+Focus 2.
+  pose proof IHn An Pn PPn.
+
 Focus 2.
    assert (Tn : ∀ x : Fin n, ∥{a : An x & Pn x a}∥).
 Focus 2.
