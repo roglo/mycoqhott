@@ -2136,6 +2136,8 @@ Definition ex_3_22_AC_3_8_3 n :
   → ∥(Π (x : X), Y x)∥.
 Proof.
 intros X Y SX SY T; subst X.
+clear SX.
+
 apply PT_intro; intros x.
 bbb.
 *)
@@ -2149,6 +2151,8 @@ bbb.
 (*
 Definition toto (p q : 0 ≤ 0) : p = q.
 Proof.
+change (match 0 with 0 => p = q | S _ => True end).
+
 bbb.
 
 Definition isProp_Fin_1 : isProp (Fin 1).
@@ -2200,7 +2204,9 @@ bbb.
 *)
 
 intros X A P SX SA PP T.
-destruct n.
+revert A P SA PP T.
+subst X; clear SX.
+induction n; intros.
  apply PT_intro.
  assert (g : ∀ x : Fin 0, A x).
   destruct x as (i, lt); exfalso.
@@ -2211,6 +2217,9 @@ destruct n.
   apply Nat.nlt_0_r in lt; destruct lt.
 
  apply PT_intro.
+ (* construire g à partir du g produit par IHn *)
+bbb.
+
  set (x := elem (S n) 0 (Nat.lt_0_succ n)).
  set (Ax := A x).
  pose proof (T x) as tx.
@@ -2220,6 +2229,7 @@ destruct n.
  (* mmm... trying something... *)
  assert (isProp (Σ (g : Π (x : X), A x), Π (x : X), P x (g x))).
   intros (g, p) (h, q).
+  assert (g = h).
 bbb.
 
  assert (g : ∀ x : Fin (S n), A x).
