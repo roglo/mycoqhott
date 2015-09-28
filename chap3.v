@@ -2137,8 +2137,8 @@ Definition ex_3_22 n :
 Proof.
 intros X A P SX SA PP T.
 subst X.
-apply PT_intro.
 destruct n.
+ apply PT_intro.
  assert (g : ∀ x : Fin 0, A x).
   destruct x as (i, lt); exfalso.
   apply Nat.nlt_0_r in lt; destruct lt.
@@ -2147,8 +2147,34 @@ destruct n.
   destruct x as (i, lt); exfalso.
   apply Nat.nlt_0_r in lt; destruct lt.
 
+ apply PT_intro.
  assert (g : ∀ x : Fin (S n), A x).
   intros x.
+  pose proof (T x) as tx.
+  destruct x as (i, lti).
+bbb.
+Check (elem (S n) 0 (Nat.lt_0_succ n)).
+
+  set (A₁ := Σ (a : A x), P x a) in tx.
+Check (PT_rec A₁).
+(* PT_rec A₁
+     : ∀ (B : Type) (f : A₁ → B),
+       isProp B → {g : ∥A₁∥ → B & ∀ a : A₁, g (PT_intro a) = f a} *)
+Check (PT_rec (Σ (a : A x), P x a)).
+(* PT_rec {a : A x & P x a}
+     : ∀ (B : Type) (f : {a : A x & P x a} → B),
+       isProp B
+       → {g : ∥{a : A x & P x a}∥ → B &
+         ∀ a : {a : A x & P x a}, g (PT_intro a) = f a} *)
+Check (λ (u : Σ (a : A x), P x a), Σ_type.pr₂ u).
+bbb.
+
+  destruct x as (i, lti).
+
+Check (PT_rec A₁ (P x (Σ_type.pr₁ x))).
+
+bbb.
+
   assert (Px : isProp (Σ (a : A x), P x a)).
    intros p q.
 Check (elem (S n) 0 (Nat.lt_0_succ n)).
