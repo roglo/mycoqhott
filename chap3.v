@@ -2147,9 +2147,21 @@ destruct n.
   destruct x as (i, lt); exfalso.
   apply Nat.nlt_0_r in lt; destruct lt.
 
+ assert (g : ∀ x : Fin (S n), A x).
+  intros x.
+  assert (Px : isProp (Σ (a : A x), P x a)).
+   intros p q.
+Check (elem (S n) 0 (Nat.lt_0_succ n)).
+Check (elem (S n) n (Nat.lt_succ_diag_r n)).
+
+bbb.
+
+  Focus 2.
+   destruct (PT_elim Px (T x)) as (ax, _); apply ax.
+
+bbb.
  set (x := elem (S n) n (Nat.lt_succ_diag_r n)).
  pose proof T x as H1.
-bbb.
 
 assert (g : ∀ x : Fin n, A x).
  intros x.
