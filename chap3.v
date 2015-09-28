@@ -2138,8 +2138,46 @@ Proof.
 intros X A P SX SA PP T.
 subst X.
 apply PT_intro.
+destruct n.
+ assert (g : ∀ x : Fin 0, A x).
+  destruct x as (i, lt); exfalso.
+  apply Nat.nlt_0_r in lt; destruct lt.
+
+  exists g; intros x.
+  destruct x as (i, lt); exfalso.
+  apply Nat.nlt_0_r in lt; destruct lt.
+
+ set (x := elem (S n) n (Nat.lt_succ_diag_r n)).
+bbb.
+
 assert (g : ∀ x : Fin n, A x).
  intros x.
+ destruct n.
+  destruct x as (i, lt); exfalso.
+  apply Nat.nlt_0_r in lt; destruct lt.
+
+(*
+  assert (x = elem (S n) n (Nat.lt_succ_diag_r n)).
+   destruct x as (i, Hin).
+*)
+ assert (isProp (Σ (a : A x), P x a)).
+  intros (a, p) (b, q).
+  pose proof (PP x a) as ppa.
+  pose proof (PP x b) as ppb.
+  unfold isSet in SX, SA.
+  pose proof SA x a b as H1.
+  pose proof T x as H2.
+  destruct x as (i, Hin); simpl in *; simpl.
+  assert (a = b) as H3.
+bbb.
+
+Focus 2.
+  apply (Σ_type.pair_eq H3).
+  destruct H3; simpl; apply ppa.
+
+Focus 2.
+ pose proof (PT_elim H (T x)) as p.
+ destruct p as (p, q); apply p.
 bbb.
 
 Focus 2.
