@@ -2148,6 +2148,7 @@ destruct n.
   apply Nat.nlt_0_r in lt; destruct lt.
 
  set (x := elem (S n) n (Nat.lt_succ_diag_r n)).
+ pose proof T x as H1.
 bbb.
 
 assert (g : ∀ x : Fin n, A x).
