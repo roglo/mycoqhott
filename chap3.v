@@ -2140,6 +2140,12 @@ apply PT_intro; intros x.
 bbb.
 *)
 
+(*
+Definition toto a b (p q : a ≤ b) : p = q.
+Proof.
+bbb.
+*)
+
 Definition ex_3_22 n :
   ∀ (X := Fin n) (A : X → Type) (P : Π (x : X), (A x → Type)),
   isSet X
@@ -2159,6 +2165,30 @@ destruct n.
   exists g; intros x.
   destruct x as (i, lt); exfalso.
   apply Nat.nlt_0_r in lt; destruct lt.
+
+ destruct n.
+ assert (g : ∀ x : Fin 1, A x).
+  assert (PF : isProp (Fin 1)).
+   intros (a, p) (b, q).
+   assert (ab : a = b).
+    apply Nat.lt_1_r in p.
+    apply Nat.lt_1_r in q.
+    destruct p, q; apply eq_refl.
+
+    subst b.
+    assert (Ha : a = 0) by (apply Nat.lt_1_r in p; apply p); subst a.
+    unfold lt in p, q.
+bbb.
+    assert (p = le_n 1).
+Definition toto (p : 1 ≤ 1) : p = le_n 1.
+Proof.
+bbb.
+refine (match p return (_ = p) with le_n _ => eq_refl _ | le_S _ _ _ => _ end).
+bbb.
+
+SearchAbout (_ < _ → _ < _ → _ = _).
+bbb.
+    apply Nat.lt_1_r in p.
 
  apply PT_intro.
  set (x := elem (S n) 0 (Nat.lt_0_succ n)).
