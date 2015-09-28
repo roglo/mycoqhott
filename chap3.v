@@ -2158,6 +2158,7 @@ induction n.
     end).
  set (H := IHn Yn SYn Tn).
  subst Yn SYn Tn; simpl in H.
+ pose proof T x.
 bbb.
 
  destruct x as (i, ilt).
