@@ -2127,7 +2127,7 @@ Defined.
     (3.8.1) holds when X is a finite type Fin(n) (as defined in
     Exercise 1.9)." *)
 
-(*
+(**)
 Definition ex_3_22_AC_3_8_3 n :
   ∀ (X := Fin n) (Y : X → Type),
   isSet X
@@ -2157,8 +2157,31 @@ induction n.
     | elem _ i ilt => T (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
     end).
  set (H := IHn Yn SYn Tn).
- subst Yn SYn Tn; simpl in H.
- pose proof T x.
+ subst SYn Tn; simpl in H.
+ revert x.
+Check @transport.
+(* @transport
+     : ∀ (A : Type) (P : A → Type) (x y : A), x = y → P x → P y
+P x   ≡ ∀ x : Fin n, Yn x
+P y   ≡ ∀ x : Fin (S n), Y x
+
+P     ≡ (λ (k, Yk), ∀ x : Fin k, Yk x)
+P x   ≡ (λ (k, Yk), ∀ x : Fin k, Yk x) (n, Yn)
+P y   ≡ (λ (k, Yk), ∀ x : Fin k, Yk x) (S n, Y)
+
+Σ (n : nat), Fin n → Type
+x = y ≡
+*)
+assert (p : existT (λ n, Fin n → Type) n Yn = existT _ (S n) Y).
+Focus 2.
+Check
+  (@transport
+     (Σ (n : nat), Fin n → Type)
+     (λ z, ∀ x : Fin (Σ_type.pr₁ z), Σ_type.pr₂ z x)
+     (existT _ n Yn)
+     (existT _ (S n) Y)
+     p H).
+
 bbb.
 *)
 
