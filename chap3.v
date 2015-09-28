@@ -2146,6 +2146,31 @@ Proof.
 bbb.
 *)
 
+(*
+Definition toto (p q : 0 ≤ 0) : p = q.
+Proof.
+bbb.
+
+Definition isProp_Fin_1 : isProp (Fin 1).
+Proof.
+intros (a, p) (b, q).
+assert (ab : a = b).
+ apply Nat.lt_1_r in p.
+ apply Nat.lt_1_r in q.
+ destruct p, q; apply eq_refl.
+
+ subst b; apply ap.
+ assert (a = 0) by (apply Nat.lt_1_r in p; apply p); subst a.
+ unfold lt in p, q.
+1 subgoal, subgoal 1 (ID 580)
+  
+  p, q : 1 ≤ 1
+  ============================
+   p = q
+bbb.
+... not so simple, apparently...
+*)
+
 Definition ex_3_22 n :
   ∀ (X := Fin n) (A : X → Type) (P : Π (x : X), (A x → Type)),
   isSet X
@@ -2154,6 +2179,7 @@ Definition ex_3_22 n :
   → (Π (x : X), ∥ (Σ (a : A x), P x a) ∥)
   → ∥ (Σ (g : Π (x : X), A x), Π (x : X), P x (g x)) ∥.
 Proof.
+(*
 intros X A P SX SA PP T.
 subst X.
 destruct n.
@@ -2168,27 +2194,21 @@ destruct n.
 
  destruct n.
  assert (g : ∀ x : Fin 1, A x).
-  assert (PF : isProp (Fin 1)).
-   intros (a, p) (b, q).
-   assert (ab : a = b).
-    apply Nat.lt_1_r in p.
-    apply Nat.lt_1_r in q.
-    destruct p, q; apply eq_refl.
-
-    subst b.
-    assert (Ha : a = 0) by (apply Nat.lt_1_r in p; apply p); subst a.
-    unfold lt in p, q.
 bbb.
     assert (p = le_n 1).
-Definition toto (p : 1 ≤ 1) : p = le_n 1.
-Proof.
-bbb.
-refine (match p return (_ = p) with le_n _ => eq_refl _ | le_S _ _ _ => _ end).
-bbb.
-
-SearchAbout (_ < _ → _ < _ → _ = _).
-bbb.
     apply Nat.lt_1_r in p.
+*)
+
+intros X A P SX SA PP T.
+destruct n.
+ apply PT_intro.
+ assert (g : ∀ x : Fin 0, A x).
+  destruct x as (i, lt); exfalso.
+  apply Nat.nlt_0_r in lt; destruct lt.
+
+  exists g; intros x.
+  destruct x as (i, lt); exfalso.
+  apply Nat.nlt_0_r in lt; destruct lt.
 
  apply PT_intro.
  set (x := elem (S n) 0 (Nat.lt_0_succ n)).
@@ -2197,6 +2217,9 @@ bbb.
  (* Σ (a : A x), P x a is not a Prop, but perhaps
     Σ (a : A x), (P x a * something) is a Prop ?
     in that case, I could use the same trick as ex 3.19 *)
+ (* mmm... trying something... *)
+ assert (isProp (Σ (g : Π (x : X), A x), Π (x : X), P x (g x))).
+  intros (g, p) (h, q).
 bbb.
 
  assert (g : ∀ x : Fin (S n), A x).
