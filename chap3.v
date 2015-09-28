@@ -2127,6 +2127,19 @@ Defined.
     (3.8.1) holds when X is a finite type Fin(n) (as defined in
     Exercise 1.9)." *)
 
+(*
+Definition ex_3_22_AC_3_8_3 n :
+  ∀ (X := Fin n) (Y : X → Type),
+  isSet X
+  → (Π (x : X), isSet (Y x))
+  → (Π (x : X), ∥(Y x)∥)
+  → ∥(Π (x : X), Y x)∥.
+Proof.
+intros X Y SX SY T; subst X.
+apply PT_intro; intros x.
+bbb.
+*)
+
 Definition ex_3_22 n :
   ∀ (X := Fin n) (A : X → Type) (P : Π (x : X), (A x → Type)),
   isSet X
@@ -2148,9 +2161,26 @@ destruct n.
   apply Nat.nlt_0_r in lt; destruct lt.
 
  apply PT_intro.
+ set (x := elem (S n) 0 (Nat.lt_0_succ n)).
+ set (Ax := A x).
+ pose proof (T x) as tx.
+ (* Σ (a : A x), P x a is not a Prop, but perhaps
+    Σ (a : A x), (P x a * something) is a Prop ?
+    in that case, I could use the same trick as ex 3.19 *)
+bbb.
+
  assert (g : ∀ x : Fin (S n), A x).
   intros x.
   pose proof (T x) as tx.
+assert (isProp (A x)).
+intros p q.
+
+(* not sure but not impossible... *)
+assert (isProp (Σ (a : A x), P x a)).
+intros (a, p) (b, q).
+(* but it requires that a=b which does not seems to be the case... *)
+
+bbb.
   destruct x as (i, lti).
 bbb.
 Check (elem (S n) 0 (Nat.lt_0_succ n)).
