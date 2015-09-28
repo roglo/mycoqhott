@@ -2136,8 +2136,9 @@ Definition ex_3_22_AC_3_8_3 n :
   → ∥(Π (x : X), Y x)∥.
 Proof.
 intros X Y SX SY T; subst X.
-clear SX; apply PT_intro; intros x.
+clear SX.
 induction n.
+ apply PT_intro; intros x.
  destruct x as (i, ilt); exfalso.
  apply Nat.nlt_0_r in ilt; destruct ilt.
 
@@ -2158,7 +2159,6 @@ induction n.
     end).
  set (H := IHn Yn SYn Tn).
  subst SYn Tn; simpl in H.
- revert x.
 Check @transport.
 (* @transport
      : ∀ (A : Type) (P : A → Type) (x y : A), x = y → P x → P y
@@ -2172,15 +2172,41 @@ P y   ≡ (λ (k, Yk), ∀ x : Fin k, Yk x) (S n, Y)
 Σ (n : nat), Fin n → Type
 x = y ≡
 *)
+(*
+  T : ∀ x : Fin (S n), ∥(Y x)∥
+  Y : Fin (S n) → Type
+  Yn : Fin n → Type
+  H : ∥(∀ x : Fin n, Yn x)∥
+  ============================
+   ∥(∀ x : Fin (S n), Y x)∥
+*)
+Check PT_rec.
+(*
+PT_rec
+     : ∀ (A B : Type) (f : A → B),
+       isProp B → {g : ∥A∥ → B & ∀ a : A, g (PT_intro a) = f a}
+*)
+set (A₁ := (∀ x : Fin n, Yn x)).
+set (B₁ := ∥(∀ x : Fin (S n), Y x)∥).
+Check (PT_rec A₁ B₁).
+assert (f₁ : A₁ → B₁).
+ subst A₁ B₁.
+ intros p.
+Focus 2.
+pose proof PT_rec A₁ B₁ f₁ (PT_eq _) as q.
+destruct q as (g, q).
+apply g, H.
+bbb.
+
 assert (p : existT (λ n, Fin n → Type) n Yn = existT _ (S n) Y).
 Focus 2.
-apply
+Check
   (@transport
      (Σ (n : nat), Fin n → Type)
      (λ z, ∀ x : Fin (Σ_type.pr₁ z), Σ_type.pr₂ z x)
      (existT _ n Yn)
      (existT _ (S n) Y)
-     p H).
+     p).
 
 bbb.
 *)
