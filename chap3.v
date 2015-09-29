@@ -2346,24 +2346,22 @@ Check (PT_rec A₀ B₀).
    assert (Nat.lt_0_1 = ilt) by apply le_unique.
    subst x₀ ilt; apply t.
 *)
-Print eq_rect_r.
+  destruct t as (ax, pax).
   set
     (g (x : Fin 1) :=
      match x with
      | elem _ i ilt =>
-         eq_rect_r
-           (λ i, ∀ ilt, A (elem 1 i ilt))
-           (λ ilt,
-            match le_unique 1 1 Nat.lt_0_1 ilt with
-            | eq_refl _ => let (x, _) := t in x
-            end)
-           (match Nat.lt_1_r i with
-            | conj f _ => f ilt
-            end)
-           ilt
-     end).
+         match match Nat.lt_1_r i with conj f _ => eq_sym (f ilt) end
+           in (_ = y) return ∀ ilt, A (elem 1 y ilt)
+         with
+         | eq_refl _ =>
+             λ ilt,
+             match le_unique 1 1 Nat.lt_0_1 ilt with
+             | eq_refl _ => ax
+             end
+         end ilt
+     end : A x).
    exists g; intros x.
-   destruct t as (ax, pax).
    assert (x = x₀) by apply isProp_Fin_1; subst x g; simpl.
 
 bbb.
