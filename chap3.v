@@ -2362,8 +2362,7 @@ Check (PT_rec A₀ B₀).
          end ilt
      end : A x).
    exists g; intros x.
-   assert (x = x₀) by apply isProp_Fin_1; subst x g; simpl.
-
+   assert (x = x₀) by apply isProp_Fin_1; subst x.
 bbb.
 destruct n.
  set (x₀ := elem 1 0 Nat.lt_0_1).
