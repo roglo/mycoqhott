@@ -2333,6 +2333,42 @@ induction n; intros.
 
 destruct n.
  set (x₀ := elem 1 0 Nat.lt_0_1).
+ pose proof (T x₀) as tx.
+ set (A₀ := Σ (a : A x₀), P x₀ a).
+ set (B₀ := ∥{g : ∀ x : Fin 1, A x & ∀ x : Fin 1, P x (g x)}∥).
+Check (PT_rec A₀ B₀).
+ assert (f : A₀ → B₀).
+  intros t; subst A₀ B₀; apply PT_intro.
+(*
+  assert (g : ∀ x : Fin 1, A x).
+   intros (i, ilt).
+   assert (i = 0) by (apply Nat.lt_1_r in ilt; assumption); subst i.
+   assert (Nat.lt_0_1 = ilt) by apply le_unique.
+   subst x₀ ilt; apply t.
+*)
+Print eq_rect_r.
+  set
+    (g (x : Fin 1) :=
+     match x with
+     | elem _ i ilt =>
+         eq_rect_r
+           (λ i, ∀ ilt, A (elem 1 i ilt))
+           (λ ilt,
+            match le_unique 1 1 Nat.lt_0_1 ilt with
+            | eq_refl _ => let (x, _) := t in x
+            end)
+           (match Nat.lt_1_r i with
+            | conj f _ => f ilt
+            end)
+           ilt
+     end).
+   exists g; intros x.
+   destruct t as (ax, pax).
+   assert (x = x₀) by apply isProp_Fin_1; subst x g; simpl.
+
+bbb.
+destruct n.
+ set (x₀ := elem 1 0 Nat.lt_0_1).
  assert (ax₀ : ∥(A x₀)∥).
   pose proof (T x₀).
   set (A₀ := Σ (a : A x₀), P x₀ a).
