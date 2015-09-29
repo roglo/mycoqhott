@@ -2295,7 +2295,10 @@ Focus 2.
   apply Nat.nlt_ge in r.
   apply Nat.succ_le_mono, Nat.le_antisymm in r; [ | apply ilt ].
   apply Nat.succ_inj in r; subst i.
-Check (elem (S n) n ilt).
+Check (A (elem (S n) n ilt)).
+SearchAbout A.
+move T at bottom.
+pose proof (T (elem (S n) n ilt)) as r.
 bbb.
 
 (* PT_rec A₁
