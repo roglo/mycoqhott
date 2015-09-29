@@ -2231,6 +2231,22 @@ assert (ab : a = b).
  subst b; apply ap, le_unique.
 Defined.
 
+Definition isSet_Fin : ∀ n, isSet (Fin n).
+Proof.
+intros n.
+intros x y p q.
+induction n.
+ destruct x as (i, ilt).
+ exfalso; clear p q; apply Nat.nlt_0_r in ilt; destruct ilt.
+
+ destruct x as (a, x).
+ destruct y as (b, y).
+ injection p; intros; subst b.
+ assert (x = y) by apply le_unique; subst y.
+ destruct (lt_dec a n) as [y| y].
+  Check (elem n a y).
+bbb.
+
 Definition ex_3_22 n :
   ∀ (X := Fin n) (A : X → Type) (P : Π (x : X), (A x → Type)),
   isSet X
@@ -2266,6 +2282,7 @@ induction n; intros.
    intros (a, x) (b, y) p q.
    injection p; intros; subst b.
    assert (x = y) by apply le_unique; subst y.
+SearchAbout (isSet bool).
 bbb.
 2: Check (IHn An Pn SXn).
   set
