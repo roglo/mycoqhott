@@ -2214,7 +2214,12 @@ Check
 bbb.
 *)
 
-(*
+Definition lt_uniq : ∀ a b, isProp (a < b).
+Proof.
+intros a b p q.
+apply le_unique.
+Defined.
+
 Definition isProp_Fin_1 : isProp (Fin 1).
 Proof.
 intros (a, p) (b, q).
@@ -2223,17 +2228,8 @@ assert (ab : a = b).
  apply Nat.lt_1_r in q.
  destruct p, q; apply eq_refl.
 
- subst b; apply ap.
- assert (a = 0) by (apply Nat.lt_1_r in p; apply p); subst a.
- unfold lt in p, q.
-1 subgoal, subgoal 1 (ID 580)
-  
-  p, q : 1 ≤ 1
-  ============================
-   p = q
-bbb.
-... not so simple, apparently...
-*)
+ subst b; apply ap, le_unique.
+Defined.
 
 Definition ex_3_22 n :
   ∀ (X := Fin n) (A : X → Type) (P : Π (x : X), (A x → Type)),
@@ -2267,8 +2263,9 @@ induction n; intros.
      | elem _ i ilt => P (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
      end).
   assert (SXn : isSet (Fin n)).
-   clear; intros (a, x) (b, y) p q.
+   intros (a, x) (b, y) p q.
    injection p; intros; subst b.
+   assert (x = y) by apply le_unique; subst y.
 bbb.
 2: Check (IHn An Pn SXn).
   set
