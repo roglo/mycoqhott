@@ -2271,15 +2271,33 @@ induction n; intros.
      match x return (∀ a : An x, isProp (Pn x a)) with
      | elem _ i ilt => PP (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
      end).
-  assert (TTTTn : ∀ x : Fin n, ∥{a : An x & Pn x a}∥).
-   move T at bottom.
-bbb.
-
+  set
+    (Tn (x : Fin n) :=
+     match x return ∥{a : An x & Pn x a}∥ with
+     | elem _ i ilt => T (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
+     end).
   pose proof IHn An Pn PPn Tn as p.
-
+  set (A₁ := {g : ∀ x : Fin n, An x & ∀ x : Fin n, Pn x (g x)}) in p.
+  set (B₁ := ∥{g : ∀ x : Fin (S n), A x & ∀ x : Fin (S n), P x (g x)}∥).
+Check (PT_rec A₁ B₁).
+assert (f : A₁ → B₁).
+ intros q.
+ subst A₁ B₁.
+ apply PT_intro.
+ destruct q as (g, q).
+ subst An; simpl in g.
+ assert (h : ∀ x : Fin (S n), A x).
+  intros (i, ilt).
+  destruct (lt_dec i n) as [r| r].
+  pose proof (g (elem n i r)) as u; simpl in u.
+(* apply u. : à voir *)
+Focus 2.
+  apply Nat.nlt_ge in r.
+  apply Nat.succ_le_mono, Nat.le_antisymm in r; [ | apply ilt ].
+  apply Nat.succ_inj in r; subst i.
+Check (elem (S n) n ilt).
 bbb.
-  set (A₁ := Σ (a : A x), P x a) in tx.
-Check (PT_rec A₁).
+
 (* PT_rec A₁
      : ∀ (B : Type) (f : A₁ → B),
        isProp B → {g : ∥A₁∥ → B & ∀ a : A₁, g (PT_intro a) = f a} *)
