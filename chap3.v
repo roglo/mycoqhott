@@ -2157,7 +2157,11 @@ induction n.
     match x return ∥(Yn x)∥ with
     | elem _ i ilt => T (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
     end).
+(*
  set (H := IHn Yn SYn Tn).
+*)
+ pose proof (IHn Yn SYn Tn) as H.
+(**)
  subst SYn Tn; simpl in H.
 Check @transport.
 (* @transport
@@ -2180,22 +2184,23 @@ x = y ≡
   ============================
    ∥(∀ x : Fin (S n), Y x)∥
 *)
-Check PT_rec.
+set (A₁ := (∀ x : Fin n, Yn x)).
+set (B₁ := ∥(∀ x : Fin (S n), Y x)∥).
+Check (PT_rec A₁ B₁).
+assert (f₁ : A₁ → B₁).
+Focus 2.
+pose proof PT_rec A₁ B₁ f₁ (PT_eq _) as q.
+destruct q as (g, q).
+apply g, H.
+ subst A₁ B₁.
+ intros p.
+ move T after p.
+ move H after p.
 (*
 PT_rec
      : ∀ (A B : Type) (f : A → B),
        isProp B → {g : ∥A∥ → B & ∀ a : A, g (PT_intro a) = f a}
 *)
-set (A₁ := (∀ x : Fin n, Yn x)).
-set (B₁ := ∥(∀ x : Fin (S n), Y x)∥).
-Check (PT_rec A₁ B₁).
-assert (f₁ : A₁ → B₁).
- subst A₁ B₁.
- intros p.
-Focus 2.
-pose proof PT_rec A₁ B₁ f₁ (PT_eq _) as q.
-destruct q as (g, q).
-apply g, H.
 bbb.
 
 assert (p : existT (λ n, Fin n → Type) n Yn = existT _ (S n) Y).
