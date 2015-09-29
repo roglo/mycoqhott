@@ -2332,10 +2332,26 @@ induction n; intros.
   pose proof (IHn An Pn (isSet_Fin n) SAn PPn Tn) as p.
 
 destruct n.
+ set (x₀ := elem 1 0 Nat.lt_0_1).
+ assert (ax₀ : ∥(A x₀)∥).
+  pose proof (T x₀).
+  set (A₀ := Σ (a : A x₀), P x₀ a).
+  set (B₀ := ∥(A x₀)∥).
+  set (f := λ (x : A₀), match x with existT _ i ilt => PT_intro i end : B₀).
+  pose proof (PT_rec A₀ B₀ f (PT_eq _)) as q.
+  destruct q as (g, q); apply g, X.
+
+bbb.
+
 assert (g : ∀ x : Fin 1, A x).
  intros (i, ilt).
  assert (i = 0) by (apply Nat.lt_1_r in ilt; assumption).
  subst i.
+set (x₀ := elem 1 0 ilt).
+set (A₀ := Σ (a : A x₀), P x₀ a).
+set (B₀ := P x₀).
+assert (isProp B₀).
+bbb.
  pose proof (T (elem 1 0 ilt)).
  apply PT_elim in X; [ destruct X; assumption | ].
  intros (a, x) (b, y).
