@@ -2330,6 +2330,18 @@ induction n; intros.
      | elem _ i ilt => T (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
      end).
   pose proof (IHn An Pn (isSet_Fin n) SAn PPn Tn) as p.
+
+destruct n.
+assert (g : ∀ x : Fin 1, A x).
+ intros (i, ilt).
+ assert (i = 0) by (apply Nat.lt_1_r in ilt; assumption).
+ subst i.
+ pose proof (T (elem 1 0 ilt)).
+ apply PT_elim in X; [ destruct X; assumption | ].
+ intros (a, x) (b, y).
+ move x before y.
+bbb.
+
   set (A₁ := {g : ∀ x : Fin n, An x & ∀ x : Fin n, Pn x (g x)}) in p.
   set (B₁ := ∥{g : ∀ x : Fin (S n), A x & ∀ x : Fin (S n), P x (g x)}∥).
 Check (PT_rec A₁ B₁).
@@ -2351,6 +2363,14 @@ assert (f : A₁ → B₁).
    apply Nat.succ_inj in r; subst i.
 
   clear Pn SAn PPn Tn p q.
+  pose proof (T (elem (S n) n ilt)) as r.
+apply PT_elim in r; [ destruct r; assumption | ].
+intros (a, x) (b, y).
+move x before y.
+bbb.
+
+assert (f : {a : A (elem (S n) n ilt) & P (elem (S n) n ilt) a} → P (elem (S n) n ilt) a).
+intros (z₁, z₂).
 bbb.
 
 Check (A (elem (S n) n ilt)).
