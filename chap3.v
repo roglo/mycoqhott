@@ -2244,8 +2244,8 @@ Definition ex_3_22 n :
   → ∥ (Σ (g : Π (x : X), A x), Π (x : X), P x (g x)) ∥.
 Proof.
 intros X A P SX SA PP T.
-subst X; clear SX SA.
-revert A P PP T.
+subst X. (*; clear SX SA.*)
+revert A P SX SA PP T.
 induction n; intros.
  assert (g : ∀ x : Fin 0, A x).
   destruct x as (i, lt); exfalso.
@@ -2266,6 +2266,11 @@ induction n; intros.
      match x return An x → Type with
      | elem _ i ilt => P (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
      end).
+  assert (SXn : isSet (Fin n)).
+   clear; intros (a, x) (b, y) p q.
+   injection p; intros; subst b.
+bbb.
+2: Check (IHn An Pn SXn).
   set
     (PPn (x : Fin n) :=
      match x return (∀ a : An x, isProp (Pn x a)) with
@@ -2299,6 +2304,9 @@ Check (A (elem (S n) n ilt)).
 SearchAbout A.
 move T at bottom.
 pose proof (T (elem (S n) n ilt)) as r.
+assert (isProp {a : A (elem (S n) n ilt) & P (elem (S n) n ilt) a}).
+ intros (a, u) (b, v).
+ clear Pn PPn p q Tn
 bbb.
 
 (* PT_rec A₁
