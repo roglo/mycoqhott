@@ -61,7 +61,9 @@ Definition ex_3_1_2 : isSet True :=
 
 (* hott_2_8_1 : ∀ x y : True, (x = y) ≃ True *)
 
-Definition ex_3_1_2_alt_tac : isSet ⊤.
+(* ex_3_1_2_alt_tac *)
+
+Definition isSet_True : isSet ⊤.
 Proof.
 intros x y p q.
 pose proof hott_2_8_1 x y as r.
@@ -86,7 +88,7 @@ Definition ex_3_1_3 : isSet False := λ x y, match x with end.
 
 (* bool is also a set *)
 
-Definition bool_set : isSet ℬ.
+Definition isSet_bool : isSet ℬ.
 Proof.
 intros x y p q.
 destruct x, y; try discriminate p.
@@ -125,7 +127,9 @@ destruct (eq_nat_dec m n) as [H1| H1].
  intros c; destruct (H1 (ℕ.decode m n c)).
 Defined.
 
-Definition ex_3_1_4_tac : isSet nat.
+(* ex_3_1_4 *)
+
+Definition isSet_nat_tac : isSet nat.
 Proof.
 intros m n p q.
 pose proof ℕ.hott_2_13_1 m n as r.
@@ -144,7 +148,7 @@ destruct s as [s| s].
  exfalso; apply f, p.
 Defined.
 
-Definition ex_3_1_4 : isSet nat :=
+Definition isSet_nat : isSet nat :=
   λ (m n : nat) (p q : m = n),
   match ℕ_code_equiv_1_or_0 m n with
   | inl s =>
@@ -2231,21 +2235,53 @@ assert (ab : a = b).
  subst b; apply ap, le_unique.
 Defined.
 
+Definition Fin_succ_equiv : ∀ n, Fin (S n) ≃ Fin n + ⊤.
+Proof.
+intros n.
+exists
+  (λ (p : Fin (S n)),
+   match p with
+   | elem _ i _ =>
+       match lt_dec i n with
+       | left p => inl (elem n i p)
+       | right _ => inr I
+       end
+   end).
+apply qinv_isequiv.
+exists
+  (λ p : Fin n + ⊤,
+   match p with
+   | inl (elem _ i ilt) => elem (S n) i (Nat.lt_lt_succ_r i n ilt)
+   | inr _ => elem (S n) n (Nat.lt_succ_diag_r n)
+   end).
+unfold "◦", "~~", id; simpl.
+split.
+ intros [ (i, ilt) | x].
+  destruct (lt_dec i n) as [p| p]; [ | destruct (p ilt) ].
+  apply ap, ap, le_unique.
+
+  destruct (lt_dec n n) as [p| p]; [ | destruct x; apply eq_refl ].
+  exfalso; revert p; apply Nat.lt_irrefl.
+
+ intros (i, ilt).
+ destruct (lt_dec i n) as [p| p]; [ apply ap, le_unique | ].
+ apply Nat.nlt_ge, Nat.succ_le_mono in p.
+ apply Nat.le_antisymm in p; [ | apply ilt ].
+ apply Nat.succ_inj in p; subst i.
+ apply ap, le_unique.
+Defined.
+
 Definition isSet_Fin : ∀ n, isSet (Fin n).
 Proof.
 intros n.
-intros x y p q.
 induction n.
+ intros x y p q.
  destruct x as (i, ilt).
  exfalso; clear p q; apply Nat.nlt_0_r in ilt; destruct ilt.
 
- destruct x as (a, x).
- destruct y as (b, y).
- injection p; intros; subst b.
- assert (x = y) by apply le_unique; subst y.
- destruct (lt_dec a n) as [y| y].
-  Check (elem n a y).
-bbb.
+ eapply ex_3_1; [ eapply quasi_inv, Fin_succ_equiv | ].
+ eapply ex_3_2; [ apply IHn | apply isSet_True ].
+Defined.
 
 Definition ex_3_22 n :
   ∀ (X := Fin n) (A : X → Type) (P : Π (x : X), (A x → Type)),
@@ -2278,13 +2314,11 @@ induction n; intros.
      match x return An x → Type with
      | elem _ i ilt => P (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
      end).
-  assert (SXn : isSet (Fin n)).
-   intros (a, x) (b, y) p q.
-   injection p; intros; subst b.
-   assert (x = y) by apply le_unique; subst y.
-SearchAbout (isSet bool).
-bbb.
-2: Check (IHn An Pn SXn).
+  set
+    (SAn (x : Fin n) :=
+     match x return (isSet (An x)) with
+     | elem _ i ilt => SA (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
+     end).
   set
     (PPn (x : Fin n) :=
      match x return (∀ a : An x, isProp (Pn x a)) with
@@ -2295,7 +2329,7 @@ bbb.
      match x return ∥{a : An x & Pn x a}∥ with
      | elem _ i ilt => T (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
      end).
-  pose proof IHn An Pn PPn Tn as p.
+  pose proof (IHn An Pn (isSet_Fin n) SAn PPn Tn) as p.
   set (A₁ := {g : ∀ x : Fin n, An x & ∀ x : Fin n, Pn x (g x)}) in p.
   set (B₁ := ∥{g : ∀ x : Fin (S n), A x & ∀ x : Fin (S n), P x (g x)}∥).
 Check (PT_rec A₁ B₁).
@@ -2308,12 +2342,17 @@ assert (f : A₁ → B₁).
  assert (h : ∀ x : Fin (S n), A x).
   intros (i, ilt).
   destruct (lt_dec i n) as [r| r].
-  pose proof (g (elem n i r)) as u; simpl in u.
-(* apply u. : à voir *)
-Focus 2.
-  apply Nat.nlt_ge in r.
-  apply Nat.succ_le_mono, Nat.le_antisymm in r; [ | apply ilt ].
-  apply Nat.succ_inj in r; subst i.
+   pose proof (g (elem n i r)) as u; simpl in u.
+   replace ilt with (Nat.lt_lt_succ_r i n r); [ apply u | ].
+   apply le_unique.
+
+   apply Nat.nlt_ge in r.
+   apply Nat.succ_le_mono, Nat.le_antisymm in r; [ | apply ilt ].
+   apply Nat.succ_inj in r; subst i.
+
+  clear Pn SAn PPn Tn p q.
+bbb.
+
 Check (A (elem (S n) n ilt)).
 SearchAbout A.
 move T at bottom.
