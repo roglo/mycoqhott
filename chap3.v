@@ -2127,7 +2127,7 @@ Defined.
     (3.8.1) holds when X is a finite type Fin(n) (as defined in
     Exercise 1.9)." *)
 
-(**)
+(*
 Definition ex_3_22_AC_3_8_3 n :
   ∀ (X := Fin n) (Y : X → Type),
   isSet X
@@ -2157,33 +2157,8 @@ induction n.
     match x return ∥(Yn x)∥ with
     | elem _ i ilt => T (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
     end).
-(*
- set (H := IHn Yn SYn Tn).
-*)
  pose proof (IHn Yn SYn Tn) as H.
-(**)
  subst SYn Tn; simpl in H.
-Check @transport.
-(* @transport
-     : ∀ (A : Type) (P : A → Type) (x y : A), x = y → P x → P y
-P x   ≡ ∀ x : Fin n, Yn x
-P y   ≡ ∀ x : Fin (S n), Y x
-
-P     ≡ (λ (k, Yk), ∀ x : Fin k, Yk x)
-P x   ≡ (λ (k, Yk), ∀ x : Fin k, Yk x) (n, Yn)
-P y   ≡ (λ (k, Yk), ∀ x : Fin k, Yk x) (S n, Y)
-
-Σ (n : nat), Fin n → Type
-x = y ≡
-*)
-(*
-  T : ∀ x : Fin (S n), ∥(Y x)∥
-  Y : Fin (S n) → Type
-  Yn : Fin n → Type
-  H : ∥(∀ x : Fin n, Yn x)∥
-  ============================
-   ∥(∀ x : Fin (S n), Y x)∥
-*)
 set (A₁ := (∀ x : Fin n, Yn x)).
 set (B₁ := ∥(∀ x : Fin (S n), Y x)∥).
 Check (PT_rec A₁ B₁).
@@ -2201,17 +2176,40 @@ PT_rec
      : ∀ (A B : Type) (f : A → B),
        isProp B → {g : ∥A∥ → B & ∀ a : A, g (PT_intro a) = f a}
 *)
-bbb.
+Check @transport.
+Check
+  (@transport
+     (Σ (n : nat), Fin n → Type)
+     (λ z, ∥(∀ x : Fin (Σ_type.pr₁ z), Σ_type.pr₂ z x)∥)
+     (existT _ n Yn)
+     (existT _ (S n) Y)).
+(* @transport
+     : ∀ (A : Type) (P : A → Type) (x y : A), x = y → P x → P y
+P x   ≡ ∥∀ x : Fin n, Yn x∥
+P y   ≡ ∥∀ x : Fin (S n), Y x∥
 
-assert (p : existT (λ n, Fin n → Type) n Yn = existT _ (S n) Y).
-Focus 2.
+P     ≡ (λ (k, Yk), ∥∀ x : Fin k, Yk x∥)
+P x   ≡ (λ (k, Yk), ∀ x : Fin k, Yk x) (n, Yn)
+P y   ≡ (λ (k, Yk), ∀ x : Fin k, Yk x) (S n, Y)
+
+Σ (n : nat), Fin n → Type
+x = y ≡
+*)
+(*
+  T : ∀ x : Fin (S n), ∥(Y x)∥
+  Y : Fin (S n) → Type
+  Yn : Fin n → Type
+  H : ∥(∀ x : Fin n, Yn x)∥
+  ============================
+   ∥(∀ x : Fin (S n), Y x)∥
+*)
 Check
   (@transport
      (Σ (n : nat), Fin n → Type)
      (λ z, ∀ x : Fin (Σ_type.pr₁ z), Σ_type.pr₂ z x)
      (existT _ n Yn)
      (existT _ (S n) Y)
-     p).
+     ).
 
 bbb.
 *)
@@ -2246,14 +2244,14 @@ Definition ex_3_22 n :
   → ∥ (Σ (g : Π (x : X), A x), Π (x : X), P x (g x)) ∥.
 Proof.
 intros X A P SX SA PP T.
-subst X; clear SX SA; apply PT_intro.
+subst X; clear SX SA.
 revert A P PP T.
 induction n; intros.
  assert (g : ∀ x : Fin 0, A x).
   destruct x as (i, lt); exfalso.
   apply Nat.nlt_0_r in lt; destruct lt.
 
-  exists g; intros x.
+  apply PT_intro; exists g; intros x.
   destruct x as (i, lt); exfalso.
   apply Nat.nlt_0_r in lt; destruct lt.
 
@@ -2263,66 +2261,23 @@ induction n; intros.
      match x with
      | elem _ i lti => A (elem (S n) i (Nat.lt_lt_succ_r i n lti))
      end).
-  set (Pn := λ (x : Fin n) (_ : An x), An x).
-  assert (PPn : ∀ (x : Fin n) (a : An x), isProp (Pn x a)).
-   intros x a.
-   subst Pn; simpl.
-   subst An; simpl.
-   destruct x as (i, ilt).
+  set
+    (Pn (x : Fin n) :=
+     match x return An x → Type with
+     | elem _ i ilt => P (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
+     end).
+  set
+    (PPn (x : Fin n) :=
+     match x return (∀ a : An x, isProp (Pn x a)) with
+     | elem _ i ilt => PP (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
+     end).
+  assert (TTTTn : ∀ x : Fin n, ∥{a : An x & Pn x a}∥).
+   move T at bottom.
 bbb.
 
-Focus 2.
-  pose proof IHn An Pn PPn.
-
-Focus 2.
-   assert (Tn : ∀ x : Fin n, ∥{a : An x & Pn x a}∥).
-Focus 2.
-    pose proof IHn An Pn PPn Tn as p.
-    destruct p as (g, p).
-    assert (gn : ∀ x : Fin (S n), A x).
-     intros x.
-bbb.
-     assert (y : Fin n).
-      destruct n.
+  pose proof IHn An Pn PPn Tn as p.
 
 bbb.
-
-      destruct x as (i, ilt).
-      destruct (lt_dec i n) as [q| q]; [ econstructor; apply q | ].
-      apply Nat.nlt_ge in q.
-      apply Nat.succ_le_mono, Nat.le_antisymm in ilt; [ | apply q ].
-      subst i.
-      destruct n.
-bbb.
-
- set (x := elem (S n) 0 (Nat.lt_0_succ n)).
- set (Ax := A x).
- pose proof (T x) as tx.
- (* Σ (a : A x), P x a is not a Prop, but perhaps
-    Σ (a : A x), (P x a * something) is a Prop ?
-    in that case, I could use the same trick as ex 3.19 *)
- (* mmm... trying something... *)
- assert (isProp (Σ (g : Π (x : X), A x), Π (x : X), P x (g x))).
-  intros (g, p) (h, q).
-  assert (g = h).
-bbb.
-
- assert (g : ∀ x : Fin (S n), A x).
-  intros x.
-  pose proof (T x) as tx.
-assert (isProp (A x)).
-intros p q.
-
-(* not sure but not impossible... *)
-assert (isProp (Σ (a : A x), P x a)).
-intros (a, p) (b, q).
-(* but it requires that a=b which does not seems to be the case... *)
-
-bbb.
-  destruct x as (i, lti).
-bbb.
-Check (elem (S n) 0 (Nat.lt_0_succ n)).
-
   set (A₁ := Σ (a : A x), P x a) in tx.
 Check (PT_rec A₁).
 (* PT_rec A₁
