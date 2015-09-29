@@ -2341,6 +2341,18 @@ destruct n.
   pose proof (PT_rec A₀ B₀ f (PT_eq _)) as q.
   destruct q as (g, q); apply g, X.
 
+  set (A₀ := A x₀).
+  set (B₀ := ∥{g : ∀ x : Fin 1, A x & ∀ x : Fin 1, P x (g x)}∥).
+Check (PT_rec A₀ B₀).
+  assert (f : A₀ → B₀).
+   intros a; subst A₀ B₀; apply PT_intro.
+   assert (g : ∀ x : Fin 1, A x).
+    intros (i, ilt).
+    assert (i = 0) by (apply Nat.lt_1_r in ilt; assumption); subst i.
+    assert (Nat.lt_0_1 = ilt) by apply le_unique.
+    subst x₀ ilt; apply a.
+
+    exists g; intros x.
 bbb.
 
 assert (g : ∀ x : Fin 1, A x).
