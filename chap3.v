@@ -2262,11 +2262,17 @@ Defined.
 Definition isProp_Fin_1 : isProp (Fin 1).
 Proof.
 intros (a, p) (b, q).
+assert (az : a = 0) by (apply my_lt_1_r, p).
+assert (bz : b = 0) by (apply my_lt_1_r, q).
+destruct az, bz; apply ap, le_unique.
+(*
+intros (a, p) (b, q).
 destruct a.
  destruct b; [ apply ap, le_unique | ].
  set (r := my_le_S_n (S b) 0 q); inversion r.
 
  set (r := my_le_S_n (S a) 0 p); inversion r.
+*)
 Defined.
 
 Definition Fin_succ_equiv : ∀ n, Fin (S n) ≃ Fin n + ⊤.
@@ -2342,6 +2348,7 @@ assert (f : A₀ → B₀).
   assert (x = x₀) by apply isProp_Fin_1; subst x.
   subst g; simpl.
   unfold ap; simpl.
+  subst x₀.
 bbb.
 
 Definition ex_3_22 n :
