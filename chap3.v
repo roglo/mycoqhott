@@ -2339,30 +2339,26 @@ destruct n.
 Check (PT_rec A₀ B₀).
  assert (f : A₀ → B₀).
   intros t; subst A₀ B₀; apply PT_intro.
-(*
-  assert (g : ∀ x : Fin 1, A x).
-   intros (i, ilt).
-   assert (i = 0) by (apply Nat.lt_1_r in ilt; assumption); subst i.
-   assert (Nat.lt_0_1 = ilt) by apply le_unique.
-   subst x₀ ilt; apply t.
-*)
   destruct t as (ax, pax).
+(*
+  assert (gggg : ∀ x : Fin 1, A x).
+   intros x.
+   assert (x = x₀) by apply isProp_Fin_1.
+   destruct H; apply ax.
+*)
   set
     (g (x : Fin 1) :=
-     match x with
-     | elem _ i ilt =>
-         match match Nat.lt_1_r i with conj f _ => eq_sym (f ilt) end
-           in (_ = y) return ∀ ilt, A (elem 1 y ilt)
-         with
-         | eq_refl _ =>
-             λ ilt,
-             match le_unique 1 1 Nat.lt_0_1 ilt with
-             | eq_refl _ => ax
-             end
-         end ilt
-     end : A x).
+     match isProp_Fin_1 x x₀ return (∀ _, A x) with
+     | eq_refl _ => λ (ax : A x), ax
+     end ax : A x).
    exists g; intros x.
    assert (x = x₀) by apply isProp_Fin_1; subst x.
+clear An Pn SAn PPn Tn p.
+pose proof PP x₀ ax.
+unfold isProp in H.
+bbb.
+   assert (ax = g x₀).
+    subst g; simpl.
 bbb.
 destruct n.
  set (x₀ := elem 1 0 Nat.lt_0_1).
