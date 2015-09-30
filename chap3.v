@@ -2329,7 +2329,7 @@ intros X A P SX SA PP T; subst X.
 set (x₀ := elem 1 0 Nat.lt_0_1).
 pose proof (T x₀) as tx.
 set (A₀ := Σ (a : A x₀), P x₀ a).
-set (B₀ := ∥{g : ∀ x : Fin 1, A x & ∀ x : Fin 1, P x (g x)}∥).
+set (B₀ := ∥(Σ (g : ∀ x : Fin 1, A x), ∀ x : Fin 1, P x (g x))∥).
 assert (f : A₀ → B₀).
  intros t; subst A₀ B₀; apply PT_intro.
  destruct t as (ax, pax).
