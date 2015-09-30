@@ -2310,6 +2310,31 @@ induction n.
  eapply ex_3_2; [ apply IHn | apply isSet_True ].
 Defined.
 
+Definition ex_3_22_Fin_1 :
+  ∀ (X := Fin 1) (A : X → Type) (P : Π (x : X), (A x → Type)),
+  isSet (Fin 1)
+  → (Π (x : X), isSet (A x))
+  → (Π (x : X), Π (a : A x), isProp (P x a))
+  → (Π (x : X), ∥ (Σ (a : A x), P x a) ∥)
+  → ∥ (Σ (g : Π (x : X), A x), Π (x : X), P x (g x)) ∥.
+Proof.
+intros X A P SX SA PP T; subst X.
+ set (x₀ := elem 1 0 Nat.lt_0_1).
+ pose proof (T x₀) as tx.
+ set (A₀ := Σ (a : A x₀), P x₀ a).
+ set (B₀ := ∥{g : ∀ x : Fin 1, A x & ∀ x : Fin 1, P x (g x)}∥).
+ assert (f : A₀ → B₀).
+  intros t; subst A₀ B₀; apply PT_intro.
+  destruct t as (ax, pax).
+  set
+    (g (x : Fin 1) :=
+     match isProp_Fin_1 x x₀ in (_ = y) return (A y → A x) with
+     | eq_refl _ => λ (ax : A x), ax
+     end ax : A x).
+   exists g; intros x.
+   assert (x = x₀) by apply isProp_Fin_1; subst x.
+bbb.
+
 Definition ex_3_22 n :
   ∀ (X := Fin n) (A : X → Type) (P : Π (x : X), (A x → Type)),
   isSet X
@@ -2318,8 +2343,7 @@ Definition ex_3_22 n :
   → (Π (x : X), ∥ (Σ (a : A x), P x a) ∥)
   → ∥ (Σ (g : Π (x : X), A x), Π (x : X), P x (g x)) ∥.
 Proof.
-intros X A P SX SA PP T.
-subst X. (*; clear SX SA.*)
+intros X A P SX SA PP T; subst X.
 revert A P SX SA PP T.
 induction n; intros.
  assert (g : ∀ x : Fin 0, A x).
@@ -2359,22 +2383,9 @@ induction n; intros.
   pose proof (IHn An Pn (isSet_Fin n) SAn PPn Tn) as p.
 
 destruct n.
- set (x₀ := elem 1 0 Nat.lt_0_1).
- pose proof (T x₀) as tx.
- set (A₀ := Σ (a : A x₀), P x₀ a).
- set (B₀ := ∥{g : ∀ x : Fin 1, A x & ∀ x : Fin 1, P x (g x)}∥).
- assert (f : A₀ → B₀).
-  intros t; subst A₀ B₀; apply PT_intro.
-  destruct t as (ax, pax).
 clear An Pn SAn PPn Tn p.
-  set
-    (g (x : Fin 1) :=
-     match isProp_Fin_1 x x₀ in (_ = y) return (A y → A x) with
-     | eq_refl _ => λ (ax : A x), ax
-     end ax : A x).
-   exists g; intros x.
-   assert (x = x₀) by apply isProp_Fin_1; subst x.
-subst g; simpl.
+apply ex_3_22_Fin_1; assumption.
+bbb.
 
 bbb.
 
