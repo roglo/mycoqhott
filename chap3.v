@@ -2224,10 +2224,46 @@ intros a b p q.
 apply le_unique.
 Defined.
 
+Definition my_le_0_r_tac : ∀ a, a ≤ 0 → a = 0.
+Proof.
+intros a ale.
+inversion ale; apply eq_refl.
+Defined.
+
+Print eq_sym.
+
+Definition my_le_0_r : ∀ a, a ≤ 0 → a = 0 :=
+  λ a ale,
+  match ale in (_ ≤ n) return (n = 0 → a = 0) with
+  | le_n _ =>
+      λ H,
+      match
+        match H in (_ = b) return (b = a) with eq_refl _ => eq_refl a end
+      with
+      | eq_refl _ => eq_refl 0
+      end
+  | le_S _ m lem =>
+      λ H,
+      match
+        match H in (_ = y) return match y with 0 => ⊥ | S _ => ⊤ end with
+        | eq_refl _ => I
+        end
+      with end lem
+  end (eq_refl 0).
+
+Definition my_le_S_n : ∀ a b, S a ≤ S b → a = b.
+Proof.
+intros a b p.
+revert a p.
+induction b; intros.
+ induction a; [ apply eq_refl | ].
+Abort.
+
 Definition my_lt_1_r : ∀ a, a < 1 → a = 0.
 Proof.
 intros a alt; unfold lt in alt.
 destruct a; [ apply eq_refl | ].
+SearchAbout (S _ ≤ S _).
 bbb.
 
 Definition isProp_Fin_1 : isProp (Fin 1).
