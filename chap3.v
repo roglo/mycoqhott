@@ -2252,6 +2252,13 @@ apply my_le_S_n in alt.
 destruct a; [ apply eq_refl | inversion alt ].
 Defined.
 
+Definition Fin_1_elem : ∀ x : Fin 1, x = elem 1 0 Nat.lt_0_1.
+Proof.
+intros (i, ilt).
+destruct i; [ apply ap, le_unique | ].
+exfalso; apply my_le_S_n in ilt; inversion ilt.
+Defined.
+
 Definition isProp_Fin_1 : isProp (Fin 1).
 Proof.
 intros (a, p) (b, q).
@@ -2319,20 +2326,22 @@ Definition ex_3_22_Fin_1 :
   → ∥ (Σ (g : Π (x : X), A x), Π (x : X), P x (g x)) ∥.
 Proof.
 intros X A P SX SA PP T; subst X.
- set (x₀ := elem 1 0 Nat.lt_0_1).
- pose proof (T x₀) as tx.
- set (A₀ := Σ (a : A x₀), P x₀ a).
- set (B₀ := ∥{g : ∀ x : Fin 1, A x & ∀ x : Fin 1, P x (g x)}∥).
- assert (f : A₀ → B₀).
-  intros t; subst A₀ B₀; apply PT_intro.
-  destruct t as (ax, pax).
-  set
-    (g (x : Fin 1) :=
-     match isProp_Fin_1 x x₀ in (_ = y) return (A y → A x) with
-     | eq_refl _ => λ (ax : A x), ax
-     end ax : A x).
-   exists g; intros x.
-   assert (x = x₀) by apply isProp_Fin_1; subst x.
+set (x₀ := elem 1 0 Nat.lt_0_1).
+pose proof (T x₀) as tx.
+set (A₀ := Σ (a : A x₀), P x₀ a).
+set (B₀ := ∥{g : ∀ x : Fin 1, A x & ∀ x : Fin 1, P x (g x)}∥).
+assert (f : A₀ → B₀).
+ intros t; subst A₀ B₀; apply PT_intro.
+ destruct t as (ax, pax).
+ set
+   (g (x : Fin 1) :=
+    match isProp_Fin_1 x x₀ in (_ = y) return (A y → A x) with
+    | eq_refl _ => λ (ax : A x), ax
+    end ax : A x).
+  exists g; intros x.
+  assert (x = x₀) by apply isProp_Fin_1; subst x.
+  subst g; simpl.
+  unfold ap; simpl.
 bbb.
 
 Definition ex_3_22 n :
