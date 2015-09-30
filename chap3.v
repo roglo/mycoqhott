@@ -2336,24 +2336,27 @@ destruct n.
  pose proof (T x₀) as tx.
  set (A₀ := Σ (a : A x₀), P x₀ a).
  set (B₀ := ∥{g : ∀ x : Fin 1, A x & ∀ x : Fin 1, P x (g x)}∥).
-Check (PT_rec A₀ B₀).
  assert (f : A₀ → B₀).
   intros t; subst A₀ B₀; apply PT_intro.
   destruct t as (ax, pax).
-(*
-  assert (gggg : ∀ x : Fin 1, A x).
-   intros x.
-   assert (x = x₀) by apply isProp_Fin_1.
-   destruct H; apply ax.
-*)
+clear An Pn SAn PPn Tn p.
   set
     (g (x : Fin 1) :=
-     match isProp_Fin_1 x x₀ return (∀ _, A x) with
+     match isProp_Fin_1 x x₀ return (_ → A x) with
      | eq_refl _ => λ (ax : A x), ax
      end ax : A x).
    exists g; intros x.
    assert (x = x₀) by apply isProp_Fin_1; subst x.
+bbb.
+
+Focus 2.
+pose proof (PT_rec A₀ B₀ f (PT_eq _)) as q.
 clear An Pn SAn PPn Tn p.
+destruct q as (g, q).
+apply g, tx.
+Focus 2.
+bbb.
+
 pose proof PP x₀ ax.
 unfold isProp in H.
 bbb.
