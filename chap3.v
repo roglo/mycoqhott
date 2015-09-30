@@ -2224,6 +2224,12 @@ intros a b p q.
 apply le_unique.
 Defined.
 
+Definition my_lt_1_r : ∀ a, a < 1 → a = 0.
+Proof.
+intros a alt; unfold lt in alt.
+destruct a; [ apply eq_refl | ].
+bbb.
+
 Definition isProp_Fin_1 : isProp (Fin 1).
 Proof.
 intros (a, p) (b, q).
@@ -2232,7 +2238,7 @@ assert (ab : a = b).
  apply Nat.lt_1_r in q.
  destruct p, q; apply eq_refl.
 
- subst b; apply ap, le_unique.
+ destruct ab; apply ap, le_unique.
 Defined.
 
 Definition Fin_succ_equiv : ∀ n, Fin (S n) ≃ Fin n + ⊤.
@@ -2342,11 +2348,12 @@ destruct n.
 clear An Pn SAn PPn Tn p.
   set
     (g (x : Fin 1) :=
-     match isProp_Fin_1 x x₀ return (_ → A x) with
+     match isProp_Fin_1 x x₀ in (_ = y) return (A y → A x) with
      | eq_refl _ => λ (ax : A x), ax
      end ax : A x).
    exists g; intros x.
    assert (x = x₀) by apply isProp_Fin_1; subst x.
+subst g; simpl.
 bbb.
 
 Focus 2.
