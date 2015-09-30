@@ -2236,32 +2236,30 @@ intros a ale.
 inversion ale.
 Defined.
 
-Definition my_le_S_n : ∀ a b, S a ≤ S b → a = b.
+Definition my_le_S_n : ∀ a b, S a ≤ S b → a ≤ b.
 Proof.
 intros a b p.
-revert a p.
-induction b; intros.
- inversion p as [| c q]; [ apply eq_refl | inversion q ].
+induction b.
+ inversion p as [| c q r]; [ apply le_n | inversion q ].
 
- inversion p as [| c q r]; [ apply eq_refl | ].
-bbb.
+ inversion p as [| c q r]; [ apply le_n | apply le_S, IHb, q ].
+Defined.
 
 Definition my_lt_1_r : ∀ a, a < 1 → a = 0.
 Proof.
 intros a alt; unfold lt in alt.
-destruct a; [ apply eq_refl | ].
-SearchAbout (S _ ≤ S _).
-bbb.
+apply my_le_S_n in alt.
+destruct a; [ apply eq_refl | inversion alt ].
+Defined.
 
 Definition isProp_Fin_1 : isProp (Fin 1).
 Proof.
 intros (a, p) (b, q).
-assert (ab : a = b).
- apply Nat.lt_1_r in p.
- apply Nat.lt_1_r in q.
- destruct p, q; apply eq_refl.
+destruct a.
+ destruct b; [ apply ap, le_unique | ].
+ set (r := my_le_S_n (S b) 0 q); inversion r.
 
- destruct ab; apply ap, le_unique.
+ set (r := my_le_S_n (S a) 0 p); inversion r.
 Defined.
 
 Definition Fin_succ_equiv : ∀ n, Fin (S n) ≃ Fin n + ⊤.
@@ -2377,6 +2375,7 @@ clear An Pn SAn PPn Tn p.
    exists g; intros x.
    assert (x = x₀) by apply isProp_Fin_1; subst x.
 subst g; simpl.
+
 bbb.
 
 Focus 2.
