@@ -2239,7 +2239,11 @@ Defined.
 Definition my_le_S_n : ∀ a b, S a ≤ S b → a = b.
 Proof.
 intros a b p.
-inversion p as [q| c q r]; [ apply eq_refl | ].
+revert a p.
+induction b; intros.
+ inversion p as [| c q]; [ apply eq_refl | inversion q ].
+
+ inversion p as [| c q r]; [ apply eq_refl | ].
 bbb.
 
 Definition my_lt_1_r : ∀ a, a < 1 → a = 0.
