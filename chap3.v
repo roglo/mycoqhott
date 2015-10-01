@@ -2265,14 +2265,6 @@ intros (a, p) (b, q).
 assert (az : a = 0) by (apply my_lt_1_r, p).
 assert (bz : b = 0) by (apply my_lt_1_r, q).
 destruct az, bz; apply ap, le_unique.
-(*
-intros (a, p) (b, q).
-destruct a.
- destruct b; [ apply ap, le_unique | ].
- set (r := my_le_S_n (S b) 0 q); inversion r.
-
- set (r := my_le_S_n (S a) 0 p); inversion r.
-*)
 Defined.
 
 Definition Fin_succ_equiv : ∀ n, Fin (S n) ≃ Fin n + ⊤.
@@ -2325,67 +2317,37 @@ Defined.
 
 Definition ACX X :=
  ∀ (A : X → Type) (P : Π (x : X), (A x → Type)),
-  isSet True
-  → (Π (x : X), isSet (A x))
-  → (Π (x : X), Π (a : A x), isProp (P x a))
-  → (Π (x : X), ∥ (Σ (a : A x), P x a) ∥)
-  → ∥ (Σ (g : Π (x : X), A x), Π (x : X), P x (g x)) ∥.
-
-Definition ex_3_22_True : ACX True.
-Proof.
-intros A P SX SA PP T.
-set (x₀ := I).
-pose proof (T x₀) as tx.
-set (A₀ := Σ (a : A x₀), P x₀ a).
-set (B₀ := ∥(Σ (g : ∀ x : True, A x), ∀ x : True, P x (g x))∥).
-assert (f : A₀ → B₀).
- intros t; subst A₀ B₀; apply PT_intro.
- destruct t as (ax, pax).
- set (g := λ x, eq_rect_r A ax match x with I => eq_refl I end).
- exists g; intros x.
- destruct x; apply pax.
-
-pose proof (PT_rec A₀ B₀ f (PT_eq _)) as g.
-destruct g as (g, p); apply g, tx.
-Defined.
-
-Definition ex_3_22_equiv X Y : X ≃ Y → ACX X → ACX Y.
-Proof.
-intros e acx.
-intros A P SX SA PP T.
-bbb.
-
-Definition ex_3_22_Fin_1 : ACX (Fin 1).
-Proof.
-intros A P SX SA PP T.
-set (x₀ := elem 1 0 Nat.lt_0_1).
-pose proof (T x₀) as tx.
-set (A₀ := Σ (a : A x₀), P x₀ a).
-set (B₀ := ∥(Σ (g : ∀ x : Fin 1, A x), ∀ x : Fin 1, P x (g x))∥).
-assert (f : A₀ → B₀).
- intros t; subst A₀ B₀; apply PT_intro.
- destruct t as (ax, pax).
- set
-   (g (x : Fin 1) :=
-    match isProp_Fin_1 x x₀ in (_ = y) return (A y → A x) with
-    | eq_refl _ => λ (ax : A x), ax
-    end ax : A x).
-  exists g; intros x.
-  assert (x = x₀) by apply isProp_Fin_1; subst x.
-  subst g; simpl.
-  unfold ap; simpl.
-  subst x₀.
-bbb.
-
-Definition ex_3_22 n :
-  ∀ (X := Fin n) (A : X → Type) (P : Π (x : X), (A x → Type)),
   isSet X
   → (Π (x : X), isSet (A x))
   → (Π (x : X), Π (a : A x), isProp (P x a))
   → (Π (x : X), ∥ (Σ (a : A x), P x a) ∥)
   → ∥ (Σ (g : Π (x : X), A x), Π (x : X), P x (g x)) ∥.
+
+Definition ex_3_22_isProp X (x₀ : X) (PX : isProp X) : ACX X.
 Proof.
-intros X A P SX SA PP T; subst X.
+intros A P SX SA PP T.
+pose proof (T x₀) as tx.
+set (A₀ := Σ (a : A x₀), P x₀ a).
+set (B₀ := ∥(Σ (g : ∀ x : X, A x), ∀ x : X, P x (g x))∥).
+assert (f : A₀ → B₀).
+ intros t; subst A₀ B₀; apply PT_intro.
+ destruct t as (ax, pax).
+ set (g (x : X) := eq_rect_r (λ x0 : X, A x0) ax (PX x x₀)); simpl in g.
+ exists g; subst g; simpl.
+ intros x; destruct (PX x x₀); apply pax.
+
+ pose proof (PT_rec A₀ B₀ f (PT_eq _)) as g.
+ destruct g as (g, p); apply g, tx.
+Defined.
+
+Definition ex_3_22_Fin_1 : ACX (Fin 1).
+Proof.
+apply ex_3_22_isProp; [ apply (elem 1 0 Nat.lt_0_1) | apply isProp_Fin_1 ].
+Defined.
+
+Definition ex_3_22 n : ACX (Fin n).
+Proof.
+intros A P SX SA PP T.
 revert A P SX SA PP T.
 induction n; intros.
  assert (g : ∀ x : Fin 0, A x).
@@ -2397,209 +2359,33 @@ induction n; intros.
   apply Nat.nlt_0_r in lt; destruct lt.
 
  (* construire g à partir du g produit par IHn *)
-  set
-    (An (x : Fin n) :=
-     match x with
-     | elem _ i lti => A (elem (S n) i (Nat.lt_lt_succ_r i n lti))
-     end).
-  set
-    (Pn (x : Fin n) :=
-     match x return An x → Type with
-     | elem _ i ilt => P (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
-     end).
-  set
-    (SAn (x : Fin n) :=
-     match x return (isSet (An x)) with
-     | elem _ i ilt => SA (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
-     end).
-  set
-    (PPn (x : Fin n) :=
-     match x return (∀ a : An x, isProp (Pn x a)) with
-     | elem _ i ilt => PP (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
-     end).
-  set
-    (Tn (x : Fin n) :=
-     match x return ∥{a : An x & Pn x a}∥ with
-     | elem _ i ilt => T (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
-     end).
-  pose proof (IHn An Pn (isSet_Fin n) SAn PPn Tn) as p.
-
-destruct n.
-clear An Pn SAn PPn Tn p.
-apply ex_3_22_Fin_1; assumption.
-bbb.
-
-bbb.
-
-Focus 2.
-pose proof (PT_rec A₀ B₀ f (PT_eq _)) as q.
-clear An Pn SAn PPn Tn p.
-destruct q as (g, q).
-apply g, tx.
-Focus 2.
-bbb.
-
-pose proof PP x₀ ax.
-unfold isProp in H.
-bbb.
-   assert (ax = g x₀).
-    subst g; simpl.
-bbb.
-destruct n.
- set (x₀ := elem 1 0 Nat.lt_0_1).
- assert (ax₀ : ∥(A x₀)∥).
-  pose proof (T x₀).
-  set (A₀ := Σ (a : A x₀), P x₀ a).
-  set (B₀ := ∥(A x₀)∥).
-  set (f := λ (x : A₀), match x with existT _ i ilt => PT_intro i end : B₀).
-  pose proof (PT_rec A₀ B₀ f (PT_eq _)) as q.
-  destruct q as (g, q); apply g, X.
-
-  set (A₀ := A x₀).
-  set (B₀ := ∥{g : ∀ x : Fin 1, A x & ∀ x : Fin 1, P x (g x)}∥).
-Check (PT_rec A₀ B₀).
-  assert (f : A₀ → B₀).
-   intros a; subst A₀ B₀; apply PT_intro.
-   assert (g : ∀ x : Fin 1, A x).
-    intros (i, ilt).
-    assert (i = 0) by (apply Nat.lt_1_r in ilt; assumption); subst i.
-    assert (Nat.lt_0_1 = ilt) by apply le_unique.
-    subst x₀ ilt; apply a.
-
-    exists g; intros x.
-bbb.
-
-assert (g : ∀ x : Fin 1, A x).
- intros (i, ilt).
- assert (i = 0) by (apply Nat.lt_1_r in ilt; assumption).
- subst i.
-set (x₀ := elem 1 0 ilt).
-set (A₀ := Σ (a : A x₀), P x₀ a).
-set (B₀ := P x₀).
-assert (isProp B₀).
-bbb.
- pose proof (T (elem 1 0 ilt)).
- apply PT_elim in X; [ destruct X; assumption | ].
- intros (a, x) (b, y).
- move x before y.
-bbb.
-
-  set (A₁ := {g : ∀ x : Fin n, An x & ∀ x : Fin n, Pn x (g x)}) in p.
-  set (B₁ := ∥{g : ∀ x : Fin (S n), A x & ∀ x : Fin (S n), P x (g x)}∥).
-Check (PT_rec A₁ B₁).
-assert (f : A₁ → B₁).
- intros q.
- subst A₁ B₁.
- apply PT_intro.
- destruct q as (g, q).
- subst An; simpl in g.
- assert (h : ∀ x : Fin (S n), A x).
-  intros (i, ilt).
-  destruct (lt_dec i n) as [r| r].
-   pose proof (g (elem n i r)) as u; simpl in u.
-   replace ilt with (Nat.lt_lt_succ_r i n r); [ apply u | ].
-   apply le_unique.
-
-   apply Nat.nlt_ge in r.
-   apply Nat.succ_le_mono, Nat.le_antisymm in r; [ | apply ilt ].
-   apply Nat.succ_inj in r; subst i.
-
-  clear Pn SAn PPn Tn p q.
-  pose proof (T (elem (S n) n ilt)) as r.
-apply PT_elim in r; [ destruct r; assumption | ].
-intros (a, x) (b, y).
-move x before y.
-bbb.
-
-assert (f : {a : A (elem (S n) n ilt) & P (elem (S n) n ilt) a} → P (elem (S n) n ilt) a).
-intros (z₁, z₂).
-bbb.
-
-Check (A (elem (S n) n ilt)).
-SearchAbout A.
-move T at bottom.
-pose proof (T (elem (S n) n ilt)) as r.
-assert (isProp {a : A (elem (S n) n ilt) & P (elem (S n) n ilt) a}).
- intros (a, u) (b, v).
- clear Pn PPn p q Tn
-bbb.
-
-(* PT_rec A₁
-     : ∀ (B : Type) (f : A₁ → B),
-       isProp B → {g : ∥A₁∥ → B & ∀ a : A₁, g (PT_intro a) = f a} *)
-Check (PT_rec (Σ (a : A x), P x a)).
-(* PT_rec {a : A x & P x a}
-     : ∀ (B : Type) (f : {a : A x & P x a} → B),
-       isProp B
-       → {g : ∥{a : A x & P x a}∥ → B &
-         ∀ a : {a : A x & P x a}, g (PT_intro a) = f a} *)
-Check (λ (u : Σ (a : A x), P x a), Σ_type.pr₂ u).
-bbb.
-
-  destruct x as (i, lti).
-
-Check (PT_rec A₁ (P x (Σ_type.pr₁ x))).
-
-bbb.
-
-  assert (Px : isProp (Σ (a : A x), P x a)).
-   intros p q.
-Check (elem (S n) 0 (Nat.lt_0_succ n)).
-Check (elem (S n) n (Nat.lt_succ_diag_r n)).
-
-bbb.
-
-  Focus 2.
-   destruct (PT_elim Px (T x)) as (ax, _); apply ax.
-
-bbb.
- set (x := elem (S n) n (Nat.lt_succ_diag_r n)).
- pose proof T x as H1.
-
-assert (g : ∀ x : Fin n, A x).
- intros x.
+ set
+   (An (x : Fin n) :=
+    match x with
+    | elem _ i lti => A (elem (S n) i (Nat.lt_lt_succ_r i n lti))
+    end).
+ set
+   (Pn (x : Fin n) :=
+    match x return An x → Type with
+    | elem _ i ilt => P (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
+    end).
+ set
+   (SAn (x : Fin n) :=
+    match x return (isSet (An x)) with
+    | elem _ i ilt => SA (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
+    end).
+ set
+   (PPn (x : Fin n) :=
+    match x return (∀ a : An x, isProp (Pn x a)) with
+    | elem _ i ilt => PP (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
+    end).
+ set
+   (Tn (x : Fin n) :=
+    match x return ∥{a : An x & Pn x a}∥ with
+    | elem _ i ilt => T (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
+    end).
+ pose proof (IHn An Pn (isSet_Fin n) SAn PPn Tn) as p.
  destruct n.
-  destruct x as (i, lt); exfalso.
-  apply Nat.nlt_0_r in lt; destruct lt.
-
-(*
-  assert (x = elem (S n) n (Nat.lt_succ_diag_r n)).
-   destruct x as (i, Hin).
-*)
- assert (isProp (Σ (a : A x), P x a)).
-  intros (a, p) (b, q).
-  pose proof (PP x a) as ppa.
-  pose proof (PP x b) as ppb.
-  unfold isSet in SX, SA.
-  pose proof SA x a b as H1.
-  pose proof T x as H2.
-  destruct x as (i, Hin); simpl in *; simpl.
-  assert (a = b) as H3.
-bbb.
-
-Focus 2.
-  apply (Σ_type.pair_eq H3).
-  destruct H3; simpl; apply ppa.
-
-Focus 2.
- pose proof (PT_elim H (T x)) as p.
- destruct p as (p, q); apply p.
-bbb.
-
-Focus 2.
- exists g.
- intros x.
-
-bbb.
-induction n.
- assert (g : ∀ x : Fin 0, A x).
-  intros x; destruct x as (i, lt); exfalso.
-  apply Nat.nlt_0_r in lt; destruct lt.
-
-  exists g.
-  intros x; destruct x as (i, lt); exfalso.
-  apply Nat.nlt_0_r in lt; destruct lt.
-
-(* fmax : ∀ n : nat, Fin (n + 1) *)
-(* Inductive Fin (n : nat) : Set :=  elem : ∀ i : nat, i < n → Fin n *)
+ clear An Pn SAn PPn Tn p.
+ apply ex_3_22_Fin_1; assumption.
 bbb.
