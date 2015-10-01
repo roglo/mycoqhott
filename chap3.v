@@ -2386,6 +2386,6 @@ induction n; intros.
     end).
  pose proof (IHn An Pn (isSet_Fin n) SAn PPn Tn) as p.
  destruct n.
- clear An Pn SAn PPn Tn p.
- apply ex_3_22_Fin_1; assumption.
+  clear An Pn SAn PPn Tn p.
+  apply ex_3_22_Fin_1; assumption.
 bbb.
