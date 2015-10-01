@@ -2345,6 +2345,32 @@ Proof.
 apply ex_3_22_isProp; [ apply (elem 1 0 Nat.lt_0_1) | apply isProp_Fin_1 ].
 Defined.
 
+Definition ex_3_22_Fin_2 : ACX (Fin 2).
+Proof.
+intros A P SX SA PP T.
+set (x₀ := elem 2 0 Nat.lt_0_2).
+pose proof (T x₀) as tx.
+set (A₀ := Σ (a : A x₀), P x₀ a) in tx.
+set (B₀ := ∥(Σ (g : ∀ x : Fin 2, A x), ∀ x : Fin 2, P x (g x))∥).
+assert (f : A₀ → B₀).
+ intros t; subst A₀ B₀; apply PT_intro.
+ destruct t as (ax, pax).
+ assert (g : ∀ x : Fin 2, A x).
+  intros (i, ilt).
+  destruct i.
+   subst x₀.
+   eapply transport; [ | apply ax ].
+   apply ap, le_unique.
+bbb.
+
+ set (g (x : Fin 2) := eq_rect_r (λ x0 : X, A x0) ax (PX x x₀)); simpl in g.
+ exists g; subst g; simpl.
+ intros x; destruct (PX x x₀); apply pax.
+
+ pose proof (PT_rec A₀ B₀ f (PT_eq _)) as g.
+ destruct g as (g, p); apply g, tx.
+Defined.
+
 Definition ex_3_22 n : ACX (Fin n).
 Proof.
 intros A P SX SA PP T.
@@ -2386,6 +2412,7 @@ induction n; intros.
     | elem _ i ilt => T (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
     end).
  pose proof (IHn An Pn (isSet_Fin n) SAn PPn Tn) as p.
+(*
  set (A₀ := {g : ∀ x : Fin n, An x & ∀ x : Fin n, Pn x (g x)}) in p.
  set (B₀ := ∥{g : ∀ x : Fin (S n), A x & ∀ x : Fin (S n), P x (g x)}∥).
  Check (PT_rec A₀ B₀).
@@ -2404,8 +2431,11 @@ induction n; intros.
     subst i.
 clear SAn Pn PPn Tn p q.
 bbb.
+*)
 
  destruct n.
   clear An Pn SAn PPn Tn p.
   apply ex_3_22_Fin_1; assumption.
+
+  destruct n.
 bbb.
