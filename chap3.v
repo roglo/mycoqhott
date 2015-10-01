@@ -2354,7 +2354,8 @@ induction n; intros.
   destruct x as (i, lt); exfalso.
   apply Nat.nlt_0_r in lt; destruct lt.
 
-  apply PT_intro; exists g; intros x.
+  apply PT_intro.
+  exists g; intros x.
   destruct x as (i, lt); exfalso.
   apply Nat.nlt_0_r in lt; destruct lt.
 
@@ -2385,6 +2386,12 @@ induction n; intros.
     | elem _ i ilt => T (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
     end).
  pose proof (IHn An Pn (isSet_Fin n) SAn PPn Tn) as p.
+(*
+ assert (gggg : ∀ x : Fin (S n), A x).
+  intros (i, ilt).
+  destruct (lt_dec i n) as [q| q].
+*)
+
  destruct n.
   clear An Pn SAn PPn Tn p.
   apply ex_3_22_Fin_1; assumption.
