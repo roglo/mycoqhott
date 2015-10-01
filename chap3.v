@@ -2349,6 +2349,23 @@ assert (f : A₀ → B₀).
   subst g; simpl.
   unfold ap; simpl.
   subst x₀.
+Definition toto : ∀ A, isProp A → isSet A.
+Proof.
+intros A P x y p q.
+unfold isProp in P.
+
+Print ispType_isSpType.
+Check (P x y).
+Check (P x x • p).
+
+Check (compose_insert (P x) p).
+(* compose_insert (P x) p
+     : P x x • p = P x y *)
+Check (compose_insert (P x) p • (compose_insert (P x) q)⁻¹).
+(* compose_insert (P x) p • (compose_insert (P x) q)⁻¹
+     : P x x • p = P x x • q *)
+Check (P x).
+
 bbb.
 
 Definition ex_3_22 n :
