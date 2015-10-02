@@ -2390,6 +2390,7 @@ Definition Fin_2_bool : Fin 2 → bool :=
      end ilt
    end.
 
+(* mouais, bof, c compliqué
 Definition ex_3_22_bool_equiv : ∀ X, X ≃ bool → ACX X.
 Proof.
 intros X XB A P SX SA PP T.
@@ -2401,13 +2402,13 @@ set (A₀ := ((Σ (a₀ : A x₀), P x₀ a₀) * (Σ (a₁ : A x₁), P x₁ a�
 set (B₀ := ∥(Σ (g : ∀ x : X, A x), ∀ x : X, P x (g x))∥).
 assert (f : A₀ → B₀).
  intros ((a₀, p₀), (a₁, p₁)); subst A₀ B₀; apply PT_intro.
- assert (g : ∀ x : X, A x).
+ assert (gggg : ∀ x : X, A x).
   intros x.
   remember (Σ_type.pr₁ XB x) as b; symmetry in Heqb.
   destruct b.
    assert (H : x₀ = x); [ | destruct H; apply a₀ ].
    subst x₀; simpl.
-   rewrite <- Heqb.
+   destruct Heqb.
    apply EqStr.quasi_inv_comp_l.
 
    assert (H : x₁ = x); [ | destruct H; apply a₁ ].
@@ -2415,6 +2416,30 @@ assert (f : A₀ → B₀).
    rewrite <- Heqb.
    apply EqStr.quasi_inv_comp_l.
 Show Proof.
+ set
+   (g (x : X) :=
+         (if Σ_type.pr₁ XB x as b0 return (Σ_type.pr₁ XB x = b0 → A x) then
+            λ Heqb : Σ_type.pr₁ XB x = true,
+            match
+              eq_ind (Σ_type.pr₁ XB x) (λ b, Σ_type.pr₁ XB⁻⁻¹ b = x)
+                (EqStr.quasi_inv_comp_l XB x) true Heqb
+            in (_ = y) return (Σ_type.pr₁ XB y = true → A y)
+            with
+            | eq_refl _ => λ _ : Σ_type.pr₁ XB x₀ = true, a₀
+            end Heqb
+          else
+           λ Heqb1 : Σ_type.pr₁ XB x = false,
+           (λ H0 : x₁ = x,
+            match
+              H0 in (_ = y) return (Σ_type.pr₁ XB y = false → A y)
+            with
+            | eq_refl _ => λ _ : Σ_type.pr₁ XB x₁ = false, a₁
+            end Heqb1)
+             (eq_ind (Σ_type.pr₁ XB x)
+                (λ b0 : bool, Σ_type.pr₁ XB⁻⁻¹ b0 = x)
+                (EqStr.quasi_inv_comp_l XB x) false Heqb1))
+      (eq_sym (eq_refl (Σ_type.pr₁ XB x)))).
+simpl in g.
 
 bbb.
  set
@@ -2433,6 +2458,7 @@ bbb.
   replace ilt with Nat.lt_0_2 by apply le_unique.
   eapply transport; [ | apply p₀ ].
 bbb.
+*)
 
 Definition ex_3_22_Fin_2 : ACX (Fin 2).
 Proof.
