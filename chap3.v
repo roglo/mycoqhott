@@ -2365,39 +2365,23 @@ set (A₀ := ((Σ (a₀ : A x₀), P x₀ a₀) * (Σ (a₁ : A x₁), P x₁ a�
 set (B₀ := ∥(Σ (g : ∀ x : Fin 2, A x), ∀ x : Fin 2, P x (g x))∥).
 assert (f : A₀ → B₀).
  intros ((a₀, p₀), (a₁, p₁)); subst A₀ B₀; apply PT_intro.
- assert (g' : Π (x : Fin 2), A x).
-  intros x.
-  destruct (Fin_2_dec x) as [p| p]; destruct p; [ apply a₀ | apply a₁ ].
  set
    (g (x : Fin 2) :=
     match Fin_2_dec x with
     | left p =>
-        match p in (_ = y) return A y → A x with
-        | eq_refl _ => λ (a : A x), a end a₀
+        match p in (_ = y) return A y → A x with eq_refl _ => id end a₀
     | right p =>
-        match
-          p in (_ = y)
-          return
-            (let x₁0 := y in
-             ∥{a : A x₁0 & P x₁0 a}∥
-             → ∀ a₁0 : A x₁0, P x₁0 a₁0 → A x)
-        with
-        | eq_refl _ =>
-            let x₁0 := x in
-            λ (_ : ∥{a : A x₁0 & P x₁0 a}∥)
-            (a₁0 : A x₁0) (_ : P x₁0 a₁0), a₁0
-        end tx₁ a₁ p₁
-    end).
-  simpl in g.
-  exists g.
-  intros (i, ilt).
-  destruct i.
-   subst x₀ g; simpl.
-   replace ilt with Nat.lt_0_2 by apply le_unique.
-   eapply transport; [ | apply p₀ ].
-   unfold transport; simpl.
+        match p in (_ = y) return A y → A x with eq_refl _ => id end a₁
+    end : A x).
+ simpl in g.
+ exists g.
+ intros (i, ilt).
+ destruct i.
+  subst x₀ g; simpl.
+  replace ilt with Nat.lt_0_2 by apply le_unique.
+  eapply transport; [ | apply p₀ ].
 bbb.
-   destruct (ap (elem 2 0) (le_unique 1 2 Nat.lt_0_2 Nat.lt_0_2)).
+  destruct (ap (elem 2 0) (le_unique 1 2 Nat.lt_0_2 Nat.lt_0_2)).
 bbb.
 
 Check (PT_rec A₀ B₀).
