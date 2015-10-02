@@ -2390,6 +2390,39 @@ Definition Fin_2_bool : Fin 2 → bool :=
      end ilt
    end.
 
+Definition ex_3_22_bool_equiv : ∀ X, X ≃ bool → ACX X.
+Proof.
+intros X XB A P SX SA PP T.
+set (x₀ := Σ_type.pr₁ (quasi_inv XB) false).
+set (x₁ := Σ_type.pr₁ (quasi_inv XB) true).
+pose proof (T x₀) as tx₀.
+pose proof (T x₁) as tx₁.
+set (A₀ := ((Σ (a₀ : A x₀), P x₀ a₀) * (Σ (a₁ : A x₁), P x₁ a₁))%type).
+set (B₀ := ∥(Σ (g : ∀ x : X, A x), ∀ x : X, P x (g x))∥).
+assert (f : A₀ → B₀).
+ intros ((a₀, p₀), (a₁, p₁)); subst A₀ B₀; apply PT_intro.
+ assert (g : ∀ x : X, A x).
+  intros x.
+  remember (Σ_type.pr₁ XB x) as b.
+  destruct b.
+bbb.
+ set
+   (g (x : Fin 2) :=
+    match Fin_2_dec x with
+    | left p =>
+        match p in (_ = y) return A y → A x with eq_refl _ => id end a₀
+    | right p =>
+        match p in (_ = y) return A y → A x with eq_refl _ => id end a₁
+    end : A x).
+ simpl in g.
+ exists g.
+ intros (i, ilt).
+ destruct i.
+  subst x₀ g. simpl.
+  replace ilt with Nat.lt_0_2 by apply le_unique.
+  eapply transport; [ | apply p₀ ].
+bbb.
+
 Definition ex_3_22_Fin_2 : ACX (Fin 2).
 Proof.
 intros A P SX SA PP T.
