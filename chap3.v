@@ -2349,18 +2349,22 @@ Definition ex_3_22_Fin_2 : ACX (Fin 2).
 Proof.
 intros A P SX SA PP T.
 set (x₀ := elem 2 0 Nat.lt_0_2).
-pose proof (T x₀) as tx.
-set (A₀ := Σ (a : A x₀), P x₀ a) in tx.
+set (x₁ := elem 2 1 Nat.lt_1_2).
+pose proof (T x₀) as tx₀.
+pose proof (T x₁) as tx₁.
+set (A₀ := Σ (a₀ : A x₀), P x₀ a₀) in tx₀.
 set (B₀ := ∥(Σ (g : ∀ x : Fin 2, A x), ∀ x : Fin 2, P x (g x))∥).
 assert (f : A₀ → B₀).
  intros t; subst A₀ B₀; apply PT_intro.
- destruct t as (ax, pax).
+ destruct t as (ax₀, pax₀).
  assert (g : ∀ x : Fin 2, A x).
   intros (i, ilt).
   destruct i.
    subst x₀.
-   eapply transport; [ | apply ax ].
+   eapply transport; [ | apply ax₀ ].
    apply ap, le_unique.
+
+   subst x₀.
 bbb.
 
  set (g (x : Fin 2) := eq_rect_r (λ x0 : X, A x0) ax (PX x x₀)); simpl in g.
