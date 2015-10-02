@@ -2354,6 +2354,42 @@ destruct i; [ right; apply ap, le_unique | ].
 exfalso; apply my_le_S_n, my_le_S_n, my_nle_succ_0 in ilt; apply ilt.
 Defined.
 
+Definition toto : ∀ i, not (S (S i) < 2).
+Proof.
+intros i c.
+do 2 apply my_le_S_n in c.
+apply my_nle_succ_0 in c.
+apply c.
+Show Proof.
+Defined.
+
+Check toto.
+
+Definition titi j i (ilt : i < 2) : i = S (S j) → False.
+Admitted.
+
+Definition Fin_2_bool' : Fin 2 → bool.
+intros (i, ilt).
+destruct i as [| [| j ]]; [ apply false | apply true | ].
+do 2 apply my_le_S_n in ilt.
+destruct (my_nle_succ_0 j ilt).
+Show Proof.
+Defined.
+
+Definition Fin_2_bool : Fin 2 → bool :=
+  λ x : Fin 2,
+  match x with
+  | elem _ i ilt =>
+     match i as n return (n < 2 → bool) with
+     | 0 => λ _ : 0 < 2, false
+     | 1 => λ _ : 1 < 2, true
+     | S (S j) =>
+         λ ilt : S (S j) < 2,
+         match my_nle_succ_0 j (my_le_S_n (S j) 0 (my_le_S_n (S (S j)) 1 ilt))
+         with end
+     end ilt
+   end.
+
 Definition ex_3_22_Fin_2 : ACX (Fin 2).
 Proof.
 intros A P SX SA PP T.
@@ -2377,7 +2413,7 @@ assert (f : A₀ → B₀).
  exists g.
  intros (i, ilt).
  destruct i.
-  subst x₀ g; simpl.
+  subst x₀ g. simpl.
   replace ilt with Nat.lt_0_2 by apply le_unique.
   eapply transport; [ | apply p₀ ].
 bbb.
