@@ -2345,6 +2345,15 @@ Proof.
 apply ex_3_22_isProp; [ apply (elem 1 0 Nat.lt_0_1) | apply isProp_Fin_1 ].
 Defined.
 
+Definition Fin_2_dec : ∀ x : Fin 2,
+  {x = elem 2 0 Nat.lt_0_2} + {x = elem 2 1 Nat.lt_1_2}.
+Proof.
+intros (i, ilt).
+destruct i; [ left; apply ap, le_unique | ].
+destruct i; [ right; apply ap, le_unique | ].
+exfalso; apply my_le_S_n, my_le_S_n, my_nle_succ_0 in ilt; apply ilt.
+Defined.
+
 Definition ex_3_22_Fin_2 : ACX (Fin 2).
 Proof.
 intros A P SX SA PP T.
@@ -2356,55 +2365,39 @@ set (A₀ := ((Σ (a₀ : A x₀), P x₀ a₀) * (Σ (a₁ : A x₁), P x₁ a�
 set (B₀ := ∥(Σ (g : ∀ x : Fin 2, A x), ∀ x : Fin 2, P x (g x))∥).
 assert (f : A₀ → B₀).
  intros ((a₀, p₀), (a₁, p₁)); subst A₀ B₀; apply PT_intro.
- assert (g : Π (x : Fin 2), A x).
+ assert (g' : Π (x : Fin 2), A x).
+  intros x.
+  destruct (Fin_2_dec x) as [p| p]; destruct p; [ apply a₀ | apply a₁ ].
+ set
+   (g (x : Fin 2) :=
+    match Fin_2_dec x with
+    | left p =>
+        match p in (_ = y) return A y → A x with
+        | eq_refl _ => λ (a : A x), a end a₀
+    | right p =>
+        match
+          p in (_ = y)
+          return
+            (let x₁0 := y in
+             ∥{a : A x₁0 & P x₁0 a}∥
+             → ∀ a₁0 : A x₁0, P x₁0 a₁0 → A x)
+        with
+        | eq_refl _ =>
+            let x₁0 := x in
+            λ (_ : ∥{a : A x₁0 & P x₁0 a}∥)
+            (a₁0 : A x₁0) (_ : P x₁0 a₁0), a₁0
+        end tx₁ a₁ p₁
+    end).
+  simpl in g.
+  exists g.
   intros (i, ilt).
   destruct i.
-   subst x₀; eapply transport; [ eapply ap, le_unique | apply a₀ ].
-
-   destruct i.
-    subst x₁; eapply transport; [ eapply ap, le_unique | apply a₁ ].
-
-    exfalso; apply my_le_S_n, my_le_S_n, my_nle_succ_0 in ilt; apply ilt.
-Show Proof.
- set (g' :=
-            (λ x : Fin 2,
-             match x as f return (A f) with
-             | elem _ i ilt =>
-                 match i as n return (∀ ilt0 : n < 2, A (elem 2 n ilt0)) with
-                 | 0 =>
-                     λ ilt0 : 0 < 2,
-                     transport A
-                       (ap (elem 2 0) (le_unique 1 2 Nat.lt_0_2 ilt0)) a₀
-                 | S i0 =>
-                     λ ilt0 : S i0 < 2,
-                     match
-                       i0 as n
-                       return (∀ ilt1 : S n < 2, A (elem 2 (S n) ilt1))
-                     with
-                     | 0 =>
-                         λ ilt1 : 1 < 2,
-                         transport A
-                           (ap (elem 2 1) (le_unique 2 2 Nat.lt_1_2 ilt1)) a₁
-                     | S i1 =>
-                         λ ilt1 : S (S i1) < 2,
-                         False_rect (A (elem 2 (S (S i1)) ilt1))
-                           ((λ ilt2 : S (S i1) ≤ 1,
-                             (λ ilt3 : S i1 ≤ 0,
-                              (λ ilt4 : ⊥, ilt4) (my_nle_succ_0 i1 ilt3))
-                               (my_le_S_n (S i1) 0 ilt2))
-                              (my_le_S_n (S (S i1)) 1 ilt1))
-                     end ilt0
-                 end ilt
-             end)).
-  simpl in g'.
-
-  exists g'.
-  intros (i, ilt).
-  destruct i.
-   subst x₀ g'; simpl.
+   subst x₀ g; simpl.
    replace ilt with Nat.lt_0_2 by apply le_unique.
    eapply transport; [ | apply p₀ ].
    unfold transport; simpl.
+bbb.
+   destruct (ap (elem 2 0) (le_unique 1 2 Nat.lt_0_2 Nat.lt_0_2)).
 bbb.
 
 Check (PT_rec A₀ B₀).
