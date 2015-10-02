@@ -2393,8 +2393,8 @@ Definition Fin_2_bool : Fin 2 → bool :=
 Definition ex_3_22_bool_equiv : ∀ X, X ≃ bool → ACX X.
 Proof.
 intros X XB A P SX SA PP T.
-set (x₀ := Σ_type.pr₁ (quasi_inv XB) false).
-set (x₁ := Σ_type.pr₁ (quasi_inv XB) true).
+set (x₀ := Σ_type.pr₁ (quasi_inv XB) true).
+set (x₁ := Σ_type.pr₁ (quasi_inv XB) false).
 pose proof (T x₀) as tx₀.
 pose proof (T x₁) as tx₁.
 set (A₀ := ((Σ (a₀ : A x₀), P x₀ a₀) * (Σ (a₁ : A x₁), P x₁ a₁))%type).
@@ -2403,8 +2403,19 @@ assert (f : A₀ → B₀).
  intros ((a₀, p₀), (a₁, p₁)); subst A₀ B₀; apply PT_intro.
  assert (g : ∀ x : X, A x).
   intros x.
-  remember (Σ_type.pr₁ XB x) as b.
+  remember (Σ_type.pr₁ XB x) as b; symmetry in Heqb.
   destruct b.
+   assert (H : x₀ = x); [ | destruct H; apply a₀ ].
+   subst x₀; simpl.
+   rewrite <- Heqb.
+   apply EqStr.quasi_inv_comp_l.
+
+   assert (H : x₁ = x); [ | destruct H; apply a₁ ].
+   subst x₁; simpl.
+   rewrite <- Heqb.
+   apply EqStr.quasi_inv_comp_l.
+Show Proof.
+
 bbb.
  set
    (g (x : Fin 2) :=
