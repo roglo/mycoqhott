@@ -2365,12 +2365,46 @@ assert (f : A₀ → B₀).
     subst x₁; eapply transport; [ eapply ap, le_unique | apply a₁ ].
 
     exfalso; apply my_le_S_n, my_le_S_n, my_nle_succ_0 in ilt; apply ilt.
+Show Proof.
+ set (g' :=
+            (λ x : Fin 2,
+             match x as f return (A f) with
+             | elem _ i ilt =>
+                 match i as n return (∀ ilt0 : n < 2, A (elem 2 n ilt0)) with
+                 | 0 =>
+                     λ ilt0 : 0 < 2,
+                     transport A
+                       (ap (elem 2 0) (le_unique 1 2 Nat.lt_0_2 ilt0)) a₀
+                 | S i0 =>
+                     λ ilt0 : S i0 < 2,
+                     match
+                       i0 as n
+                       return (∀ ilt1 : S n < 2, A (elem 2 (S n) ilt1))
+                     with
+                     | 0 =>
+                         λ ilt1 : 1 < 2,
+                         transport A
+                           (ap (elem 2 1) (le_unique 2 2 Nat.lt_1_2 ilt1)) a₁
+                     | S i1 =>
+                         λ ilt1 : S (S i1) < 2,
+                         False_rect (A (elem 2 (S (S i1)) ilt1))
+                           ((λ ilt2 : S (S i1) ≤ 1,
+                             (λ ilt3 : S i1 ≤ 0,
+                              (λ ilt4 : ⊥, ilt4) (my_nle_succ_0 i1 ilt3))
+                               (my_le_S_n (S i1) 0 ilt2))
+                              (my_le_S_n (S (S i1)) 1 ilt1))
+                     end ilt0
+                 end ilt
+             end)).
+  simpl in g'.
 
-  exists g.
+  exists g'.
   intros (i, ilt).
   destruct i.
-   subst x₀.
-   eapply transport.
+   subst x₀ g'; simpl.
+   replace ilt with Nat.lt_0_2 by apply le_unique.
+   eapply transport; [ | apply p₀ ].
+   unfold transport; simpl.
 bbb.
 
 Check (PT_rec A₀ B₀).
