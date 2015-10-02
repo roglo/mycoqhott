@@ -2354,28 +2354,6 @@ destruct i; [ right; apply ap, le_unique | ].
 exfalso; apply my_le_S_n, my_le_S_n, my_nle_succ_0 in ilt; apply ilt.
 Defined.
 
-Definition toto : ∀ i, not (S (S i) < 2).
-Proof.
-intros i c.
-do 2 apply my_le_S_n in c.
-apply my_nle_succ_0 in c.
-apply c.
-Show Proof.
-Defined.
-
-Check toto.
-
-Definition titi j i (ilt : i < 2) : i = S (S j) → False.
-Admitted.
-
-Definition Fin_2_bool' : Fin 2 → bool.
-intros (i, ilt).
-destruct i as [| [| j ]]; [ apply false | apply true | ].
-do 2 apply my_le_S_n in ilt.
-destruct (my_nle_succ_0 j ilt).
-Show Proof.
-Defined.
-
 Definition Fin_2_bool : Fin 2 → bool :=
   λ x : Fin 2,
   match x with
@@ -2460,6 +2438,17 @@ bbb.
 bbb.
 *)
 
+Definition PT_and A B : ∥A∥ → ∥B∥ → ∥(A * B)∥.
+Proof.
+intros p q.
+set (B₀ := ∥(A * B)∥).
+bbb.
+
+set (A₀ := (A * B)%type).
+set (B₀ := (∥A∥ * ∥B∥)%type).
+pose proof (PT_rec A₀ B₀).
+bbb.
+
 Definition ex_3_22_Fin_2 : ACX (Fin 2).
 Proof.
 intros A P SX SA PP T.
@@ -2480,17 +2469,21 @@ assert (f : A₀ → B₀).
         match p in (_ = y) return A y → A x with eq_refl _ => id end a₁
     end : A x).
  simpl in g.
- exists g.
- intros (i, ilt).
+ exists g; intros (i, ilt).
+ subst g; simpl.
  destruct i.
-  subst x₀ g. simpl.
-  replace ilt with Nat.lt_0_2 by apply le_unique.
-  eapply transport; [ | apply p₀ ].
-bbb.
-  destruct (ap (elem 2 0) (le_unique 1 2 Nat.lt_0_2 Nat.lt_0_2)).
-bbb.
+  destruct (ap (elem 2 0) (le_unique 1 2 ilt Nat.lt_0_2)); apply p₀.
 
-Check (PT_rec A₀ B₀).
+  destruct i.
+   destruct (ap (elem 2 1) (le_unique 2 2 ilt Nat.lt_1_2)); apply p₁.
+
+   exfalso; do 2 apply my_le_S_n in ilt; revert ilt; apply my_nle_succ_0.
+
+ pose proof (PT_rec A₀ B₀ f (PT_eq _)) as p.
+ destruct p as (g, p).
+ apply g; subst A₀.
+SearchAbout (∥((_ * _)%type)∥).
+
 bbb.
 
 set (A₀ := Σ (a₀ : A x₀), P x₀ a₀) in tx₀.
