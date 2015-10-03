@@ -28,10 +28,21 @@ Definition hott_4_1_1 A B (f : A → B) (p : qinv f) :
 Proof.
 assert (Π (x : A), x = x).
  intros x.
- eapply compose; [ | apply (snd (Σ_pr₂ p)) ].
+ destruct p as (g, (fg, gf)).
+ assert ((g ◦ f) x = x) by apply gf.
 bbb.
 
-pose proof (λ x, snd (Σ_type.pr₂ p) x).
+ pose proof gf x as q; unfold id in q.
+ apply (ap f) in q.
+
+ eapply compose; [ | apply (snd (Σ_pr₂ p)) ].
+simpl.
+
+ rewrite (λ x, snd (Σ_type.pr₂ p) x).
+bbb.
+
+
+Check (λ x, snd (Σ_type.pr₂ p) x).
 exists (λ _ x, eq_refl x).
 apply qinv_isequiv.
 exists (λ _, p).
@@ -39,5 +50,6 @@ unfold "◦", "~~", id; simpl.
 split.
  intros g.
  apply Π_type.funext; intros x.
+
 bbb.
 
