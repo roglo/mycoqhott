@@ -1387,8 +1387,8 @@ Definition isequiv_transport {A B} : ∀ (p : A = B), isequiv (transport id p)
   λ p,
   match p with
   | eq_refl _ =>
-      (existT (λ g, id ◦ g ~~ id) id (λ x, eq_refl x),
-       existT (λ h, h ◦ id ~~ id) id (λ x, eq_refl x))
+      (existT (λ g, id ◦ g ~~ id) id (@eq_refl A),
+       existT (λ h, h ◦ id ~~ id) id (@eq_refl A))
   end.
 
 Definition idtoeqv {A B : Type} : A = B → A ≃ B :=

@@ -31,11 +31,8 @@ set (fe := existT isequiv f e : A ≃ B); simpl in fe.
 remember (ua fe) as p eqn:r.
 set (s := (idtoeqv_ua fe)⁻¹ : fe = idtoeqv (ua fe)); simpl in s.
 rewrite <- r in s.
-destruct p.
-Print idtoeqv.
-unfold idtoeqv in s.
-About isequiv_transport.
-simpl in s.
+destruct p; unfold idtoeqv in s; simpl in s.
+subst fe; injection s; clear s; intros s t; subst f.
 bbb.
 
 assert (Π (x : A), x = x).
