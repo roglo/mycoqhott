@@ -1387,8 +1387,8 @@ Definition isequiv_transport {A B} : ∀ (p : A = B), isequiv (transport id p)
   λ p,
   match p with
   | eq_refl _ =>
-      (existT (λ g, id ◦ g ~~ id) id (@eq_refl A),
-       existT (λ h, h ◦ id ~~ id) id (@eq_refl A))
+      (existT (λ g, g ~~ id) id (@eq_refl A),
+       existT (λ h, h ~~ id) id (@eq_refl A))
   end.
 
 Definition idtoeqv {A B : Type} : A = B → A ≃ B :=
@@ -3230,8 +3230,8 @@ existT isequiv (λ f, (λ a, f (inl a), λ b, f (inr b)))
 
 End ex_2_9.
 
-(* "Exercise 2.10. Prove that Σ-types are “associative”, in that for
-    any A : Type and families B : A → Type and C : (Σ (x : A), B x) → Type, we
+(* "Exercise 2.10. Prove that Σ-types are “associative”, in that for any
+    A : Type and families B : A → Type and C : (Σ (x : A), B x) → Type, we
     have
        (Σ (x : A), Σ (y : B x), C (x, y)) ≃ Σ (p : Σ (x : A), B x), C p" *)
 

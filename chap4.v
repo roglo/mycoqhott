@@ -33,32 +33,28 @@ set (s := (idtoeqv_ua fe)⁻¹ : fe = idtoeqv (ua fe)); simpl in s.
 rewrite <- r in s.
 destruct p; unfold idtoeqv in s; simpl in s.
 subst fe; injection s; clear s; intros s t; subst f.
+
+unfold qinv.
+apply (@equiv_compose _ ({g : A → A & ((g = id) * (g = id))%type})).
 bbb.
 
-assert (Π (x : A), x = x).
- intros x.
- destruct p as (g, (fg, gf)).
- assert ((g ◦ f) x = x) by apply gf.
+eapply equiv_compose.
+Check @ex_2_10.
+(* @ex_2_10
+     : ∀ (A : Type) (B : A → Type) (C : {x : A & B x} → Type),
+       {x : A & {y : B x & C (existT (λ x0 : A, B x0) x y)}}
+       ≃ {p : {x : A & B x} & C p} *)
+
 bbb.
+Definition ex_2_10 {A B C} :
+  (Σ (x : A), Σ (y : B x), C (existT _ x y)) ≃ (Σ (p : Σ (x : A), B x), C p).
 
- pose proof gf x as q; unfold id in q.
- apply (ap f) in q.
-
- eapply compose; [ | apply (snd (Σ_pr₂ p)) ].
-simpl.
-
- rewrite (λ x, snd (Σ_type.pr₂ p) x).
-bbb.
-
-
-Check (λ x, snd (Σ_type.pr₂ p) x).
 exists (λ _ x, eq_refl x).
 apply qinv_isequiv.
-exists (λ _, p).
+exists (λ _, existT _ id (@eq_refl A, @eq_refl A)).
 unfold "◦", "~~", id; simpl.
 split.
  intros g.
  apply Π_type.funext; intros x.
-
 bbb.
 
