@@ -23,6 +23,31 @@ Open Scope nat_scope.
 (* "Lemma 4.1.1. If f : A → B is such that qinv(f) is inhabited, then
         qinv(f) ≃ (Π (x : A) (x = x). " *)
 
+Definition Σ_equiv {A} {P Q : A → Type} :
+  P = Q → (Σ (x : A), P x) ≃ (Σ (x : A), Q x).
+Proof.
+intros p.
+exists
+  (λ (q : Σ (x : A), P x),
+   existT Q (Σ_pr₁ q)
+     match p in (_ = f) return f (Σ_pr₁ q) with
+     | eq_refl _ => Σ_pr₂ q
+     end : Σ (x : A), Q x).
+apply qinv_isequiv.
+exists
+  (λ (q : Σ (x : A), Q x),
+   existT P (Σ_pr₁ q)
+     (match p in (_ = f) return (f (Σ_pr₁ q) → P (Σ_pr₁ q)) with
+      | eq_refl _ => id
+      end (Σ_pr₂ q)) : Σ (x : A), P x).
+unfold "◦", "~~", id; simpl.
+split; intros (x, q); destruct p; apply eq_refl.
+Defined.
+
+Definition type_pair_eq {A B C D : Type} :
+  A = C → B = D → (A * B)%type = (C * D)%type.
+Proof. intros p q; destruct p, q; apply eq_refl. Defined.
+
 Definition hott_4_1_1 A B (f : A → B) (q : qinv f) :
   qinv f ≃ (Π (x : A), x = x).
 Proof.
@@ -35,7 +60,18 @@ destruct p; unfold idtoeqv in s; simpl in s.
 subst fe; injection s; clear s; intros s t; subst f.
 
 unfold qinv.
+bbb.
+
 apply (@equiv_compose _ ({g : A → A & ((g = id) * (g = id))%type})).
+apply Σ_equiv, Π_type.funext; intros f.
+unfold "◦", "~~", id; simpl.
+apply type_pair_eq.
+
+bbb.
+
+Focus 1.
+eapply equiv_compose; [| eapply ex_2_10 ].
+
 bbb.
 
 eapply equiv_compose.
