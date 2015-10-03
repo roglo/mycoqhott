@@ -23,9 +23,17 @@ Open Scope nat_scope.
 (* "Lemma 4.1.1. If f : A → B is such that qinv(f) is inhabited, then
         qinv(f) ≃ (Π (x : A) (x = x). " *)
 
-Definition hott_4_1_1 A B (f : A → B) (p : qinv f) :
+Definition hott_4_1_1 A B (f : A → B) (q : qinv f) :
   qinv f ≃ (Π (x : A), x = x).
 Proof.
+assert (e : isequiv f) by (apply qinv_isequiv, q).
+set (fe := existT isequiv f e : A ≃ B); simpl in fe.
+remember (ua fe) as p eqn:r.
+set (s := (idtoeqv_ua fe)⁻¹ : fe = idtoeqv (ua fe)); simpl in s.
+rewrite <- r in s.
+destruct p.
+bbb.
+
 assert (Π (x : A), x = x).
  intros x.
  destruct p as (g, (fg, gf)).
