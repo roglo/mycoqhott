@@ -2478,6 +2478,30 @@ set (x₀ := elem 2 0 Nat.lt_0_2).
 set (x₁ := elem 2 1 Nat.lt_1_2).
 pose proof (T x₀) as tx₀.
 pose proof (T x₁) as tx₁.
+apply PT_intro.
+assert (g : ∀ x : Fin 2, A x).
+ intros x.
+ destruct (Fin_2_dec x) as [p| p].
+  set (A₀ := {a : A x₀ & P x₀ a}).
+  set (B₀ := ∥(A x)∥).
+  assert (f : A₀ → B₀).
+   subst A₀ B₀; intros (a, q); apply PT_intro.
+   eapply transport; [ | apply a ].
+   subst x x₀; apply eq_refl.
+
+   pose proof (PT_rec A₀ B₀ f (PT_eq _)) as q.
+   destruct q as (g, q).
+    subst A₀ B₀.
+    pose proof (g tx₀) as r.
+    assert (x₀ = x) by (subst x₀ x; apply eq_refl); subst x; clear H.
+SearchAbout (∥(_ + _)∥).
+
+bbb.
+intros A P SX SA PP T.
+set (x₀ := elem 2 0 Nat.lt_0_2).
+set (x₁ := elem 2 1 Nat.lt_1_2).
+pose proof (T x₀) as tx₀.
+pose proof (T x₁) as tx₁.
 set (A₀ := ((Σ (a₀ : A x₀), P x₀ a₀) * (Σ (a₁ : A x₁), P x₁ a₁))%type).
 set (B₀ := ∥(Σ (g : ∀ x : Fin 2, A x), ∀ x : Fin 2, P x (g x))∥).
 assert (f : A₀ → B₀).
