@@ -60,8 +60,6 @@ destruct p; unfold idtoeqv in s; simpl in s.
 subst fe; injection s; clear s; intros s t; subst f.
 
 unfold qinv.
-bbb.
-
 apply (@equiv_compose _ ({g : A → A & ((g = id) * (g = id))%type})).
 apply Σ_equiv, Π_type.funext; intros f.
 unfold "◦", "~~", id; simpl.
