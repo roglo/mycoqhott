@@ -26,6 +26,12 @@ Open Scope nat_scope.
 Definition hott_4_1_1 A B (f : A → B) (p : qinv f) :
   qinv f ≃ (Π (x : A), x = x).
 Proof.
+assert (Π (x : A), x = x).
+ intros x.
+ eapply compose; [ | apply (snd (Σ_pr₂ p)) ].
+bbb.
+
+pose proof (λ x, snd (Σ_type.pr₂ p) x).
 exists (λ _ x, eq_refl x).
 apply qinv_isequiv.
 exists (λ _, p).
@@ -33,6 +39,5 @@ unfold "◦", "~~", id; simpl.
 split.
  intros g.
  apply Π_type.funext; intros x.
- pose proof g x as y.
 bbb.
 
