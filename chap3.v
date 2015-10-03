@@ -2438,16 +2438,38 @@ bbb.
 bbb.
 *)
 
-Definition PT_and A B : ∥A∥ → ∥B∥ → ∥(A * B)∥.
+(* not seem provable...
+Definition PT_and_elim A B : ∥(A * B)∥ → ∥A∥ * ∥B∥.
 Proof.
-intros p q.
-set (B₀ := ∥(A * B)∥).
-bbb.
-
+intros ab.
 set (A₀ := (A * B)%type).
 set (B₀ := (∥A∥ * ∥B∥)%type).
-pose proof (PT_rec A₀ B₀).
+assert (f : A₀ → B₀).
+ intros (a₀, b₀); subst A₀ B₀.
+ split; apply PT_intro; assumption.
+
+ assert (PB : isProp B₀) by (apply ex_3_6_1; apply PT_eq).
+ pose proof (PT_rec A₀ B₀ f PB) as p.
+ destruct p as (g, p).
+ subst A₀ B₀.
+ apply g.
 bbb.
+
+Definition PT_and A B : ∥A∥ → ∥B∥ → ∥(A * B)∥.
+Proof.
+intros a b.
+set (A₀ := (A * B)%type).
+set (B₀ := (∥A∥ * ∥B∥)%type).
+assert (f : A₀ → B₀).
+ intros (a₀, b₀); subst A₀ B₀.
+ split; apply PT_intro; assumption.
+
+ assert (PB : isProp B₀) by (apply ex_3_6_1; apply PT_eq).
+ pose proof (PT_rec A₀ B₀ f PB) as p.
+ destruct p as (g, p).
+ subst A₀ B₀.
+bbb.
+*)
 
 Definition ex_3_22_Fin_2 : ACX (Fin 2).
 Proof.
@@ -2456,6 +2478,8 @@ set (x₀ := elem 2 0 Nat.lt_0_2).
 set (x₁ := elem 2 1 Nat.lt_1_2).
 pose proof (T x₀) as tx₀.
 pose proof (T x₁) as tx₁.
+bbb.
+
 set (A₀ := ((Σ (a₀ : A x₀), P x₀ a₀) * (Σ (a₁ : A x₁), P x₁ a₁))%type).
 set (B₀ := ∥(Σ (g : ∀ x : Fin 2, A x), ∀ x : Fin 2, P x (g x))∥).
 assert (f : A₀ → B₀).
