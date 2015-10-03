@@ -2496,6 +2496,7 @@ assert (g : ∀ x : Fin 2, A x).
     assert (x₀ = x) by (subst x₀ x; apply eq_refl); subst x; clear H.
 SearchAbout (∥(_ + _)∥).
 
+Abort. (*
 bbb.
 intros A P SX SA PP T.
 set (x₀ := elem 2 0 Nat.lt_0_2).
@@ -2625,3 +2626,4 @@ bbb.
 
   destruct n.
 bbb.
+*)

@@ -2,7 +2,7 @@
 (* requires coq 8.5 *)
 
 Require Import Utf8 QArith NPeano.
-Require Import chap1 chap2.
+Require Import chap1 chap2 chap3.
 
 (* no default implicit without arguments *)
 Arguments eq_refl [A] x.
@@ -26,4 +26,13 @@ Open Scope nat_scope.
 Definition hott_4_1_1 A B (f : A → B) (p : qinv f) :
   qinv f ≃ (Π (x : A), x = x).
 Proof.
+exists (λ _ x, eq_refl x).
+apply qinv_isequiv.
+exists (λ _, p).
+unfold "◦", "~~", id; simpl.
+split.
+ intros g.
+ apply Π_type.funext; intros x.
+ pose proof g x as y.
+bbb.
 
