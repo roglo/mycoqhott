@@ -32,6 +32,10 @@ remember (ua fe) as p eqn:r.
 set (s := (idtoeqv_ua fe)⁻¹ : fe = idtoeqv (ua fe)); simpl in s.
 rewrite <- r in s.
 destruct p.
+Print idtoeqv.
+unfold idtoeqv in s.
+About isequiv_transport.
+simpl in s.
 bbb.
 
 assert (Π (x : A), x = x).

@@ -1375,15 +1375,20 @@ subst q; simpl.
 apply qinv_isequiv, ex_2_4_7.
 Defined.
 
+Definition isequiv_transport_tac {A B} : ∀ (p : A = B),
+  isequiv (transport id p).
+Proof.
+intros p; destruct p; simpl.
+split; exists id; intros x; apply eq_refl.
+Defined.
+
 Definition isequiv_transport {A B} : ∀ (p : A = B), isequiv (transport id p)
 :=
   λ p,
   match p with
   | eq_refl _ =>
-      (existT (λ g : id A → id A, transport id (eq_refl _) ◦ g ~~ id) id
-         (reflexivity id),
-       existT (λ h : id A → id A, h ◦ transport id (eq_refl _) ~~ id) id
-         (reflexivity id))
+      (existT (λ g, id ◦ g ~~ id) id (λ x, eq_refl x),
+       existT (λ h, h ◦ id ~~ id) id (λ x, eq_refl x))
   end.
 
 Definition idtoeqv {A B : Type} : A = B → A ≃ B :=

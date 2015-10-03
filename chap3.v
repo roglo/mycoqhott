@@ -2494,9 +2494,9 @@ assert (g : ∀ x : Fin 2, A x).
     subst A₀ B₀.
     pose proof (g tx₀) as r.
     assert (x₀ = x) by (subst x₀ x; apply eq_refl); subst x; clear H.
-SearchAbout (∥(_ + _)∥).
 
 Abort. (*
+SearchAbout (∥(_ + _)∥).
 bbb.
 intros A P SX SA PP T.
 set (x₀ := elem 2 0 Nat.lt_0_2).
