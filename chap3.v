@@ -2478,8 +2478,6 @@ set (x₀ := elem 2 0 Nat.lt_0_2).
 set (x₁ := elem 2 1 Nat.lt_1_2).
 pose proof (T x₀) as tx₀.
 pose proof (T x₁) as tx₁.
-bbb.
-
 set (A₀ := ((Σ (a₀ : A x₀), P x₀ a₀) * (Σ (a₁ : A x₁), P x₁ a₁))%type).
 set (B₀ := ∥(Σ (g : ∀ x : Fin 2, A x), ∀ x : Fin 2, P x (g x))∥).
 assert (f : A₀ → B₀).
@@ -2507,6 +2505,8 @@ assert (f : A₀ → B₀).
  destruct p as (g, p).
  apply g; subst A₀.
 SearchAbout (∥((_ * _)%type)∥).
+
+(* does not work: I cannot prove ∥(A * B)∥ from ∥A∥ and ∥B∥ *)
 
 bbb.
 
