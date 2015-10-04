@@ -89,8 +89,16 @@ apply (@equiv_compose _ ({g : A → A & ((g = id) * (g = id))%type})).
  assert
    ({g : A → A & ((g = id) * (g = id))%type} =
     (Σ (h : Σ (g : A → A), g = @id A), Σ_pr₁ h = @id A)).
-  Check (@ex_2_10 (A → A) (λ g, g = id) (λ h, Σ_pr₁ h = id)).
-
+  apply ua.
+  eapply equiv_compose.
+  2: eapply (@ex_2_10 (A → A) (λ g, g = id) (λ h, Σ_pr₁ h = id)).
+  simpl.
+  apply Σ_equiv.
+  apply Π_type.funext; intros x.
+Check ((x = id) * (x = id))%type.
+(* ((x = id) * (x = id))%type : Prop *)
+Check ({_ : x = id & x = id}).
+(* {_ : x = id & x = id} : Prop *)
 bbb.
 
 (* @ex_2_10
