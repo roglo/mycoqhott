@@ -82,19 +82,24 @@ apply (@equiv_compose _ ({g : A → A & ((g = id) * (g = id))%type})).
   intros p; apply Π_type.funext; intros x.
   apply (Π_type.funext_quasi_inverse_of_happly f id p x).
 
-(* @ex_2_10
-     : ∀ (A : Type) (B : A → Type) (C : {x : A & B x} → Type),
-       {x : A & {y : B x & C (existT (λ x0 : A, B x0) x y)}}
-       ≃ {p : {x : A & B x} & C p} *)
- Check (@ex_2_10 (A → A) (λ g, g = id)).
 (*
   ============================
    {g : A → A & ((g = id) * (g = id))%type} ≃ (∀ x : A, x = x)
 *)
+ assert
+   ({g : A → A & ((g = id) * (g = id))%type} =
+    (Σ (h : Σ (g : A → A), g = @id A), Σ_pr₁ h = @id A)).
+  Check (@ex_2_10 (A → A) (λ g, g = id) (λ h, Σ_pr₁ h = id)).
+
+bbb.
+
+(* @ex_2_10
+     : ∀ (A : Type) (B : A → Type) (C : {x : A & B x} → Type),
+       {x : A & {y : B x & C (existT (λ x0 : A, B x0) x y)}}
+       ≃ {p : {x : A & B x} & C p} *)
 eapply ex_2_10.
 bbb.
 
-eapply equiv_compose.
 Check @ex_2_10.
 (* @ex_2_10
      : ∀ (A : Type) (B : A → Type) (C : {x : A & B x} → Type),
