@@ -95,10 +95,24 @@ apply (@equiv_compose _ ({g : A → A & ((g = id) * (g = id))%type})).
   simpl.
   apply Σ_equiv.
   apply Π_type.funext; intros x.
-Check ((x = id) * (x = id))%type.
-(* ((x = id) * (x = id))%type : Prop *)
-Check ({_ : x = id & x = id}).
-(* {_ : x = id & x = id} : Prop *)
+  apply ua.
+(*
+  assert (f : (x = id) * (x = id) → {_ : x = id & x = id}).
+   intros (p, _).
+   exists p; apply p.
+*)
+  exists (λ p, existT (λ _, x = id) (fst p) (fst p)).
+  apply qinv_isequiv.
+(*
+  assert (g : {_ : x = id & x = id} → (x = id) * (x = id)).
+   intros (p, _).
+   split; apply p.
+*)
+  exists (λ p : {_ : x = id & x = id}, (Σ_pr₁ p, Σ_pr₁ p)).
+  unfold "◦", "~~", id; simpl.
+  split.
+   intros p.
+
 bbb.
 
 (* @ex_2_10
