@@ -61,31 +61,32 @@ subst fe; injection s; clear s; intros s t; subst f.
 
 unfold qinv.
 apply (@equiv_compose _ ({g : A → A & ((g = id) * (g = id))%type})).
-apply Σ_equiv, Π_type.funext; intros f.
-unfold "◦", "~~", id; simpl.
-apply type_pair_eq; apply ua.
-exists (λ g, Π_type.funext g).
-apply qinv_isequiv.
-(*
-assert (g : (f = (λ x : A, x)) → (∀ x : A, f x = x)).
- intros g x.
- symmetry in g; destruct g; apply eq_refl.
-*)
-exists
-  (λ g x,
-   match eq_sym g in (_ = y) return (y x = x) with
-   | eq_refl _ => eq_refl x
-   end).
-unfold "◦", "~~", id; simpl.
-split.
- intros p.
- destruct (eq_sym p).
-Print Π_type.funext.
-bbb.
+ apply Σ_equiv, Π_type.funext; intros f.
+ unfold "◦", "~~"; simpl.
+ apply type_pair_eq.
+  apply ua.
+  exists (λ g, Π_type.funext g).
+  apply qinv_isequiv.
+  exists (λ g x, (Π_type.happly g x)).
+  unfold "◦", "~~"; simpl.
+  split; [ intros p; apply invert, Π_type.funext_prop_uniq_princ | ].
+  intros p; apply Π_type.funext; intros x.
+  apply (Π_type.funext_quasi_inverse_of_happly f id p x).
 
-Focus 1.
-eapply equiv_compose; [| eapply ex_2_10 ].
+  apply ua.
+  exists (λ g, Π_type.funext g).
+  apply qinv_isequiv.
+  exists (λ g x, (Π_type.happly g x)).
+  unfold "◦", "~~"; simpl.
+  split; [ intros p; apply invert, Π_type.funext_prop_uniq_princ | ].
+  intros p; apply Π_type.funext; intros x.
+  apply (Π_type.funext_quasi_inverse_of_happly f id p x).
 
+(* @ex_2_10
+     : ∀ (A : Type) (B : A → Type) (C : {x : A & B x} → Type),
+       {x : A & {y : B x & C (existT (λ x0 : A, B x0) x y)}}
+       ≃ {p : {x : A & B x} & C p} *)
+ Check (@ex_2_10 (A → A) (λ g, g = id)).
 bbb.
 
 eapply equiv_compose.
