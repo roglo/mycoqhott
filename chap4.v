@@ -87,6 +87,11 @@ apply (@equiv_compose _ ({g : A → A & ((g = id) * (g = id))%type})).
        {x : A & {y : B x & C (existT (λ x0 : A, B x0) x y)}}
        ≃ {p : {x : A & B x} & C p} *)
  Check (@ex_2_10 (A → A) (λ g, g = id)).
+(*
+  ============================
+   {g : A → A & ((g = id) * (g = id))%type} ≃ (∀ x : A, x = x)
+*)
+eapply ex_2_10.
 bbb.
 
 eapply equiv_compose.
