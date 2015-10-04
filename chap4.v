@@ -63,8 +63,24 @@ unfold qinv.
 apply (@equiv_compose _ ({g : A → A & ((g = id) * (g = id))%type})).
 apply Σ_equiv, Π_type.funext; intros f.
 unfold "◦", "~~", id; simpl.
-apply type_pair_eq.
-
+apply type_pair_eq; apply ua.
+exists (λ g, Π_type.funext g).
+apply qinv_isequiv.
+(*
+assert (g : (f = (λ x : A, x)) → (∀ x : A, f x = x)).
+ intros g x.
+ symmetry in g; destruct g; apply eq_refl.
+*)
+exists
+  (λ g x,
+   match eq_sym g in (_ = y) return (y x = x) with
+   | eq_refl _ => eq_refl x
+   end).
+unfold "◦", "~~", id; simpl.
+split.
+ intros p.
+ destruct (eq_sym p).
+Print Π_type.funext.
 bbb.
 
 Focus 1.
