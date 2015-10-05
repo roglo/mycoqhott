@@ -84,7 +84,6 @@ Defined.
 Definition hott_4_1_1 A B (f : A → B) (q : qinv f) :
   qinv f ≃ (Π (x : A), x = x).
 Proof.
-set (r (_ : A) := eq_refl (A := A)); simpl in r.
 assert (e : isequiv f) by (apply qinv_isequiv, q).
 set (fe := existT isequiv f e : A ≃ B); simpl in fe.
 remember (ua fe) as p eqn:s.
@@ -148,22 +147,16 @@ apply (@equiv_compose _ ({g : A → A & ((g = id) * (g = id))%type})).
   simpl in c₀.
   pose proof (@hott_3_11_9_ii A₀ P₀ c₀) as p.
   subst A₀ P₀ c₀; simpl in p.
-  eapply equiv_compose; [ apply p | clear p ].
-bbb.
-  exists (λ p x, eq_refl _).
+  eapply equiv_compose; [ apply p | ].
+  exists (λ (p : @id A = @id A) (x : A), Π_type.happly p x).
   apply qinv_isequiv.
-  exists (λ _, eq_refl _).
+  exists (λ g, Π_type.funext g).
   unfold "◦", "~~", id; simpl.
   split.
-   intros p.
+   intros u.
    apply Π_type.funext; intros x.
-bbb.
-(* @hott_3_11_9_i
-     : Π (A : Type),
-       Π (P : Π (_ : A), Type),
-       Π (_ : Π (x : A), isContr (P x)), Σ (x : A), P x ≃ A *)
-(* @hott_3_11_9_ii
-     : Π (A : Type),
-       Π (P : Π (_ : A), Type),
-       Π (p : isContr A), (let a := Σ_type.pr₁ p in Σ (x : A), P x ≃ P a) *)
-bbb.
+   apply (@Π_type.funext_quasi_inverse_of_happly A (λ _, A) id id u x).
+
+   intros u.
+   apply invert, Π_type.funext_prop_uniq_princ.
+Defined.
