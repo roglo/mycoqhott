@@ -150,6 +150,14 @@ apply (@equiv_compose _ ({g : A → A & ((g = id) * (g = id))%type})).
   subst A₀ P₀ c₀; simpl in p.
   eapply equiv_compose; [ apply p | clear p ].
 bbb.
+  exists (λ p x, eq_refl _).
+  apply qinv_isequiv.
+  exists (λ _, eq_refl _).
+  unfold "◦", "~~", id; simpl.
+  split.
+   intros p.
+   apply Π_type.funext; intros x.
+bbb.
 (* @hott_3_11_9_i
      : Π (A : Type),
        Π (P : Π (_ : A), Type),
