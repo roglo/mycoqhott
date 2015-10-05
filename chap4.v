@@ -48,22 +48,17 @@ Definition type_pair_eq {A B C D : Type} :
   A = C → B = D → (A * B)%type = (C * D)%type.
 Proof. intros p q; destruct p, q; apply eq_refl. Defined.
 
-Definition Σ_eq_inv A (x : A) : (Σ (y : A), x = y) → (Σ (y : A), y = x).
-Proof.
-intros (z, s).
-exists z; apply invert, s.
-Defined.
-
 Definition hott_4_1_1 A B (f : A → B) (q : qinv f) :
   qinv f ≃ (Π (x : A), x = x).
 Proof.
+set (r (_ : A) := eq_refl (A := A)); simpl in r.
 assert (e : isequiv f) by (apply qinv_isequiv, q).
 set (fe := existT isequiv f e : A ≃ B); simpl in fe.
-remember (ua fe) as p eqn:r.
-set (s := (idtoeqv_ua fe)⁻¹ : fe = idtoeqv (ua fe)); simpl in s.
-rewrite <- r in s.
-destruct p; unfold idtoeqv in s; simpl in s.
-subst fe; injection s; clear s; intros s t; subst f.
+remember (ua fe) as p eqn:s.
+set (t := (idtoeqv_ua fe)⁻¹ : fe = idtoeqv (ua fe)); simpl in t.
+rewrite <- s in t.
+destruct p; unfold idtoeqv in t; simpl in t.
+subst fe; injection t; clear t; intros t u; subst f.
 
 unfold qinv.
 apply (@equiv_compose _ ({g : A → A & ((g = id) * (g = id))%type})).
@@ -98,7 +93,7 @@ apply (@equiv_compose _ ({g : A → A & ((g = id) * (g = id))%type})).
   apply qinv_isequiv.
   exists (λ p : {_ : x = id & x = id}, (Σ_pr₁ p, Σ_pr₂ p)).
   unfold "◦", "~~", id; simpl.
-  split; [ intros (p, t); apply eq_refl | ].
+  split; [ intros (p, u); apply eq_refl | ].
   intros p; apply invert, surjective_pairing.
 
   eapply equiv_compose; [ apply H | clear H ].
@@ -107,18 +102,15 @@ Definition isContr_Σ_inv A (y : A) :
   isContr (Σ (x : A), x = y) → isContr (Σ (x : A), y = x).
 Proof.
 unfold isContr; intros (p, q).
-Check Σ_eq_inv.
+Definition Σ_eq_inv A (x : A) : (Σ (y : A), x = y) → (Σ (y : A), y = x).
+Proof.
+intros (z, s).
+exists z; apply invert, s.
+Defined.
+Show.
+pose proof Σ_eq_inv _ p as r; simpl in r.
 
 bbb.
-
-   eapply hott_3_11_8.
-
-   eapply hott_3_11_9_i.
-   intros x.
-
-  assert
-    ((Σ (h : Σ (g : Π (_ : A), A), g = id), Σ_pr₁ h = id) ≃
-     (Σ (h : Σ (g : Π (_ : A), A), g = id), Σ_pr₁ h = id)).
 (* @hott_3_11_8
      : Π (A : Type), Π (a : A), isContr Σ (x : A), a = x *)
 (* @hott_3_11_9_i
