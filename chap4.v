@@ -135,7 +135,7 @@ apply (@equiv_compose _ ({g : A → A & ((g = id) * (g = id))%type})).
      (gggg : (∀ x : A, x = x) → {h : {g : A → A & g = id} & Σ_pr₁ h = id}).
     intros u; exists p.
     destruct p as (g, p); apply p.
-   exists (λ u, exists _ p (Σ_pr₂ p)).
+   exists (λ u, existT _ p (Σ_pr₂ p)).
 
 bbb.
 (* @hott_3_11_9_i
