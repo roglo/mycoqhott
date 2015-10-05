@@ -188,9 +188,9 @@ Qed.
    equalities stated in §1.7 hold. *)
 
 Notation "'Σ' ( x : A ) , B" :=
-  ({ x : A & B }) (at level 0, x at level 0, B at level 100(*, only parsing*)).
+  ({ x : A & B }) (at level 0, x at level 0, B at level 100, only parsing).
 Notation "'Π' ( x : A ) , B" :=
-  (∀ x : A, B) (at level 0, x at level 0, B at level 100(*, only parsing*)).
+  (∀ x : A, B) (at level 0, x at level 0, B at level 100, only parsing).
 
 Definition rec₂ C (c₀ c₁ : C) (b : bool) := if b then c₀ else c₁.
 

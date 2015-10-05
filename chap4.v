@@ -48,6 +48,12 @@ Definition type_pair_eq {A B C D : Type} :
   A = C → B = D → (A * B)%type = (C * D)%type.
 Proof. intros p q; destruct p, q; apply eq_refl. Defined.
 
+Definition Σ_eq_inv A (x : A) : (Σ (y : A), x = y) → (Σ (y : A), y = x).
+Proof.
+intros (z, s).
+exists z; apply invert, s.
+Defined.
+
 Definition hott_4_1_1 A B (f : A → B) (q : qinv f) :
   qinv f ≃ (Π (x : A), x = x).
 Proof.
@@ -96,6 +102,23 @@ apply (@equiv_compose _ ({g : A → A & ((g = id) * (g = id))%type})).
   intros p; apply invert, surjective_pairing.
 
   eapply equiv_compose; [ apply H | clear H ].
+  assert (isContr (Σ (g : A → A), g = id)).
+Definition isContr_Σ_inv A (y : A) :
+  isContr (Σ (x : A), x = y) → isContr (Σ (x : A), y = x).
+Proof.
+unfold isContr; intros (p, q).
+Check Σ_eq_inv.
+
+bbb.
+
+   eapply hott_3_11_8.
+
+   eapply hott_3_11_9_i.
+   intros x.
+
+  assert
+    ((Σ (h : Σ (g : Π (_ : A), A), g = id), Σ_pr₁ h = id) ≃
+     (Σ (h : Σ (g : Π (_ : A), A), g = id), Σ_pr₁ h = id)).
 (* @hott_3_11_8
      : Π (A : Type), Π (a : A), isContr Σ (x : A), a = x *)
 (* @hott_3_11_9_i
