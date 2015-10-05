@@ -48,6 +48,33 @@ Definition type_pair_eq {A B C D : Type} :
   A = C → B = D → (A * B)%type = (C * D)%type.
 Proof. intros p q; destruct p, q; apply eq_refl. Defined.
 
+Definition Σ_eq_inv A (x : A) : (Σ (y : A), x = y) → (Σ (y : A), y = x).
+Proof.
+intros (z, s).
+exists z; apply invert, s.
+Defined.
+
+Definition Σ_Π_eq_inv A :
+  (Σ (x : A), Π (y : A), y = x)
+  → (Σ (x : A), Π (y : A), x = y).
+Proof.
+intros (x, p).
+exists x; intros y.
+apply invert, p.
+Defined.
+
+Definition isContr_Σ_inv A (x : A) :
+  isProp (Σ (y : A), y = x)
+  → isContr (Σ (y : A), x = y)
+  → isContr (Σ (y : A), y = x).
+Proof.
+intros P.
+unfold isContr; intros (p, q).
+pose proof (Σ_eq_inv _ _ p) as y.
+exists y; intros z.
+apply P.
+Defined.
+
 Definition hott_4_1_1 A B (f : A → B) (q : qinv f) :
   qinv f ≃ (Π (x : A), x = x).
 Proof.
@@ -97,22 +124,20 @@ apply (@equiv_compose _ ({g : A → A & ((g = id) * (g = id))%type})).
   intros p; apply invert, surjective_pairing.
 
   eapply equiv_compose; [ apply H | clear H ].
-  assert (isContr (Σ (g : A → A), g = id)).
-Definition isContr_Σ_inv A (y : A) :
-  isContr (Σ (x : A), x = y) → isContr (Σ (x : A), y = x).
-Proof.
-unfold isContr; intros (p, q).
-Definition Σ_eq_inv A (x : A) : (Σ (y : A), x = y) → (Σ (y : A), y = x).
-Proof.
-intros (z, s).
-exists z; apply invert, s.
-Defined.
-Show.
-pose proof Σ_eq_inv _ p as r; simpl in r.
+  assert (p : isContr (Σ (g : A → A), g = id)).
+   apply isContr_Σ_inv; [ intros (f, x) (g, y); subst f g; apply eq_refl | ].
+   apply hott_3_11_8.
+
+   apply hott_3_11_9_i in p.
+   exists (λ _ _, eq_refl _).
+   apply qinv_isequiv.
+   assert
+     (gggg : (∀ x : A, x = x) → {h : {g : A → A & g = id} & Σ_pr₁ h = id}).
+    intros u; exists p.
+    destruct p as (g, p); apply p.
+   exists (λ u, exists _ p (Σ_pr₂ p)).
 
 bbb.
-(* @hott_3_11_8
-     : Π (A : Type), Π (a : A), isContr Σ (x : A), a = x *)
 (* @hott_3_11_9_i
      : Π (A : Type),
        Π (P : Π (_ : A), Type),
