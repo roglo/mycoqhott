@@ -96,4 +96,14 @@ apply (@equiv_compose _ ({g : A → A & ((g = id) * (g = id))%type})).
   intros p; apply invert, surjective_pairing.
 
   eapply equiv_compose; [ apply H | clear H ].
+(* @hott_3_11_8
+     : Π (A : Type), Π (a : A), isContr Σ (x : A), a = x *)
+(* @hott_3_11_9_i
+     : Π (A : Type),
+       Π (P : Π (_ : A), Type),
+       Π (_ : Π (x : A), isContr (P x)), Σ (x : A), P x ≃ A *)
+(* @hott_3_11_9_ii
+     : Π (A : Type),
+       Π (P : Π (_ : A), Type),
+       Π (p : isContr A), (let a := Σ_type.pr₁ p in Σ (x : A), P x ≃ P a) *)
 bbb.
