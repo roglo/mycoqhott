@@ -82,62 +82,18 @@ apply (@equiv_compose _ ({g : A → A & ((g = id) * (g = id))%type})).
   intros p; apply Π_type.funext; intros x.
   apply (Π_type.funext_quasi_inverse_of_happly f id p x).
 
-(*
-  ============================
-   {g : A → A & ((g = id) * (g = id))%type} ≃ (∀ x : A, x = x)
-*)
  assert
-   ({g : A → A & ((g = id) * (g = id))%type} =
+   (H : {g : A → A & ((g = id) * (g = id))%type} ≃
     (Σ (h : Σ (g : A → A), g = @id A), Σ_pr₁ h = @id A)).
-  apply ua.
-  eapply equiv_compose.
-  2: eapply (@ex_2_10 (A → A) (λ g, g = id) (λ h, Σ_pr₁ h = id)).
+  eapply equiv_compose; [ | eapply ex_2_10 ].
   simpl.
-  apply Σ_equiv.
-  apply Π_type.funext; intros x.
-  apply ua.
-(*
-  assert (f : (x = id) * (x = id) → {_ : x = id & x = id}).
-   intros (p, _).
-   exists p; apply p.
-*)
-  exists (λ p, existT (λ _, x = id) (fst p) (fst p)).
+  apply Σ_equiv, Π_type.funext; intros x; apply ua.
+  exists (λ p, existT (λ _, x = id) (fst p) (snd p)).
   apply qinv_isequiv.
-(*
-  assert (g : {_ : x = id & x = id} → (x = id) * (x = id)).
-   intros (p, _).
-   split; apply p.
-*)
-  exists (λ p : {_ : x = id & x = id}, (Σ_pr₁ p, Σ_pr₁ p)).
+  exists (λ p : {_ : x = id & x = id}, (Σ_pr₁ p, Σ_pr₂ p)).
   unfold "◦", "~~", id; simpl.
-  split.
-   intros p.
+  split; [ intros (p, t); apply eq_refl | ].
+  intros p; apply invert, surjective_pairing.
 
+  eapply equiv_compose; [ apply H | clear H ].
 bbb.
-
-(* @ex_2_10
-     : ∀ (A : Type) (B : A → Type) (C : {x : A & B x} → Type),
-       {x : A & {y : B x & C (existT (λ x0 : A, B x0) x y)}}
-       ≃ {p : {x : A & B x} & C p} *)
-eapply ex_2_10.
-bbb.
-
-Check @ex_2_10.
-(* @ex_2_10
-     : ∀ (A : Type) (B : A → Type) (C : {x : A & B x} → Type),
-       {x : A & {y : B x & C (existT (λ x0 : A, B x0) x y)}}
-       ≃ {p : {x : A & B x} & C p} *)
-
-bbb.
-Definition ex_2_10 {A B C} :
-  (Σ (x : A), Σ (y : B x), C (existT _ x y)) ≃ (Σ (p : Σ (x : A), B x), C p).
-
-exists (λ _ x, eq_refl x).
-apply qinv_isequiv.
-exists (λ _, existT _ id (@eq_refl A, @eq_refl A)).
-unfold "◦", "~~", id; simpl.
-split.
- intros g.
- apply Π_type.funext; intros x.
-bbb.
-
