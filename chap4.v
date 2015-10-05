@@ -174,4 +174,14 @@ Definition hott_4_1_2 A (a : A) (q : a = a) :
   → Σ (f : Π (x : A), (x = x)), f a = q.
 Proof.
 intros Sa Ax Pc.
+assert (isProp A).
+ intros x y.
+ pose proof Ax x as ax.
+ pose proof Ax y as ay.
+(* PT_rec
+     : ∀ (A B : Type) (f : A → B),
+       isProp B → {g : ∥A∥ → B & ∀ a : A, g (PT_intro a) = f a} *)
+set (A₀ := a = x).
+Check (@PT_rec A₀).
+Inspect 1.
 bbb.
