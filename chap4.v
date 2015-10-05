@@ -159,3 +159,19 @@ apply (@equiv_compose _ {g : A → A & ((g = id) * (g = id))%type}).
    intros u.
    apply invert, Π_type.funext_prop_uniq_princ.
 Defined.
+
+(* "Lemma 4.1.2. Suppose we have a type A with a:A and q:a=a such that
+        (i) The type a=a is a set.
+       (ii) For all x:A we have ∥a=x∥.
+      (iii) For all p:a=a we have p•q=q•p
+
+    Then there exists f:Π(x:A)(x=x) with f(a) = q." *)
+
+Definition hott_4_1_2 A (a : A) (q : a = a) :
+  isSet (a = a)
+  → (∀ x : A, ∥(a = x)∥)
+  → (∀ p : a = a, p • q = q • p)
+  → Σ (f : Π (x : A), (x = x)), f a = q.
+Proof.
+intros Sa Ax Pc.
+bbb.
