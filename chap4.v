@@ -84,70 +84,69 @@ Defined.
 Definition hott_4_1_1 A B (f : A → B) (q : qinv f) :
   qinv f ≃ (Π (x : A), x = x).
 Proof.
-assert (e : isequiv f) by (apply qinv_isequiv, q).
+assert (e : isequiv f) by apply qinv_isequiv, q.
 set (fe := existT isequiv f e : A ≃ B); simpl in fe.
-remember (ua fe) as p eqn:s.
+remember (ua fe) as p eqn:s .
 set (t := (idtoeqv_ua fe)⁻¹ : fe = idtoeqv (ua fe)); simpl in t.
 rewrite <- s in t.
 destruct p; unfold idtoeqv in t; simpl in t.
 subst fe; injection t; clear t; intros t u; subst f.
-
 unfold qinv.
-apply (@equiv_compose _ ({g : A → A & ((g = id) * (g = id))%type})).
+apply (@equiv_compose _ {g : A → A & ((g = id) * (g = id))%type}).
  apply Σ_equiv, Π_type.funext; intros f.
  unfold "◦", "~~"; simpl.
  apply type_pair_eq.
   apply ua.
   exists (λ g, Π_type.funext g).
   apply qinv_isequiv.
-  exists (λ g x, (Π_type.happly g x)).
+  exists (λ g x, Π_type.happly g x).
   unfold "◦", "~~"; simpl.
-  split; [ intros p; apply invert, Π_type.funext_prop_uniq_princ | ].
+  split; [ intros p; apply invert, Π_type.funext_prop_uniq_princ |  ].
   intros p; apply Π_type.funext; intros x.
   apply (Π_type.funext_quasi_inverse_of_happly f id p x).
 
   apply ua.
   exists (λ g, Π_type.funext g).
   apply qinv_isequiv.
-  exists (λ g x, (Π_type.happly g x)).
+  exists (λ g x, Π_type.happly g x).
   unfold "◦", "~~"; simpl.
-  split; [ intros p; apply invert, Π_type.funext_prop_uniq_princ | ].
+  split; [ intros p; apply invert, Π_type.funext_prop_uniq_princ |  ].
   intros p; apply Π_type.funext; intros x.
   apply (Π_type.funext_quasi_inverse_of_happly f id p x).
 
  assert
-   (H : {g : A → A & ((g = id) * (g = id))%type} ≃
-    (Σ (h : Σ (g : A → A), g = @id A), Σ_pr₁ h = @id A)).
-  eapply equiv_compose; [ | eapply ex_2_10 ].
-  simpl.
+  (H :
+   {g : A → A & ((g = id) * (g = id))%type}
+   ≃ Σ (h : Σ (g : A → A), g = @id A), Σ_pr₁ h = @id A).
+  eapply equiv_compose; [  | eapply ex_2_10 ]; simpl.
   apply Σ_equiv, Π_type.funext; intros x; apply ua.
   exists (λ p, existT (λ _, x = id) (fst p) (snd p)).
   apply qinv_isequiv.
   exists (λ p : {_ : x = id & x = id}, (Σ_pr₁ p, Σ_pr₂ p)).
   unfold "◦", "~~", id; simpl.
-  split; [ intros (p, u); apply eq_refl | ].
+  split; [ intros (p, u); apply eq_refl |  ].
   intros p; apply invert, surjective_pairing.
 
   eapply equiv_compose; [ apply H | clear H ].
   set (A₀ := {g : A → A & g = id}).
-  set (P₀ := λ (a : A₀), Σ_pr₁ a = id).
+  set (P₀ := λ a : A₀, Σ_pr₁ a = id).
   set
-    (c₀ :=
-       existT _
-         (existT (λ g : A → A, g = id) id (eq_refl id))
-         (λ x : A₀,
-          match x return existT (λ g : A → A, g = id) id (eq_refl id) = x with
-          | existT _ g p =>
-              match p with
-              | eq_refl _ =>
-                  λ _,
-                  eq_refl (existT (λ g₀ : A → A, g₀ = g) g (eq_refl g))
-              end t
-          end) : isContr A₀).
+   (c₀ :=
+    existT _ (existT (λ g : A → A, g = id) id (eq_refl id))
+      (λ x : A₀,
+       match x return (existT (λ g : A → A, g = id) id (eq_refl id) = x) with
+       | existT _ g p =>
+           match p with
+           | eq_refl _ =>
+               λ _, eq_refl (existT (λ g₀ : A → A, g₀ = g) g (eq_refl g))
+           end t
+       end)
+    :
+    isContr A₀).
   simpl in c₀.
   pose proof (@hott_3_11_9_ii A₀ P₀ c₀) as p.
   subst A₀ P₀ c₀; simpl in p.
-  eapply equiv_compose; [ apply p | ].
+  eapply equiv_compose; [ apply p |  ].
   exists (λ (p : @id A = @id A) (x : A), Π_type.happly p x).
   apply qinv_isequiv.
   exists (λ g, Π_type.funext g).
