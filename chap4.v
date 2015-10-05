@@ -131,12 +131,11 @@ apply (@equiv_compose _ ({g : A → A & ((g = id) * (g = id))%type})).
    apply hott_3_11_9_i in p.
    exists (λ _ _, eq_refl _).
    apply qinv_isequiv.
-   assert
-     (gggg : (∀ x : A, x = x) → {h : {g : A → A & g = id} & Σ_pr₁ h = id}).
-    intros u; exists p.
-    destruct p as (g, p); apply p.
    exists (λ u, existT _ p (Σ_pr₂ p)).
-
+   unfold "◦", "~~", id; simpl.
+   split.
+    intros u.
+    apply Π_type.funext; intros x.
 bbb.
 (* @hott_3_11_9_i
      : Π (A : Type),
