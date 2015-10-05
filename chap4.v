@@ -136,6 +136,7 @@ apply (@equiv_compose _ ({g : A → A & ((g = id) * (g = id))%type})).
    split.
     intros u.
     apply Π_type.funext; intros x.
+
 bbb.
 (* @hott_3_11_9_i
      : Π (A : Type),
