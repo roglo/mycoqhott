@@ -48,31 +48,37 @@ Definition type_pair_eq {A B C D : Type} :
   A = C → B = D → (A * B)%type = (C * D)%type.
 Proof. intros p q; destruct p, q; apply eq_refl. Defined.
 
-Definition Σ_eq_inv A (x : A) : (Σ (y : A), x = y) → (Σ (y : A), y = x).
+Definition Σ_eq_inv A (x : A) : (Σ (y : A), x = y) ⇔ (Σ (y : A), y = x).
 Proof.
-intros (z, s).
-exists z; apply invert, s.
+split; intros (z, s); exists z; apply invert, s.
+Defined.
+
+Definition isProp_Σ_eq_inv A (x : A) :
+  isProp (Σ (y : A), y = x) ⇔ isProp (Σ (y : A), x = y).
+Proof.
+unfold isProp; split; intros P (z, p) (t, q); destruct p, q; reflexivity.
 Defined.
 
 Definition Σ_Π_eq_inv A :
   (Σ (x : A), Π (y : A), y = x)
-  → (Σ (x : A), Π (y : A), x = y).
+  ⇔ (Σ (x : A), Π (y : A), x = y).
 Proof.
-intros (x, p).
-exists x; intros y.
-apply invert, p.
+split; intros (x, p); exists x; intros y; apply invert, p.
 Defined.
 
 Definition isContr_Σ_inv A (x : A) :
   isProp (Σ (y : A), y = x)
   → isContr (Σ (y : A), x = y)
-  → isContr (Σ (y : A), y = x).
+  ⇔ isContr (Σ (y : A), y = x).
 Proof.
 intros P.
-unfold isContr; intros (p, q).
-pose proof (Σ_eq_inv _ _ p) as y.
-exists y; intros z.
-apply P.
+unfold isContr; split; intros (p, q).
+ pose proof (fst (Σ_eq_inv _ _) p) as y.
+ exists y; intros z; apply P.
+
+ apply isProp_Σ_eq_inv in P.
+ pose proof (snd (Σ_eq_inv _ _) p) as y.
+ exists y; intros z; apply P.
 Defined.
 
 Definition hott_4_1_1 A B (f : A → B) (q : qinv f) :
@@ -124,19 +130,25 @@ apply (@equiv_compose _ ({g : A → A & ((g = id) * (g = id))%type})).
   intros p; apply invert, surjective_pairing.
 
   eapply equiv_compose; [ apply H | clear H ].
-  assert (p : isContr (Σ (g : A → A), g = id)).
-   apply isContr_Σ_inv; [ intros (f, x) (g, y); subst f g; apply eq_refl | ].
-   apply hott_3_11_8.
-
-   apply hott_3_11_9_i in p.
-   exists (λ _ _, eq_refl _).
-   apply qinv_isequiv.
-   exists (λ u, existT _ p (Σ_pr₂ p)).
-   unfold "◦", "~~", id; simpl.
-   split.
-    intros u.
-    apply Π_type.funext; intros x.
-
+  set (A₀ := {g : A → A & g = id}).
+  set (P₀ := λ (a : A₀), Σ_pr₁ a = id).
+  set
+    (c₀ :=
+       existT _
+         (existT (λ g : A → A, g = id) id (eq_refl id))
+         (λ x : A₀,
+          match x return existT (λ g : A → A, g = id) id (eq_refl id) = x with
+          | existT _ g p =>
+              match p with
+              | eq_refl _ =>
+                  λ _,
+                  eq_refl (existT (λ g₀ : A → A, g₀ = g) g (eq_refl g))
+              end t
+          end) : isContr A₀).
+  simpl in c₀.
+  pose proof (@hott_3_11_9_ii A₀ P₀ c₀) as p.
+  subst A₀ P₀ c₀; simpl in p.
+  eapply equiv_compose; [ apply p | clear p ].
 bbb.
 (* @hott_3_11_9_i
      : Π (A : Type),
