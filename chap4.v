@@ -176,8 +176,19 @@ Proof.
 intros Sa g Pc.
 assert (Se : ∀ x y : A, isSet (x = y)).
  intros x y.
+(* They say: induction principle. Induction principe or *recursion*
+   principle? If induction principe (ex_3_17), I don't see how to prove
+   the thing; if recursion principe, it does not work since in their
+   définition of the recursion principle, they speak of normal function
+   (A→B), not dependent function (Π(x:A),B(x)). Does it mean that I need
+   to change PT_rec to accept dependent functions? *)
+bbb.
+Check @ex_3_17.
+Check PT_rec.
+Check (PT_rec A ∥(a = a)∥ g).
+bbb.
  assert (f : (a = x) * (a = y) → isSet (x = y)).
-  intros (p, q').
+  clear q Pc; intros (p, q).
   destruct p; subst y.
   apply Sa.
 
