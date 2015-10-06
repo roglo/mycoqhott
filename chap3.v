@@ -744,6 +744,7 @@ Notation "∥ A ∥" := (PT A) (A at level 0, format "∥ A ∥") : type_scope.
 
 Axiom PT_intro : ∀ A, A → ∥A∥.
 Arguments PT_intro [A] x.
+Notation "╎ A ╎" := (PT_intro A) (A at level 0, format "╎ A ╎") : type_scope.
 
 Axiom PT_eq : ∀ A, isProp ∥A∥.
 (* Arguments PT_eq [A] x y. *)

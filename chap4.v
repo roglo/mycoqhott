@@ -183,9 +183,10 @@ assert (Se : ∀ x y : A, isSet (x = y)).
   assert (h : ∀ z (t : a = z), g z = PT_intro t) by (intros z t; apply PT_eq).
   assert (∀ (p : a = x) (q : a = y), (g x = PT_intro p) * (g y = PT_intro q)).
    intros p₁ q₁.
-   split.
-    apply ex_3_17; [ apply f | apply h ].
-    apply ex_3_17; [ apply f | apply h ].
+   split; apply h.
+
+Check @ex_3_17.
+bbb.
 
    assert ((x = y) ≃ (a = a)).
     exists (λ _, eq_refl _).
