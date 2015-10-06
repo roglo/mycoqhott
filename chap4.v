@@ -187,11 +187,9 @@ assert (Se : ∀ x y : A, isSet (x = y)).
     apply ex_3_17; [ apply f | apply h ].
     apply ex_3_17; [ apply f | apply h ].
 
-bbb.
-
- assert ((x = y) ≃ (a = a)).
-  exists (λ _, eq_refl _).
-  apply qinv_isequiv.
-  assert (gggg : (a = a) → (x = y)).
-   intros p.
+   assert ((x = y) ≃ (a = a)).
+    exists (λ _, eq_refl _).
+    apply qinv_isequiv.
+    assert (gggg : (a = a) → (x = y)).
+     intros p.
 bbb.
