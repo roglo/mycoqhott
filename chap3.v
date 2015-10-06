@@ -2323,18 +2323,19 @@ Definition ACX X :=
   → (Π (x : X), ∥ (Σ (a : A x), P x a) ∥)
   → ∥ (Σ (g : Π (x : X), A x), Π (x : X), P x (g x)) ∥.
 
-Definition ex_3_22_isProp X (x₀ : X) (PX : isProp X) : ACX X.
+Definition ex_3_22_isContr X (CX : isContr X) : ACX X.
 Proof.
 intros A P SX SA PP T.
+destruct CX as (x₀, PX).
 pose proof (T x₀) as tx.
 set (A₀ := Σ (a : A x₀), P x₀ a).
 set (B₀ := ∥(Σ (g : ∀ x : X, A x), ∀ x : X, P x (g x))∥).
 assert (f : A₀ → B₀).
  intros t; subst A₀ B₀; apply PT_intro.
  destruct t as (ax, pax).
- set (g (x : X) := eq_rect_r (λ x0 : X, A x0) ax (PX x x₀)); simpl in g.
+ set (g (x : X) := eq_rect_r (λ x0 : X, A x0) ax (PX x)⁻¹); simpl in g.
  exists g; subst g; simpl.
- intros x; destruct (PX x x₀); apply pax.
+ intros x; destruct (PX x); apply pax.
 
  pose proof (PT_rec A₀ B₀ f (PT_eq _)) as g.
  destruct g as (g, p); apply g, tx.
@@ -2342,7 +2343,9 @@ Defined.
 
 Definition ex_3_22_Fin_1 : ACX (Fin 1).
 Proof.
-apply ex_3_22_isProp; [ apply (elem 1 0 Nat.lt_0_1) | apply isProp_Fin_1 ].
+apply ex_3_22_isContr.
+exists (elem 1 0 Nat.lt_0_1); intros x.
+apply isProp_Fin_1.
 Defined.
 
 Definition Fin_2_dec : ∀ x : Fin 2,
