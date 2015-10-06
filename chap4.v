@@ -182,10 +182,21 @@ assert (Se : ∀ x y : A, isSet (x = y)).
    définition of the recursion principle, they speak of normal function
    (A→B), not dependent function (Π(x:A),B(x)). Does it mean that I need
    to change PT_rec to accept dependent functions? *)
+(* @ex_3_17
+     : ∀ (A : Type) (B : ∥A∥ → Type),
+       (∀ x : ∥A∥, isProp (B x)) → (∀ a : A, B (PT_intro a)) → ∀ x : ∥A∥, B x
+*)
+(* PT_rec
+     : ∀ (A B : Type) (f : A → B),
+       isProp B → {g : ∥A∥ → B & ∀ a : A, g (PT_intro a) = f a} *)
+set (B₀ := λ u, g x = u).
+Check (@ex_3_17 (a = x) (λ u, g x = u)).
+assert (f : ∀ p : ∥(a = x)∥, isProp (g x = p)).
+ intros p.
+ intros u v.
 bbb.
-Check @ex_3_17.
-Check PT_rec.
-Check (PT_rec A ∥(a = a)∥ g).
+
+Check (PT_rec A ∥(a = x)∥ g).
 bbb.
  assert (f : (a = x) * (a = y) → isSet (x = y)).
   clear q Pc; intros (p, q).
