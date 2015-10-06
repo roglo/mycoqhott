@@ -176,59 +176,22 @@ Proof.
 intros Sa g Pc.
 assert (Se : ∀ x y : A, isSet (x = y)).
  intros x y.
-(* They say: induction principle. Induction principe or *recursion*
-   principle? If induction principe (ex_3_17), I don't see how to prove
-   the thing; if recursion principe, it does not work since in their
-   définition of the recursion principle, they speak of normal function
-   (A→B), not dependent function (Π(x:A),B(x)). Does it mean that I need
-   to change PT_rec to accept dependent functions? *)
-(* @ex_3_17
-     : ∀ (A : Type) (B : ∥A∥ → Type),
-       (∀ x : ∥A∥, isProp (B x)) → (∀ a : A, B (PT_intro a)) → ∀ x : ∥A∥, B x
-*)
-(* PT_rec
-     : ∀ (A B : Type) (f : A → B),
-       isProp B → {g : ∥A∥ → B & ∀ a : A, g (PT_intro a) = f a} *)
-set (B₀ := λ u, g x = u).
-Check (@ex_3_17 (a = x) (λ u, g x = u)).
-assert (f : ∀ p : ∥(a = x)∥, isProp (g x = p)).
- intros p.
- intros u v.
- apply PT_eq.
+ assert (r : ∀ z, isSet ∥(a = z)∥) by (intros z; apply isProp_isSet, PT_eq).
+ assert (f : ∀ z (p : ∥(a = z)∥), isProp (g z = p)).
+  intros z p u v; apply r.
+
+  assert (h : ∀ z (t : a = z), g z = PT_intro t) by (intros z t; apply PT_eq).
+  assert (∀ (p : a = x) (q : a = y), (g x = PT_intro p) * (g y = PT_intro q)).
+   intros p₁ q₁.
+   split.
+    apply ex_3_17; [ apply f | apply h ].
+    apply ex_3_17; [ apply f | apply h ].
+
 bbb.
 
-Check (PT_rec A ∥(a = x)∥ g).
-bbb.
- assert (f : (a = x) * (a = y) → isSet (x = y)).
-  clear q Pc; intros (p, q).
-  destruct p; subst y.
-  apply Sa.
-
-  set (A₀ := ((a = x) * (a = y))%type).
-  set (B₀ := isSet (x = y)).
-  pose proof (PT_rec A₀ B₀ f (hott_3_3_5_ii _)) as u.
-  destruct u as (g', u); subst A₀ B₀.
-  apply g'.
-bbb.
-
- intros x y p r s t.
-SearchAbout isSet.
-bbb.
- destruct r.
- destruct t.
- destruct p.
- unfold isSet in Sa.
-bbb.
-
-
-assert (isProp A).
- intros x y.
- pose proof Ax x as ax.
- pose proof Ax y as ay.
-(* PT_rec
-     : ∀ (A B : Type) (f : A → B),
-       isProp B → {g : ∥A∥ → B & ∀ a : A, g (PT_intro a) = f a} *)
-set (A₀ := a = x).
-Check (@PT_rec A₀).
-Inspect 1.
+ assert ((x = y) ≃ (a = a)).
+  exists (λ _, eq_refl _).
+  apply qinv_isequiv.
+  assert (gggg : (a = a) → (x = y)).
+   intros p.
 bbb.
