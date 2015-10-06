@@ -173,7 +173,31 @@ Definition hott_4_1_2 A (a : A) (q : a = a) :
   → (∀ p : a = a, p • q = q • p)
   → Σ (f : Π (x : A), (x = x)), f a = q.
 Proof.
-intros Sa Ax Pc.
+intros Sa g Pc.
+assert (Se : ∀ x y : A, isSet (x = y)).
+ intros x y.
+ assert (f : (a = x) * (a = y) → isSet (x = y)).
+  intros (p, q').
+  destruct p; subst y.
+  apply Sa.
+
+  set (A₀ := ((a = x) * (a = y))%type).
+  set (B₀ := isSet (x = y)).
+  pose proof (PT_rec A₀ B₀ f (hott_3_3_5_ii _)) as u.
+  destruct u as (g', u); subst A₀ B₀.
+  apply g'.
+bbb.
+
+ intros x y p r s t.
+SearchAbout isSet.
+bbb.
+ destruct r.
+ destruct t.
+ destruct p.
+ unfold isSet in Sa.
+bbb.
+
+
 assert (isProp A).
  intros x y.
  pose proof Ax x as ax.
