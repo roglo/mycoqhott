@@ -181,16 +181,11 @@ assert (Se : ∀ x y : A, isSet (x = y)).
   intros z p u v; apply r.
 
   assert (h : ∀ z (t : a = z), g z = PT_intro t) by (intros z t; apply PT_eq).
-  assert (∀ (p : a = x) (q : a = y), (g x = PT_intro p) * (g y = PT_intro q)).
-   intros p₁ q₁.
-   split; apply h.
-
-Check @ex_3_17.
-bbb.
-
-   assert ((x = y) ≃ (a = a)).
-    exists (λ _, eq_refl _).
-    apply qinv_isequiv.
-    assert (gggg : (a = a) → (x = y)).
-     intros p.
+  assert ((x = y) ≃ (a = a)).
+   exists (λ _, eq_refl _).
+   apply qinv_isequiv.
+   assert (gggg : (a = a) → (x = y)).
+    intros p.
+(* h x : ∀ t : a = x, g x = ╎t╎ *)
+(* h y : ∀ t : a = y, g y = ╎t╎ *)
 bbb.
