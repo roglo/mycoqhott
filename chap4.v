@@ -194,6 +194,7 @@ Check (@ex_3_17 (a = x) (λ u, g x = u)).
 assert (f : ∀ p : ∥(a = x)∥, isProp (g x = p)).
  intros p.
  intros u v.
+ apply PT_eq.
 bbb.
 
 Check (PT_rec A ∥(a = x)∥ g).
