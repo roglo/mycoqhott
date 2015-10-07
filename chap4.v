@@ -176,6 +176,22 @@ Proof.
 intros Sa g Pc.
 assert (Se : ∀ x y : A, isSet (x = y)).
  assert (gz : ∀ z (p : a = z), g z = ╎p╎) by (intros z p; apply PT_eq).
+  intros x y.
+(* hott_3_3_5_ii
+     : ∀ A : Type, isProp (isSet A) *)
+(* @ex_3_17
+     : ∀ (A : Type) (B : ∥A∥ → Type),
+       (∀ x : ∥A∥, isProp (B x)) → (∀ a : A, B ╎a╎) → ∀ x : ∥A∥, B x *)
+set (B := λ _ : ∥A∥, isSet (x = y)).
+assert (f : ∀ x : ∥A∥, isProp (B x)).
+ intros z; subst B; apply hott_3_3_5_ii.
+
+Check (@ex_3_17 A B f).
+ simpl in f.
+ assert (h : ∀ a : A, B (PT_intro a)).
+  intros z; subst B; simpl.
+
+bbb.
  assert (xya : ∀ x y : A, (x = y) ≃ (a = a)).
   intros x y.
   exists (λ _ , eq_refl _); apply qinv_isequiv.
