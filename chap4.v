@@ -186,7 +186,8 @@ assert (Se : ∀ x y : A, isSet (x = y)).
    apply hott_3_3_5_i.
 
    intros x (r, h) (r', h'); simpl.
-   Check (λ p, h p • (h' p)⁻¹).
+   assert (r = r').
+    set (u := λ p, h p • (h' p)⁻¹); apply u.
 bbb.
 
   intros (r, p₀) (t, q₀).
