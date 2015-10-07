@@ -2040,7 +2040,7 @@ End Σ_type2.
 
 (* 2.13 Natural numbers *)
 
-Module ℕ.
+Module N.
 
 Fixpoint code m n : Type :=
   match (m, n) with
@@ -2056,10 +2056,10 @@ Fixpoint r n : code n n :=
   | S m => r m
   end.
 
-Definition encode (m n : nat) : m = n → code m n :=
+Definition encode (m n : ℕ) : m = n → code m n :=
   λ p, transport (code m) p (r m).
 
-Definition decode (m n : nat) : code m n → m = n.
+Definition decode (m n : ℕ) : code m n → m = n.
 Proof.
 revert m n.
 fix 1; rename decode into IHn.
@@ -2107,7 +2107,7 @@ Definition hott_2_13_2 {m} : S m = 0 → ⊥ := encode (S m) 0.
 Definition hott_2_13_3 m n : (S m = S n) → (m = n) :=
   λ p, decode m n (encode (S m) (S n) p).
 
-End ℕ.
+End N.
 
 (* 2.14 Example: equality of structures *)
 
@@ -3008,7 +3008,7 @@ Definition hott_2_1_2_proof_4_eq_proof_1 {A} {x y z : A}
     of boundaries for such paths." *)
 
 (* borrowed to Adam Chlipala's code found in the Web *)
-Inductive ilist A : nat → Type :=
+Inductive ilist A : ℕ → Type :=
   | Nil : ilist A 0
   | Cons : ∀ n, A → ilist A n → ilist A (S n).
 Arguments Nil [A].

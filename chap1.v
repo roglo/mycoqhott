@@ -10,6 +10,7 @@ Arguments eq_refl [A] x.
 Notation "⊥" := False.
 Notation "⊤" := True.
 Notation "'ℬ'" := (bool : Type).
+Notation "'ℕ'" := nat.
 Notation "( x , y ) '_{' P }" := (existT P x y)
   (at level 0, format "'[' ( x ,  y ) _{ P } ']'", only parsing).
 
@@ -156,15 +157,15 @@ Fixpoint iter {C} c₀ (cs : C → C) m :=
   | S n => cs (iter c₀ cs n)
   end.
 
-(* iter : ∀ C : Type, C → (C → C) → nat → C *)
+(* iter : ∀ C : Type, C → (C → C) → ℕ → C *)
 
 (* iter C c₀ cs n ≡ cs (cs (cs (cs … (cs c₀)))) with 'n' cs *)
 (* rec_ℕ C c₀ cs n ≡ cs n (cs (n-1) (cs (n-2) … (cs 0 c₀))) with 'n' cs *)
 
-Definition iter_f {A B} (cs : _ → _ → B) (r : nat * A) :=
+Definition iter_f {A B} (cs : _ → _ → B) (r : ℕ * A) :=
   (S (fst r), cs (fst r) (snd r)).
 
-Definition rec_ℕ' {C} (c₀ : C) (cs : nat → C → C) (n : nat) :=
+Definition rec_ℕ' {C} (c₀ : C) (cs : ℕ → C → C) (n : ℕ) :=
   snd (iter (0, c₀) (iter_f cs) n).
 
 (*
@@ -356,7 +357,7 @@ Eval vm_compute in (ℕ_exp 2 9).
 Eval vm_compute in (ℕ_tet 2 3).
 *)
 
-Fixpoint ind_ℕ (C : nat → Type) P0 Pn n :=
+Fixpoint ind_ℕ (C : ℕ → Type) P0 Pn n :=
   match n return C n with
   | 0 => P0
   | S n' => Pn n' (ind_ℕ C P0 Pn n')
@@ -397,7 +398,7 @@ Inductive Fin n := elem : ∀ i, i < n → Fin n.
 Definition fmax n := elem (n + 1) n (Nat.lt_add_pos_r 1 n Nat.lt_0_1).
 
 (* fmax
-     : ∀ n : nat, Fin (n + 1) *)
+     : ∀ n : ℕ, Fin (n + 1) *)
 
 (* Exercise 1.10. Show that the Ackermann function ack : ℕ → ℕ → ℕ
    is definable using only rec_ℕ satisfying the following equations:

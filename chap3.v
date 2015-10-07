@@ -106,34 +106,34 @@ Defined.
     are equivalent to either 1 or 0, and any two inhabitants of 1 or 0
     are equal. We will see another proof of this fact in Chapter 7." *)
 
-(* ℕ.hott_2_13_1 : ∀ m n : nat, (m = n) ≃ ℕ.code m n *)
+(* ℕ.hott_2_13_1 : ∀ m n : ℕ, (m = n) ≃ ℕ.code m n *)
 
-Definition ℕ_code_equiv_1_or_0 m n :
-  (ℕ.code m n ≃ True) + (ℕ.code m n ≃ False).
+Definition N_code_equiv_1_or_0 m n :
+  (N.code m n ≃ True) + (N.code m n ≃ False).
 Proof.
 destruct (eq_nat_dec m n) as [H1| H1].
  left; subst m.
  exists (λ c, I); apply qinv_isequiv.
- exists (λ _, ℕ.r n).
+ exists (λ _, N.r n).
  unfold "◦", "~~", id; simpl.
  split; [ intros u; destruct u; reflexivity | intros c ].
  induction n; [ destruct c; reflexivity | apply IHn ].
 
  right.
- exists (λ c, H1 (ℕ.decode m n c)); apply qinv_isequiv.
+ exists (λ c, H1 (N.decode m n c)); apply qinv_isequiv.
  exists (λ p : False, match p with end).
  unfold "◦", "~~", id.
  split; [ intros p; destruct p | ].
- intros c; destruct (H1 (ℕ.decode m n c)).
+ intros c; destruct (H1 (N.decode m n c)).
 Defined.
 
 (* ex_3_1_4 *)
 
-Definition isSet_nat_tac : isSet nat.
+Definition isSet_nat_tac : isSet ℕ.
 Proof.
 intros m n p q.
-pose proof ℕ.hott_2_13_1 m n as r.
-pose proof ℕ_code_equiv_1_or_0 m n as s.
+pose proof N.hott_2_13_1 m n as r.
+pose proof N_code_equiv_1_or_0 m n as s.
 destruct s as [s| s].
  eapply equiv_compose in s; [ | apply r ].
  destruct s as (f, ((g, Hg), (h, Hh))).
@@ -148,11 +148,11 @@ destruct s as [s| s].
  exfalso; apply f, p.
 Defined.
 
-Definition isSet_nat : isSet nat :=
-  λ (m n : nat) (p q : m = n),
-  match ℕ_code_equiv_1_or_0 m n with
+Definition isSet_nat : isSet ℕ :=
+  λ (m n : ℕ) (p q : m = n),
+  match N_code_equiv_1_or_0 m n with
   | inl s =>
-      match s ◦◦ ℕ.hott_2_13_1 m n with
+      match s ◦◦ N.hott_2_13_1 m n with
       | existT _ f (existT _ g Hg, existT _ h Hh) =>
           match f p with
           | I =>
@@ -168,7 +168,7 @@ Definition isSet_nat : isSet nat :=
           end (Hh p)
       end
   | inr s =>
-      match s ◦◦ ℕ.hott_2_13_1 m n with
+      match s ◦◦ N.hott_2_13_1 m n with
       | existT _ f _ => match f p with end
       end
   end.
@@ -1982,7 +1982,7 @@ Proof. apply LEM_LDN. Defined.
          ∥Σ (n:ℕ) P(n)∥ → Σ (n:ℕ) P(n)." *)
 
 (* return 0 if not enough iterations, else S n for n *)
-Fixpoint first_such_that P (DP : isDecidableFamily nat P) m n :=
+Fixpoint first_such_that P (DP : isDecidableFamily ℕ P) m n :=
   match m with
   | 0 => 0
   | S m' =>
@@ -1992,7 +1992,7 @@ Fixpoint first_such_that P (DP : isDecidableFamily nat P) m n :=
       end
   end.
 
-Definition first_such_that_prop P (DP : isDecidableFamily nat P) m n a :
+Definition first_such_that_prop P (DP : isDecidableFamily ℕ P) m n a :
   first_such_that P DP (S n) a = S m
   → P m * ∀ b, a ≤ b → b < m → notT (P b).
 Proof.
@@ -2021,7 +2021,7 @@ destruct (DP a) as [q| q].
    destruct t; apply q.
 Defined.
 
-Definition no_first_such_that_prop P (DP : isDecidableFamily nat P) n a :
+Definition no_first_such_that_prop P (DP : isDecidableFamily ℕ P) n a :
   first_such_that P DP (S n) a = 0
   → notT (P (a + n)).
 Proof.
@@ -2035,9 +2035,9 @@ rewrite <- Nat.add_succ_comm.
 apply IHn; [ apply p | apply r ].
 Defined.
 
-Definition smallest_such_that P : isDecidableFamily nat P
-  → (Σ (n : nat), P n)
-  → (Σ (n : nat), (P n * ∀ m, m < n → notT (P m))%type).
+Definition smallest_such_that P : isDecidableFamily ℕ P
+  → (Σ (n : ℕ), P n)
+  → (Σ (n : ℕ), (P n * ∀ m, m < n → notT (P m))%type).
 Proof.
 intros DP (n, p).
 remember (first_such_that P DP (S n) 0) as x eqn:Hx; symmetry in Hx.
@@ -2049,8 +2049,8 @@ destruct x as [| m].
  apply r; [ apply Nat.le_0_l | apply Ha ].
 Defined.
 
-Definition isProp_first_such_that P (PP : Π (n : nat), isProp (P n)) :
-  isProp (Σ (n : nat), (P n * (∀ m : nat, m < n → notT (P m)))%type).
+Definition isProp_first_such_that P (PP : Π (n : ℕ), isProp (P n)) :
+  isProp (Σ (n : ℕ), (P n * (∀ m : ℕ, m < n → notT (P m)))%type).
 Proof.
 intros q r.
 destruct q as (m, (pm, q)).
@@ -2069,14 +2069,14 @@ destruct (lt_eq_lt_dec m n) as [[Hmn| Hmn] | Hmn].
  destruct (q n Hmn pn).
 Defined.
 
-Definition ex_3_19_tac P : isDecidableFamily nat P
-  → (Π (n : nat), isProp (P n))
-  → ∥(Σ (n : nat), P n)∥
-  → Σ (n : nat), P n.
+Definition ex_3_19_tac P : isDecidableFamily ℕ P
+  → (Π (n : ℕ), isProp (P n))
+  → ∥(Σ (n : ℕ), P n)∥
+  → Σ (n : ℕ), P n.
 Proof.
 intros DP PP p.
-set (A := Σ (n : nat), P n) in p |-*.
-set (B := Σ (n : nat), (P n * (∀ m : nat, m < n → notT (P m)))%type).
+set (A := Σ (n : ℕ), P n) in p |-*.
+set (B := Σ (n : ℕ), (P n * (∀ m : ℕ, m < n → notT (P m)))%type).
 set (f := smallest_such_that P DP : A → B).
 set (PB := isProp_first_such_that P PP : isProp B).
 set (g := Σ_type.pr₁ (PT_rec A B f PB)).
@@ -2084,10 +2084,10 @@ destruct (g p) as (n, (pn, _)).
 exists n; apply pn.
 Defined.
 
-Definition ex_3_19 P : isDecidableFamily nat P
-  → (Π (n : nat), isProp (P n))
-  → ∥(Σ (n : nat), P n)∥
-  → Σ (n : nat), P n
+Definition ex_3_19 P : isDecidableFamily ℕ P
+  → (Π (n : ℕ), isProp (P n))
+  → ∥(Σ (n : ℕ), P n)∥
+  → Σ (n : ℕ), P n
 :=
   λ DP PP p,
   let f := smallest_such_that P DP in
@@ -2184,7 +2184,7 @@ PT_rec
 Check @transport.
 Check
   (@transport
-     (Σ (n : nat), Fin n → Type)
+     (Σ (n : ℕ), Fin n → Type)
      (λ z, ∥(∀ x : Fin (Σ_type.pr₁ z), Σ_type.pr₂ z x)∥)
      (existT _ n Yn)
      (existT _ (S n) Y)).
@@ -2197,7 +2197,7 @@ P     ≡ (λ (k, Yk), ∥∀ x : Fin k, Yk x∥)
 P x   ≡ (λ (k, Yk), ∀ x : Fin k, Yk x) (n, Yn)
 P y   ≡ (λ (k, Yk), ∀ x : Fin k, Yk x) (S n, Y)
 
-Σ (n : nat), Fin n → Type
+Σ (n : ℕ), Fin n → Type
 x = y ≡
 *)
 (*
@@ -2210,7 +2210,7 @@ x = y ≡
 *)
 Check
   (@transport
-     (Σ (n : nat), Fin n → Type)
+     (Σ (n : ℕ), Fin n → Type)
      (λ z, ∀ x : Fin (Σ_type.pr₁ z), Σ_type.pr₂ z x)
      (existT _ n Yn)
      (existT _ (S n) Y)
