@@ -174,15 +174,60 @@ Definition hott_4_1_2 A (a : A) (q : a = a) :
   → Σ (f : Π (x : A), (x = x)), f a = q.
 Proof.
 intros Sa g Pc.
+assert (gz : ∀ z (p : a = z), g z = ╎p╎) by (intros z p; apply PT_eq).
 assert (Se : ∀ x y : A, isSet (x = y)).
- assert (gz : ∀ z (p : a = z), g z = ╎p╎) by (intros z p; apply PT_eq).
-  intros x y.
+ intros x y.
+ admit. (* j'y arrive pas, même avec leurs explications *)
+
+ set (B (x : A) := Σ (r : x = x), Π (s : a = x), (r = s⁻¹ • q • s)).
+ assert (u : ∀ x, isProp (B x)).
+  assert (v : isProp (∀ x, isProp (B x))).
+   apply ex_3_6_2; intros x.
+   apply hott_3_3_5_i.
+
+   intros x (r, h) (r', h'); simpl.
+   Check (h p • (h' p)⁻¹).
+bbb.
+
+  intros (r, p₀) (t, q₀).
+  pose proof (Se x x r t) as u.
+  unfold isSet in u.
+bbb.
+
+ pose proof (gz x) as p₀.
+ pose proof (gz y) as q₀.
+bbb.
+
 (* hott_3_3_5_ii
      : ∀ A : Type, isProp (isSet A) *)
 (* @ex_3_17
      : ∀ (A : Type) (B : ∥A∥ → Type),
        (∀ x : ∥A∥, isProp (B x)) → (∀ a : A, B ╎a╎) → ∀ x : ∥A∥, B x *)
-set (B := λ _ : ∥A∥, isSet (x = y)).
+(* PT_rec
+     : ∀ (A B : Type) (f : A → B),
+       isProp B → {g : ∥A∥ → B & ∀ a : A, g ╎a╎ = f a} *)
+
+ assert (u : ∀ z, isSet (a = z)).
+  intros z.
+
+ assert (u : ∀ a : isSet (a = y), isSet (x = y)).
+  intros a₀.
+
+set (A₀ := isSet (a = x)).
+set (B₀ := λ p : ∥A₀∥, isSet (x = y)).
+assert (f : ∀ p : ∥A₀∥, isProp (B₀ p)).
+ intros p; subst A₀ B₀; apply hott_3_3_5_ii.
+
+ assert (u : ∀ a : A₀, B₀ (PT_intro a)).
+  intros a₀; subst A₀ B₀; simpl.
+
+  Focus 2.
+  pose proof (@ex_3_17 A₀ B₀ f u) as v.
+  subst A₀ B₀; simpl in u, v.
+
+  apply v, PT_intro.
+
+
 assert (f : ∀ x : ∥A∥, isProp (B x)).
  intros z; subst B; apply hott_3_3_5_ii.
 
