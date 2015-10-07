@@ -175,6 +175,16 @@ Definition hott_4_1_2 A (a : A) (q : a = a) :
 Proof.
 intros Sa g Pc.
 assert (Se : ∀ x y : A, isSet (x = y)).
+ assert (gz : ∀ z (p : a = z), g z = ╎p╎) by (intros z p; apply PT_eq).
+ assert (xya : ∀ x y : A, (x = y) ≃ (a = a)).
+  intros x y.
+  exists (λ _ , eq_refl _); apply qinv_isequiv.
+  assert (gggg : (a = a) → (x = y)).
+   intros p.
+
+bbb.
+intros Sa g Pc.
+assert (Se : ∀ x y : A, isSet (x = y)).
  intros x y.
  assert (r : ∀ z, isSet ∥(a = z)∥) by (intros z; apply isProp_isSet, PT_eq).
  assert (f : ∀ z (p : ∥(a = z)∥), isProp (g z = p)).
