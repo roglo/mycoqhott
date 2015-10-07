@@ -177,6 +177,16 @@ intros Sa g Pc.
 assert (gz : ∀ z (p : a = z), g z = ╎p╎) by (intros z p; apply PT_eq).
 assert (Se : ∀ x y : A, isSet (x = y)).
  intros x y.
+ assert (p : a = x).
+Check (gz x).
+Check (λ p, g x = PT_intro p).
+bbb.
+
+Check ((gz x)⁻¹ • (gz y)).
+ set (u := λ p, h p • (h' p)⁻¹).
+ assert (x = y).
+
+
  admit. (* j'y arrive pas, même avec leurs explications *)
 
  set (B (x : A) := Σ (r : x = x), Π (s : a = x), (r = s⁻¹ • q • s)).
@@ -187,7 +197,11 @@ assert (Se : ∀ x y : A, isSet (x = y)).
 
    intros x (r, h) (r', h'); simpl.
    assert (r = r').
-    set (u := λ p, h p • (h' p)⁻¹); apply u.
+    set (u := λ p, h p • (h' p)⁻¹); apply u; clear u.
+(* @ex_3_17
+     : ∀ (A : Type) (B : ∥A∥ → Type),
+       (∀ x : ∥A∥, isProp (B x)) → (∀ a : A, B ╎a╎) → ∀ x : ∥A∥, B x *)
+Check (@ex_3_17 ∥A∥ B).
 bbb.
 
   intros (r, p₀) (t, q₀).
@@ -201,9 +215,6 @@ bbb.
 
 (* hott_3_3_5_ii
      : ∀ A : Type, isProp (isSet A) *)
-(* @ex_3_17
-     : ∀ (A : Type) (B : ∥A∥ → Type),
-       (∀ x : ∥A∥, isProp (B x)) → (∀ a : A, B ╎a╎) → ∀ x : ∥A∥, B x *)
 (* PT_rec
      : ∀ (A B : Type) (f : A → B),
        isProp B → {g : ∥A∥ → B & ∀ a : A, g ╎a╎ = f a} *)
