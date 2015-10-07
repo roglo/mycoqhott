@@ -177,15 +177,30 @@ intros Sa g Pc.
 assert (gz : ∀ z (p : a = z), g z = ╎p╎) by (intros z p; apply PT_eq).
 assert (Se : ∀ x y : A, isSet (x = y)).
  intros x y.
- assert (p : a = x).
-Check (gz x).
-Check (λ p, g x = PT_intro p).
+ assert (p : (x = y) ≃ (a = a)).
+  exists (λ _, eq_refl _); apply qinv_isequiv.
+  assert (gggg : (a = a) → (x = y)).
+   intros r.
+   eapply compose.
+    eapply compose; [ eapply invert | apply r ].
+    pose proof gz x.
 bbb.
 
-Check ((gz x)⁻¹ • (gz y)).
- set (u := λ p, h p • (h' p)⁻¹).
- assert (x = y).
+   set (u := λ (p : a = x) (q : a = y), p⁻¹ • q); simpl in u.
+   apply u.
 
+bbb.
+   set (u := λ p, h p • (h' p)⁻¹); apply u; clear u.
+
+ assert (Ps : ∀ y, isProp (isSet (a = y))) by (intros; apply hott_3_3_5_ii).
+ assert (f : ∀ y, a = y → isSet (a = y)) by (intros z h; subst z; apply Sa).
+ pose proof (PT_rec (a = y) (isSet (a = y)) (f y) (Ps y)) as u.
+ pose proof (PT_rec (a = x) (isSet (a = x)) (f x) (Ps x)) as v.
+ destruct u as (h, u).
+ destruct v as (i, v).
+ pose proof (h (g y)) as uu.
+ pose proof (i (g x)) as vv.
+bbb.
 
  admit. (* j'y arrive pas, même avec leurs explications *)
 

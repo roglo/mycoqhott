@@ -1957,7 +1957,7 @@ End ex_3_16.
     B(x) is a mere proposition, if for every a:A we have B(|a|), then
     for every x:∥A∥ we have B(x)." *)
 
-Definition ex_3_17 {A B} : (Π (x : ∥A∥), isProp (B x))
+Definition ex_3_17 A B : (Π (x : ∥A∥), isProp (B x))
   → (Π (a : A), B (PT_intro a)) → (Π (x : ∥A∥), B x).
 Proof.
 intros PB BA x.
