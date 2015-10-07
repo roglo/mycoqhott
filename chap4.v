@@ -177,6 +177,11 @@ intros Sa g Pc.
 assert (gz : ∀ z (p : a = z), g z = ╎p╎) by (intros z p; apply PT_eq).
 assert (Se : ∀ x y : A, isSet (x = y)).
  intros x y.
+ assert (Ps : isProp (isSet (x = y))) by (intros; apply hott_3_3_5_ii).
+
+(*
+Check ex_3_17.
+set (B (x y : A) := isSet (x = y) : Type).
 
 Check (λ (p : a = x), gz x p).
 (* λ p : a = x, gz x p
@@ -198,7 +203,6 @@ Check (λ (p : a = x) (q : a = y), (p, q⁻¹)).
    eapply compose.
     eapply compose; [ eapply invert | apply r ].
     pose proof gz x.
-bbb.
 
    set (u := λ (p : a = x) (q : a = y), p⁻¹ • q); simpl in u.
    apply u.
@@ -215,10 +219,12 @@ bbb.
  pose proof (h (g y)) as uu.
  pose proof (i (g x)) as vv.
 bbb.
+*)
 
  admit. (* j'y arrive pas, même avec leurs explications *)
 
- set (B (x : A) := Σ (r : x = x), Π (s : a = x), (r = s⁻¹ • q • s)).
+ set (B (x : A) := Σ (r : x = x), Π (s : a = x), (r = s⁻¹ • q • s) : Type).
+ simpl in B.
  assert (u : ∀ x, isProp (B x)).
   assert (v : isProp (∀ x, isProp (B x))).
    apply ex_3_6_2; intros x.
@@ -226,7 +232,18 @@ bbb.
 
    intros x (r, h) (r', h'); simpl.
    assert (r = r').
-    set (u := λ p, h p • (h' p)⁻¹); apply u; clear u.
+    set (u := λ p, h p • (h' p)⁻¹); apply u.
+bbb.
+
+set (B₀ := ∀ x, isProp (B x)) in v.
+Check (PT_rec A B₀).
+assert (f : A → B₀).
+ intros x₀; subst B₀; intros y₀.
+(*
+  ============================
+   isProp (B y₀)
+*)
+
 (* @ex_3_17
      : ∀ (A : Type) (B : ∥A∥ → Type),
        (∀ x : ∥A∥, isProp (B x)) → (∀ a : A, B ╎a╎) → ∀ x : ∥A∥, B x *)
