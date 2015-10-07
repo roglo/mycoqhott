@@ -177,6 +177,20 @@ intros Sa g Pc.
 assert (gz : ∀ z (p : a = z), g z = ╎p╎) by (intros z p; apply PT_eq).
 assert (Se : ∀ x y : A, isSet (x = y)).
  intros x y.
+
+Check (λ (p : a = x), gz x p).
+(* λ p : a = x, gz x p
+     : ∀ p : a = x, g x = ╎p╎ *)
+Check (λ (q : a = y), gz y q).
+(* λ q : a = y, gz y q
+     : ∀ q : a = y, g y = ╎q╎ *)
+Check (λ (p : a = x) (q : a = y), p⁻¹ • q).
+(* λ (p : a = x) (q : a = y), p⁻¹ • q
+     : a = x → a = y → x = y *)
+Check (λ (p : a = x) (q : a = y), (p, q⁻¹)).
+(* λ (p : a = x) (q : a = y), (p, q⁻¹)
+     : a = x → a = y → (a = x) * (y = a) *)
+
  assert (p : (x = y) ≃ (a = a)).
   exists (λ _, eq_refl _); apply qinv_isequiv.
   assert (gggg : (a = a) → (x = y)).
