@@ -178,6 +178,21 @@ assert (gx : ∀ x (p : a = x), g x = ╎p╎) by (intros; apply PT_eq).
 assert (Sx : ∀ y, a = y → isSet (a = y)) by (intros; destruct H; apply Sa).
 assert (Se : ∀ x y : A, isSet (x = y)).
  intros x y.
+
+(* pour voir si... *)
+assert ∥(x = y)∥.
+ assert (∥((x = a) * (a = y))∥).
+SearchAbout (∥(_ * _)∥).
+(* it is the same problem that blocked me in exercise 3.22 (the last one
+   of chapter 3), how to prove that e.g. ∥A * B∥ ≃ ∥A∥ * ∥B∥; perhaps it
+   is not even true, but in that case, I am blocked *)
+bbb.
+
+ intros r s.
+ intros u v.
+bbb.
+
+ intros x y.
  assert (Ps : isProp (isSet (x = y))) by (intros; apply hott_3_3_5_ii).
  assert (Pa : isProp (isSet (a = a))) by (intros; apply hott_3_3_5_ii).
 (* ex_3_17
