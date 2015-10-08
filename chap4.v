@@ -175,10 +175,10 @@ Definition hott_4_1_2 A (a : A) (q : a = a) :
 Proof.
 intros Sa g Pc.
 assert (gz : ∀ z (p : a = z), g z = ╎p╎) by (intros z p; apply PT_eq).
+assert (f : ∀ y, a = y → isSet (a = y)) by (intros z h; destruct h; apply Sa).
 assert (Se : ∀ x y : A, isSet (x = y)).
  intros x y.
  assert (Ps : isProp (isSet (x = y))) by (intros; apply hott_3_3_5_ii).
-
 (*
 Check ex_3_17.
 set (B (x y : A) := isSet (x = y) : Type).
@@ -205,12 +205,8 @@ Check (λ (p : a = x) (q : a = y), (p, q⁻¹)).
     pose proof gz x.
 
    set (u := λ (p : a = x) (q : a = y), p⁻¹ • q); simpl in u.
-   apply u.
-
-bbb.
    set (u := λ p, h p • (h' p)⁻¹); apply u; clear u.
 
- assert (Ps : ∀ y, isProp (isSet (a = y))) by (intros; apply hott_3_3_5_ii).
  assert (f : ∀ y, a = y → isSet (a = y)) by (intros z h; subst z; apply Sa).
  pose proof (PT_rec (a = y) (isSet (a = y)) (f y) (Ps y)) as u.
  pose proof (PT_rec (a = x) (isSet (a = x)) (f x) (Ps x)) as v.
@@ -233,6 +229,7 @@ bbb.
    intros x (r, h) (r', h'); simpl.
    assert (r = r').
     set (u := λ p, h p • (h' p)⁻¹); apply u.
+
 bbb.
 
 set (B₀ := ∀ x, isProp (B x)) in v.
