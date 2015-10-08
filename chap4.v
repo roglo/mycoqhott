@@ -174,8 +174,8 @@ Definition hott_4_1_2 A (a : A) (q : a = a) :
   → Σ (f : Π (x : A), (x = x)), f a = q.
 Proof.
 intros Sa g Pc.
-assert (gz : ∀ z (p : a = z), g z = ╎p╎) by (intros z p; apply PT_eq).
-assert (f : ∀ y, a = y → isSet (a = y)) by (intros z h; destruct h; apply Sa).
+assert (gx : ∀ x (p : a = x), g x = ╎p╎) by (intros; apply PT_eq).
+assert (Sx : ∀ y, a = y → isSet (a = y)) by (intros; destruct H; apply Sa).
 assert (Se : ∀ x y : A, isSet (x = y)).
  intros x y.
  assert (Ps : isProp (isSet (x = y))) by (intros; apply hott_3_3_5_ii).
