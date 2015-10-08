@@ -179,8 +179,22 @@ assert (Sx : ∀ y, a = y → isSet (a = y)) by (intros; destruct H; apply Sa).
 assert (Se : ∀ x y : A, isSet (x = y)).
  intros x y.
  assert (Ps : isProp (isSet (x = y))) by (intros; apply hott_3_3_5_ii).
+ assert (Pa : isProp (isSet (a = a))) by (intros; apply hott_3_3_5_ii).
+(* ex_3_17
+     : ∀ (A : Type) (B : ∥A∥ → Type),
+       (∀ x : ∥A∥, isProp (B x)) → (∀ a : A, B ╎a╎) → ∀ x : ∥A∥, B x *)
+
+eapply ex_3_17.
+bbb.
+
+Check (ex_3_17 A (λ _, isSet (x = y)) (λ _, Ps)).
+Check (isSet ∥(a = x)∥).
+
+bbb.
+
+ assert (p : a = x).
+
 (*
-Check ex_3_17.
 set (B (x y : A) := isSet (x = y) : Type).
 
 Check (λ (p : a = x), gz x p).
@@ -229,39 +243,19 @@ bbb.
 
    (* "... we may again apply induction on truncation and assume that
        g(x) = |p| for some p : a = x." *)
-   (* and my problem starts there... *)
-   (* do they mean "recursion" instead of "induction"? in this case,
-      the definition of the recursion principle of truncation (PT_rec)
-      should be defined on dependent functions (Π (x : A), B x), not
-      only on normal functions (A → B). What do I do? Do I have to
-      change my definition, contradicting §3.7? Moreover, there would
-      be two errors in hott book: one on §3.7 and one on the term
-      "induction" used instead of "truncation" *)
-   (* if they indeed mean "induction", it is supposed to be exercise
-      3.17, but I don't know how to define B such that we can conclude
-      that g(x) = |p| for some p : a = x; which p? With gx, we already
-      have g(x) = |p| which did not use 3.17! (nor PT_rec) *)
-
-Axiom PT_rec' : ∀ A B (f : ∀ x : A, B ╎x╎), (∀ x : A, isProp (B ╎x╎)) →
-  Σ (g : ∀ x : ∥A∥, B x), ∀ a, g ╎a╎ = f a.
-Check PT_rec'.
-(* PT_rec'
-     : ∀ (A : Type) (B : ∥A∥ → Type) (f : ∀ x : A, B ╎x╎),
-       (∀ x : A, isProp (B ╎x╎))
-       → {g : ∀ x : ∥A∥, B x & ∀ a : A, g ╎a╎ = f a} *)
-(* does it make sense? *)
-bbb.
-
 intros x.
 Check (g x).
 Check ex_3_17.
 (* ex_3_17
      : ∀ (A : Type) (B : ∥A∥ → Type),
        (∀ x : ∥A∥, isProp (B x)) → (∀ a : A, B ╎a╎) → ∀ x : ∥A∥, B x *)
-Check PT_rec.
-(* PT_rec
-     : ∀ (A B : Type) (f : A → B),
-       isProp B → {g : ∥A∥ → B & ∀ a : A, g ╎a╎ = f a} *)
+bbb.
+
+Check (ex_3_17 (a = x)). (λ p : ∥(a = x)∥,
+
+B₀ (x₀ : ∥A₀∥) ≡ (a = x)
+
+bbb.
 set (A₀ := A).
 set (B₀ := ∥(a = x)∥).
 set (f₀ := g).
