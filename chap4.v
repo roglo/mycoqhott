@@ -213,12 +213,16 @@ assert (Se : ∀ x y : A, isSet (x = y)).
  subst Sxa; simpl in ax, ay.
 bbb.
 
- assert (axy : isSet ((a = x) * (a = y))) by (apply ex_3_1_5; assumption).
-Check ex_3_1.
  assert ((x = y) ≃ (a = a)).
   exists (λ _, eq_refl _).
   apply qinv_isequiv.
   assert ((a = a) → (x = y)).
+   intros r.
+
+bbb.
+
+ assert (axy : isSet ((a = x) * (a = y))) by (apply ex_3_1_5; assumption).
+Check ex_3_1.
 bbb.
 
  apply ex_3_1 with (B := ((a = x) * (x = y))%type) in axy.
