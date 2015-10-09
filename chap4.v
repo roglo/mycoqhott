@@ -205,6 +205,27 @@ assert (gx : ∀ x (p : a = x), g x = ╎p╎) by (intros; apply PT_eq).
 assert (Sx : ∀ y, a = y → isSet (a = y)) by (intros; destruct H; apply Sa).
 assert (Se : ∀ x y : A, isSet (x = y)).
  intros x y.
+ assert (Ps : ∀ x, isProp (isSet (a = x))) by (intros; apply hott_3_3_5_ii).
+ assert (s : ∀ x, a = x → isSet (a = x)) by (intros z p; apply Sx, p).
+ set (Sxa x (_ : ∥(a = x)∥) := isSet (a = x)).
+ pose proof (ex_3_17 (a = x) (Sxa x) (λ _, Ps x) (s x) (g x)) as ax.
+ pose proof (ex_3_17 (a = y) (Sxa y) (λ _, Ps y) (s y) (g y)) as ay.
+ subst Sxa; simpl in ax, ay.
+
+ SearchAbout (isSet _ → isSet _).
+bbb.
+
+Check (λ x y, ex_3_17 (x = y) (λ u, isSet ∥(x = y)∥) (λ _, (Ps' x y)) (s x y)).
+SearchAbout (isSet ∥_∥).
+bbb.
+
+Check ex_3_17.
+   eapply compose.
+    eapply compose; [ eapply invert | apply p ].
+    pose proof gx x.
+bbb.
+
+   transitivity a.
 
  assert (xy : ∥(x = y)∥).
   assert (p : ∥((x = a) * (a = y))∥).
@@ -212,18 +233,19 @@ assert (Se : ∀ x y : A, isSet (x = y)).
 
    eapply PT_imp; [ | apply p ].
    intros (u, v); etransitivity; [ apply u | apply v ].
-bbb.
 
- intros r s.
- intros u v.
-bbb.
+   assert (Ps : isProp (isSet (x = y))) by (intros; apply hott_3_3_5_ii).
+   assert (Pa : isProp (isSet (a = a))) by (intros; apply hott_3_3_5_ii).
 
- intros x y.
- assert (Ps : isProp (isSet (x = y))) by (intros; apply hott_3_3_5_ii).
- assert (Pa : isProp (isSet (a = a))) by (intros; apply hott_3_3_5_ii).
 (* ex_3_17
      : ∀ (A : Type) (B : ∥A∥ → Type),
        (∀ x : ∥A∥, isProp (B x)) → (∀ a : A, B ╎a╎) → ∀ x : ∥A∥, B x *)
+
+Check ex_3_17.
+bbb.
+
+B ≡ λ _, isSet (x = y).
+Check (ex_3_17 A (λ _, isSet (x = y)) (λ _, Ps)).
 
 eapply ex_3_17.
 bbb.
