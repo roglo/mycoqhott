@@ -2323,6 +2323,20 @@ assert (f : A₀ → B₀).
  apply PT_and_intro; apply T.
 Defined.
 
+Definition lt_succ_l_lt m n (p : S n < m) : n < m.
+Proof.
+apply Nat.lt_succ_l, p.
+Defined.
+
+Fixpoint Fin_and m n (p : n < m) (A : Fin m → Type) (P : ∀ x, A x → Type) :=
+  match n return n < m → Type with
+  | O => λ _, True
+  | S n' =>
+      let x := elem m n p in
+      λ q,
+      (Fin_and m n' (lt_succ_l_lt m n' q) A P * (Σ (a : A x), P x a))%type
+  end p.
+
 Definition ex_3_22 n : ACX (Fin n).
 Proof.
 intros A P SX SA PP T.
@@ -2363,9 +2377,21 @@ induction n; intros.
     | elem _ i ilt => T (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
     end).
  pose proof (IHn An Pn (isSet_Fin n) SAn PPn Tn) as p.
+set (A₀ := Fin_and (S n) n (Nat.lt_succ_diag_r n) A P).
+assert (Fin (S n) ≃ A₀).
+ assert (Fin (S n) → A₀).
+  subst A₀; clear; intros x.
+  induction n; [ constructor | ].
+bbb.
  destruct n.
   apply ex_3_22_Fin_1; assumption.
 
   destruct n.
    apply ex_3_22_Fin_2; assumption.
+
+bbb.
+set (x₀ := elem 2 0 Nat.lt_0_2).
+set (x₁ := elem 2 1 Nat.lt_1_2).
+set (A₀ := ((Σ (a₀ : A x₀), P x₀ a₀) * (Σ (a₁ : A x₁), P x₁ a₁))%type).
+set (B₀ := ∥(Σ (g : ∀ x : Fin 2, A x), ∀ x : Fin 2, P x (g x))∥).
 bbb.
