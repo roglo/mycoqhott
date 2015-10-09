@@ -201,7 +201,6 @@ Definition hott_4_1_2 A (a : A) (q : a = a) :
   → Σ (f : Π (x : A), (x = x)), f a = q.
 Proof.
 intros Sa g Pc.
-assert (gx : ∀ x (p : a = x), g x = ╎p╎) by (intros; apply PT_eq).
 assert (Sx : ∀ y, a = y → isSet (a = y)) by (intros; destruct H; apply Sa).
 assert (Se : ∀ x y : A, isSet (x = y)).
  intros x y.
@@ -212,6 +211,17 @@ assert (Se : ∀ x y : A, isSet (x = y)).
  pose proof (ex_3_17 (a = y) (Sxa y) (λ _, Ps y) (s y) (g y)) as ay.
  subst Sxa; simpl in ax, ay.
  assert (axy : isSet ((a = x) * (a = y))) by (apply ex_3_1_5; assumption).
+ assert (gx : ∀ x (p : a = x), g x = ╎p╎) by (intros; apply PT_eq).
+Check (Σ (p : a = x), g x = ╎p╎ : Type).
+(* ex_3_17
+     : ∀ (A : Type) (B : ∥A∥ → Type),
+       (∀ x : ∥A∥, isProp (B x)) → (∀ a : A, B ╎a╎) → ∀ x : ∥A∥, B x *)
+bbb.
+
+Check (ex_3_17 A (λ _, Σ (p : a = x), g x = ╎p╎)).
+assert (f : ∥A∥ → isProp {p : a = x & g x = ╎p╎}).
+ intros u.
+
 bbb.
 
  assert ((x = y) ≃ (a = a)).
