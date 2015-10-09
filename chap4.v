@@ -179,13 +179,9 @@ assert (Sx : ∀ y, a = y → isSet (a = y)) by (intros; destruct H; apply Sa).
 assert (Se : ∀ x y : A, isSet (x = y)).
  intros x y.
 
-(* pour voir si... *)
 assert ∥(x = y)∥.
  assert (∥((x = a) * (a = y))∥).
 SearchAbout (∥(_ * _)∥).
-(* it is the same problem that blocked me in exercise 3.22 (the last one
-   of chapter 3), how to prove that e.g. ∥A * B∥ ≃ ∥A∥ * ∥B∥; perhaps it
-   is not even true, but in that case, I am blocked *)
 bbb.
 
  intros r s.

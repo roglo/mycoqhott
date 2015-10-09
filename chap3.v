@@ -2442,42 +2442,53 @@ bbb.
 bbb.
 *)
 
-(* not seem provable...
 Definition PT_and_elim A B : ∥(A * B)∥ → ∥A∥ * ∥B∥.
 Proof.
-intros ab.
-set (A₀ := (A * B)%type).
-set (B₀ := (∥A∥ * ∥B∥)%type).
-assert (f : A₀ → B₀).
- intros (a₀, b₀); subst A₀ B₀.
- split; apply PT_intro; assumption.
+intros p.
+split.
+ set (q := PT_rec (A * B) ∥A∥ (λ p, PT_intro (fst p)) (PT_eq _)).
+ destruct q as (g, q); apply g, p.
 
- assert (PB : isProp B₀) by (apply ex_3_6_1; apply PT_eq).
- pose proof (PT_rec A₀ B₀ f PB) as p.
- destruct p as (g, p).
- subst A₀ B₀.
- apply g.
-bbb.
+ set (q := PT_rec (A * B) ∥B∥ (λ p, PT_intro (snd p)) (PT_eq _)).
+ destruct q as (g, q); apply g, p.
+Defined.
 
-Definition PT_and A B : ∥A∥ → ∥B∥ → ∥(A * B)∥.
+Definition PT_and_intro A B : ∥A∥ → ∥B∥ → ∥(A * B)∥.
 Proof.
-intros a b.
-set (A₀ := (A * B)%type).
-set (B₀ := (∥A∥ * ∥B∥)%type).
-assert (f : A₀ → B₀).
- intros (a₀, b₀); subst A₀ B₀.
- split; apply PT_intro; assumption.
+intros x y.
+assert (f : A → ∥(A * B)∥).
+ intros a.
+ assert (f : B → ∥(A * B)∥) by (intros b; apply PT_intro; split; assumption).
+ set (r := PT_rec B ∥(A * B)∥ f (PT_eq _)).
+ destruct r as (g, r); apply g, y.
 
- assert (PB : isProp B₀) by (apply ex_3_6_1; apply PT_eq).
- pose proof (PT_rec A₀ B₀ f PB) as p.
- destruct p as (g, p).
- subst A₀ B₀.
-bbb.
-*)
+ set (r := PT_rec A ∥(A * B)∥ f (PT_eq _)).
+ destruct r as (g, r); apply g, x.
+Defined.
+
+Definition PT_and_equiv A B : ∥(A * B)∥ ≃ ∥A∥ * ∥B∥.
+Proof.
+apply hott_3_3_3.
+ apply PT_eq.
+
+ apply ex_3_6_1; apply PT_eq.
+
+ apply PT_and_elim.
+
+ intros (x, y).
+ apply PT_and_intro; assumption.
+Defined.
 
 Definition ex_3_22_Fin_2 : ACX (Fin 2).
 Proof.
 intros A P SX SA PP T.
+Abort.
+
+(* actually, could be done now since I managed to prove PT_and_elim,
+   PT_and_intro, PT_and_equiv; I was blocked on them some time ago
+   so I gave up all these experiments (AC only with 2 types). But
+   when I wrote these lines, I was on things on chapter 4...
+
 set (x₀ := elem 2 0 Nat.lt_0_2).
 set (x₁ := elem 2 1 Nat.lt_1_2).
 pose proof (T x₀) as tx₀.
@@ -2499,7 +2510,6 @@ assert (g : ∀ x : Fin 2, A x).
     pose proof (g tx₀) as r.
     assert (x₀ = x) by (subst x₀ x; apply eq_refl); subst x; clear H.
 
-Abort. (* given up; I should try again later
 SearchAbout (∥(_ + _)∥).
 bbb.
 intros A P SX SA PP T.
