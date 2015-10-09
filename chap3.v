@@ -2381,7 +2381,19 @@ set (A₀ := Fin_and (S n) n (Nat.lt_succ_diag_r n) A P).
 assert (Fin (S n) ≃ A₀).
  assert (Fin (S n) → A₀).
   subst A₀; clear; intros x.
+
+Definition toto m n (p : n < m) A P : Fin_and m n p A P.
+bbb.
+
+bbb.
+
   induction n; [ constructor | ].
+  rename n into m.
+  simpl; split.
+   destruct x as (n, nlt).
+   destruct (eq_nat_dec n (S m)) as [H₁| H₁].
+    subst n.
+
 bbb.
  destruct n.
   apply ex_3_22_Fin_1; assumption.
