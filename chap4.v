@@ -170,18 +170,29 @@ Defined.
 Definition PT_eq_sym A (a b : A) : ∥(a = b)∥ → ∥(b = a)∥.
 Proof.
 intros p.
-set (q := PT_rec (a = b) ∥(b = a)∥ (λ p, PT_intro (eq_sym p)) (PT_eq _)).
-destruct q as (g, q); apply g, p.
+apply (PT_rec (a = b) ∥(b = a)∥ (λ p, PT_intro (eq_sym p)) (PT_eq _)), p.
+Defined.
+
+Definition PT_imp A B : (A → B) → (∥A∥ → ∥B∥).
+Proof.
+intros p x.
+apply (PT_rec A ∥B∥ (λ a, ╎(p a)╎) (PT_eq _)), x.
+Defined.
+
+Definition PT_equiv_imp A B : (A ≃ B) → ∥A∥ → ∥B∥.
+Proof.
+intros p x.
+apply (PT_rec A ∥B∥ (λ a, ╎(Σ_pr₁ p a)╎) (PT_eq _)), x.
 Defined.
 
 Definition PT_equiv A B : (A ≃ B) → (∥A∥ ≃ ∥B∥).
 Proof.
 intros p.
 apply hott_3_3_3; [ apply PT_eq | apply PT_eq | | ].
- intros x.
-Check (PT_rec A ∥B∥ (λ a, PT_intro (Σ_pr₁ p a))).
-bbb.
+ apply PT_equiv_imp, p.
 
+ apply PT_equiv_imp, quasi_inv, p.
+Defined.
 
 Definition hott_4_1_2 A (a : A) (q : a = a) :
   isSet (a = a)
@@ -195,11 +206,12 @@ assert (Sx : ∀ y, a = y → isSet (a = y)) by (intros; destruct H; apply Sa).
 assert (Se : ∀ x y : A, isSet (x = y)).
  intros x y.
 
-assert ∥(x = y)∥.
- assert (p : ∥((x = a) * (a = y))∥).
-  apply PT_and_intro; [ apply PT_eq_sym, g | apply g ].
+ assert (xy : ∥(x = y)∥).
+  assert (p : ∥((x = a) * (a = y))∥).
+   apply PT_and_intro; [ apply PT_eq_sym, g | apply g ].
 
-SearchAbout (∥_∥ ≃ ∥_∥).
+   eapply PT_imp; [ | apply p ].
+   intros (u, v); etransitivity; [ apply u | apply v ].
 bbb.
 
  intros r s.
