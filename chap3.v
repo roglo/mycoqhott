@@ -1274,7 +1274,7 @@ End Contr.
 Section ex_3_1.
 Import Σ_type.
 
-Definition ex_3_1_tac {A B} : A ≃ B → isSet A → isSet B.
+Definition ex_3_1_tac A B : A ≃ B → isSet A → isSet B.
 Proof.
 intros AB SA x y p q.
 destruct AB as (f, ((g, fg), _)).
@@ -1291,7 +1291,7 @@ assert (r : ∀ p, ap id p = transport (λ u, u x = u y) fg (ap (f ◦ g) p)).
  apply ap, SA.
 Defined.
 
-Definition ex_3_1 {A B} : A ≃ B → isSet A → isSet B
+Definition ex_3_1 A B : A ≃ B → isSet A → isSet B
 :=
   λ (AB : A ≃ B) (SA : isSet A) (x y : B) (p q : x = y),
   match AB with
