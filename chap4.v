@@ -211,6 +211,7 @@ assert (Se : ∀ x y : A, isSet (x = y)).
  pose proof (ex_3_17 (a = x) (Sxa x) (λ _, Ps x) (s x) (g x)) as ax.
  pose proof (ex_3_17 (a = y) (Sxa y) (λ _, Ps y) (s y) (g y)) as ay.
  subst Sxa; simpl in ax, ay.
+ assert (axy : isSet ((a = x) * (a = y))) by (apply ex_3_1_5; assumption).
 bbb.
 
  assert ((x = y) ≃ (a = a)).
@@ -221,7 +222,6 @@ bbb.
 
 bbb.
 
- assert (axy : isSet ((a = x) * (a = y))) by (apply ex_3_1_5; assumption).
 Check ex_3_1.
 bbb.
 
