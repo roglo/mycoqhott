@@ -167,6 +167,22 @@ Defined.
 
     Then there exists f:Π(x:A)(x=x) with f(a) = q." *)
 
+Definition PT_eq_sym A (a b : A) : ∥(a = b)∥ → ∥(b = a)∥.
+Proof.
+intros p.
+set (q := PT_rec (a = b) ∥(b = a)∥ (λ p, PT_intro (eq_sym p)) (PT_eq _)).
+destruct q as (g, q); apply g, p.
+Defined.
+
+Definition PT_equiv A B : (A ≃ B) → (∥A∥ ≃ ∥B∥).
+Proof.
+intros p.
+apply hott_3_3_3; [ apply PT_eq | apply PT_eq | | ].
+ intros x.
+Check (PT_rec A ∥B∥ (λ a, PT_intro (Σ_pr₁ p a))).
+bbb.
+
+
 Definition hott_4_1_2 A (a : A) (q : a = a) :
   isSet (a = a)
   → (∀ x : A, ∥(a = x)∥)
@@ -180,8 +196,10 @@ assert (Se : ∀ x y : A, isSet (x = y)).
  intros x y.
 
 assert ∥(x = y)∥.
- assert (∥((x = a) * (a = y))∥).
-SearchAbout (∥(_ * _)∥).
+ assert (p : ∥((x = a) * (a = y))∥).
+  apply PT_and_intro; [ apply PT_eq_sym, g | apply g ].
+
+SearchAbout (∥_∥ ≃ ∥_∥).
 bbb.
 
  intros r s.
