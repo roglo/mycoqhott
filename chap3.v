@@ -2482,7 +2482,39 @@ Defined.
 Definition ex_3_22_Fin_2 : ACX (Fin 2).
 Proof.
 intros A P SX SA PP T.
-Abort.
+bbb.
+
+set (x₀ := elem 2 0 Nat.lt_0_2).
+set (x₁ := elem 2 1 Nat.lt_1_2).
+set (A₀ := ((Σ (a₀ : A x₀), P x₀ a₀) * (Σ (a₁ : A x₁), P x₁ a₁))%type).
+set (B₀ := ∥(Σ (g : ∀ x : Fin 2, A x), ∀ x : Fin 2, P x (g x))∥).
+assert (f : A₀ → B₀).
+ intros ((a₀, p₀), (a₁, p₁)); subst A₀ B₀; apply PT_intro.
+ set
+   (g (x : Fin 2) :=
+    match Fin_2_dec x with
+    | left p =>
+        match p in (_ = y) return A y → A x with eq_refl _ => id end a₀
+    | right p =>
+        match p in (_ = y) return A y → A x with eq_refl _ => id end a₁
+    end : A x).
+ simpl in g.
+ exists g; intros (i, ilt).
+ subst g; simpl.
+ destruct i.
+  destruct (ap (elem 2 0) (le_unique 1 2 ilt Nat.lt_0_2)); apply p₀.
+
+  destruct i.
+   destruct (ap (elem 2 1) (le_unique 2 2 ilt Nat.lt_1_2)); apply p₁.
+
+   exfalso; do 2 apply my_le_S_n in ilt; revert ilt; apply my_nle_succ_0.
+
+ pose proof (PT_rec A₀ B₀ f (PT_eq _)) as p.
+ destruct p as (g, p).
+ apply g; subst A₀ B₀.
+ apply PT_and_intro.
+Inspect 5.
+bbb.
 
 (* actually, could be done now since I managed to prove PT_and_elim,
    PT_and_intro, PT_and_equiv; I was blocked on them some time ago
