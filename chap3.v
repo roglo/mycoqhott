@@ -2132,105 +2132,6 @@ Defined.
     (3.8.1) holds when X is a finite type Fin(n) (as defined in
     Exercise 1.9)." *)
 
-(*
-Definition ex_3_22_AC_3_8_3 n :
-  ∀ (X := Fin n) (Y : X → Type),
-  isSet X
-  → (Π (x : X), isSet (Y x))
-  → (Π (x : X), ∥(Y x)∥)
-  → ∥(Π (x : X), Y x)∥.
-Proof.
-intros X Y SX SY T; subst X.
-clear SX.
-induction n.
- apply PT_intro; intros x.
- destruct x as (i, ilt); exfalso.
- apply Nat.nlt_0_r in ilt; destruct ilt.
-
- set
-   (Yn (x : Fin n) :=
-    match x with
-    | elem _ i ilt => Y (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
-    end).
- set
-   (SYn (x : Fin n) :=
-    match x return (isSet (Yn x)) with
-    | elem _ i ilt => SY (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
-    end).
- set
-   (Tn (x : Fin n) :=
-    match x return ∥(Yn x)∥ with
-    | elem _ i ilt => T (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
-    end).
- pose proof (IHn Yn SYn Tn) as H.
- subst SYn Tn; simpl in H.
-set (A₁ := (∀ x : Fin n, Yn x)).
-set (B₁ := ∥(∀ x : Fin (S n), Y x)∥).
-Check (PT_rec A₁ B₁).
-assert (f₁ : A₁ → B₁).
-Focus 2.
-pose proof PT_rec A₁ B₁ f₁ (PT_eq _) as q.
-destruct q as (g, q).
-apply g, H.
- subst A₁ B₁.
- intros p.
- move T after p.
- move H after p.
-(*
-PT_rec
-     : ∀ (A B : Type) (f : A → B),
-       isProp B → {g : ∥A∥ → B & ∀ a : A, g (PT_intro a) = f a}
-*)
-Check @transport.
-Check
-  (@transport
-     (Σ (n : ℕ), Fin n → Type)
-     (λ z, ∥(∀ x : Fin (Σ_type.pr₁ z), Σ_type.pr₂ z x)∥)
-     (existT _ n Yn)
-     (existT _ (S n) Y)).
-(* @transport
-     : ∀ (A : Type) (P : A → Type) (x y : A), x = y → P x → P y
-P x   ≡ ∥∀ x : Fin n, Yn x∥
-P y   ≡ ∥∀ x : Fin (S n), Y x∥
-
-P     ≡ (λ (k, Yk), ∥∀ x : Fin k, Yk x∥)
-P x   ≡ (λ (k, Yk), ∀ x : Fin k, Yk x) (n, Yn)
-P y   ≡ (λ (k, Yk), ∀ x : Fin k, Yk x) (S n, Y)
-
-Σ (n : ℕ), Fin n → Type
-x = y ≡
-*)
-(*
-  T : ∀ x : Fin (S n), ∥(Y x)∥
-  Y : Fin (S n) → Type
-  Yn : Fin n → Type
-  H : ∥(∀ x : Fin n, Yn x)∥
-  ============================
-   ∥(∀ x : Fin (S n), Y x)∥
-*)
-Check
-  (@transport
-     (Σ (n : ℕ), Fin n → Type)
-     (λ z, ∀ x : Fin (Σ_type.pr₁ z), Σ_type.pr₂ z x)
-     (existT _ n Yn)
-     (existT _ (S n) Y)
-     ).
-
-bbb.
-*)
-
-Definition lt_uniq : ∀ a b, isProp (a < b).
-Proof.
-intros a b p q.
-apply le_unique.
-Defined.
-
-Definition my_le_0_r : ∀ a, a ≤ 0 → a = 0.
-Proof.
-intros a ale.
-inversion ale; apply eq_refl.
-Defined.
-
 Definition my_nle_succ_0 : ∀ a, not (S a ≤ 0).
 Proof.
 intros a ale.
@@ -2251,13 +2152,6 @@ Proof.
 intros a alt; unfold lt in alt.
 apply my_le_S_n in alt.
 destruct a; [ apply eq_refl | inversion alt ].
-Defined.
-
-Definition Fin_1_elem : ∀ x : Fin 1, x = elem 1 0 Nat.lt_0_1.
-Proof.
-intros (i, ilt).
-destruct i; [ apply ap, le_unique | ].
-exfalso; apply my_le_S_n in ilt; inversion ilt.
 Defined.
 
 Definition isProp_Fin_1 : isProp (Fin 1).
@@ -2358,90 +2252,6 @@ destruct i; [ right; apply ap, le_unique | ].
 exfalso; apply my_le_S_n, my_le_S_n, my_nle_succ_0 in ilt; apply ilt.
 Defined.
 
-Definition Fin_2_bool : Fin 2 → bool :=
-  λ x : Fin 2,
-  match x with
-  | elem _ i ilt =>
-     match i as n return (n < 2 → bool) with
-     | 0 => λ _ : 0 < 2, false
-     | 1 => λ _ : 1 < 2, true
-     | S (S j) =>
-         λ ilt : S (S j) < 2,
-         match my_nle_succ_0 j (my_le_S_n (S j) 0 (my_le_S_n (S (S j)) 1 ilt))
-         with end
-     end ilt
-   end.
-
-(* mouais, bof, c compliqué
-Definition ex_3_22_bool_equiv : ∀ X, X ≃ bool → ACX X.
-Proof.
-intros X XB A P SX SA PP T.
-set (x₀ := Σ_type.pr₁ (quasi_inv XB) true).
-set (x₁ := Σ_type.pr₁ (quasi_inv XB) false).
-pose proof (T x₀) as tx₀.
-pose proof (T x₁) as tx₁.
-set (A₀ := ((Σ (a₀ : A x₀), P x₀ a₀) * (Σ (a₁ : A x₁), P x₁ a₁))%type).
-set (B₀ := ∥(Σ (g : ∀ x : X, A x), ∀ x : X, P x (g x))∥).
-assert (f : A₀ → B₀).
- intros ((a₀, p₀), (a₁, p₁)); subst A₀ B₀; apply PT_intro.
- assert (gggg : ∀ x : X, A x).
-  intros x.
-  remember (Σ_type.pr₁ XB x) as b; symmetry in Heqb.
-  destruct b.
-   assert (H : x₀ = x); [ | destruct H; apply a₀ ].
-   subst x₀; simpl.
-   destruct Heqb.
-   apply EqStr.quasi_inv_comp_l.
-
-   assert (H : x₁ = x); [ | destruct H; apply a₁ ].
-   subst x₁; simpl.
-   rewrite <- Heqb.
-   apply EqStr.quasi_inv_comp_l.
-Show Proof.
- set
-   (g (x : X) :=
-         (if Σ_type.pr₁ XB x as b0 return (Σ_type.pr₁ XB x = b0 → A x) then
-            λ Heqb : Σ_type.pr₁ XB x = true,
-            match
-              eq_ind (Σ_type.pr₁ XB x) (λ b, Σ_type.pr₁ XB⁻⁻¹ b = x)
-                (EqStr.quasi_inv_comp_l XB x) true Heqb
-            in (_ = y) return (Σ_type.pr₁ XB y = true → A y)
-            with
-            | eq_refl _ => λ _ : Σ_type.pr₁ XB x₀ = true, a₀
-            end Heqb
-          else
-           λ Heqb1 : Σ_type.pr₁ XB x = false,
-           (λ H0 : x₁ = x,
-            match
-              H0 in (_ = y) return (Σ_type.pr₁ XB y = false → A y)
-            with
-            | eq_refl _ => λ _ : Σ_type.pr₁ XB x₁ = false, a₁
-            end Heqb1)
-             (eq_ind (Σ_type.pr₁ XB x)
-                (λ b0 : bool, Σ_type.pr₁ XB⁻⁻¹ b0 = x)
-                (EqStr.quasi_inv_comp_l XB x) false Heqb1))
-      (eq_sym (eq_refl (Σ_type.pr₁ XB x)))).
-simpl in g.
-
-bbb.
- set
-   (g (x : Fin 2) :=
-    match Fin_2_dec x with
-    | left p =>
-        match p in (_ = y) return A y → A x with eq_refl _ => id end a₀
-    | right p =>
-        match p in (_ = y) return A y → A x with eq_refl _ => id end a₁
-    end : A x).
- simpl in g.
- exists g.
- intros (i, ilt).
- destruct i.
-  subst x₀ g. simpl.
-  replace ilt with Nat.lt_0_2 by apply le_unique.
-  eapply transport; [ | apply p₀ ].
-bbb.
-*)
-
 Definition PT_and_elim A B : ∥(A * B)∥ → ∥A∥ * ∥B∥.
 Proof.
 intros p.
@@ -2482,73 +2292,8 @@ Defined.
 Definition ex_3_22_Fin_2 : ACX (Fin 2).
 Proof.
 intros A P SX SA PP T.
-bbb.
-
 set (x₀ := elem 2 0 Nat.lt_0_2).
 set (x₁ := elem 2 1 Nat.lt_1_2).
-set (A₀ := ((Σ (a₀ : A x₀), P x₀ a₀) * (Σ (a₁ : A x₁), P x₁ a₁))%type).
-set (B₀ := ∥(Σ (g : ∀ x : Fin 2, A x), ∀ x : Fin 2, P x (g x))∥).
-assert (f : A₀ → B₀).
- intros ((a₀, p₀), (a₁, p₁)); subst A₀ B₀; apply PT_intro.
- set
-   (g (x : Fin 2) :=
-    match Fin_2_dec x with
-    | left p =>
-        match p in (_ = y) return A y → A x with eq_refl _ => id end a₀
-    | right p =>
-        match p in (_ = y) return A y → A x with eq_refl _ => id end a₁
-    end : A x).
- simpl in g.
- exists g; intros (i, ilt).
- subst g; simpl.
- destruct i.
-  destruct (ap (elem 2 0) (le_unique 1 2 ilt Nat.lt_0_2)); apply p₀.
-
-  destruct i.
-   destruct (ap (elem 2 1) (le_unique 2 2 ilt Nat.lt_1_2)); apply p₁.
-
-   exfalso; do 2 apply my_le_S_n in ilt; revert ilt; apply my_nle_succ_0.
-
- pose proof (PT_rec A₀ B₀ f (PT_eq _)) as p.
- destruct p as (g, p).
- apply g; subst A₀ B₀.
- apply PT_and_intro.
-Inspect 5.
-bbb.
-
-(* actually, could be done now since I managed to prove PT_and_elim,
-   PT_and_intro, PT_and_equiv; I was blocked on them some time ago
-   so I gave up all these experiments (AC only with 2 types). But
-   when I wrote these lines, I was on things on chapter 4...
-
-set (x₀ := elem 2 0 Nat.lt_0_2).
-set (x₁ := elem 2 1 Nat.lt_1_2).
-pose proof (T x₀) as tx₀.
-pose proof (T x₁) as tx₁.
-apply PT_intro.
-assert (g : ∀ x : Fin 2, A x).
- intros x.
- destruct (Fin_2_dec x) as [p| p].
-  set (A₀ := {a : A x₀ & P x₀ a}).
-  set (B₀ := ∥(A x)∥).
-  assert (f : A₀ → B₀).
-   subst A₀ B₀; intros (a, q); apply PT_intro.
-   eapply transport; [ | apply a ].
-   subst x x₀; apply eq_refl.
-
-   pose proof (PT_rec A₀ B₀ f (PT_eq _)) as q.
-   destruct q as (g, q).
-    subst A₀ B₀.
-    pose proof (g tx₀) as r.
-    assert (x₀ = x) by (subst x₀ x; apply eq_refl); subst x; clear H.
-
-SearchAbout (∥(_ + _)∥).
-bbb.
-intros A P SX SA PP T.
-set (x₀ := elem 2 0 Nat.lt_0_2).
-set (x₁ := elem 2 1 Nat.lt_1_2).
-pose proof (T x₀) as tx₀.
-pose proof (T x₁) as tx₁.
 set (A₀ := ((Σ (a₀ : A x₀), P x₀ a₀) * (Σ (a₁ : A x₁), P x₁ a₁))%type).
 set (B₀ := ∥(Σ (g : ∀ x : Fin 2, A x), ∀ x : Fin 2, P x (g x))∥).
 assert (f : A₀ → B₀).
@@ -2575,33 +2320,7 @@ assert (f : A₀ → B₀).
  pose proof (PT_rec A₀ B₀ f (PT_eq _)) as p.
  destruct p as (g, p).
  apply g; subst A₀.
-SearchAbout (∥((_ * _)%type)∥).
-
-(* does not work: I cannot prove ∥(A * B)∥ from ∥A∥ and ∥B∥ *)
-
-bbb.
-
-set (A₀ := Σ (a₀ : A x₀), P x₀ a₀) in tx₀.
-set (B₀ := ∥(Σ (g : ∀ x : Fin 2, A x), ∀ x : Fin 2, P x (g x))∥).
-assert (f : A₀ → B₀).
- intros t; subst A₀ B₀; apply PT_intro.
- destruct t as (ax₀, pax₀).
- assert (g : ∀ x : Fin 2, A x).
-  intros (i, ilt).
-  destruct i.
-   subst x₀.
-   eapply transport; [ | apply ax₀ ].
-   apply ap, le_unique.
-
-   subst x₀.
-bbb.
-
- set (g (x : Fin 2) := eq_rect_r (λ x0 : X, A x0) ax (PX x x₀)); simpl in g.
- exists g; subst g; simpl.
- intros x; destruct (PX x x₀); apply pax.
-
- pose proof (PT_rec A₀ B₀ f (PT_eq _)) as g.
- destruct g as (g, p); apply g, tx.
+ apply PT_and_intro; apply T.
 Defined.
 
 Definition ex_3_22 n : ACX (Fin n).
@@ -2618,7 +2337,6 @@ induction n; intros.
   destruct x as (i, lt); exfalso.
   apply Nat.nlt_0_r in lt; destruct lt.
 
- (* construire g à partir du g produit par IHn *)
  set
    (An (x : Fin n) :=
     match x with
@@ -2645,31 +2363,9 @@ induction n; intros.
     | elem _ i ilt => T (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
     end).
  pose proof (IHn An Pn (isSet_Fin n) SAn PPn Tn) as p.
-(*
- set (A₀ := {g : ∀ x : Fin n, An x & ∀ x : Fin n, Pn x (g x)}) in p.
- set (B₀ := ∥{g : ∀ x : Fin (S n), A x & ∀ x : Fin (S n), P x (g x)}∥).
- Check (PT_rec A₀ B₀).
- assert (f : A₀ → B₀).
-  subst A₀; intros (g, q); apply PT_intro.
-  subst An; simpl in g.
-  assert (h : ∀ x : Fin (S n), A x).
-   intros (i, ilt).
-   destruct (lt_dec i n) as [ilt2| ige].
-    pose proof g (elem _ i ilt2) as r; simpl in r.
-    replace ilt with (Nat.lt_lt_succ_r i n ilt2); [ apply r | ].
-    apply le_unique.
-
-    apply Nat.nlt_ge in ige.
-    apply Nat.le_antisymm in ige; [ | apply le_S_n, ilt ].
-    subst i.
-clear SAn Pn PPn Tn p q.
-bbb.
-*)
-
  destruct n.
-  clear An Pn SAn PPn Tn p.
   apply ex_3_22_Fin_1; assumption.
 
   destruct n.
+   apply ex_3_22_Fin_2; assumption.
 bbb.
-*)
