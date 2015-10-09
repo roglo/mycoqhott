@@ -212,8 +212,8 @@ assert (Se : ∀ x y : A, isSet (x = y)).
  pose proof (ex_3_17 (a = y) (Sxa y) (λ _, Ps y) (s y) (g y)) as ay.
  subst Sxa; simpl in ax, ay.
 
-Check ex_3_1.
-SearchAbout (isSet _ → isSet _).
+ assert (axy : isSet ((a = x) * (a = y))) by (apply ex_3_1_5; assumption).
+SearchAbout (isSet (_ * _)).
 bbb.
 
 Check (λ x y, ex_3_17 (x = y) (λ u, isSet ∥(x = y)∥) (λ _, (Ps' x y)) (s x y)).
