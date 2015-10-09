@@ -211,9 +211,23 @@ assert (Se : ∀ x y : A, isSet (x = y)).
  pose proof (ex_3_17 (a = x) (Sxa x) (λ _, Ps x) (s x) (g x)) as ax.
  pose proof (ex_3_17 (a = y) (Sxa y) (λ _, Ps y) (s y) (g y)) as ay.
  subst Sxa; simpl in ax, ay.
+bbb.
 
  assert (axy : isSet ((a = x) * (a = y))) by (apply ex_3_1_5; assumption).
-SearchAbout (isSet (_ * _)).
+Check ex_3_1.
+ assert ((x = y) ≃ (a = a)).
+  exists (λ _, eq_refl _).
+  apply qinv_isequiv.
+  assert ((a = a) → (x = y)).
+bbb.
+
+ apply ex_3_1 with (B := ((a = x) * (x = y))%type) in axy.
+
+bbb.
+Definition toto A B : isSet A → isSet (A * B) → isSet B.
+Proof.
+intros r s x y p q.
+unfold isSet in r, s.
 bbb.
 
 Check (λ x y, ex_3_17 (x = y) (λ u, isSet ∥(x = y)∥) (λ _, (Ps' x y)) (s x y)).
