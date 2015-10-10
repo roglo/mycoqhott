@@ -2252,17 +2252,21 @@ destruct i; [ right; apply ap, le_unique | ].
 exfalso; apply my_le_S_n, my_le_S_n, my_nle_succ_0 in ilt; apply ilt.
 Defined.
 
-Definition Fin_3_x₀ :=
-  elem 3 0 (Nat.lt_0_succ 2).
-Definition Fin_3_x₁ :=
-  elem 3 1 (proj1 (Nat.succ_lt_mono 0 2) (Nat.lt_0_succ 1)).
-Definition Fin_3_x₂ :=
-  elem 3 2 (proj1 (Nat.succ_lt_mono 1 2) (Nat.lt_1_2)).
+Definition prev_elem n (x : Fin n) : Fin n :=
+  match x with
+  | elem _ (S m) p => elem n m (Nat.lt_succ_l m n p)
+  | elem _ 0 p => x
+  end.
+
+Definition Fin_3_x₂ := elem 3 2 (proj1 (Nat.succ_lt_mono 1 2) (Nat.lt_1_2)).
+Definition Fin_3_x₁ := prev_elem 3 Fin_3_x₂.
+Definition Fin_3_x₀ := prev_elem 3 Fin_3_x₁.
 
 Definition Fin_3_dec x :
   sumor (sumor (x = Fin_3_x₀) (x = Fin_3_x₁)) (x = Fin_3_x₂).
 Proof.
 destruct x as (i, ilt).
+unfold Fin_3_x₀, Fin_3_x₁, Fin_3_x₂, prev_elem.
 destruct i; [ left; left; apply ap, le_unique | ].
 destruct i; [ left; right; apply ap, le_unique | ].
 destruct i; [ right; apply ap, le_unique | ].
@@ -2347,8 +2351,6 @@ Proof.
 apply Nat.lt_succ_l, p.
 Defined.
 
-Definition Fin_code n : Fin n → nat := λ x, match x with elem _ m _ => m end.
-
 Definition ex_3_22_Fin_3 : ACX (Fin 3).
 Proof.
 intros A P SX SA PP T.
@@ -2377,14 +2379,20 @@ assert (f : A₀ → B₀).
  exists g; intros (i, ilt).
  subst g; simpl.
  destruct i.
-  unfold Fin_3_x₀ in x₀.
-  destruct (ap (elem 3 0) (le_unique 1 3 ilt (Nat.lt_0_succ 2))); apply p₀.
+  unfold Fin_3_x₀, Fin_3_x₁, prev_elem in x₀; simpl in x₀.
+  destruct
+    (ap (elem 3 0)
+       (le_unique 1 3 ilt
+          (Nat.lt_succ_l 0 3
+             (Nat.lt_succ_l 1 3 (proj1 (Nat.succ_lt_mono 1 2) Nat.lt_1_2))))).
+  apply p₀.
 
   destruct i.
-   unfold Fin_3_x₁ in x₁.
+   unfold Fin_3_x₁, prev_elem in x₁; simpl in x₁.
    destruct
      (ap (elem 3 1)
-        (le_unique 2 3 ilt (proj1 (Nat.succ_lt_mono 0 2) (Nat.lt_0_succ 1)))).
+        (le_unique 2 3 ilt
+           (Nat.lt_succ_l 1 3 (proj1 (Nat.succ_lt_mono 1 2) Nat.lt_1_2)))).
    apply p₁.
 
    destruct i.
