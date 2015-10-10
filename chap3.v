@@ -2252,6 +2252,25 @@ destruct i; [ right; apply ap, le_unique | ].
 exfalso; apply my_le_S_n, my_le_S_n, my_nle_succ_0 in ilt; apply ilt.
 Defined.
 
+Definition Fin_3_x₀ :=
+  elem 3 0 (Nat.lt_0_succ 2).
+Definition Fin_3_x₁ :=
+  elem 3 1 (proj1 (Nat.succ_lt_mono 0 2) (Nat.lt_0_succ 1)).
+Definition Fin_3_x₂ :=
+  elem 3 2 (proj1 (Nat.succ_lt_mono 1 2) (Nat.lt_1_2)).
+
+Definition Fin_3_dec x :
+  sumor (sumor (x = Fin_3_x₀) (x = Fin_3_x₁)) (x = Fin_3_x₂).
+Proof.
+destruct x as (i, ilt).
+destruct i; [ left; left; apply ap, le_unique | ].
+destruct i; [ left; right; apply ap, le_unique | ].
+destruct i; [ right; apply ap, le_unique | ].
+pose proof (my_le_S_n (S (S (S i))) 2 ilt) as p.
+do 2 apply my_le_S_n in p.
+destruct (my_nle_succ_0 i p).
+Defined.
+
 Definition PT_and_elim A B : ∥(A * B)∥ → ∥A∥ * ∥B∥.
 Proof.
 intros p.
@@ -2333,43 +2352,29 @@ Definition Fin_code n : Fin n → nat := λ x, match x with elem _ m _ => m end.
 Definition ex_3_22_Fin_3 : ACX (Fin 3).
 Proof.
 intros A P SX SA PP T.
-set (x₀ := elem 3 0 (Nat.lt_0_succ 2)).
-set (x₁ := elem 3 1 (proj1 (Nat.succ_lt_mono 0 2) (Nat.lt_0_succ 1))).
-set (x₂ := elem 3 2 (proj1 (Nat.succ_lt_mono 1 2) (Nat.lt_1_2))).
+set (x₀ := Fin_3_x₀).
+set (x₁ := Fin_3_x₁).
+set (x₂ := Fin_3_x₂).
 set (h x := Σ (a : A x), P x a); simpl in h.
 set (A₀ := (h x₀ * h x₁ * h x₂)%type).
 set (B₀ := ∥(Σ (g : ∀ x : Fin 3, A x), ∀ x : Fin 3, P x (g x))∥).
 assert (f : A₀ → B₀).
  intros (((a₀, p₀), (a₁, p₁)), (a₂, p₂)); subst A₀ B₀; apply PT_intro.
- assert (g : Π (x : Fin 3), A x).
-  intros x.
-  destruct x as (m, mlt).
-   destruct m.
-    apply a₀.
-bbb.
-
  set
    (g (x : Fin 3) :=
-    match Fin_code 3 x return A A x with
-    | 0 => λ _, a₀
-    | 1 => a₁
-    | 2 => a₂
-   | _ => a₀
-    end).
-
-bbb.
- set
-   (g (x : Fin 3) :=
-    match Fin_2_dec x with
-    | left p =>
+    match Fin_3_dec x with
+    | inleft (inleft p) =>
         match p in (_ = y) return A y → A x with eq_refl _ => id end a₀
-    | right p =>
+    | inleft (inright p) =>
         match p in (_ = y) return A y → A x with eq_refl _ => id end a₁
+    | inright p =>
+        match p in (_ = y) return A y → A x with eq_refl _ => id end a₂
     end : A x).
  simpl in g.
  exists g; intros (i, ilt).
  subst g; simpl.
  destruct i.
+bbb.
   destruct (ap (elem 2 0) (le_unique 1 2 ilt Nat.lt_0_2)); apply p₀.
 
   destruct i.
