@@ -2328,6 +2328,61 @@ Proof.
 apply Nat.lt_succ_l, p.
 Defined.
 
+Definition Fin_code n : Fin n → nat := λ x, match x with elem _ m _ => m end.
+
+Definition ex_3_22_Fin_3 : ACX (Fin 3).
+Proof.
+intros A P SX SA PP T.
+set (x₀ := elem 3 0 (Nat.lt_0_succ 2)).
+set (x₁ := elem 3 1 (proj1 (Nat.succ_lt_mono 0 2) (Nat.lt_0_succ 1))).
+set (x₂ := elem 3 2 (proj1 (Nat.succ_lt_mono 1 2) (Nat.lt_1_2))).
+set (h x := Σ (a : A x), P x a); simpl in h.
+set (A₀ := (h x₀ * h x₁ * h x₂)%type).
+set (B₀ := ∥(Σ (g : ∀ x : Fin 3, A x), ∀ x : Fin 3, P x (g x))∥).
+assert (f : A₀ → B₀).
+ intros (((a₀, p₀), (a₁, p₁)), (a₂, p₂)); subst A₀ B₀; apply PT_intro.
+ assert (g : Π (x : Fin 3), A x).
+  intros x.
+  destruct x as (m, mlt).
+   destruct m.
+    apply a₀.
+bbb.
+
+ set
+   (g (x : Fin 3) :=
+    match Fin_code 3 x return A A x with
+    | 0 => λ _, a₀
+    | 1 => a₁
+    | 2 => a₂
+   | _ => a₀
+    end).
+
+bbb.
+ set
+   (g (x : Fin 3) :=
+    match Fin_2_dec x with
+    | left p =>
+        match p in (_ = y) return A y → A x with eq_refl _ => id end a₀
+    | right p =>
+        match p in (_ = y) return A y → A x with eq_refl _ => id end a₁
+    end : A x).
+ simpl in g.
+ exists g; intros (i, ilt).
+ subst g; simpl.
+ destruct i.
+  destruct (ap (elem 2 0) (le_unique 1 2 ilt Nat.lt_0_2)); apply p₀.
+
+  destruct i.
+   destruct (ap (elem 2 1) (le_unique 2 2 ilt Nat.lt_1_2)); apply p₁.
+
+   exfalso; do 2 apply my_le_S_n in ilt; revert ilt; apply my_nle_succ_0.
+
+ pose proof (PT_rec A₀ B₀ f (PT_eq _)) as p.
+ destruct p as (g, p).
+ apply g; subst A₀.
+ apply PT_and_intro; apply T.
+Defined.
+
 Fixpoint Fin_and m n (p : n < m) (A : Fin m → Type) (P : ∀ x, A x → Type) :=
   match n return n < m → Type with
   | O => λ _, True
@@ -2389,20 +2444,21 @@ induction n; intros.
  pose proof (IHn An Pn (isSet_Fin n) SAn PPn Tn) as p.
 *)
 intros A P SX SA PP T.
-rename n into m.
+apply PT_intro.
 revert A P SX SA PP T.
-induction m; intros.
+induction n; intros.
  assert (g : ∀ x : Fin 0, A x).
   destruct x as (n, nlt); destruct (Nat.nlt_0_r n nlt).
 
-  apply PT_intro.
   exists g; intros x.
   destruct x as (n, nlt); destruct (Nat.nlt_0_r n nlt).
 
- set (A₀ := Fin_or (S m) m (Nat.lt_succ_diag_r m) A P).
- assert (Fin m ≃ A₀).
-  assert (Fin m → A₀).
-   subst A₀; intros x.
+ set (Ao := Fin_or (S n) n (Nat.lt_succ_diag_r n) A P).
+ assert (Fin n ≃ Ao).
+  assert (Fin n → Ao).
+   subst Ao; intros x.
+bbb.
+
    destruct m; [ destruct x as (n, nlt); destruct (Nat.nlt_0_r n nlt) | ].
    simpl; destruct x as (n, nlt).
    destruct (eq_nat_dec n m) as [H1| H1].
