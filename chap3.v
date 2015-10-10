@@ -2396,8 +2396,7 @@ assert (f : A₀ → B₀).
  pose proof (PT_rec A₀ B₀ f (PT_eq _)) as p.
  destruct p as (g, p).
  apply g; subst A₀.
-bbb.
- apply PT_and_intro; apply T.
+ apply PT_and_intro; [ apply PT_and_intro; apply T | apply T ].
 Defined.
 
 Fixpoint Fin_and m n (p : n < m) (A : Fin m → Type) (P : ∀ x, A x → Type) :=
@@ -2461,15 +2460,22 @@ induction n; intros.
  pose proof (IHn An Pn (isSet_Fin n) SAn PPn Tn) as p.
 *)
 intros A P SX SA PP T.
-apply PT_intro.
 revert A P SX SA PP T.
 induction n; intros.
+ apply PT_intro.
  assert (g : ∀ x : Fin 0, A x).
   destruct x as (n, nlt); destruct (Nat.nlt_0_r n nlt).
 
   exists g; intros x.
   destruct x as (n, nlt); destruct (Nat.nlt_0_r n nlt).
 
+ destruct n; [ apply ex_3_22_Fin_1; assumption | ].
+ destruct n; [ apply ex_3_22_Fin_2; assumption | ].
+ destruct n; [ apply ex_3_22_Fin_3; assumption | ].
+
+bbb.
+
+ apply PT_intro.
  set (Ao := Fin_or (S n) n (Nat.lt_succ_diag_r n) A P).
  assert (Fin n ≃ Ao).
   assert (Fin n → Ao).
@@ -2496,13 +2502,6 @@ bbb.
    destruct x as (n, nlt).
    destruct (eq_nat_dec n (S m)) as [H₁| H₁].
     subst n.
-
-bbb.
- destruct n.
-  apply ex_3_22_Fin_1; assumption.
-
-  destruct n.
-   apply ex_3_22_Fin_2; assumption.
 
 bbb.
 set (x₀ := elem 2 0 Nat.lt_0_2).
