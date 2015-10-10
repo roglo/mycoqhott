@@ -2374,17 +2374,29 @@ assert (f : A₀ → B₀).
  exists g; intros (i, ilt).
  subst g; simpl.
  destruct i.
-bbb.
-  destruct (ap (elem 2 0) (le_unique 1 2 ilt Nat.lt_0_2)); apply p₀.
+  unfold Fin_3_x₀ in x₀.
+  destruct (ap (elem 3 0) (le_unique 1 3 ilt (Nat.lt_0_succ 2))); apply p₀.
 
   destruct i.
-   destruct (ap (elem 2 1) (le_unique 2 2 ilt Nat.lt_1_2)); apply p₁.
+   unfold Fin_3_x₁ in x₁.
+   destruct
+     (ap (elem 3 1)
+        (le_unique 2 3 ilt (proj1 (Nat.succ_lt_mono 0 2) (Nat.lt_0_succ 1)))).
+   apply p₁.
 
-   exfalso; do 2 apply my_le_S_n in ilt; revert ilt; apply my_nle_succ_0.
+   destruct i.
+    unfold Fin_3_x₂ in x₂.
+    destruct
+      (ap (elem 3 2)
+         (le_unique 3 3 ilt (proj1 (Nat.succ_lt_mono 1 2) Nat.lt_1_2))).
+    apply p₂.
+
+   exfalso; do 3 apply my_le_S_n in ilt; revert ilt; apply my_nle_succ_0.
 
  pose proof (PT_rec A₀ B₀ f (PT_eq _)) as p.
  destruct p as (g, p).
  apply g; subst A₀.
+bbb.
  apply PT_and_intro; apply T.
 Defined.
 
