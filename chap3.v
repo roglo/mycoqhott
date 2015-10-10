@@ -2363,10 +2363,13 @@ assert (f : A₀ → B₀).
  set
    (g (x : Fin 3) :=
     match Fin_3_dec x with
-    | inleft (inleft p) =>
-        match p in (_ = y) return A y → A x with eq_refl _ => id end a₀
-    | inleft (inright p) =>
-        match p in (_ = y) return A y → A x with eq_refl _ => id end a₁
+    | inleft y =>
+        match y with
+       | inleft p =>
+           match p in (_ = y) return A y → A x with eq_refl _ => id end a₀
+       | inright p =>
+           match p in (_ = y) return A y → A x with eq_refl _ => id end a₁
+       end
     | inright p =>
         match p in (_ = y) return A y → A x with eq_refl _ => id end a₂
     end : A x).
