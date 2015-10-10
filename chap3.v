@@ -2337,8 +2337,18 @@ Fixpoint Fin_and m n (p : n < m) (A : Fin m → Type) (P : ∀ x, A x → Type) 
       (Fin_and m n' (lt_succ_l_lt m n' q) A P * (Σ (a : A x), P x a))%type
   end p.
 
+Fixpoint Fin_or m n (p : n < m) (A : Fin m → Type) (P : ∀ x, A x → Type) :=
+  match n return n < m → Type with
+  | O => λ _, False
+  | S n' =>
+      let x := elem m n p in
+      λ q,
+      (Fin_or m n' (lt_succ_l_lt m n' q) A P + ∥(Σ (a : A x), P x a)∥)%type
+  end p.
+
 Definition ex_3_22 n : ACX (Fin n).
 Proof.
+(*
 intros A P SX SA PP T.
 revert A P SX SA PP T.
 induction n; intros.
@@ -2377,13 +2387,33 @@ induction n; intros.
     | elem _ i ilt => T (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
     end).
  pose proof (IHn An Pn (isSet_Fin n) SAn PPn Tn) as p.
-set (A₀ := Fin_and (S n) n (Nat.lt_succ_diag_r n) A P).
-assert (Fin (S n) ≃ A₀).
- assert (Fin (S n) → A₀).
-  subst A₀; clear; intros x.
+*)
+intros A P SX SA PP T.
+rename n into m.
+revert A P SX SA PP T.
+induction m; intros.
+ assert (g : ∀ x : Fin 0, A x).
+  destruct x as (n, nlt); destruct (Nat.nlt_0_r n nlt).
 
-Definition toto m n (p : n < m) A P : Fin_and m n p A P.
+  apply PT_intro.
+  exists g; intros x.
+  destruct x as (n, nlt); destruct (Nat.nlt_0_r n nlt).
+
+ set (A₀ := Fin_or (S m) m (Nat.lt_succ_diag_r m) A P).
+ assert (Fin m ≃ A₀).
+  assert (Fin m → A₀).
+   subst A₀; intros x.
+   destruct m; [ destruct x as (n, nlt); destruct (Nat.nlt_0_r n nlt) | ].
+   simpl; destruct x as (n, nlt).
+   destruct (eq_nat_dec n m) as [H1| H1].
+    subst n; right.
+    set (x := elem (S (S m)) (S m) (Nat.lt_succ_diag_r (S m))).
+    apply T.
+
+    left.
 bbb.
+
+Definition toto m n (p : n < m) A P : Fin_or m n p A P.
 
 bbb.
 
