@@ -2258,7 +2258,7 @@ Definition prev_elem n (x : Fin n) : Fin n :=
   | elem _ 0 p => x
   end.
 
-Definition Fin_3_x₂ := elem 3 2 (proj1 (Nat.succ_lt_mono 1 2) (Nat.lt_1_2)).
+Definition Fin_3_x₂ := elem 3 2 (Nat.lt_succ_diag_r 2).
 Definition Fin_3_x₁ := prev_elem 3 Fin_3_x₂.
 Definition Fin_3_x₀ := prev_elem 3 Fin_3_x₁.
 
@@ -2383,23 +2383,19 @@ assert (f : A₀ → B₀).
   destruct
     (ap (elem 3 0)
        (le_unique 1 3 ilt
-          (Nat.lt_succ_l 0 3
-             (Nat.lt_succ_l 1 3 (proj1 (Nat.succ_lt_mono 1 2) Nat.lt_1_2))))).
+          (Nat.lt_succ_l 0 3 (Nat.lt_succ_l 1 3 (Nat.lt_succ_diag_r 2))))).
   apply p₀.
 
   destruct i.
    unfold Fin_3_x₁, prev_elem in x₁; simpl in x₁.
    destruct
      (ap (elem 3 1)
-        (le_unique 2 3 ilt
-           (Nat.lt_succ_l 1 3 (proj1 (Nat.succ_lt_mono 1 2) Nat.lt_1_2)))).
+        (le_unique 2 3 ilt (Nat.lt_succ_l 1 3 (Nat.lt_succ_diag_r 2)))).
    apply p₁.
 
    destruct i.
     unfold Fin_3_x₂ in x₂.
-    destruct
-      (ap (elem 3 2)
-         (le_unique 3 3 ilt (proj1 (Nat.succ_lt_mono 1 2) Nat.lt_1_2))).
+    destruct (ap (elem 3 2) (le_unique 3 3 ilt (Nat.lt_succ_diag_r 2))).
     apply p₂.
 
    exfalso; do 3 apply my_le_S_n in ilt; revert ilt; apply my_nle_succ_0.
