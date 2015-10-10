@@ -2236,6 +2236,17 @@ assert (f : A₀ → B₀).
  destruct g as (g, p); apply g, tx.
 Defined.
 
+Definition ex_3_22_Fin_0 : ACX (Fin 0).
+Proof.
+intros A P SX SA PP T.
+apply PT_intro.
+assert (g : ∀ x : Fin 0, A x).
+ destruct x as (n, nlt); destruct (Nat.nlt_0_r n nlt).
+
+ exists g; intros x.
+ destruct x as (n, nlt); destruct (Nat.nlt_0_r n nlt).
+Defined.
+
 Definition ex_3_22_Fin_1 : ACX (Fin 1).
 Proof.
 apply ex_3_22_isContr.
@@ -2468,17 +2479,10 @@ induction n; intros.
 *)
 intros A P SX SA PP T.
 revert A P SX SA PP T.
-induction n; intros.
- apply PT_intro.
- assert (g : ∀ x : Fin 0, A x).
-  destruct x as (n, nlt); destruct (Nat.nlt_0_r n nlt).
-
-  exists g; intros x.
-  destruct x as (n, nlt); destruct (Nat.nlt_0_r n nlt).
-
- destruct n; [ apply ex_3_22_Fin_1; assumption | ].
- destruct n; [ apply ex_3_22_Fin_2; assumption | ].
- destruct n; [ apply ex_3_22_Fin_3; assumption | ].
+induction n; intros; [ apply ex_3_22_Fin_0; assumption | ].
+destruct n; [ apply ex_3_22_Fin_1; assumption | ].
+destruct n; [ apply ex_3_22_Fin_2; assumption | ].
+destruct n; [ apply ex_3_22_Fin_3; assumption | ].
 
 bbb.
 
