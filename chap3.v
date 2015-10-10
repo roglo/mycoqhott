@@ -2236,24 +2236,6 @@ assert (f : A₀ → B₀).
  destruct g as (g, p); apply g, tx.
 Defined.
 
-Definition ex_3_22_Fin_0 : ACX (Fin 0).
-Proof.
-intros A P SX SA PP T.
-apply PT_intro.
-assert (g : ∀ x : Fin 0, A x).
- destruct x as (n, nlt); destruct (Nat.nlt_0_r n nlt).
-
- exists g; intros x.
- destruct x as (n, nlt); destruct (Nat.nlt_0_r n nlt).
-Defined.
-
-Definition ex_3_22_Fin_1 : ACX (Fin 1).
-Proof.
-apply ex_3_22_isContr.
-exists (elem 1 0 Nat.lt_0_1); intros x.
-apply isProp_Fin_1.
-Defined.
-
 Definition Fin_2_dec : ∀ x : Fin 2,
   {x = elem 2 0 Nat.lt_0_2} + {x = elem 2 1 Nat.lt_1_2}.
 Proof.
@@ -2323,6 +2305,30 @@ apply hott_3_3_3.
  apply PT_and_intro; assumption.
 Defined.
 
+Definition lt_succ_l_lt m n (p : S n < m) : n < m.
+Proof.
+apply Nat.lt_succ_l, p.
+Defined.
+
+
+Definition ex_3_22_Fin_0 : ACX (Fin 0).
+Proof.
+intros A P SX SA PP T.
+apply PT_intro.
+assert (g : ∀ x : Fin 0, A x).
+ destruct x as (n, nlt); destruct (Nat.nlt_0_r n nlt).
+
+ exists g; intros x.
+ destruct x as (n, nlt); destruct (Nat.nlt_0_r n nlt).
+Defined.
+
+Definition ex_3_22_Fin_1 : ACX (Fin 1).
+Proof.
+apply ex_3_22_isContr.
+exists (elem 1 0 Nat.lt_0_1); intros x.
+apply isProp_Fin_1.
+Defined.
+
 Definition ex_3_22_Fin_2 : ACX (Fin 2).
 Proof.
 intros A P SX SA PP T.
@@ -2355,11 +2361,6 @@ assert (f : A₀ → B₀).
  destruct p as (g, p).
  apply g; subst A₀.
  apply PT_and_intro; apply T.
-Defined.
-
-Definition lt_succ_l_lt m n (p : S n < m) : n < m.
-Proof.
-apply Nat.lt_succ_l, p.
 Defined.
 
 Definition ex_3_22_Fin_3 : ACX (Fin 3).
