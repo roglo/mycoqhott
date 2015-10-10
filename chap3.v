@@ -2310,7 +2310,6 @@ Proof.
 apply Nat.lt_succ_l, p.
 Defined.
 
-
 Definition ex_3_22_Fin_0 : ACX (Fin 0).
 Proof.
 intros A P SX SA PP T.
