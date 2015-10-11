@@ -2518,6 +2518,110 @@ apply and_imp with (C := ∥{a : A (Fin_x n) & P (Fin_x n) a}∥) in p.
  Check (PT_rec A₀ B₀).
  assert (f₀ : A₀ → B₀).
   intros ((an, q), (g, r)); subst B₀; apply PT_intro.
+(*
+  assert (h : ∀ x : Fin (S n), A x).
+   intros (i, ilt).
+   destruct (lt_dec i n) as [H2| H2].
+    set (x := g (elem n i H2)).
+    unfold An in x; simpl in x.
+    eapply transport; [ | apply x ].
+    apply ap, le_unique.
+
+    apply Nat.nlt_ge, Nat.succ_le_mono in H2.
+    apply Nat.le_antisymm in H2; [ | apply ilt ].
+    apply Nat.succ_inj in H2; subst i.
+    eapply transport; [ | apply an ].
+    unfold Fin_x; apply ap, le_unique.
+    Set Printing Depth 100. Show Proof.
+*)
+  set
+    (h :=
+                    (λ x : Fin (S n),
+                     match x as f return (A f) with
+                     | elem _ i ilt =>
+                         let s1 := lt_dec i n in
+                         match s1 with
+                         | left H3 =>
+                             let x0 := g (elem n i H3) in
+                             transport A
+                               (ap (elem (S n) i)
+                                  (le_unique (S i) 
+                                     (S n) (Nat.lt_lt_succ_r i n H3) ilt))
+                               x0
+                         | right H3 =>
+                             (λ H : ∀ n1 m : ℕ, ¬ n1 < m → m ≤ n1,
+                              (λ H4 : n ≤ i,
+                               (λ H0 : ∀ n1 m : ℕ, n1 ≤ m → S n1 ≤ S m,
+                                (λ H5 : S n ≤ S i,
+                                 (λ H6 : S i = S n,
+                                  (λ H7 : i = n,
+                                   eq_rect_r
+                                     (λ i0 : ℕ,
+                                      ∀ ilt0 : i0 < S n,
+                                      A (elem (S n) i0 ilt0))
+                                     (λ ilt0 : n < S n,
+                                      transport A
+                                        (ap (elem (S n) n)
+                                           (le_unique 
+                                              (S n) 
+                                              (S n) 
+                                              (Nat.lt_succ_diag_r n) ilt0))
+                                        an) H7 ilt) 
+                                    (Nat.succ_inj i n H6))
+                                   (Nat.le_antisymm (S i) (S n) ilt H5))
+                                  (H0 n i H4))
+                                 (λ n1 m : ℕ,
+                                  match Nat.succ_le_mono n1 m with
+                                  | conj x0 _ => x0
+                                  end)) (H i n H3))
+                               (λ n1 m : ℕ,
+                                match Nat.nlt_ge n1 m with
+                                | conj x0 _ => x0
+                                end)
+                         end
+                     end)).
+   exists h.
+   intros (i, ilt); subst h; simpl.
+   destruct (lt_dec i n) as [H2| H2].
+    unfold Fin_x in q.
+    set (x := r (elem n i H2)).
+    unfold Pn in x; simpl in x.
+    unfold transport.
+    destruct
+      (ap (elem (S n) i)
+          (le_unique (S i) (S n) (Nat.lt_lt_succ_r i n H2) ilt)).
+    apply x.
+
+unfold eq_rect_r; simpl.
+unfold eq_rect; simpl.
+destruct (
+        eq_sym
+          (Nat.succ_inj i n
+             (Nat.le_antisymm (S i) (S n) ilt
+                (match Nat.succ_le_mono n i with
+                 | conj x0 _ => x0
+                 end (match Nat.nlt_ge i n with
+                      | conj x0 _ => x0
+                      end H2))))).
+unfold transport; simpl.
+destruct (
+        ap (elem (S n) n) (le_unique (S n) (S n) (Nat.lt_succ_diag_r n) ilt)).
+apply q.
+
+bbb.
+
+unfold eq_sym; simpl.
+destruct (Nat.succ_le_mono n i); simpl.
+destruct (Nat.nlt_ge i n); simpl.
+
+    apply Nat.nlt_ge, Nat.succ_le_mono in H2.
+    apply Nat.le_antisymm in H2; [ | apply ilt ].
+    apply Nat.succ_inj in H2; subst i.
+    eapply transport; [ | apply an ].
+    unfold Fin_x; apply ap, le_unique.
+    Set Printing Depth 100. Show Proof.
+bbb.
+
   exists
     (λ x,
      match x with
