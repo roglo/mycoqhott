@@ -2265,13 +2265,16 @@ Definition Fin_3_dec x : (x = Fin_3_x₀) + {x = Fin_3_x₁} + {x = Fin_3_x₂}.
 Proof.
 destruct x as (i, ilt).
 unfold Fin_3_x₀, Fin_3_x₁, Fin_3_x₂.
-unfold Fin_2_x₀, Fin_2_x₁, Fin_x, lift_succ.
-destruct i; [ left; left; apply ap, le_unique | ].
-destruct i; [ left; right; apply ap, le_unique | ].
-destruct i; [ right; apply ap, le_unique | ].
-pose proof (my_le_S_n (S (S (S i))) 2 ilt) as p.
-do 2 apply my_le_S_n in p.
-destruct (my_nle_succ_0 i p).
+destruct (eq_nat_dec i 2) as [p| p].
+ unfold Fin_2_x₀, Fin_2_x₁, Fin_x, lift_succ.
+ subst i; right; apply ap, le_unique.
+
+ left; rename ilt into jlt.
+ assert (ilt : i < 2) by omega.
+ unfold Fin_2_x₀, Fin_2_x₁, Fin_1_x₀, Fin_x, lift_succ.
+ destruct i; [ left; apply ap, le_unique | ].
+ destruct i; [ right; apply ap, le_unique | ].
+ exfalso; apply my_le_S_n, my_le_S_n, my_nle_succ_0 in ilt; apply ilt.
 Defined.
 
 Definition PT_and_elim A B : ∥(A * B)∥ → ∥A∥ * ∥B∥.
@@ -2403,7 +2406,7 @@ assert (f : A₀ → B₀).
  unfold Fin_3_A in g; simpl in g.
  exists g; intros (i, ilt).
  subst g; simpl.
- destruct i.
+ destruct i; simpl.
   unfold Fin_3_x₀, Fin_3_x₁, Fin_2_x₀, Fin_1_x₀, Fin_x, lift_succ in x₀.
   destruct
     (ap (elem 3 0)
@@ -2412,14 +2415,14 @@ assert (f : A₀ → B₀).
              (Nat.lt_lt_succ_r 0 1 (Nat.lt_succ_diag_r 0))))).
   apply p₀.
 
-  destruct i.
+  destruct i; simpl.
    unfold Fin_3_x₁, Fin_2_x₁, Fin_x, lift_succ in x₁.
    destruct
      (ap (elem 3 1)
         (le_unique 2 3 ilt (Nat.lt_lt_succ_r 1 2 (Nat.lt_succ_diag_r 1)))).
    apply p₁.
 
-   destruct i.
+   destruct i; simpl.
     unfold Fin_3_x₂, Fin_x in x₂.
     destruct (ap (elem 3 2) (le_unique 3 3 ilt (Nat.lt_succ_diag_r 2))).
     apply p₂.
