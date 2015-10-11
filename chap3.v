@@ -2456,45 +2456,57 @@ Fixpoint Fin_or m n (p : n < m) (A : Fin m → Type) (P : ∀ x, A x → Type) :
 
 Definition ex_3_22 n : ACX (Fin n).
 Proof.
-(*
+(**)
 intros A P SX SA PP T.
 revert A P SX SA PP T.
-induction n; intros.
- assert (g : ∀ x : Fin 0, A x).
-  destruct x as (i, lt); exfalso.
-  apply Nat.nlt_0_r in lt; destruct lt.
-
-  apply PT_intro.
-  exists g; intros x.
-  destruct x as (i, lt); exfalso.
-  apply Nat.nlt_0_r in lt; destruct lt.
-
- set
-   (An (x : Fin n) :=
+induction n; intros; [ apply ex_3_22_Fin_0; assumption | ].
+set
+  (An := λ (x : Fin n),
     match x with
     | elem _ i lti => A (elem (S n) i (Nat.lt_lt_succ_r i n lti))
     end).
  set
-   (Pn (x : Fin n) :=
+   (Pn := λ (x : Fin n),
     match x return An x → Type with
     | elem _ i ilt => P (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
     end).
- set
-   (SAn (x : Fin n) :=
+ pose proof
+   (λ (x : Fin n),
     match x return (isSet (An x)) with
     | elem _ i ilt => SA (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
-    end).
- set
-   (PPn (x : Fin n) :=
+    end) as SAn.
+ pose proof
+   (λ (x : Fin n),
     match x return (∀ a : An x, isProp (Pn x a)) with
     | elem _ i ilt => PP (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
-    end).
- set
-   (Tn (x : Fin n) :=
+    end) as PPn.
+ pose proof
+   (λ (x : Fin n),
     match x return ∥{a : An x & Pn x a}∥ with
     | elem _ i ilt => T (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
-    end).
+    end) as Tn.
  pose proof (IHn An Pn (isSet_Fin n) SAn PPn Tn) as p.
+ set (A₀ := {g : ∀ x : Fin n, An x & ∀ x : Fin n, Pn x (g x)}) in p.
+ set (B₀ := ∥{g : ∀ x : Fin (S n), A x & ∀ x : Fin (S n), P x (g x)}∥).
+Check (PT_rec A₀ B₀).
+ assert (f : A₀ → B₀).
+  intros (g, q); subst A₀ B₀.
+  subst An; simpl in g.
+  assert (h : ∀ x : Fin (S n), A x).
+   intros (i, ilt).
+   destruct (eq_nat_dec i n) as [r| r].
+    subst i.
+Focus 2.
+assert (jlt : i < n) by omega.
+set (u := T (lift_succ n (elem n i jlt))).
+simpl in u.
+
+bbb.
+
+  pose proof (PT_rec A₀ B₀ f (PT_eq _)) as q.
+  destruct q as (g, q).
+  apply g, p.
+bbb.
 *)
 intros A P SX SA PP T.
 revert A P SX SA PP T.
