@@ -2363,7 +2363,8 @@ Proof.
 intros A P SX SA PP T.
 set (x₀ := Fin_2_x₀).
 set (x₁ := Fin_2_x₁).
-set (A₀ := ((Σ (a₀ : A x₀), P x₀ a₀) * (Σ (a₁ : A x₁), P x₁ a₁))%type).
+set (h x := Σ (a : A x), P x a); simpl in h.
+set (A₀ := (h x₀ * h x₁)%type).
 set (B₀ := ∥(Σ (g : ∀ x : Fin 2, A x), ∀ x : Fin 2, P x (g x))∥).
 assert (f : A₀ → B₀).
  intros ((a₀, p₀), (a₁, p₁)); subst A₀ B₀; apply PT_intro.
