@@ -2494,22 +2494,41 @@ assert
   (H1 : (Π (x : Fin (S n)), ∥(Σ (a : A x), P x a)∥) ≃
    (Π (x : Fin (n)), ∥(Σ (a : An x), Pn x a)∥) *
     ∥(Σ (a : A (Fin_x n)), P (Fin_x n) a)∥).
- apply hott_3_3_3.
-  apply ex_3_6_2; intros x; apply PT_eq.
+apply hott_3_3_3.
+ apply ex_3_6_2; intros x; apply PT_eq.
 
-  apply ex_3_6_1; [ apply ex_3_6_2; intros y; apply PT_eq | apply PT_eq ].
+ apply ex_3_6_1; [ apply ex_3_6_2; intros y; apply PT_eq | apply PT_eq ].
 
-  intros p.
-  split; [ intros y; apply Tn | apply T ].
+ intros p.
+ split; [ intros y; apply Tn | apply T ].
 
-  intros (p, q); apply T.
+ intros (p, q); apply T.
 
- eapply ua in H1.
- pose proof (IHn An Pn (isSet_Fin n) SAn PPn) as p.
- apply and_imp with (C := ∥{a : A (Fin_x n) & P (Fin_x n) a}∥) in p.
-  2: split; [ intros x; apply Tn | apply T ].
-  destruct p as (p, q).
-  eapply PT_and_intro in p; [ clear q | apply q ].
+eapply ua in H1.
+pose proof (IHn An Pn (isSet_Fin n) SAn PPn) as p.
+apply and_imp with (C := ∥{a : A (Fin_x n) & P (Fin_x n) a}∥) in p.
+ 2: split; [ intros x; apply Tn | apply T ].
+ destruct p as (p, q).
+ eapply PT_and_intro in p; [ clear q | apply q ].
+ set
+   (A₀ :=
+      ({a : A (Fin_x n) & P (Fin_x n) a} *
+       {g : ∀ x : Fin n, An x & ∀ x : Fin n, Pn x (g x)})%type).
+ set (B₀ := ∥{g : ∀ x : Fin (S n), A x & ∀ x : Fin (S n), P x (g x)}∥).
+ Check (PT_rec A₀ B₀).
+ assert (f₀ : A₀ → B₀).
+  intros ((an, q), (g, r)); subst B₀; apply PT_intro.
+  exists
+    (λ x,
+     match x with
+     | elem _ i ilt => if lt_dec i n then (g x : A x) else an
+     end).
+
+On (g x : A x):
+The term "x" has type "Fin (S n)" while it is expected to have type "Fin n".
+
+Well, this is normal; I have to think about it.
+
 bbb.
 (**)
 intros A P SX SA PP T.
