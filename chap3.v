@@ -2328,6 +2328,14 @@ exists (elem 1 0 Nat.lt_0_1); intros x.
 apply isProp_Fin_1.
 Defined.
 
+Definition Fin_2_A A a₀ a₁ (x : Fin 2) :=
+  match Fin_2_dec x with
+  | left p =>
+      match p in (_ = y) return A y → A x with eq_refl _ => id end a₀
+  | right p =>
+      match p in (_ = y) return A y → A x with eq_refl _ => id end a₁
+  end : A x.
+
 Definition ex_3_22_Fin_2 : ACX (Fin 2).
 Proof.
 intros A P SX SA PP T.
@@ -2337,15 +2345,8 @@ set (A₀ := ((Σ (a₀ : A x₀), P x₀ a₀) * (Σ (a₁ : A x₁), P x₁ a�
 set (B₀ := ∥(Σ (g : ∀ x : Fin 2, A x), ∀ x : Fin 2, P x (g x))∥).
 assert (f : A₀ → B₀).
  intros ((a₀, p₀), (a₁, p₁)); subst A₀ B₀; apply PT_intro.
- set
-   (g (x : Fin 2) :=
-    match Fin_2_dec x with
-    | left p =>
-        match p in (_ = y) return A y → A x with eq_refl _ => id end a₀
-    | right p =>
-        match p in (_ = y) return A y → A x with eq_refl _ => id end a₁
-    end : A x).
- simpl in g.
+ set (g := Fin_2_A A a₀ a₁).
+ unfold Fin_2_A in g; simpl in g.
  exists g; intros (i, ilt).
  subst g; simpl.
  destruct i.
@@ -2362,6 +2363,19 @@ assert (f : A₀ → B₀).
  apply PT_and_intro; apply T.
 Defined.
 
+Definition Fin_3_A A a₀ a₁ a₂ (x : Fin 3) :=
+  match Fin_3_dec x with
+  | inleft y =>
+      match y with
+      | inleft p =>
+          match p in (_ = y) return A y → A x with eq_refl _ => id end a₀
+      | inright p =>
+         match p in (_ = y) return A y → A x with eq_refl _ => id end a₁
+      end
+  | inright p =>
+      match p in (_ = y) return A y → A x with eq_refl _ => id end a₂
+  end : A x.
+
 Definition ex_3_22_Fin_3 : ACX (Fin 3).
 Proof.
 intros A P SX SA PP T.
@@ -2373,20 +2387,8 @@ set (A₀ := (h x₀ * h x₁ * h x₂)%type).
 set (B₀ := ∥(Σ (g : ∀ x : Fin 3, A x), ∀ x : Fin 3, P x (g x))∥).
 assert (f : A₀ → B₀).
  intros (((a₀, p₀), (a₁, p₁)), (a₂, p₂)); subst A₀ B₀; apply PT_intro.
- set
-   (g (x : Fin 3) :=
-    match Fin_3_dec x with
-    | inleft y =>
-        match y with
-       | inleft p =>
-           match p in (_ = y) return A y → A x with eq_refl _ => id end a₀
-       | inright p =>
-           match p in (_ = y) return A y → A x with eq_refl _ => id end a₁
-       end
-    | inright p =>
-        match p in (_ = y) return A y → A x with eq_refl _ => id end a₂
-    end : A x).
- simpl in g.
+ set (g := Fin_3_A A a₀ a₁ a₂).
+ unfold Fin_3_A in g; simpl in g.
  exists g; intros (i, ilt).
  subst g; simpl.
  destruct i.
