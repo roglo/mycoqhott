@@ -2255,8 +2255,7 @@ Definition Fin_3_x₂ := elem 3 2 (Nat.lt_succ_diag_r 2).
 Definition Fin_3_x₁ := prev_elem 3 Fin_3_x₂.
 Definition Fin_3_x₀ := prev_elem 3 Fin_3_x₁.
 
-Definition Fin_3_dec x :
-  sumor (sumor (x = Fin_3_x₀) (x = Fin_3_x₁)) (x = Fin_3_x₂).
+Definition Fin_3_dec x : (x = Fin_3_x₀) + {x = Fin_3_x₁} + {x = Fin_3_x₂}.
 Proof.
 destruct x as (i, ilt).
 unfold Fin_3_x₀, Fin_3_x₁, Fin_3_x₂, prev_elem.
