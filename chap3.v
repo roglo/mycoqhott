@@ -2319,24 +2319,6 @@ Proof.
 apply Nat.lt_succ_l, p.
 Defined.
 
-Definition ex_3_22_Fin_0 : ACX (Fin 0).
-Proof.
-intros A P SX SA PP T.
-apply PT_intro.
-assert (g : ∀ x : Fin 0, A x).
- destruct x as (n, nlt); destruct (Nat.nlt_0_r n nlt).
-
- exists g; intros x.
- destruct x as (n, nlt); destruct (Nat.nlt_0_r n nlt).
-Defined.
-
-Definition ex_3_22_Fin_1 : ACX (Fin 1).
-Proof.
-apply ex_3_22_isContr.
-exists (elem 1 0 Nat.lt_0_1); intros x.
-apply isProp_Fin_1.
-Defined.
-
 Definition Fin_2_A A a₀ a₁ (x : Fin 2) :=
   match Fin_2_dec x with
   | inleft p =>
@@ -2357,6 +2339,24 @@ Definition Fin_3_A A a₀ a₁ a₂ (x : Fin 3) :=
   | inright p =>
       match p in (_ = y) return A y → A x with eq_refl _ => id end a₂
   end : A x.
+
+Definition ex_3_22_Fin_0 : ACX (Fin 0).
+Proof.
+intros A P SX SA PP T.
+apply PT_intro.
+assert (g : ∀ x : Fin 0, A x).
+ destruct x as (n, nlt); destruct (Nat.nlt_0_r n nlt).
+
+ exists g; intros x.
+ destruct x as (n, nlt); destruct (Nat.nlt_0_r n nlt).
+Defined.
+
+Definition ex_3_22_Fin_1 : ACX (Fin 1).
+Proof.
+apply ex_3_22_isContr.
+exists (elem 1 0 Nat.lt_0_1); intros x.
+apply isProp_Fin_1.
+Defined.
 
 Definition ex_3_22_Fin_2 : ACX (Fin 2).
 Proof.
