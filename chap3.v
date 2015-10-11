@@ -2236,23 +2236,24 @@ assert (f : A₀ → B₀).
  destruct g as (g, p); apply g, tx.
 Defined.
 
-Definition prev_elem n (x : Fin n) : Fin n :=
+Definition lift_succ n (x : Fin n) : Fin (S n) :=
   match x with
-  | elem _ (S m) p => elem n m (Nat.lt_succ_l m n p)
-  | elem _ 0 p => x
+  | elem _ i ilt => elem (S n) i (Nat.lt_lt_succ_r i n ilt)
   end.
 
+Definition Fin_1_x₀ := elem 1 0 (Nat.lt_succ_diag_r 0).
+
 Definition Fin_2_x₁ := elem 2 1 (Nat.lt_succ_diag_r 1).
-Definition Fin_2_x₀ := prev_elem 2 Fin_2_x₁.
+Definition Fin_2_x₀ := lift_succ 1 Fin_1_x₀.
 
 Definition Fin_3_x₂ := elem 3 2 (Nat.lt_succ_diag_r 2).
-Definition Fin_3_x₁ := prev_elem 3 Fin_3_x₂.
-Definition Fin_3_x₀ := prev_elem 3 Fin_3_x₁.
+Definition Fin_3_x₁ := lift_succ 2 Fin_2_x₁.
+Definition Fin_3_x₀ := lift_succ 2 Fin_2_x₀.
 
 Definition Fin_2_dec x : (x = Fin_2_x₀) + {x = Fin_2_x₁}.
 Proof.
 destruct x as (i, ilt).
-unfold Fin_2_x₀, Fin_2_x₁, prev_elem.
+unfold Fin_2_x₀, Fin_2_x₁, Fin_1_x₀, lift_succ.
 destruct i; [ left; apply ap, le_unique | ].
 destruct i; [ right; apply ap, le_unique | ].
 exfalso; apply my_le_S_n, my_le_S_n, my_nle_succ_0 in ilt; apply ilt.
@@ -2261,7 +2262,8 @@ Defined.
 Definition Fin_3_dec x : (x = Fin_3_x₀) + {x = Fin_3_x₁} + {x = Fin_3_x₂}.
 Proof.
 destruct x as (i, ilt).
-unfold Fin_3_x₀, Fin_3_x₁, Fin_3_x₂, prev_elem.
+unfold Fin_3_x₀, Fin_3_x₁, Fin_3_x₂.
+unfold Fin_2_x₀, Fin_2_x₁, lift_succ.
 destruct i; [ left; left; apply ap, le_unique | ].
 destruct i; [ left; right; apply ap, le_unique | ].
 destruct i; [ right; apply ap, le_unique | ].
@@ -2352,10 +2354,10 @@ assert (f : A₀ → B₀).
  exists g; intros (i, ilt).
  subst g; simpl.
  destruct i.
-  unfold Fin_2_x₀, Fin_2_x₁, prev_elem in x₀; simpl in x₀.
+  unfold Fin_2_x₀, Fin_2_x₁ in x₀; simpl in x₀.
   destruct
     (ap (elem 2 0)
-       (le_unique 1 2 ilt (Nat.lt_succ_l 0 2 (Nat.lt_succ_diag_r 1)))).
+       (le_unique 1 2 ilt (Nat.lt_lt_succ_r 0 1 (Nat.lt_succ_diag_r 0)))).
   apply p₀.
 
   destruct i.
@@ -2400,18 +2402,19 @@ assert (f : A₀ → B₀).
  exists g; intros (i, ilt).
  subst g; simpl.
  destruct i.
-  unfold Fin_3_x₀, Fin_3_x₁, prev_elem in x₀; simpl in x₀.
+  unfold Fin_3_x₀, Fin_3_x₁, Fin_2_x₀, Fin_1_x₀, lift_succ in x₀.
   destruct
     (ap (elem 3 0)
        (le_unique 1 3 ilt
-          (Nat.lt_succ_l 0 3 (Nat.lt_succ_l 1 3 (Nat.lt_succ_diag_r 2))))).
+          (Nat.lt_lt_succ_r 0 2
+             (Nat.lt_lt_succ_r 0 1 (Nat.lt_succ_diag_r 0))))).
   apply p₀.
 
   destruct i.
-   unfold Fin_3_x₁, prev_elem in x₁; simpl in x₁.
+   unfold Fin_3_x₁, Fin_2_x₁, lift_succ in x₁.
    destruct
      (ap (elem 3 1)
-        (le_unique 2 3 ilt (Nat.lt_succ_l 1 3 (Nat.lt_succ_diag_r 2)))).
+        (le_unique 2 3 ilt (Nat.lt_lt_succ_r 1 2 (Nat.lt_succ_diag_r 1)))).
    apply p₁.
 
    destruct i.
