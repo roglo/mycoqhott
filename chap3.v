@@ -2342,6 +2342,19 @@ Definition Fin_2_A A a₀ a₁ (x : Fin 2) :=
       match p in (_ = y) return A y → A x with eq_refl _ => id end a₁
   end : A x.
 
+Definition Fin_3_A A a₀ a₁ a₂ (x : Fin 3) :=
+  match Fin_3_dec x with
+  | inleft y =>
+      match y with
+      | inleft p =>
+          match p in (_ = y) return A y → A x with eq_refl _ => id end a₀
+      | inright p =>
+         match p in (_ = y) return A y → A x with eq_refl _ => id end a₁
+      end
+  | inright p =>
+      match p in (_ = y) return A y → A x with eq_refl _ => id end a₂
+  end : A x.
+
 Definition ex_3_22_Fin_2 : ACX (Fin 2).
 Proof.
 intros A P SX SA PP T.
@@ -2374,19 +2387,6 @@ assert (f : A₀ → B₀).
  apply g; subst A₀.
  apply PT_and_intro; apply T.
 Defined.
-
-Definition Fin_3_A A a₀ a₁ a₂ (x : Fin 3) :=
-  match Fin_3_dec x with
-  | inleft y =>
-      match y with
-      | inleft p =>
-          match p in (_ = y) return A y → A x with eq_refl _ => id end a₀
-      | inright p =>
-         match p in (_ = y) return A y → A x with eq_refl _ => id end a₁
-      end
-  | inright p =>
-      match p in (_ = y) return A y → A x with eq_refl _ => id end a₂
-  end : A x.
 
 Definition ex_3_22_Fin_3 : ACX (Fin 3).
 Proof.
