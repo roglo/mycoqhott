@@ -2454,8 +2454,62 @@ Fixpoint Fin_or m n (p : n < m) (A : Fin m → Type) (P : ∀ x, A x → Type) :
       (Fin_or m n' (lt_succ_l_lt m n' q) A P + ∥(Σ (a : A x), P x a)∥)%type
   end p.
 
+Definition and_imp A B C : (A → B) → (A * C → B * C)%type.
+Proof.
+intros p (a, c).
+split; [ apply p, a | apply c ].
+Defined.
+
 Definition ex_3_22 n : ACX (Fin n).
 Proof.
+intros A P SX SA PP T.
+revert A P SX SA PP T.
+induction n; intros; [ apply ex_3_22_Fin_0; assumption | ].
+set
+  (An := λ (x : Fin n),
+    match x with
+    | elem _ i lti => A (elem (S n) i (Nat.lt_lt_succ_r i n lti))
+    end).
+set
+  (Pn := λ (x : Fin n),
+   match x return An x → Type with
+   | elem _ i ilt => P (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
+   end).
+pose proof
+  (λ (x : Fin n),
+   match x return (isSet (An x)) with
+   | elem _ i ilt => SA (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
+   end) as SAn.
+pose proof
+  (λ (x : Fin n),
+   match x return (∀ a : An x, isProp (Pn x a)) with
+   | elem _ i ilt => PP (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
+   end) as PPn.
+pose proof
+  (λ (x : Fin n),
+   match x return ∥{a : An x & Pn x a}∥ with
+   | elem _ i ilt => T (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
+   end) as Tn.
+assert
+  (H1 : (Π (x : Fin (S n)), ∥(Σ (a : A x), P x a)∥) ≃
+   (Π (x : Fin (n)), ∥(Σ (a : An x), Pn x a)∥) *
+    ∥(Σ (a : A (Fin_x n)), P (Fin_x n) a)∥).
+ apply hott_3_3_3.
+  apply ex_3_6_2; intros x; apply PT_eq.
+
+  apply ex_3_6_1; [ apply ex_3_6_2; intros y; apply PT_eq | apply PT_eq ].
+
+  intros p.
+  split; [ intros y; apply Tn | apply T ].
+
+  intros (p, q); apply T.
+
+ eapply ua in H1.
+ pose proof (IHn An Pn (isSet_Fin n) SAn PPn) as p.
+ apply and_imp with (C := ∥{a : A (Fin_x n) & P (Fin_x n) a}∥) in p.
+  2: split; [ intros x; apply Tn | apply T ].
+  destruct p as (p, q).
+bbb.
 (**)
 intros A P SX SA PP T.
 revert A P SX SA PP T.
@@ -2465,37 +2519,37 @@ set
     match x with
     | elem _ i lti => A (elem (S n) i (Nat.lt_lt_succ_r i n lti))
     end).
- set
-   (Pn := λ (x : Fin n),
-    match x return An x → Type with
-    | elem _ i ilt => P (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
-    end).
- pose proof
-   (λ (x : Fin n),
-    match x return (isSet (An x)) with
-    | elem _ i ilt => SA (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
-    end) as SAn.
- pose proof
-   (λ (x : Fin n),
-    match x return (∀ a : An x, isProp (Pn x a)) with
-    | elem _ i ilt => PP (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
-    end) as PPn.
- pose proof
-   (λ (x : Fin n),
-    match x return ∥{a : An x & Pn x a}∥ with
-    | elem _ i ilt => T (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
-    end) as Tn.
- pose proof (IHn An Pn (isSet_Fin n) SAn PPn Tn) as p.
- set (A₀ := {g : ∀ x : Fin n, An x & ∀ x : Fin n, Pn x (g x)}) in p.
- set (B₀ := ∥{g : ∀ x : Fin (S n), A x & ∀ x : Fin (S n), P x (g x)}∥).
+set
+  (Pn := λ (x : Fin n),
+   match x return An x → Type with
+   | elem _ i ilt => P (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
+   end).
+pose proof
+  (λ (x : Fin n),
+   match x return (isSet (An x)) with
+   | elem _ i ilt => SA (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
+   end) as SAn.
+pose proof
+  (λ (x : Fin n),
+   match x return (∀ a : An x, isProp (Pn x a)) with
+   | elem _ i ilt => PP (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
+   end) as PPn.
+pose proof
+  (λ (x : Fin n),
+   match x return ∥{a : An x & Pn x a}∥ with
+   | elem _ i ilt => T (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
+   end) as Tn.
+pose proof (IHn An Pn (isSet_Fin n) SAn PPn Tn) as p.
+set (A₀ := {g : ∀ x : Fin n, An x & ∀ x : Fin n, Pn x (g x)}) in p.
+set (B₀ := ∥{g : ∀ x : Fin (S n), A x & ∀ x : Fin (S n), P x (g x)}∥).
 Check (PT_rec A₀ B₀).
- assert (f : A₀ → B₀).
-  intros (g, q); subst A₀ B₀.
-  subst An; simpl in g.
-  assert (h : ∀ x : Fin (S n), A x).
-   intros (i, ilt).
-   destruct (eq_nat_dec i n) as [r| r].
-    subst i.
+assert (f : A₀ → B₀).
+ intros (g, q); subst A₀ B₀.
+ subst An; simpl in g.
+ assert (h : ∀ x : Fin (S n), A x).
+  intros (i, ilt).
+  destruct (eq_nat_dec i n) as [r| r].
+   subst i.
 Focus 2.
 assert (jlt : i < n) by omega.
 set (u := T (lift_succ n (elem n i jlt))).
