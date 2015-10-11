@@ -2515,7 +2515,6 @@ apply and_imp with (C := ∥{a : A (Fin_x n) & P (Fin_x n) a}∥) in p.
       ({a : A (Fin_x n) & P (Fin_x n) a} *
        {g : ∀ x : Fin n, An x & ∀ x : Fin n, Pn x (g x)})%type).
  set (B₀ := ∥{g : ∀ x : Fin (S n), A x & ∀ x : Fin (S n), P x (g x)}∥).
- Check (PT_rec A₀ B₀).
  assert (f₀ : A₀ → B₀).
   intros ((an, q), (g, r)); subst B₀; apply PT_intro.
 (*
@@ -2607,6 +2606,17 @@ unfold transport; simpl.
 destruct (
         ap (elem (S n) n) (le_unique (S n) (S n) (Nat.lt_succ_diag_r n) ilt)).
 apply q.
+apply f₀.
+(* actually I didn't use PT_rec; I should compute f₀ inline instead of
+   apart *)
+clear f₀; subst A₀.
+split.
+(* bon, faut que je réfléchisse... *)
+
+bbb.
+pose proof (PT_rec A₀ B₀ f₀ (PT_eq _)) as q.
+destruct q as (g, q).
+apply g.
 
 bbb.
 
