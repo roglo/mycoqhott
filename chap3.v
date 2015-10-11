@@ -2509,6 +2509,7 @@ assert
  apply and_imp with (C := ∥{a : A (Fin_x n) & P (Fin_x n) a}∥) in p.
   2: split; [ intros x; apply Tn | apply T ].
   destruct p as (p, q).
+  eapply PT_and_intro in p; [ clear q | apply q ].
 bbb.
 (**)
 intros A P SX SA PP T.
