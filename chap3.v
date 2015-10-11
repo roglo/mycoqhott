@@ -2500,7 +2500,7 @@ Focus 2.
 assert (jlt : i < n) by omega.
 set (u := T (lift_succ n (elem n i jlt))).
 simpl in u.
-
+simpl in p.
 bbb.
 
   pose proof (PT_rec A₀ B₀ f (PT_eq _)) as q.
