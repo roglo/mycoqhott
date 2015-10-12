@@ -201,11 +201,26 @@ Definition hott_4_1_2 A (a : A) (q : a = a) :
   → Σ (f : Π (x : A), (x = x)), f a = q.
 Proof.
 intros Sa g Pc.
+assert (Sx : ∀ y, a = y → isSet (a = y)) by (intros; destruct H; apply Sa).
+assert (f : ∀ x y : A, a = x → a = y → isSet (x = y)).
+ intros x y p r; destruct p; apply Sx, r.
+
+  assert (Se : ∀ x y : A, isSet (x = y)).
+   intros x y.
+   assert (Saxy : (a = x) * (a = y) → isSet (x = y)).
+    intros (p, r); apply f; assumption.
+Show Proof.
+set (Saxy' := λ p : (a = x) * (a = y), let (p, r) := p in f x y p r).
 bbb.
 
-assert (Sx : ∀ y, a = y → isSet (a = y)) by (intros; destruct H; apply Sa).
-assert (Se : ∀ x y : A, isSet (x = y)).
- intros x y.
+    assert (Ps : isProp (isSet (x = y))) by apply hott_3_3_5_ii.
+    pose proof (PT_rec ((a = x) * (a = y)) (isSet (x = y)) Saxy Ps) as p.
+    destruct p as (h, p); apply Saxy.
+    unfold Saxy in p.
+Check ex_3_17.
+
+bbb.
+
  assert (Ps : ∀ x, isProp (isSet (a = x))) by (intros; apply hott_3_3_5_ii).
  assert (s : ∀ x, a = x → isSet (a = x)) by (intros z p; apply Sx, p).
  set (Sxa x (_ : ∥(a = x)∥) := isSet (a = x)).
