@@ -227,11 +227,11 @@ assert (Se : ∀ x y : A, isSet (x = y)).
    assert (f : a = x → isProp (B x)).
     intros py; subst B.
     simpl in v, p; simpl.
-    destruct py; intros (r, x) (s, y).
-    pose proof x s as H.
+    destruct py; intros (r, h) (r', h').
+    pose proof h r as H.
     rewrite Pc, <- compose_assoc, compose_invert_l, <- ru in H; subst r.
-    pose proof y q as H.
-    rewrite Pc, compose_invert_l, <- ru in H; subst s; apply ap.
+    pose proof h' q as H.
+    rewrite Pc, compose_invert_l, <- ru in H; subst r'; apply ap.
 bbb.
 
 intros x.
