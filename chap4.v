@@ -207,6 +207,15 @@ assert (f : ∀ x y : A, a = x → a = y → isSet (x = y)).
 
   assert (Se : ∀ x y : A, isSet (x = y)).
    intros x y.
+   evar (Saxy : (a = x) * (a = y) → isSet (x = y)).
+bbb.
+
+   assert (Saxy%signature).
+bbb.
+
+   assert (u : (a = x) * (a = y) → isSet (x = y)).
+    intros (p, r); apply f; assumption.
+bbb.
    assert (Saxy : (a = x) * (a = y) → isSet (x = y)).
     intros (p, r); apply f; assumption.
 Show Proof.
