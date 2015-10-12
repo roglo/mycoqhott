@@ -762,12 +762,15 @@ Definition PT_intro_not {A} : notT A → notT ∥A∥ :=
 
 (* "3.8 The axiom of choice" *)
 
-Definition AC := ∀ (X : Type) (A : X → Type) (P : Π (x : X), (A x → Type)),
+Definition ACX X :=
+  ∀ (A : X → Type) (P : Π (x : X), (A x → Type)),
   isSet X
   → (Π (x : X), isSet (A x))
   → (Π (x : X), Π (a : A x), isProp (P x a))
   → (Π (x : X), ∥ (Σ (a : A x), P x a) ∥)
   → ∥ (Σ (g : Π (x : X), A x), Π (x : X), P x (g x)) ∥.
+
+Definition AC := ∀ (X : Type), ACX X.
 
 Definition AC_3_8_3 :=
   ∀ (X : Type) (Y : X → Type), isSet X → (Π (x : X), isSet (Y x))
@@ -2179,14 +2182,6 @@ induction n.
  eapply ex_3_1; [ eapply quasi_inv, Fin_succ_equiv | ].
  eapply ex_3_2; [ apply IHn | apply isSet_True ].
 Defined.
-
-Definition ACX X :=
- ∀ (A : X → Type) (P : Π (x : X), (A x → Type)),
-  isSet X
-  → (Π (x : X), isSet (A x))
-  → (Π (x : X), Π (a : A x), isProp (P x a))
-  → (Π (x : X), ∥ (Σ (a : A x), P x a) ∥)
-  → ∥ (Σ (g : Π (x : X), A x), Π (x : X), P x (g x)) ∥.
 
 Definition Fin_x n := elem (S n) n (Nat.lt_succ_diag_r n).
 

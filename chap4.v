@@ -201,6 +201,8 @@ Definition hott_4_1_2 A (a : A) (q : a = a) :
   → Σ (f : Π (x : A), (x = x)), f a = q.
 Proof.
 intros Sa g Pc.
+bbb.
+
 assert (Sx : ∀ y, a = y → isSet (a = y)) by (intros; destruct H; apply Sa).
 assert (Se : ∀ x y : A, isSet (x = y)).
  intros x y.
