@@ -218,12 +218,16 @@ assert (Se : ∀ x y : A, isSet (x = y)).
   simpl in B.
   (* "We claim that B (x) is a mere proposition for each x : A." *)
   assert (u : ∀ x, isProp (B x)).
+   intros x.
    (* "Since this claim is itself a mere proposition, ..." *)
-   assert (v : isProp (∀ x, isProp (B x))).
-    apply ex_3_6_2; intros x; apply hott_3_3_5_i.
-
+   assert (v : isProp (isProp (B x))) by apply hott_3_3_5_i.
    (* "... we may again apply induction on truncation and assume that
        g(x) = |p| for some p : a = x." *)
+   pose proof PT_rec (a = x) (isProp (B x)).
+   assert (f : a = x → isProp (B x)).
+    intros py; subst B.
+    simpl in v, H; simpl.
+    destruct py.
 bbb.
 
 intros x.
