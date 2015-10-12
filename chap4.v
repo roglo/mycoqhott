@@ -223,11 +223,15 @@ assert (Se : ∀ x y : A, isSet (x = y)).
    assert (v : isProp (isProp (B x))) by apply hott_3_3_5_i.
    (* "... we may again apply induction on truncation and assume that
        g(x) = |p| for some p : a = x." *)
-   pose proof PT_rec (a = x) (isProp (B x)).
+   pose proof PT_rec (a = x) (isProp (B x)) as p.
    assert (f : a = x → isProp (B x)).
     intros py; subst B.
-    simpl in v, H; simpl.
-    destruct py.
+    simpl in v, p; simpl.
+    destruct py; intros (r, x) (s, y).
+    pose proof x s as H.
+    rewrite Pc, <- compose_assoc, compose_invert_l, <- ru in H; subst r.
+    pose proof y q as H.
+    rewrite Pc, compose_invert_l, <- ru in H; subst s; apply ap.
 bbb.
 
 intros x.
