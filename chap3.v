@@ -2248,105 +2248,97 @@ Definition ex_3_22 n : ACX (Fin n).
 Proof.
 intros A P SX SA PP T.
 revert A P SX SA PP T.
-induction n; intros; [ apply ex_3_22_Fin_0; assumption | ].
+induction n; intros; [ apply ex_3_22_Fin_0; assumption |  ].
 set
-  (An := λ (x : Fin n),
-    match x with
-    | elem _ i lti => A (elem (S n) i (Nat.lt_lt_succ_r i n lti))
-    end).
+ (An :=
+  λ x : Fin n,
+  match x with
+  | elem _ i lti => A (elem (S n) i (Nat.lt_lt_succ_r i n lti))
+  end).
 set
-  (Pn := λ (x : Fin n),
-   match x return An x → Type with
-   | elem _ i ilt => P (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
-   end).
+ (Pn :=
+  λ x : Fin n,
+  match x return (An x → Type) with
+  | elem _ i ilt => P (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
+  end).
 pose proof
-  (λ (x : Fin n),
-   match x return (isSet (An x)) with
-   | elem _ i ilt => SA (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
-   end) as SAn.
+ (λ x : Fin n,
+  match x return (isSet (An x)) with
+  | elem _ i ilt => SA (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
+  end) as SAn.
 pose proof
-  (λ (x : Fin n),
-   match x return (∀ a : An x, isProp (Pn x a)) with
-   | elem _ i ilt => PP (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
-   end) as PPn.
+ (λ x : Fin n,
+  match x return (∀ a : An x, isProp (Pn x a)) with
+  | elem _ i ilt => PP (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
+  end) as PPn.
 pose proof
-  (λ (x : Fin n),
-   match x return ∥{a : An x & Pn x a}∥ with
-   | elem _ i ilt => T (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
-   end) as Tn.
+ (λ x : Fin n,
+  match x return ∥{a : An x & Pn x a}∥ with
+  | elem _ i ilt => T (elem (S n) i (Nat.lt_lt_succ_r i n ilt))
+  end) as Tn.
 assert
-  (H1 : (Π (x : Fin (S n)), ∥(Σ (a : A x), P x a)∥) ≃
-   (Π (x : Fin (n)), ∥(Σ (a : An x), Pn x a)∥) *
-    ∥(Σ (a : A (Fin_x n)), P (Fin_x n) a)∥).
-apply hott_3_3_3.
- apply ex_3_6_2; intros x; apply PT_eq.
+ (H1 : (Π (x : Fin (S n)), ∥(Σ (a : A x), P x a)∥) ≃
+  (Π (x : Fin (n)), ∥(Σ (a : An x), Pn x a)∥) *
+   ∥(Σ (a : A (Fin_x n)), P (Fin_x n) a)∥).
+ apply hott_3_3_3.
+  apply ex_3_6_2; intros x; apply PT_eq.
 
- apply ex_3_6_1; [ apply ex_3_6_2; intros y; apply PT_eq | apply PT_eq ].
+  apply ex_3_6_1; [ apply ex_3_6_2; intros y; apply PT_eq | apply PT_eq ].
 
- intros p.
- split; [ intros y; apply Tn | apply T ].
+  intros p.
+  split; [ intros y; apply Tn | apply T ].
 
- intros (p, q); apply T.
+  intros (p, q); apply T.
 
-eapply ua in H1.
-pose proof (IHn An Pn (isSet_Fin n) SAn PPn) as p.
-apply and_imp with (C := ∥{a : A (Fin_x n) & P (Fin_x n) a}∥) in p.
- 2: split; [ intros x; apply Tn | apply T ].
- destruct p as (p, q).
- eapply PT_and_intro in p; [ clear q | apply q ].
- set
-   (A₀ :=
-      ({a : A (Fin_x n) & P (Fin_x n) a} *
-       {g : ∀ x : Fin n, An x & ∀ x : Fin n, Pn x (g x)})%type).
- set (B₀ := ∥{g : ∀ x : Fin (S n), A x & ∀ x : Fin (S n), P x (g x)}∥).
- assert (f₀ : A₀ → B₀).
-  intros ((an, q), (g, r)); subst B₀; apply PT_intro.
+ eapply ua in H1.
+ pose proof (IHn An Pn (isSet_Fin n) SAn PPn) as p.
+ apply and_imp with (C := ∥{a : A (Fin_x n) & P (Fin_x n) a}∥) in p.
+  destruct p as (p, q).
+  eapply PT_and_intro in p; [ clear q | apply q ].
   set
+   (A₀ :=
+    ({a : A (Fin_x n) & P (Fin_x n) a} *
+     {g : ∀ x : Fin n, An x & ∀ x : Fin n, Pn x (g x)})%type).
+  set (B₀ := ∥{g : ∀ x : Fin (S n), A x & ∀ x : Fin (S n), P x (g x)}∥).
+  assert (f₀ : A₀ → B₀).
+   intros ((an, q), (g, r)); subst B₀; apply PT_intro.
+   set
     (h :=
-                    (λ x : Fin (S n),
-                     match x as f return (A f) with
-                     | elem _ i ilt =>
-                         let s1 := lt_dec i n in
-                         match s1 with
-                         | left H3 =>
-                             let x0 := g (elem n i H3) in
-                             transport A
-                               (ap (elem (S n) i)
-                                  (le_unique (S i) 
-                                     (S n) (Nat.lt_lt_succ_r i n H3) ilt))
-                               x0
-                         | right H3 =>
-                             (λ H : ∀ n1 m : ℕ, ¬ n1 < m → m ≤ n1,
-                              (λ H4 : n ≤ i,
-                               (λ H0 : ∀ n1 m : ℕ, n1 ≤ m → S n1 ≤ S m,
-                                (λ H5 : S n ≤ S i,
-                                 (λ H6 : S i = S n,
-                                  (λ H7 : i = n,
-                                   eq_rect_r
-                                     (λ i0 : ℕ,
-                                      ∀ ilt0 : i0 < S n,
-                                      A (elem (S n) i0 ilt0))
-                                     (λ ilt0 : n < S n,
-                                      transport A
-                                        (ap (elem (S n) n)
-                                           (le_unique 
-                                              (S n) 
-                                              (S n) 
-                                              (Nat.lt_succ_diag_r n) ilt0))
-                                        an) H7 ilt) 
-                                    (Nat.succ_inj i n H6))
-                                   (Nat.le_antisymm (S i) (S n) ilt H5))
-                                  (H0 n i H4))
-                                 (λ n1 m : ℕ,
-                                  match Nat.succ_le_mono n1 m with
-                                  | conj x0 _ => x0
-                                  end)) (H i n H3))
-                               (λ n1 m : ℕ,
-                                match Nat.nlt_ge n1 m with
-                                | conj x0 _ => x0
-                                end)
-                         end
-                     end)).
+     λ x : Fin (S n),
+     match x as f return (A f) with
+     | elem _ i ilt =>
+         let s1 := lt_dec i n in
+         match s1 with
+         | left H3 =>
+             let x0 := g (elem n i H3) in
+             transport A
+               (ap (elem (S n) i)
+                  (le_unique (S i) (S n) (Nat.lt_lt_succ_r i n H3) ilt)) x0
+         | right H3 =>
+             (λ H : ∀ n1 m : ℕ, ¬ n1 < m → m ≤ n1,
+              (λ H4 : n ≤ i,
+               (λ H0 : ∀ n1 m : ℕ, n1 ≤ m → S n1 ≤ S m,
+                (λ H5 : S n ≤ S i,
+                 (λ H6 : S i = S n,
+                  (λ H7 : i = n,
+                   eq_rect_r
+                     (λ i0 : ℕ, ∀ ilt0 : i0 < S n, A (elem (S n) i0 ilt0))
+                     (λ ilt0 : n < S n,
+                      transport A
+                        (ap (elem (S n) n)
+                           (le_unique (S n) (S n) (Nat.lt_succ_diag_r n) ilt0))
+                        an) H7 ilt) (Nat.succ_inj i n H6))
+                   (Nat.le_antisymm (S i) (S n) ilt H5))
+                  (H0 n i H4))
+                 (λ n1 m : ℕ,
+                  match Nat.succ_le_mono n1 m with
+                  | conj x0 _ => x0
+                  end)) (H i n H3))
+               (λ n1 m : ℕ, match Nat.nlt_ge n1 m with
+                            | conj x0 _ => x0
+                            end)
+         end
+     end).
    exists h.
    intros (i, ilt); subst h; simpl.
    destruct (lt_dec i n) as [H2| H2].
@@ -2355,26 +2347,28 @@ apply and_imp with (C := ∥{a : A (Fin_x n) & P (Fin_x n) a}∥) in p.
     unfold Pn in x; simpl in x.
     unfold transport.
     destruct
-      (ap (elem (S n) i)
-          (le_unique (S i) (S n) (Nat.lt_lt_succ_r i n H2) ilt)).
+     (ap (elem (S n) i) (le_unique (S i) (S n) (Nat.lt_lt_succ_r i n H2) ilt)).
     apply x.
 
-unfold eq_rect_r; simpl.
-unfold eq_rect; simpl.
-destruct (
-        eq_sym
-          (Nat.succ_inj i n
-             (Nat.le_antisymm (S i) (S n) ilt
-                (match Nat.succ_le_mono n i with
-                 | conj x0 _ => x0
-                 end (match Nat.nlt_ge i n with
-                      | conj x0 _ => x0
-                      end H2))))).
-unfold transport; simpl.
-destruct (
-        ap (elem (S n) n) (le_unique (S n) (S n) (Nat.lt_succ_diag_r n) ilt)).
-apply q.
-pose proof (PT_rec A₀ B₀ f₀ (PT_eq _)) as q.
-destruct q as (g, q).
-apply g, p.
+    unfold eq_rect_r; simpl.
+    unfold eq_rect; simpl.
+    destruct
+     (eq_sym
+        (Nat.succ_inj i n
+           (Nat.le_antisymm (S i) (S n) ilt
+              (match Nat.succ_le_mono n i with
+               | conj x0 _ => x0
+               end (match Nat.nlt_ge i n with
+                    | conj x0 _ => x0
+                    end H2))))).
+    unfold transport; simpl.
+    destruct
+     (ap (elem (S n) n) (le_unique (S n) (S n) (Nat.lt_succ_diag_r n) ilt)).
+    apply q.
+
+   pose proof (PT_rec A₀ B₀ f₀ (PT_eq _)) as q.
+   destruct q as (g, q).
+   apply g, p.
+
+  split; [ intros x; apply Tn | apply T ].
 Defined.
