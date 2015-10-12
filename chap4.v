@@ -204,22 +204,16 @@ intros Sa g Pc.
 assert (Sx : ∀ y, a = y → isSet (a = y)) by (intros; destruct H; apply Sa).
 assert (f : ∀ x y : A, a = x → a = y → isSet (x = y)).
  intros x y p r; destruct p; apply Sx, r.
-
   assert (Se : ∀ x y : A, isSet (x = y)).
    intros x y.
-   evar (Saxy : (a = x) * (a = y) → isSet (x = y)).
-bbb.
-
-   assert (Saxy%signature).
-bbb.
-
-   assert (u : (a = x) * (a = y) → isSet (x = y)).
-    intros (p, r); apply f; assumption.
-bbb.
+(*
    assert (Saxy : (a = x) * (a = y) → isSet (x = y)).
     intros (p, r); apply f; assumption.
-Show Proof.
-set (Saxy' := λ p : (a = x) * (a = y), let (p, r) := p in f x y p r).
+*)
+   evar (Saxy : (a = x) * (a = y) → isSet (x = y)).
+admit.
+admit.
+    intros (p, r).
 bbb.
 
     assert (Ps : isProp (isSet (x = y))) by apply hott_3_3_5_ii.
