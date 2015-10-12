@@ -2132,36 +2132,6 @@ Defined.
     (3.8.1) holds when X is a finite type Fin(n) (as defined in
     Exercise 1.9)." *)
 
-Definition my_nle_succ_0 : ∀ a, not (S a ≤ 0).
-Proof.
-intros a ale.
-inversion ale.
-Defined.
-
-Definition my_le_S_n : ∀ a b, S a ≤ S b → a ≤ b.
-Proof.
-intros a b p.
-induction b.
- inversion p as [| c q r]; [ apply le_n | inversion q ].
-
- inversion p as [| c q r]; [ apply le_n | apply le_S, IHb, q ].
-Defined.
-
-Definition my_lt_1_r : ∀ a, a < 1 → a = 0.
-Proof.
-intros a alt; unfold lt in alt.
-apply my_le_S_n in alt.
-destruct a; [ apply eq_refl | inversion alt ].
-Defined.
-
-Definition isProp_Fin_1 : isProp (Fin 1).
-Proof.
-intros (a, p) (b, q).
-assert (az : a = 0) by (apply my_lt_1_r, p).
-assert (bz : b = 0) by (apply my_lt_1_r, q).
-destruct az, bz; apply ap, le_unique.
-Defined.
-
 Definition Fin_succ_equiv : ∀ n, Fin (S n) ≃ Fin n + ⊤.
 Proof.
 intros n.
@@ -2218,64 +2188,7 @@ Definition ACX X :=
   → (Π (x : X), ∥ (Σ (a : A x), P x a) ∥)
   → ∥ (Σ (g : Π (x : X), A x), Π (x : X), P x (g x)) ∥.
 
-Definition ex_3_22_isContr X (CX : isContr X) : ACX X.
-Proof.
-intros A P SX SA PP T.
-destruct CX as (x₀, PX).
-pose proof (T x₀) as tx.
-set (A₀ := Σ (a : A x₀), P x₀ a).
-set (B₀ := ∥(Σ (g : ∀ x : X, A x), ∀ x : X, P x (g x))∥).
-assert (f : A₀ → B₀).
- intros t; subst A₀ B₀; apply PT_intro.
- destruct t as (ax, pax).
- set (g (x : X) := eq_rect_r (λ x0 : X, A x0) ax (PX x)⁻¹); simpl in g.
- exists g; subst g; simpl.
- intros x; destruct (PX x); apply pax.
-
- pose proof (PT_rec A₀ B₀ f (PT_eq _)) as g.
- destruct g as (g, p); apply g, tx.
-Defined.
-
-Definition lift_succ n (x : Fin n) : Fin (S n) :=
-  match x with
-  | elem _ i ilt => elem (S n) i (Nat.lt_lt_succ_r i n ilt)
-  end.
-
 Definition Fin_x n := elem (S n) n (Nat.lt_succ_diag_r n).
-
-Definition Fin_1_x₀ := Fin_x 0.
-
-Definition Fin_2_x₁ := Fin_x 1.
-Definition Fin_2_x₀ := lift_succ 1 Fin_1_x₀.
-
-Definition Fin_3_x₂ := Fin_x 2.
-Definition Fin_3_x₁ := lift_succ 2 Fin_2_x₁.
-Definition Fin_3_x₀ := lift_succ 2 Fin_2_x₀.
-
-Definition Fin_2_dec x : (x = Fin_2_x₀) + {x = Fin_2_x₁}.
-Proof.
-destruct x as (i, ilt).
-unfold Fin_2_x₀, Fin_2_x₁, Fin_1_x₀, Fin_x, lift_succ.
-destruct i; [ left; apply ap, le_unique | ].
-destruct i; [ right; apply ap, le_unique | ].
-exfalso; apply my_le_S_n, my_le_S_n, my_nle_succ_0 in ilt; apply ilt.
-Defined.
-
-Definition Fin_3_dec x : (x = Fin_3_x₀) + {x = Fin_3_x₁} + {x = Fin_3_x₂}.
-Proof.
-destruct x as (i, ilt).
-unfold Fin_3_x₀, Fin_3_x₁, Fin_3_x₂.
-destruct (eq_nat_dec i 2) as [p| p].
- unfold Fin_2_x₀, Fin_2_x₁, Fin_x, lift_succ.
- subst i; right; apply ap, le_unique.
-
- left; rename ilt into jlt.
- assert (ilt : i < 2) by omega.
- unfold Fin_2_x₀, Fin_2_x₁, Fin_1_x₀, Fin_x, lift_succ.
- destruct i; [ left; apply ap, le_unique | ].
- destruct i; [ right; apply ap, le_unique | ].
- exfalso; apply my_le_S_n, my_le_S_n, my_nle_succ_0 in ilt; apply ilt.
-Defined.
 
 Definition PT_and_elim A B : ∥(A * B)∥ → ∥A∥ * ∥B∥.
 Proof.
@@ -2314,32 +2227,6 @@ apply hott_3_3_3.
  apply PT_and_intro; assumption.
 Defined.
 
-Definition lt_succ_l_lt m n (p : S n < m) : n < m.
-Proof.
-apply Nat.lt_succ_l, p.
-Defined.
-
-Definition Fin_2_A A a₀ a₁ (x : Fin 2) :=
-  match Fin_2_dec x with
-  | inleft p =>
-      match p in (_ = y) return A y → A x with eq_refl _ => id end a₀
-  | inright p =>
-      match p in (_ = y) return A y → A x with eq_refl _ => id end a₁
-  end : A x.
-
-Definition Fin_3_A A a₀ a₁ a₂ (x : Fin 3) :=
-  match Fin_3_dec x with
-  | inleft y =>
-      match y with
-      | inleft p =>
-          match p in (_ = y) return A y → A x with eq_refl _ => id end a₀
-      | inright p =>
-         match p in (_ = y) return A y → A x with eq_refl _ => id end a₁
-      end
-  | inright p =>
-      match p in (_ = y) return A y → A x with eq_refl _ => id end a₂
-  end : A x.
-
 Definition ex_3_22_Fin_0 : ACX (Fin 0).
 Proof.
 intros A P SX SA PP T.
@@ -2350,109 +2237,6 @@ assert (g : ∀ x : Fin 0, A x).
  exists g; intros x.
  destruct x as (n, nlt); destruct (Nat.nlt_0_r n nlt).
 Defined.
-
-Definition ex_3_22_Fin_1 : ACX (Fin 1).
-Proof.
-apply ex_3_22_isContr.
-exists (elem 1 0 Nat.lt_0_1); intros x.
-apply isProp_Fin_1.
-Defined.
-
-Definition ex_3_22_Fin_2 : ACX (Fin 2).
-Proof.
-intros A P SX SA PP T.
-set (x₀ := Fin_2_x₀).
-set (x₁ := Fin_2_x₁).
-set (h x := Σ (a : A x), P x a); simpl in h.
-set (A₀ := (h x₀ * h x₁)%type).
-set (B₀ := ∥(Σ (g : ∀ x : Fin 2, A x), ∀ x : Fin 2, P x (g x))∥).
-assert (f : A₀ → B₀).
- intros ((a₀, p₀), (a₁, p₁)); subst A₀ B₀; apply PT_intro.
- set (g := Fin_2_A A a₀ a₁).
- unfold Fin_2_A in g; simpl in g.
- exists g; intros (i, ilt).
- subst g; simpl.
- destruct i.
-  unfold Fin_2_x₀, Fin_2_x₁ in x₀; simpl in x₀.
-  destruct
-    (ap (elem 2 0)
-       (le_unique 1 2 ilt (Nat.lt_lt_succ_r 0 1 (Nat.lt_succ_diag_r 0)))).
-  apply p₀.
-
-  destruct i.
-   unfold Fin_2_x₁, Fin_x in x₁.
-   destruct (ap (elem 2 1) (le_unique 2 2 ilt (Nat.lt_succ_diag_r 1))).
-   apply p₁.
-
-   exfalso; do 2 apply my_le_S_n in ilt; revert ilt; apply my_nle_succ_0.
-
- pose proof (PT_rec A₀ B₀ f (PT_eq _)) as p.
- destruct p as (g, p).
- apply g; subst A₀.
- apply PT_and_intro; apply T.
-Defined.
-
-Definition ex_3_22_Fin_3 : ACX (Fin 3).
-Proof.
-intros A P SX SA PP T.
-set (x₀ := Fin_3_x₀).
-set (x₁ := Fin_3_x₁).
-set (x₂ := Fin_3_x₂).
-set (h x := Σ (a : A x), P x a); simpl in h.
-set (A₀ := (h x₀ * h x₁ * h x₂)%type).
-set (B₀ := ∥(Σ (g : ∀ x : Fin 3, A x), ∀ x : Fin 3, P x (g x))∥).
-assert (f : A₀ → B₀).
- intros (((a₀, p₀), (a₁, p₁)), (a₂, p₂)); subst A₀ B₀; apply PT_intro.
- set (g := Fin_3_A A a₀ a₁ a₂).
- unfold Fin_3_A in g; simpl in g.
- exists g; intros (i, ilt).
- subst g; simpl.
- destruct i; simpl.
-  unfold Fin_3_x₀, Fin_3_x₁, Fin_2_x₀, Fin_1_x₀, Fin_x, lift_succ in x₀.
-  destruct
-    (ap (elem 3 0)
-       (le_unique 1 3 ilt
-          (Nat.lt_lt_succ_r 0 2
-             (Nat.lt_lt_succ_r 0 1 (Nat.lt_succ_diag_r 0))))).
-  apply p₀.
-
-  destruct i; simpl.
-   unfold Fin_3_x₁, Fin_2_x₁, Fin_x, lift_succ in x₁.
-   destruct
-     (ap (elem 3 1)
-        (le_unique 2 3 ilt (Nat.lt_lt_succ_r 1 2 (Nat.lt_succ_diag_r 1)))).
-   apply p₁.
-
-   destruct i; simpl.
-    unfold Fin_3_x₂, Fin_x in x₂.
-    destruct (ap (elem 3 2) (le_unique 3 3 ilt (Nat.lt_succ_diag_r 2))).
-    apply p₂.
-
-   exfalso; do 3 apply my_le_S_n in ilt; revert ilt; apply my_nle_succ_0.
-
- pose proof (PT_rec A₀ B₀ f (PT_eq _)) as p.
- destruct p as (g, p).
- apply g; subst A₀.
- apply PT_and_intro; [ apply PT_and_intro; apply T | apply T ].
-Defined.
-
-Fixpoint Fin_and m n (p : n < m) (A : Fin m → Type) (P : ∀ x, A x → Type) :=
-  match n return n < m → Type with
-  | O => λ _, True
-  | S n' =>
-      let x := elem m n p in
-      λ q,
-      (Fin_and m n' (lt_succ_l_lt m n' q) A P * (Σ (a : A x), P x a))%type
-  end p.
-
-Fixpoint Fin_or m n (p : n < m) (A : Fin m → Type) (P : ∀ x, A x → Type) :=
-  match n return n < m → Type with
-  | O => λ _, False
-  | S n' =>
-      let x := elem m n p in
-      λ q,
-      (Fin_or m n' (lt_succ_l_lt m n' q) A P + ∥(Σ (a : A x), P x a)∥)%type
-  end p.
 
 Definition and_imp A B C : (A → B) → (A * C → B * C)%type.
 Proof.
@@ -2517,22 +2301,6 @@ apply and_imp with (C := ∥{a : A (Fin_x n) & P (Fin_x n) a}∥) in p.
  set (B₀ := ∥{g : ∀ x : Fin (S n), A x & ∀ x : Fin (S n), P x (g x)}∥).
  assert (f₀ : A₀ → B₀).
   intros ((an, q), (g, r)); subst B₀; apply PT_intro.
-(*
-  assert (h : ∀ x : Fin (S n), A x).
-   intros (i, ilt).
-   destruct (lt_dec i n) as [H2| H2].
-    set (x := g (elem n i H2)).
-    unfold An in x; simpl in x.
-    eapply transport; [ | apply x ].
-    apply ap, le_unique.
-
-    apply Nat.nlt_ge, Nat.succ_le_mono in H2.
-    apply Nat.le_antisymm in H2; [ | apply ilt ].
-    apply Nat.succ_inj in H2; subst i.
-    eapply transport; [ | apply an ].
-    unfold Fin_x; apply ap, le_unique.
-    Set Printing Depth 100. Show Proof.
-*)
   set
     (h :=
                     (λ x : Fin (S n),
