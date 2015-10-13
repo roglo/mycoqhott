@@ -14,6 +14,9 @@ Notation "A ⇔ B" := ((A → B) * (B → A))%type (at level 100).
 Notation "( x , y ) '_{' P }" := (existT P x y)
   (at level 0, format "'[' ( x ,  y ) _{ P } ']'", only parsing).
 
+Tactic Notation "transparent" "assert" "(" ident(H) ":" open_constr(type) ")" :=
+ refine (let H := (_ : type) in _).
+
 Open Scope nat_scope.
 
 (* "Chapter 4 - Equivalences" *)
@@ -167,6 +170,10 @@ Defined.
 
     Then there exists f:Π(x:A)(x=x) with f(a) = q." *)
 
+Section lemma_4_1_2.
+
+Import Σ_type2.
+
 Definition PT_eq_sym A (a b : A) : ∥(a = b)∥ → ∥(b = a)∥.
 Proof.
 intros p.
@@ -193,9 +200,6 @@ apply hott_3_3_3; [ apply PT_eq | apply PT_eq | | ].
 
  apply PT_equiv_imp, quasi_inv, p.
 Defined.
-
-Tactic Notation "transparent" "assert" "(" ident(H) ":" open_constr(type) ")" :=
- refine (let H := (_ : type) in _).
 
 Definition hott_4_1_2 A (a : A) (q : a = a) :
   isSet (a = a)
@@ -230,13 +234,33 @@ assert (Se : ∀ x y : A, isSet (x = y)).
     pose proof h r as H.
     rewrite Pc, <- compose_assoc, compose_invert_l, <- ru in H; subst r.
     pose proof h' q as H.
-    rewrite Pc, compose_invert_l, <- ru in H; subst r'; apply ap.
+    rewrite Pc, compose_invert_l, <- ru in H; subst r'.
+(*
+(*
+  @Σ_type.pair_eq
+     : ∀ (A : Type) (P : A → Type) (x y : A) (u : P x)
+       (v : P y) (p : x = y),
+       transport P p u = v → existT P x u = existT P y v
+*)
+    apply (@Σ_type.pair_eq _ _ _ _ _ _ (eq_refl q)).
+    simpl.
+(*
+  ============================
+   id h = h'
+   eventually, not a better solution than the below one
+*)
+*)
+    apply ap.
     apply Π_type.funext; intros s.
 Check (h s).
 (* h s
      : q = s⁻¹ • q • s *)
-bbb.
-
+Check @hott_2_11_2_iii.
+(* @hott_2_11_2_iii
+     : ∀ A : Type,
+       A
+       → ∀ (x₁ x₂ : A) (p : x₁ = x₂) (q : x₁ = x₁),
+         transport (λ x : A, x = x) p q = p⁻¹ • q • p *)
     assert (r : ∀ s p, h s = h p • (h' p)⁻¹ • h' s) by (intros; apply Sa).
     pose proof r s s as t.
     eapply compose; [ apply t | ].
@@ -359,3 +383,5 @@ assert (Se : ∀ x y : A, isSet (x = y)).
 (* h x : ∀ t : a = x, g x = ╎t╎ *)
 (* h y : ∀ t : a = y, g y = ╎t╎ *)
 bbb.
+
+End lemma_4_1_2.
