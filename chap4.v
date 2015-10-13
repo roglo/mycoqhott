@@ -257,3 +257,11 @@ assert (Se : ∀ x y : A, isSet (x = y)).
 Defined.
 
 End lemma_4_1_2.
+
+(* "Theorem 4.1.3. There exist types A and B and a function f : A → B
+    such that qinv(f) is not a mere proposition." *)
+
+Definition hott_4_1_3 :
+  Σ (A : Type), Σ (B : Type), Σ (f : A → B), notT (isProp (qinv f)).
+Proof.
+bbb.
