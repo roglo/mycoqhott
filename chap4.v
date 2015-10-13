@@ -272,11 +272,21 @@ hott_4_1_2
        isSet (a = a)
        → (∀ x : A, ∥(a = x)∥)
          → (∀ p : a = a, p • q = q • p) → {f : ∀ x : A, x = x & f a = q}
-hott_3_8_5_tac
+hott_3_8_5
      : {X : Type &
        {Y : X → Type & notT ((∀ x : X, ∥(Y x)∥) → ∥(∀ x : X, Y x)∥)}}
 *)
 assert (p : Σ (X : Type), Π (x : X), notT (isProp (x = x))).
+ set (X := Σ (A : Type), ∥(ℬ = A)∥).
+ assert (f : Π (x : X), x = x).
+  set (a := existT _ ℬ ╎(eq_refl ℬ)╎ : X).
+  set (e := bool_eq_bool_negb).
+  transparent assert (q : a = a).
+   unfold a; simpl; apply ap.
+   apply (compose (y := ╎(ua e)╎)); apply PT_eq.
+
+   simpl in q.
+bbb.
 Focus 2.
  destruct p as (X, p).
 bbb.

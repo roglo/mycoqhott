@@ -946,7 +946,7 @@ Proof.
 intros; apply equiv_eq_pair_trunc.
 Defined.
 
-Definition hott_3_8_5_tac :
+Definition hott_3_8_5 :
   Σ (X : Type), Σ (Y : X → Type),
   notT ((Π (x : X), ∥(Y x)∥) → ∥(Π (x : X), Y x)∥).
 Proof.
