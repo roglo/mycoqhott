@@ -244,20 +244,16 @@ assert (Se : ∀ x y : A, isSet (x = y)).
 
     apply (PT_rec (a = x) (B x) f (u x)), g.
 
-   assert (h : ∀ (p s : a = a), q • (p • s⁻¹) = (p • s⁻¹) • q).
-    intros p s; apply invert, Pc.
+   transparent assert (f : ∀ x : A, x = x).
+    intros x.
+    pose proof v x as p; unfold B in p; simpl in p.
+    destruct p as (r, p); apply r.
 
-    transparent assert (f : ∀ x : A, x = x).
-     intros x.
-     pose proof v x as p; unfold B in p; simpl in p.
-     destruct p as (r, p).
-     apply r.
-
-     exists f; unfold f.
-     destruct (v a) as (r, s).
-     pose proof s r as H; rewrite H.
-     rewrite Pc, <- compose_assoc, compose_invert_l, <- ru.
-     apply eq_refl.
+    exists f; unfold f.
+    destruct (v a) as (r, s).
+    pose proof s r as H; rewrite H.
+    rewrite Pc, <- compose_assoc, compose_invert_l, <- ru.
+    apply eq_refl.
 Defined.
 
 End lemma_4_1_2.
