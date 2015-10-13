@@ -264,4 +264,79 @@ End lemma_4_1_2.
 Definition hott_4_1_3 :
   Σ (A : Type), Σ (B : Type), Σ (f : A → B), notT (isProp (qinv f)).
 Proof.
+(*
+hott_4_1_1
+     : ∀ (A B : Type) (f : A → B), qinv f → qinv f ≃ (∀ x : A, x = x)
+hott_4_1_2
+     : ∀ (A : Type) (a : A) (q : a = a),
+       isSet (a = a)
+       → (∀ x : A, ∥(a = x)∥)
+         → (∀ p : a = a, p • q = q • p) → {f : ∀ x : A, x = x & f a = q}
+hott_3_8_5_tac
+     : {X : Type &
+       {Y : X → Type & notT ((∀ x : X, ∥(Y x)∥) → ∥(∀ x : X, Y x)∥)}}
+*)
+assert (p : Σ (X : Type), Π (x : X), notT (isProp (x = x))).
+Focus 2.
+ destruct p as (X, p).
+ exists X, X, id.
+ intros q.
+ pose proof hott_4_1_1 X X id as r.
+ assert (s : qinv (id (A := X))).
+  exists id; unfold "◦", "~~"; simpl.
+  split; apply eq_refl.
+
+  pose proof r s as t.
+  assert (H : ∀ A B, A = B → isProp A → isProp B).
+   intros A B eqAB H; subst A; apply H.
+
+   assert (qinv (id (A := X)) = (∀ x : X, x = x)).
+Check @ua.
+Set Printing All.
+Show.
+Check @ua.
+bbb.
+
+   pose proof H _ _ _ q.
+
+
+Focus 2.
+pose proof H _ _ t q as u.
+assert (∀ x : X, isProp (x = x)).
+intros x a b.
+unfold isProp in u.
+
+
+
+SearchAbout (isProp (∀ _, _)).
+eapply p.
+bbb.
+
+Check @ex_3_6_2.
+apply ex_3_6_2 in u.
+bbb.
+
+  eapply ua in t.
+  apply (Σ_pr₁ univalence2) in t.
+
+bbb.
+
+ exists X, X.
+ exists id.
+ intros q.
+bbb.
+
+pose proof hott_3_8_5_tac as p.
+destruct p as (X, (Y, f)).
+bbb.
+
+exists bool, bool, (Σ_pr₁ bool_eq_bool_negb).
+intros p.
+unfold bool_eq_bool_negb in p.
+simpl in p.
+unfold isProp in p.
+assert (isProp (Π (x : bool), x = x)).
+ intros q r.
+ unfold isProp in p.
+
 bbb.
