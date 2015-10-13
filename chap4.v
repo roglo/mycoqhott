@@ -194,7 +194,7 @@ apply hott_3_3_3; [ apply PT_eq | apply PT_eq | | ].
  apply PT_equiv_imp, quasi_inv, p.
 Defined.
 
-Tactic Notation "transparent" "assert" "(" ident(H) ":" constr(type) ")" :=
+Tactic Notation "transparent" "assert" "(" ident(H) ":" open_constr(type) ")" :=
  refine (let H := (_ : type) in _).
 
 Definition hott_4_1_2 A (a : A) (q : a = a) :
@@ -223,15 +223,23 @@ assert (Se : ∀ x y : A, isSet (x = y)).
    assert (v : isProp (isProp (B x))) by apply hott_3_3_5_i.
    (* "... we may again apply induction on truncation and assume that
        g(x) = |p| for some p : a = x." *)
-   pose proof PT_rec (a = x) (isProp (B x)) as p.
    assert (f : a = x → isProp (B x)).
     intros py; subst B.
-    simpl in v, p; simpl.
+    simpl in v; simpl.
     destruct py; intros (r, h) (r', h').
     pose proof h r as H.
     rewrite Pc, <- compose_assoc, compose_invert_l, <- ru in H; subst r.
     pose proof h' q as H.
     rewrite Pc, compose_invert_l, <- ru in H; subst r'; apply ap.
+    assert (r : ∀ s p, h s = h p • (h' p)⁻¹ • h' s) by (intros; apply Sa).
+    apply Π_type.funext; intros s.
+    pose proof r s s as t.
+    eapply compose; [ apply t | ].
+bbb.
+
+Focus 2.
+   pose proof PT_rec (a = x) (isProp (B x)) f v as p.
+   destruct p as (h, p); apply h, g.
 bbb.
 
 intros x.
