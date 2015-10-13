@@ -249,7 +249,9 @@ assert (Se : ∀ x y : A, isSet (x = y)).
 
     apply (PT_rec (a = x) (B x) f (u x)), g.
 
-   simpl.
+   assert (f : ∀ (p s : a = a), q • (p • s⁻¹) = (p • s⁻¹) • q).
+    intros p s; apply invert, Pc.
+
 bbb.
 
 End lemma_4_1_2.
