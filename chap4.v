@@ -231,8 +231,13 @@ assert (Se : ∀ x y : A, isSet (x = y)).
     rewrite Pc, <- compose_assoc, compose_invert_l, <- ru in H; subst r.
     pose proof h' q as H.
     rewrite Pc, compose_invert_l, <- ru in H; subst r'; apply ap.
-    assert (r : ∀ s p, h s = h p • (h' p)⁻¹ • h' s) by (intros; apply Sa).
     apply Π_type.funext; intros s.
+Check (h s).
+(* h s
+     : q = s⁻¹ • q • s *)
+bbb.
+
+    assert (r : ∀ s p, h s = h p • (h' p)⁻¹ • h' s) by (intros; apply Sa).
     pose proof r s s as t.
     eapply compose; [ apply t | ].
 bbb.
