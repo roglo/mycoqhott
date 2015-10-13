@@ -279,6 +279,7 @@ hott_3_8_5_tac
 assert (p : Σ (X : Type), Π (x : X), notT (isProp (x = x))).
 Focus 2.
  destruct p as (X, p).
+bbb.
  exists X, X, id.
  intros q.
  pose proof hott_4_1_1 X X id as r.
@@ -287,56 +288,4 @@ Focus 2.
   split; apply eq_refl.
 
   pose proof r s as t.
-  assert (H : ∀ A B, A = B → isProp A → isProp B).
-   intros A B eqAB H; subst A; apply H.
-
-   assert (qinv (id (A := X)) = (∀ x : X, x = x)).
-Check @ua.
-Set Printing All.
-Show.
-Check @ua.
-bbb.
-
-   pose proof H _ _ _ q.
-
-
-Focus 2.
-pose proof H _ _ t q as u.
-assert (∀ x : X, isProp (x = x)).
-intros x a b.
-unfold isProp in u.
-
-
-
-SearchAbout (isProp (∀ _, _)).
-eapply p.
-bbb.
-
-Check @ex_3_6_2.
-apply ex_3_6_2 in u.
-bbb.
-
-  eapply ua in t.
-  apply (Σ_pr₁ univalence2) in t.
-
-bbb.
-
- exists X, X.
- exists id.
- intros q.
-bbb.
-
-pose proof hott_3_8_5_tac as p.
-destruct p as (X, (Y, f)).
-bbb.
-
-exists bool, bool, (Σ_pr₁ bool_eq_bool_negb).
-intros p.
-unfold bool_eq_bool_negb in p.
-simpl in p.
-unfold isProp in p.
-assert (isProp (Π (x : bool), x = x)).
- intros q r.
- unfold isProp in p.
-
 bbb.
