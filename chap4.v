@@ -286,6 +286,11 @@ assert (p : Σ (X : Type), Π (x : X), notT (isProp (x = x))).
    apply (compose (y := ╎(ua e)╎)); apply PT_eq.
 
    simpl in q.
+   assert (r : (a = a) ≃ (ℬ ≃ ℬ)).
+    transparent assert (f : (a = a) → (ℬ ≃ ℬ)).
+Focus 1.
+     intros p.
+
 bbb.
 Focus 2.
  destruct p as (X, p).
