@@ -288,9 +288,13 @@ assert (p : Σ (X : Type), Π (x : X), notT (isProp (x = x))).
    simpl in q.
    assert (r : (a = a) ≃ (ℬ ≃ ℬ)).
     transparent assert (f : (a = a) → (ℬ ≃ ℬ)).
-Focus 1.
      intros p.
-
+bbb.
+    transparent assert (f : (a = a) → (ℬ ≃ ℬ)); [ intros p; apply e | ].
+    exists f; apply qinv_isequiv.
+    transparent assert (g : (ℬ ≃ ℬ) → (a = a)); [ intros p; apply q | ].
+    exists g; subst f g.
+    unfold "◦", "~~", id; simpl.
 bbb.
 Focus 2.
  destruct p as (X, p).
