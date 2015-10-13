@@ -14,7 +14,7 @@ Notation "A ⇔ B" := ((A → B) * (B → A))%type (at level 100).
 Notation "( x , y ) '_{' P }" := (existT P x y)
   (at level 0, format "'[' ( x ,  y ) _{ P } ']'", only parsing).
 
-Tactic Notation "transparent" "assert" "(" ident(H) ":" open_constr(type) ")" :=
+Tactic Notation "transparent" "assert" "(" ident(H) ":" lconstr(type) ")" :=
  refine (let H := (_ : type) in _).
 
 Open Scope nat_scope.
@@ -211,7 +211,7 @@ intros Sa g Pc.
 assert (Sx : ∀ y, a = y → isSet (a = y)) by (intros; destruct H; apply Sa).
 assert (Se : ∀ x y : A, isSet (x = y)).
  intros x y.
- assert (Saxy : ((a = x) * (a = y) → isSet (x = y))).
+ assert (Saxy : (a = x) * (a = y) → isSet (x = y)).
   intros (p, r); destruct p, r; apply Sa.
 
   assert (Ps : isProp (isSet (x = y))) by apply hott_3_3_5_ii.
