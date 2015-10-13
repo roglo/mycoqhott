@@ -218,170 +218,38 @@ assert (Se : ∀ x y : A, isSet (x = y)).
   pose proof (PT_rec ((a = x) * (a = y)) (isSet (x = y)) Saxy Ps) as p.
   destruct p as (h, p); apply h, PT_and_intro; apply g.
 
-  set (B (x : A) := Σ (r : x = x), Π (s : a = x), (r = s⁻¹ • q • s) : Type).
-  simpl in B.
-  (* "We claim that B (x) is a mere proposition for each x : A." *)
-  assert (u : ∀ x, isProp (B x)).
-   intros x.
-   (* "Since this claim is itself a mere proposition, ..." *)
-   assert (v : isProp (isProp (B x))) by apply hott_3_3_5_i.
-   (* "... we may again apply induction on truncation and assume that
-       g(x) = |p| for some p : a = x." *)
-   assert (f : a = x → isProp (B x)).
-    intros py; subst B.
-    simpl in v; simpl.
-    destruct py; intros (r, h) (r', h').
-    pose proof h r as H.
-    rewrite Pc, <- compose_assoc, compose_invert_l, <- ru in H; subst r.
-    pose proof h' q as H.
-    rewrite Pc, compose_invert_l, <- ru in H; subst r'.
-(*
-(*
-  @Σ_type.pair_eq
-     : ∀ (A : Type) (P : A → Type) (x y : A) (u : P x)
-       (v : P y) (p : x = y),
-       transport P p u = v → existT P x u = existT P y v
-*)
-    apply (@Σ_type.pair_eq _ _ _ _ _ _ (eq_refl q)).
-    simpl.
-(*
-  ============================
-   id h = h'
-   eventually, not a better solution than the below one
-*)
-*)
-    apply ap.
-    apply Π_type.funext; intros s.
-Check (h s).
-(* h s
-     : q = s⁻¹ • q • s *)
-Check @hott_2_11_2_iii.
-(* @hott_2_11_2_iii
-     : ∀ A : Type,
-       A
-       → ∀ (x₁ x₂ : A) (p : x₁ = x₂) (q : x₁ = x₁),
-         transport (λ x : A, x = x) p q = p⁻¹ • q • p *)
-    assert (r : ∀ s p, h s = h p • (h' p)⁻¹ • h' s) by (intros; apply Sa).
-    pose proof r s s as t.
-    eapply compose; [ apply t | ].
-bbb.
+ set (B (x : A) := Σ (r : x = x), Π (s : a = x), (r = s⁻¹ • q • s) : Type).
+ simpl in B.
+ (* "We claim that B (x) is a mere proposition for each x : A." *)
+ assert (u : ∀ x, isProp (B x)).
+  intros x.
+  (* "Since this claim is itself a mere proposition, ..." *)
+  assert (v : isProp (isProp (B x))) by apply hott_3_3_5_i.
+  (* "... we may again apply induction on truncation and assume that
+      g(x) = |p| for some p : a = x." *)
+  assert (f : a = x → isProp (B x)).
+   intros p.
+   simpl in v; simpl.
+   intros (r, h) (r', h').
+   pose proof h p as H; subst r.
+   pose proof h' p as H; subst r'.
+   apply ap, Π_type.funext; intros s.
+   apply Se.
 
-Focus 2.
    pose proof PT_rec (a = x) (isProp (B x)) f v as p.
    destruct p as (h, p); apply h, g.
-bbb.
 
-intros x.
-Check (g x).
-Check ex_3_17.
-(* ex_3_17
-     : ∀ (A : Type) (B : ∥A∥ → Type),
-       (∀ x : ∥A∥, isProp (B x)) → (∀ a : A, B ╎a╎) → ∀ x : ∥A∥, B x *)
-bbb.
+  assert (v : Π (x : A), B x).
+   intros x.
+   assert (f : a = x → B x).
+    intros p; unfold B; destruct p.
+    exists q; intros s.
+    rewrite Pc, <- compose_assoc, compose_invert_l, <- ru.
+    apply eq_refl.
 
-Check (ex_3_17 (a = x)). (λ p : ∥(a = x)∥,
+    apply (PT_rec (a = x) (B x) f (u x)), g.
 
-B₀ (x₀ : ∥A₀∥) ≡ (a = x)
-
-bbb.
-set (A₀ := A).
-set (B₀ := ∥(a = x)∥).
-set (f₀ := g).
-Check (PT_rec A₀ B₀ f₀).
-bbb.
-
-set (B₀ (_ : ∥A∥) := ∀ x, isProp (B x)).
-
-bbb.
-
-   intros x (r, h) (r', h'); simpl.
-   assert (r = r').
-    set (u := λ p, h p • (h' p)⁻¹); apply u.
-
-bbb.
-
-set (B₀ := ∀ x, isProp (B x)) in v.
-Check (PT_rec A B₀).
-assert (f : A → B₀).
- intros x₀; subst B₀; intros y₀.
-(*
-  ============================
-   isProp (B y₀)
-*)
-
-(* @ex_3_17
-     : ∀ (A : Type) (B : ∥A∥ → Type),
-       (∀ x : ∥A∥, isProp (B x)) → (∀ a : A, B ╎a╎) → ∀ x : ∥A∥, B x *)
-Check (@ex_3_17 ∥A∥ B).
-bbb.
-
-  intros (r, p₀) (t, q₀).
-  pose proof (Se x x r t) as u.
-  unfold isSet in u.
-bbb.
-
- pose proof (gz x) as p₀.
- pose proof (gz y) as q₀.
-bbb.
-
-(* hott_3_3_5_ii
-     : ∀ A : Type, isProp (isSet A) *)
-(* PT_rec
-     : ∀ (A B : Type) (f : A → B),
-       isProp B → {g : ∥A∥ → B & ∀ a : A, g ╎a╎ = f a} *)
-
- assert (u : ∀ z, isSet (a = z)).
-  intros z.
-
- assert (u : ∀ a : isSet (a = y), isSet (x = y)).
-  intros a₀.
-
-set (A₀ := isSet (a = x)).
-set (B₀ := λ p : ∥A₀∥, isSet (x = y)).
-assert (f : ∀ p : ∥A₀∥, isProp (B₀ p)).
- intros p; subst A₀ B₀; apply hott_3_3_5_ii.
-
- assert (u : ∀ a : A₀, B₀ (PT_intro a)).
-  intros a₀; subst A₀ B₀; simpl.
-
-  Focus 2.
-  pose proof (@ex_3_17 A₀ B₀ f u) as v.
-  subst A₀ B₀; simpl in u, v.
-
-  apply v, PT_intro.
-
-
-assert (f : ∀ x : ∥A∥, isProp (B x)).
- intros z; subst B; apply hott_3_3_5_ii.
-
-Check (@ex_3_17 A B f).
- simpl in f.
- assert (h : ∀ a : A, B (PT_intro a)).
-  intros z; subst B; simpl.
-
-bbb.
- assert (xya : ∀ x y : A, (x = y) ≃ (a = a)).
-  intros x y.
-  exists (λ _ , eq_refl _); apply qinv_isequiv.
-  assert (gggg : (a = a) → (x = y)).
-   intros p.
-
-bbb.
-intros Sa g Pc.
-assert (Se : ∀ x y : A, isSet (x = y)).
- intros x y.
- assert (r : ∀ z, isSet ∥(a = z)∥) by (intros z; apply isProp_isSet, PT_eq).
- assert (f : ∀ z (p : ∥(a = z)∥), isProp (g z = p)).
-  intros z p u v; apply r.
-
-  assert (h : ∀ z (t : a = z), g z = PT_intro t) by (intros z t; apply PT_eq).
-  assert ((x = y) ≃ (a = a)).
-   exists (λ _, eq_refl _).
-   apply qinv_isequiv.
-   assert (gggg : (a = a) → (x = y)).
-    intros p.
-(* h x : ∀ t : a = x, g x = ╎t╎ *)
-(* h y : ∀ t : a = y, g y = ╎t╎ *)
+   simpl.
 bbb.
 
 End lemma_4_1_2.
