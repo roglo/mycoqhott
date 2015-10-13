@@ -171,7 +171,6 @@ Defined.
     Then there exists f:Π(x:A)(x=x) with f(a) = q." *)
 
 Section lemma_4_1_2.
-
 Import Σ_type2.
 
 Definition PT_eq_sym A (a b : A) : ∥(a = b)∥ → ∥(b = a)∥.
@@ -220,13 +219,9 @@ assert (Se : ∀ x y : A, isSet (x = y)).
 
  set (B (x : A) := Σ (r : x = x), Π (s : a = x), (r = s⁻¹ • q • s) : Type).
  simpl in B.
- (* "We claim that B (x) is a mere proposition for each x : A." *)
  assert (u : ∀ x, isProp (B x)).
   intros x.
-  (* "Since this claim is itself a mere proposition, ..." *)
   assert (v : isProp (isProp (B x))) by apply hott_3_3_5_i.
-  (* "... we may again apply induction on truncation and assume that
-      g(x) = |p| for some p : a = x." *)
   assert (f : a = x → isProp (B x)).
    intros p.
    simpl in v; simpl.
@@ -249,9 +244,20 @@ assert (Se : ∀ x y : A, isSet (x = y)).
 
     apply (PT_rec (a = x) (B x) f (u x)), g.
 
-   assert (f : ∀ (p s : a = a), q • (p • s⁻¹) = (p • s⁻¹) • q).
+   assert (h : ∀ (p s : a = a), q • (p • s⁻¹) = (p • s⁻¹) • q).
     intros p s; apply invert, Pc.
 
-bbb.
+    transparent assert (f : ∀ x : A, x = x).
+     intros x.
+     pose proof v x as p; unfold B in p; simpl in p.
+     destruct p as (r, p).
+     apply r.
+
+     exists f; unfold f.
+     destruct (v a) as (r, s).
+     pose proof s r as H; rewrite H.
+     rewrite Pc, <- compose_assoc, compose_invert_l, <- ru.
+     apply eq_refl.
+Defined.
 
 End lemma_4_1_2.
