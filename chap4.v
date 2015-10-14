@@ -311,7 +311,6 @@ transparent assert (p : Σ (X : Type), notT (isProp (Π (x : X), x = x))).
                 (ii) For all x:A we have ∥a=x∥.
                (iii) For all p:a=a we have p•q=q•p *)
     assert (saa : isSet (a = a)).
-bbb.
 
 Definition toto A B : isSet (A ≃ B) → isSet A → isSet B.
 Proof.
@@ -327,7 +326,37 @@ Definition toto A B : isProp (A ≃ B) → isProp A → isProp B.
 Proof.
 (* et ça ? *)
 intros PAB PA.
+assert (PBA : isProp (B → A)) by apply isPropImp, PA.
+intros x y.
+
 SearchAbout (isProp _ → _).
+Definition toto A B : isProp (A ≃ B) → isProp (B ≃ A).
+Proof.
+intros PAB x y.
+pose proof PAB (quasi_inv x) (quasi_inv y) as p.
+SearchAbout (_⁻⁻¹).
+
+Definition toto A B (x : A ≃ B) : x⁻⁻¹⁻⁻¹ = x.
+Proof.
+unfold "⁻⁻¹".
+destruct x as (f, ((g, Hg), (h, Hh))); unfold id.
+apply ap, split_pair_eq; split.
+ apply ap, Π_type.funext; intros x.
+ unfold "◦", "~~", id in Hg.
+ pose proof Hg x as v.
+ set (u := f (g x)) in v |-*.
+bbb.
+
+ rewrite Hg.
+bbb.
+
+SearchAbout (_ = _ • _).
+
+unfold "⁻⁻¹" in p.
+destruct x, y.
+destruct i, i0.
+destruct s, s1.
+destruct s0, s2.
 
 bbb.
 
