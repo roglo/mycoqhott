@@ -286,6 +286,12 @@ Definition quasi_inv_eq A B (x y : A ≃ B) : x⁻⁻¹ = y⁻⁻¹ → x = y :=
        • hott_2_1_4_iii Type A B (ua y))
   • idtoeqv_ua y.
 
+Definition isProp_inv A B : isProp (A ≃ B) → isProp (B ≃ A).
+Proof.
+intros PAB x y.
+apply quasi_inv_eq, PAB.
+Defined.
+
 Definition hott_4_1_3 :
   Σ (A : Type), Σ (B : Type), Σ (f : A → B), notT (isProp (qinv f)).
 Proof.
@@ -353,14 +359,12 @@ Proof.
 intros PAB PA.
 assert (PBA : isProp (B → A)) by apply isPropImp, PA.
 intros x y.
+bbb.
 
-SearchAbout (isProp _ → _).
-Definition toto A B : isProp (A ≃ B) → isProp (B ≃ A).
-Proof.
-intros PAB x y.
-pose proof PAB (quasi_inv x) (quasi_inv y) as p.
-apply quasi_inv_eq, p.
-Check isProp_inv.
+apply isProp_inv in PAB.
+assert (PAB' : isProp (A → B)).
+ apply isPropImp.
+
 bbb.
 
 (*
