@@ -297,39 +297,27 @@ transparent assert (p : Σ (X : Type), notT (isProp (Π (x : X), x = x))).
 
    simpl in q.
    (* "By definition of X, equalities in subset types (§3.5), and
-       univalence, we have (a = a) ≃ (2 ≃ 2)" *)
-   assert (r : (a = a) ≃ (ℬ ≃ ℬ)).
-    transparent assert (f : (a = a) → (ℬ ≃ ℬ)).
-     intros p.
-(* what do I do now? I should make two cases 1/ p=refl 2/ p=q; but
-   it is not decidable! *)
-bbb.
-     apply idtoeqv, eq_refl.
+       univalence, we have (a = a) ≃ (2 ≃ 2), ..." *)
+   set (r := equiv_eq_bool_trunc : (a = a) ≃ (ℬ ≃ ℬ)); simpl in r.
+   (* "... which is a set, so (i) holds." *)
+   (* reminder: (i) The type a=a is a set. *)
+   assert (isSet ((a = a) ≃ (ℬ ≃ ℬ))).
+    apply isSet_equiv; [ | apply isSet_equiv; apply isSet_bool ].
 
-     exists f; apply qinv_isequiv.
-     transparent assert (g : (ℬ ≃ ℬ) → (a = a)).
-      intros p.
-      apply hott_3_5_1; [ intros x; apply PT_eq | ].
-      apply eq_refl.
+(* it asks me to prove a=a is a set which is supposed to be the
+   consequence of isSet ((a = a) ≃ (ℬ ≃ ℬ)); something is going
+   wrong... *)
+(* or else I should prove this...
+Definition foo A B : isSet (A ≃ B) → isSet A → isSet B.
 
-      exists g; subst f g.
-      unfold "◦", "~~", id; simpl.
+But even if I manage to do it, it supposes that I have a proof of
+isSet ((a = a) ≃ (ℬ ≃ ℬ)) not using isSet_equiv *)
+assert (isSet ((a = a) ≃ (ℬ ≃ ℬ))). Focus 1.
+
 bbb.
-    transparent assert (f : (a = a) → (ℬ ≃ ℬ)); [ intros p; apply e | ].
-    exists f; apply qinv_isequiv.
-    transparent assert (g : (ℬ ≃ ℬ) → (a = a)); [ intros p; apply q | ].
-    exists g; subst f g.
-    unfold "◦", "~~", id; simpl.
-(*
-  e := bool_eq_bool_negb : bool ≃ bool
-  q := ap (existT (λ A : Type, ∥(bool = A)∥) bool)
-         (PT_eq (bool = bool) ╎(eq_refl bool)╎ ╎(ua e)╎
-          • PT_eq (bool = bool) ╎(ua e)╎ ╎(eq_refl bool)╎) :
-   a = a
-  ============================
-   (∀ x : bool ≃ bool, e = x) * (∀ x : a = a, q = x)
-*)
+    SearchAbout (isSet (_ ≃ _)).
 bbb.
+
 Focus 2.
  destruct p as (X, p).
 bbb.
