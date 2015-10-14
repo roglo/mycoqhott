@@ -342,6 +342,8 @@ eapply (ap ua) in p.
 eapply compose in p; [ apply eq_sym in p | apply ua_inverse ].
 eapply compose in p; [ apply eq_sym in p | apply ua_inverse ].
 Check (ua x).
+SearchAbout (_⁻¹ = _).
+Check hott_2_1_4_iii.
 bbb.
 
 (*

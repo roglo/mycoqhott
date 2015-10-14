@@ -94,7 +94,7 @@ Qed.
 Definition compose_invert_r {A} {x y : A} : ∀ (p : x = y), p • p⁻¹ = eq_refl x
   := λ p, match p with eq_refl _ => eq_refl (eq_refl x) end.
 
-Lemma hott_2_1_4_iii {A} {x y : A} : ∀ (p : x = y), (p⁻¹)⁻¹ = p.
+Lemma hott_2_1_4_iii A (x y : A) : ∀ (p : x = y), (p⁻¹)⁻¹ = p.
 Proof.
 intros p; destruct p; reflexivity.
 Qed.
