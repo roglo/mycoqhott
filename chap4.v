@@ -292,6 +292,25 @@ intros PAB x y.
 apply quasi_inv_eq, PAB.
 Defined.
 
+Definition isSet_inv A B : isSet (A ≃ B) → isSet (B ≃ A).
+Proof.
+intros SAB.
+
+bbb.
+intros SAB x y p q.
+pose proof (quasi_inv x) as x'.
+destruct x' as (f, ((g, Hg), (h, Hh))).
+unfold isSet in SAB.
+bbb.
+
+intros SAB x y p q.
+pose proof (quasi_inv x) as x'.
+bbb.
+
+pose proof quasi_inv_eq B A x y as r.
+pose proof (SAB (quasi_inv x) (quasi_inv y)) as s.
+bbb.
+
 Definition hott_4_1_3 :
   Σ (A : Type), Σ (B : Type), Σ (f : A → B), notT (isProp (qinv f)).
 Proof.
@@ -342,6 +361,15 @@ transparent assert (p : Σ (X : Type), notT (isProp (Π (x : X), x = x))).
                 (ii) For all x:A we have ∥a=x∥.
                (iii) For all p:a=a we have p•q=q•p *)
     assert (saa : isSet (a = a)).
+
+Definition toto A B : A ≃ B → isSet (A ≃ B) → isSet A → isSet B.
+Proof.
+Admitted.
+Show.
+
+eapply toto; [ eapply quasi_inv, r | | apply isSet_equiv; apply isSet_bool ].
+SearchAbout (isSet (_ ≃ _)).
+bbb.
 
 Definition toto A B : isSet (A ≃ B) → isSet A → isSet B.
 Proof.
