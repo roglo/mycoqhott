@@ -292,25 +292,6 @@ intros PAB x y.
 apply quasi_inv_eq, PAB.
 Defined.
 
-Definition isSet_inv A B : isSet (A ≃ B) → isSet (B ≃ A).
-Proof.
-intros SAB.
-
-bbb.
-intros SAB x y p q.
-pose proof (quasi_inv x) as x'.
-destruct x' as (f, ((g, Hg), (h, Hh))).
-unfold isSet in SAB.
-bbb.
-
-intros SAB x y p q.
-pose proof (quasi_inv x) as x'.
-bbb.
-
-pose proof quasi_inv_eq B A x y as r.
-pose proof (SAB (quasi_inv x) (quasi_inv y)) as s.
-bbb.
-
 Definition hott_4_1_3 :
   Σ (A : Type), Σ (B : Type), Σ (f : A → B), notT (isProp (qinv f)).
 Proof.
@@ -361,65 +342,33 @@ transparent assert (p : Σ (X : Type), notT (isProp (Π (x : X), x = x))).
                 (ii) For all x:A we have ∥a=x∥.
                (iii) For all p:a=a we have p•q=q•p *)
     assert (saa : isSet (a = a)).
+     eapply ex_3_1; [ eapply quasi_inv, r | ].
+     apply isSet_equiv; apply isSet_bool.
 
-Definition toto A B : A ≃ B → isSet (A ≃ B) → isSet A → isSet B.
-Proof.
-Admitted.
-Show.
-
-eapply toto; [ eapply quasi_inv, r | | apply isSet_equiv; apply isSet_bool ].
-SearchAbout (isSet (_ ≃ _)).
+     (* "Similarly, by definition of X and equalities in subset types
+         we have (ii)." *)
+     assert (tax : ∀ x : X, ∥(a = x)∥).
+      intros (B, BB); unfold a.
 bbb.
 
-Definition toto A B : isSet (A ≃ B) → isSet A → isSet B.
-Proof.
-(* c'est vrai, ça ? *)
-intros SAB SA.
-intros x y p q.
-unfold isSet in SAB.
-
-SearchAbout (isProp (Σ (_ : _), _)).
-apply (ex_3_1 A); [ | apply SA ].
-
-Definition toto A B : isProp (A ≃ B) → isProp A → isProp B.
-Proof.
-(* et ça ? *)
-intros PAB PA.
-assert (PBA : isProp (B → A)) by apply isPropImp, PA.
-intros x y.
+set (C :=
+   ∥(existT (λ A : Type, ∥(ℬ = A)∥) B BB =
+     existT (λ A : Type, ∥(ℬ = A)∥) bool ╎(eq_refl ℬ)╎)∥) in |-*.
+simpl in C.
+      pose proof PT_rec (ℬ = B) C.
+assert (f : (ℬ = B) → C).
+intros p; unfold C.
+destruct p.
+apply PT_intro.
+apply Σ_type.pair_eq with (p := eq_refl _).
+simpl.
 bbb.
 
-apply isProp_inv in PAB.
-assert (PAB' : isProp (A → B)).
- apply isPropImp.
+      apply PT_intro.
+      pose proof @PT_elim (ℬ = B).
 
-bbb.
-
-(*
-Definition toto A B (x : A ≃ B) : x⁻⁻¹⁻⁻¹ = x.
-Proof.
-unfold "⁻⁻¹".
-destruct x as (f, ((g, Hg), (h, Hh))); unfold id.
-apply ap.
-pose proof EqStr.quasi_inv_l_eq_r f g h Hg Hh as H.
-unfold "~~" in H.
-apply split_pair_eq; split.
- apply ap, Π_type.funext; intros x.
- unfold "⁻¹", "◦", id; simpl.
- unfold "◦", "~~", id in Hg, Hh.
- rewrite Hh at 1.
-bbb.
-*)
-
-intros x y; unfold isProp in PAB, PA.
-bbb.
-
-unfold equivalence in sa2.
-SearchAbout (isSet (Σ (_ : _), _)).
-(* reminder
-       (ii) For all x:A we have ∥a=x∥.
-      (iii) For all p:a=a we have p•q=q•p *)
-
+      eapply Σ_type.pair_eq.
+SearchAbout (∥(_ = _)∥).
 
 bbb.
 
