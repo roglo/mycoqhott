@@ -272,14 +272,24 @@ hott_4_1_2
        isSet (a = a)
        → (∀ x : A, ∥(a = x)∥)
          → (∀ p : a = a, p • q = q • p) → {f : ∀ x : A, x = x & f a = q}
-hott_3_8_5
-     : {X : Type &
-       {Y : X → Type & notT ((∀ x : X, ∥(Y x)∥) → ∥(∀ x : X, Y x)∥)}}
 *)
-assert (p : Σ (X : Type), Π (x : X), notT (isProp (x = x))).
+
+(* "It suffices to exhibit a type X such that Π (x:X) (x = x) is not a
+    mere proposition." *)
+transparent assert (p : Σ (X : Type), notT (isProp (Π (x : X), x = x))).
+ (* "Define X :≡ Σ (A:U) ∥2 = A∥, as in the proof of Lemma 3.8.5." *)
+ (* hott_3_8_5
+     : {X : Type &
+       {Y : X → Type & notT ((∀ x : X, ∥(Y x)∥) → ∥(∀ x : X, Y x)∥)}} *)
  set (X := Σ (A : Type), ∥(ℬ = A)∥).
+ (* "It will suffice to exhibit an f : Π (x:X) (x = x) which is
+     unequal to λx.refl_x." *)
  assert (f : Π (x : X), x = x).
+  (* "Let a : ≡ (2, |refl 2|) : X, ..." *)
   set (a := existT _ ℬ ╎(eq_refl ℬ)╎ : X).
+  (* "... and let q : a = a be the path corresponding to the
+      nonidentity equivalence e : 2 ≃ 2 defined by e(0₂):≡1₂
+      and e(1₂):≡0₂." *)
   set (e := bool_eq_bool_negb).
   transparent assert (q : a = a).
    unfold a; simpl; apply ap.
@@ -291,6 +301,19 @@ assert (p : Σ (X : Type), Π (x : X), notT (isProp (x = x))).
    assert (r : (a = a) ≃ (ℬ ≃ ℬ)).
     transparent assert (f : (a = a) → (ℬ ≃ ℬ)).
      intros p.
+(* what do I do now? I should make two cases 1/ p=refl 2/ p=q; but
+   it is not decidable! *)
+bbb.
+     apply idtoeqv, eq_refl.
+
+     exists f; apply qinv_isequiv.
+     transparent assert (g : (ℬ ≃ ℬ) → (a = a)).
+      intros p.
+      apply hott_3_5_1; [ intros x; apply PT_eq | ].
+      apply eq_refl.
+
+      exists g; subst f g.
+      unfold "◦", "~~", id; simpl.
 bbb.
     transparent assert (f : (a = a) → (ℬ ≃ ℬ)); [ intros p; apply e | ].
     exists f; apply qinv_isequiv.
