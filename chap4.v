@@ -286,6 +286,8 @@ assert (p : Σ (X : Type), Π (x : X), notT (isProp (x = x))).
    apply (compose (y := ╎(ua e)╎)); apply PT_eq.
 
    simpl in q.
+   (* "By definition of X, equalities in subset types (§3.5), and
+       univalence, we have (a = a) ≃ (2 ≃ 2)" *)
    assert (r : (a = a) ≃ (ℬ ≃ ℬ)).
     transparent assert (f : (a = a) → (ℬ ≃ ℬ)).
      intros p.
@@ -295,6 +297,15 @@ bbb.
     transparent assert (g : (ℬ ≃ ℬ) → (a = a)); [ intros p; apply q | ].
     exists g; subst f g.
     unfold "◦", "~~", id; simpl.
+(*
+  e := bool_eq_bool_negb : bool ≃ bool
+  q := ap (existT (λ A : Type, ∥(bool = A)∥) bool)
+         (PT_eq (bool = bool) ╎(eq_refl bool)╎ ╎(ua e)╎
+          • PT_eq (bool = bool) ╎(ua e)╎ ╎(eq_refl bool)╎) :
+   a = a
+  ============================
+   (∀ x : bool ≃ bool, e = x) * (∀ x : a = a, q = x)
+*)
 bbb.
 Focus 2.
  destruct p as (X, p).
