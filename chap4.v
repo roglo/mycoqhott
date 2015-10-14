@@ -261,6 +261,31 @@ End lemma_4_1_2.
 (* "Theorem 4.1.3. There exist types A and B and a function f : A → B
     such that qinv(f) is not a mere proposition." *)
 
+(* note: very clean proof: its 'Show Proof' generates exactly the next
+   definition quasi_inv_eq *)
+Definition quasi_inv_eq_tac A B (x y : A ≃ B) : x⁻⁻¹ = y⁻⁻¹ → x = y.
+Proof.
+intros p.
+eapply compose; [ | apply idtoeqv_ua ].
+eapply compose; [ eapply invert, idtoeqv_ua | ].
+apply ap.
+eapply compose; [ | apply hott_2_1_4_iii ].
+eapply compose; [ eapply invert, hott_2_1_4_iii | ].
+apply (ap invert).
+eapply compose; [ | eapply invert, ua_inverse ].
+eapply compose; [ eapply ua_inverse | ].
+apply ap, p.
+Defined.
+
+Definition quasi_inv_eq A B (x y : A ≃ B) : x⁻⁻¹ = y⁻⁻¹ → x = y :=
+  λ p,
+  (idtoeqv_ua x)⁻¹
+  • ap idtoeqv
+      ((hott_2_1_4_iii Type A B (ua x))⁻¹
+       • ap invert (ua_inverse x • ap ua p • (ua_inverse y)⁻¹)
+       • hott_2_1_4_iii Type A B (ua y))
+  • idtoeqv_ua y.
+
 Definition hott_4_1_3 :
   Σ (A : Type), Σ (B : Type), Σ (f : A → B), notT (isProp (qinv f)).
 Proof.
@@ -334,16 +359,8 @@ Definition toto A B : isProp (A ≃ B) → isProp (B ≃ A).
 Proof.
 intros PAB x y.
 pose proof PAB (quasi_inv x) (quasi_inv y) as p.
-
-Definition toto A B (x y : A ≃ B) : x⁻⁻¹ = y⁻⁻¹ → x = y.
-Proof.
-intros p.
-eapply (ap ua) in p.
-eapply compose in p; [ apply eq_sym in p | apply ua_inverse ].
-eapply compose in p; [ apply eq_sym in p | apply ua_inverse ].
-Check (ua x).
-SearchAbout (_⁻¹ = _).
-Check hott_2_1_4_iii.
+apply quasi_inv_eq, p.
+Check isProp_inv.
 bbb.
 
 (*
