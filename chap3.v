@@ -201,7 +201,7 @@ Defined.
 
 (* just like ex_3_1_5 above, not sure of what I've done in this proof,
    but I completed it; perhaps simplifiable, understandable too? *)
-Definition ex_3_1_5_bis {A B} :
+Definition ex_3_1_5_bis A B :
   isSet A → (Π (x : A), isSet (B x)) → isSet (Σ (x : A), B x).
 Proof.
 intros r s x y p q.
@@ -228,7 +228,7 @@ Section ex_3_1_6.
 
 Import Π_type.
 
-Definition ex_3_1_6 {A B} : (Π (a : A), isSet (B a)) → isSet (Π (a : A), B a).
+Definition ex_3_1_6 A B : (Π (a : A), isSet (B a)) → isSet (Π (a : A), B a).
 Proof.
 intros r f g p q.
 unfold isSet in r.

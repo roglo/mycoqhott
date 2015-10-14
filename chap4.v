@@ -299,23 +299,48 @@ transparent assert (p : Σ (X : Type), notT (isProp (Π (x : X), x = x))).
    (* "By definition of X, equalities in subset types (§3.5), and
        univalence, we have (a = a) ≃ (2 ≃ 2), ..." *)
    set (r := equiv_eq_bool_trunc : (a = a) ≃ (ℬ ≃ ℬ)); simpl in r.
-   (* "... which is a set, so (i) holds." *)
-   (* reminder: (i) The type a=a is a set. *)
-   assert (isSet ((a = a) ≃ (ℬ ≃ ℬ))).
-    apply isSet_equiv; [ | apply isSet_equiv; apply isSet_bool ].
+   (* "... which is a set, ..." *)
+   assert (sa2 : isSet ((a = a) ≃ (ℬ ≃ ℬ))).
+    apply ex_3_1_5_bis.
+     apply ex_3_1_6; intros; apply isSet_equiv; apply isSet_bool.
 
-(* it asks me to prove a=a is a set which is supposed to be the
-   consequence of isSet ((a = a) ≃ (ℬ ≃ ℬ)); something is going
-   wrong... *)
-(* or else I should prove this...
-Definition foo A B : isSet (A ≃ B) → isSet A → isSet B.
+     intros; apply isProp_isSet, isProp_isequiv.
 
-But even if I manage to do it, it supposes that I have a proof of
-isSet ((a = a) ≃ (ℬ ≃ ℬ)) not using isSet_equiv *)
-assert (isSet ((a = a) ≃ (ℬ ≃ ℬ))). Focus 1.
+    (* "... so (i) holds." *)
+    (* reminder: (i) The type a=a is a set.
+                (ii) For all x:A we have ∥a=x∥.
+               (iii) For all p:a=a we have p•q=q•p *)
+    assert (saa : isSet (a = a)).
+bbb.
+
+Definition toto A B : isSet (A ≃ B) → isSet A → isSet B.
+Proof.
+(* c'est vrai, ça ? *)
+intros SAB SA.
+intros x y p q.
+unfold isSet in SAB.
+
+SearchAbout (isProp (Σ (_ : _), _)).
+apply (ex_3_1 A); [ | apply SA ].
+
+Definition toto A B : isProp (A ≃ B) → isProp A → isProp B.
+Proof.
+(* et ça ? *)
+intros PAB PA.
+SearchAbout (isProp _ → _).
 
 bbb.
-    SearchAbout (isSet (_ ≃ _)).
+
+intros x y; unfold isProp in PAB, PA.
+bbb.
+
+unfold equivalence in sa2.
+SearchAbout (isSet (Σ (_ : _), _)).
+(* reminder
+       (ii) For all x:A we have ∥a=x∥.
+      (iii) For all p:a=a we have p•q=q•p *)
+
+
 bbb.
 
 Focus 2.
