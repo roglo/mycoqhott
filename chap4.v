@@ -334,31 +334,31 @@ Definition toto A B : isProp (A ≃ B) → isProp (B ≃ A).
 Proof.
 intros PAB x y.
 pose proof PAB (quasi_inv x) (quasi_inv y) as p.
-SearchAbout (_⁻⁻¹).
 
+Definition toto A B (x y : A ≃ B) : x⁻⁻¹ = y⁻⁻¹ → x = y.
+Proof.
+intros p.
+eapply (ap ua) in p.
+eapply compose in p; [ apply eq_sym in p | apply ua_inverse ].
+eapply compose in p; [ apply eq_sym in p | apply ua_inverse ].
+Check (ua x).
+bbb.
+
+(*
 Definition toto A B (x : A ≃ B) : x⁻⁻¹⁻⁻¹ = x.
 Proof.
 unfold "⁻⁻¹".
 destruct x as (f, ((g, Hg), (h, Hh))); unfold id.
-apply ap, split_pair_eq; split.
+apply ap.
+pose proof EqStr.quasi_inv_l_eq_r f g h Hg Hh as H.
+unfold "~~" in H.
+apply split_pair_eq; split.
  apply ap, Π_type.funext; intros x.
- unfold "◦", "~~", id in Hg.
- pose proof Hg x as v.
- set (u := f (g x)) in v |-*.
+ unfold "⁻¹", "◦", id; simpl.
+ unfold "◦", "~~", id in Hg, Hh.
+ rewrite Hh at 1.
 bbb.
-
- rewrite Hg.
-bbb.
-
-SearchAbout (_ = _ • _).
-
-unfold "⁻⁻¹" in p.
-destruct x, y.
-destruct i, i0.
-destruct s, s1.
-destruct s0, s2.
-
-bbb.
+*)
 
 intros x y; unfold isProp in PAB, PA.
 bbb.
