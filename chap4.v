@@ -349,6 +349,11 @@ transparent assert (p : Σ (X : Type), notT (isProp (Π (x : X), x = x))).
          we have (ii)." *)
      assert (tax : ∀ x : X, ∥(a = x)∥).
       intros (B, BB); unfold a.
+assert (ℬ = B).
+Focus 2.
+destruct H.
+SearchAbout (∥(_ = _)∥).
+
 bbb.
 
 set (C :=
