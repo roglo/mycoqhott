@@ -350,7 +350,20 @@ transparent assert (p : Σ (X : Type), notT (isProp (Π (x : X), x = x))).
      assert (tax : ∀ x : X, ∥(a = x)∥).
       intros p.
       set (P A := ∥(ℬ = A)∥); simpl in P.
-      pose proof hott_3_5_1 Type P (λ A, PT_eq (ℬ = A)) a p.
+      pose proof hott_3_5_1 Type P (λ A, PT_eq (ℬ = A)) a p as s.
+apply PT_intro, s.
+unfold a; destruct p as (B, BB); simpl; simpl in s.
+(* on ne peut pas utiliser PT_elim, puisque bool = B n'est pas une prop : en
+   effet, on a le contre-exemple avec B ≡ bool, où bool = bool a deux preuves
+   différentes *)
+(* ou alors j'applique l'univalence ? *)
+apply ua.
+bbb.
+
+assert (isProp (a = p)) as u. Focus 2.
+pose proof PT_rec (Σ_type.pr₁ a = Σ_type.pr₁ p) (a = p) s u as t.
+destruct t as (g, t).
+
 bbb.
 
 Focus 2.
