@@ -374,17 +374,33 @@ transparent assert (p : Σ (X : Type), notT (isProp (Π (x : X), x = x))).
           four-way case analysis." *)
       (* reminder: ex_2_13 : (bool ≃ bool) ≃ bool
                    (iii) For all p:a=a we have p•q=q•p *)
-      assert (cpq : ∀ p, p • q = q • p).
-       intros p.
-       assert (pbb : ∀ p : ℬ ≃ ℬ, {p = bool_eq_bool_id} + {p = e}).
-        apply bool_equiv_dec.
+      assert (pbb : ∀ p : ℬ ≃ ℬ, {p = bool_eq_bool_id} + {p = e}).
+       apply bool_equiv_dec.
 
+       assert (cpq : ∀ p, p • q = q • p).
+        intros p.
+        destruct (pbb (Σ_pr₁ r q)) as [H1| H1].
+         destruct (pbb (Σ_pr₁ r p)) as [H2| H2].
+bbb.
         assert
           (paa : ∀ p,
            {p = Σ_pr₁ (fst (Σ_pr₂ r)) bool_eq_bool_id} +
            {p = Σ_pr₁ (fst (Σ_pr₂ r)) bool_eq_bool_negb}).
          intros s.
+bbb.
          destruct (pbb (Σ_pr₁ r s)) as [H1| H1]; [ left | right ].
+
+unfold r in H1; simpl in H1.
+apply (ap ua) in H1.
+rewrite ua_idtoeqv in H1.
+unfold bool_eq_bool_id in H1; simpl in H1.
+
+
+unfold ap in H1; simpl in H1.
+Print ap.
+
+unfold r; simpl.
+unfold bool_eq_bool_id; simpl.
 bbb.
 
           rewrite <- H1.
