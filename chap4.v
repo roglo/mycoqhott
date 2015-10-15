@@ -363,8 +363,48 @@ transparent assert (p : Σ (X : Type), notT (isProp (Π (x : X), x = x))).
                    (iii) For all p:a=a we have p•q=q•p *)
       assert (cpq : ∀ p, p • q = q • p).
        intros p.
-       assert (ab : (a = a) ≃ (ℬ = ℬ)).
-SearchAbout (isSet (_ ≃ _)).
+       transparent assert (aab : (a = a) ≃ ℬ).
+        eapply equiv_compose; [ apply r | apply ex_2_13 ].
+
+        set (f := Σ_type.pr₁ aab); simpl in f.
+        unfold "◦" in f; simpl in f.
+        set (h := snd (Σ_type.pr₂ aab)).
+        destruct h as (h, Hh).
+        unfold "◦", "~~", id in Hh; simpl in Hh.
+        unfold "◦" in Hh; simpl in Hh.
+        rewrite <- Hh; rewrite <- Hh at 1.
+        apply ap.
+        set
+          (ss :=
+             (@ap _ _
+                (existT _ _ ╎(@eq_refl Type bool)╎)
+                (existT _ _ ╎(@eq_refl Type bool)╎)
+                (@Σ_type.pr₁ _ (λ A, ∥(ℬ = A)∥)) (p • q))).
+        simpl in ss.
+        set
+          (tt :=
+             (@ap _ _
+                (existT _ _ ╎(@eq_refl Type bool)╎)
+                (existT _ _ ╎(@eq_refl Type bool)╎)
+                (@Σ_type.pr₁ _ (λ A, ∥(ℬ = A)∥)) (q • p))).
+        simpl in tt.
+        remember (transport id ss true) as s eqn:Hs.
+        remember (transport id tt true) as t eqn:Ht.
+        unfold id in s, t.
+        destruct s, t.
+         apply eq_refl.
+
+         unfold transport in Ht.
+bbb.
+        destruct aab as (f, ((g, Hg), (h, Hh))).
+        pose proof EqStr.quasi_inv_l_eq_r f g h Hg Hh as H.
+        unfold "◦", "~~", id in Hg, Hh, H.
+        rewrite <- Hh; rewrite <- Hh at 1.
+        apply ap.
+        remember (f (p • q)) as s eqn:Hs.
+        remember (f (q • p)) as t eqn:Ht.
+        destruct s, t; [ apply eq_refl | | | apply eq_refl ].
+
 
 bbb.
 
