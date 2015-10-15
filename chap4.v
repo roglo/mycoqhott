@@ -380,7 +380,6 @@ transparent assert (p : Σ (X : Type), notT (isProp (Π (x : X), x = x))).
        assert (cpq : ∀ p, p • q = q • p).
         intros p.
         destruct (pbb (Σ_pr₁ r q)) as [H1| H1].
-         destruct (pbb (Σ_pr₁ r p)) as [H2| H2].
 bbb.
         assert
           (paa : ∀ p,
