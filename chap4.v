@@ -292,6 +292,19 @@ intros PAB x y.
 apply quasi_inv_eq, PAB.
 Defined.
 
+Definition bool_equiv_dec p : {p = bool_eq_bool_id} + {p = bool_eq_bool_negb}.
+Proof.
+transparent assert (t: (bool ≃ bool) ≃ bool); [ apply ex_2_13 | ].
+set (f := Σ_type.pr₁ t); simpl in f.
+set (h := Σ_type.pr₁ (snd (Σ_type.pr₂ t))); simpl in h.
+set (Hh := Σ_type.pr₂ (snd (Σ_type.pr₂ t))).
+unfold "◦", "~~", id in Hh.
+remember (f p) as u eqn:Hu; symmetry in Hu.
+apply (ap h) in Hu.
+rewrite Hh in Hu.
+destruct u; [ left | right ]; apply Hu.
+Defined.
+
 Definition hott_4_1_3 :
   Σ (A : Type), Σ (B : Type), Σ (f : A → B), notT (isProp (qinv f)).
 Proof.
@@ -363,7 +376,12 @@ transparent assert (p : Σ (X : Type), notT (isProp (Π (x : X), x = x))).
                    (iii) For all p:a=a we have p•q=q•p *)
       assert (cpq : ∀ p, p • q = q • p).
        intros p.
-       transparent assert (aab : (a = a) ≃ ℬ).
+       assert (pbb : ∀ p : ℬ ≃ ℬ, {p = bool_eq_bool_id} + {p = e}).
+        apply bool_equiv_dec.
+
+        simpl in pbb.
+bbb.
+       transparent assert (aab : (a = a : Type) ≃ ℬ).
         eapply equiv_compose; [ apply r | apply ex_2_13 ].
 
         set (f := Σ_type.pr₁ aab); simpl in f.
