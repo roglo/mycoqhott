@@ -379,6 +379,132 @@ transparent assert (p : Σ (X : Type), notT (isProp (Π (x : X), x = x))).
        assert (pbb : ∀ p : ℬ ≃ ℬ, {p = bool_eq_bool_id} + {p = e}).
         apply bool_equiv_dec.
 
+        assert
+          (paa : ∀ p,
+           {p = Σ_pr₁ (fst (Σ_pr₂ r)) bool_eq_bool_id} +
+           {p = Σ_pr₁ (fst (Σ_pr₂ r)) bool_eq_bool_negb}).
+         intros s.
+         destruct (pbb (Σ_pr₁ r s)) as [H1| H1]; [ left | right ].
+bbb.
+
+          rewrite <- H1.
+          unfold r; simpl.
+          rewrite ua_idtoeqv; simpl.
+          unfold Σ_type.pair_eq; simpl.
+          destruct (ap Σ_type.pr₁ s).
+unfold r in H1.
+simpl in H1.
+set (x :=
+        @ap (@sigT Type (fun y : Type => PT (@eq Type bool y))) Type
+          (@existT Type (fun A0 : Type => PT (@eq Type bool A0)) bool
+             (@PT_intro (@eq Type bool bool) (@eq_refl Type bool)))
+          (@existT Type (fun A0 : Type => PT (@eq Type bool A0)) bool
+             (@PT_intro (@eq Type bool bool) (@eq_refl Type bool)))
+          (@Σ_type.pr₁ Type (fun A0 : Type => PT (@eq Type bool A0))) s)
+in H1 |-*.
+simpl in x, H1.
+unfold bool_eq_bool_id in H1.
+unfold idtoeqv in H1.
+subst x; simpl in H1; simpl.
+inversion H1.
+unfold transport in H0.
+bbb.
+
+refine (match x with eq_refl _ => _ end).
+simpl in x; simpl.
+SearchAbout (idtoeqv(ap _ _)).
+subst x.
+
+ as p0
+        in (eq _ a0)
+        return
+          (forall (x0 : PT (@eq Type bool a0))
+             (_ : @eq (PT (@eq Type bool a0))
+                    (@transport Type (fun A : Type => PT (@eq Type bool A))
+                       bool a0 p0
+                       (@PT_intro (@eq Type bool bool) (@eq_refl Type bool)))
+                    x0),
+           @eq (@sigT Type (fun A : Type => PT (@eq Type bool A)))
+             (@existT Type (fun A : Type => PT (@eq Type bool A)) bool
+                (@PT_intro (@eq Type bool bool) (@eq_refl Type bool)))
+             (@existT Type (fun A : Type => PT (@eq Type bool A)) a0 x0))
+      with
+      | eq_refl _ =>
+          fun (w : PT (@eq Type bool bool))
+            (r0 : @eq (PT (@eq Type bool bool))
+                    (@id (PT (@eq Type bool bool))
+                       (@PT_intro (@eq Type bool bool) (@eq_refl Type bool)))
+                    w) =>
+          match
+            r0 in (eq _ t)
+            return
+              (@eq (@sigT Type (fun A : Type => PT (@eq Type bool A)))
+                 (@existT Type (fun A : Type => PT (@eq Type bool A)) bool
+                    (@PT_intro (@eq Type bool bool) (@eq_refl Type bool)))
+                 (@existT Type (fun A : Type => PT (@eq Type bool A)) bool t))
+          with
+          | eq_refl _ =>
+              @eq_refl (@sigT Type (fun A : Type => PT (@eq Type bool A)))
+                (@existT Type (fun A : Type => PT (@eq Type bool A)) bool
+                   (@id (PT (@eq Type bool bool))
+                      (@PT_intro (@eq Type bool bool) (@eq_refl Type bool))))
+          end
+      end (@PT_intro (@eq Type bool bool) (@eq_refl Type bool))
+        (PT_eq (@eq Type bool bool)
+           (@transport Type (fun A : Type => PT (@eq Type bool A)) bool bool
+              (@ap (@sigT Type (fun y : Type => PT (@eq Type bool y))) Type
+                 (@existT Type (fun A0 : Type => PT (@eq Type bool A0)) bool
+                    (@PT_intro (@eq Type bool bool) (@eq_refl Type bool)))
+                 (@existT Type (fun A0 : Type => PT (@eq Type bool A0)) bool
+                    (@PT_intro (@eq Type bool bool) (@eq_refl Type bool)))
+                 (@Σ_type.pr₁ Type (fun A0 : Type => PT (@eq Type bool A0)))
+                 s) (@PT_intro (@eq Type bool bool) (@eq_refl Type bool)))
+           (@PT_intro (@eq Type bool bool) (@eq_refl Type bool))))
+
+subgoal 2 (ID 338) is:
+ @eq (@eq X a a) s
+   (@Σ_pr₁ (forall _ : equivalence bool bool, @eq X a a)
+      (fun g : forall _ : equivalence bool bool, @eq X a a =>
+       @homotopy (equivalence bool bool) (equivalence bool bool)
+         (@composite (equivalence bool bool) (@eq X a a)
+            (equivalence bool bool) g
+            (@Σ_pr₁ (forall _ : @eq X a a, equivalence bool bool)
+               (@isequiv (@eq X a a) (equivalence bool bool)) r))
+         (@id (equivalence bool bool)))
+      (@fst
+         (@sigT (forall _ : equivalence bool bool, @eq X a a)
+            (fun g : forall _ : equivalence bool bool, @eq X a a =>
+             @homotopy (equivalence bool bool) (equivalence bool bool)
+               (@composite (equivalence bool bool) 
+                  (@eq X a a) (equivalence bool bool) g
+                  (@Σ_pr₁ (forall _ : @eq X a a, equivalence bool bool)
+                     (@isequiv (@eq X a a) (equivalence bool bool)) r))
+               (@id (equivalence bool bool))))
+         (@sigT (forall _ : equivalence bool bool, @eq X a a)
+            (fun h : forall _ : equivalence bool bool, @eq X a a =>
+             @homotopy (@eq X a a) (@eq X a a)
+               (@composite (@eq X a a) (equivalence bool bool) 
+                  (@eq X a a)
+                  (@Σ_pr₁ (forall _ : @eq X a a, equivalence bool bool)
+                     (@isequiv (@eq X a a) (equivalence bool bool)) r) h)
+               (@id (@eq X a a))))
+         (@Σ_pr₂ (forall _ : @eq X a a, equivalence bool bool)
+            (@isequiv (@eq X a a) (equivalence bool bool)) r))
+      bool_eq_bool_negb)
+subgoal 3 (ID 323) is:
+ @eq (@eq X a a) (@compose X a a a p q) (@compose X a a a q p)
+subgoal 4 (ID 298) is:
+ forall x : X, @eq X x x
+subgoal 5 (ID 170) is:
+ @sigT Type (fun X0 : Type => notT (isProp (forall x : X0, @eq X0 x x)))
+subgoal 6 (ID 163) is:
+ @sigT Type
+   (fun A : Type =>
+    @sigT Type
+      (fun B : Type =>
+       @sigT (forall _ : A, B)
+         (fun f : forall _ : A, B => notT (isProp (@qinv A B f)))))
+bbb.
         simpl in pbb.
         destruct (pbb (Σ_pr₁ r p)) as [H1| H1].
 (*
