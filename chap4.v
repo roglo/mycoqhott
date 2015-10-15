@@ -381,8 +381,14 @@ transparent assert (p : Σ (X : Type), notT (isProp (Π (x : X), x = x))).
 
         simpl in pbb.
         destruct (pbb (Σ_pr₁ r p)) as [H1| H1].
+(*
          destruct (pbb (Σ_pr₁ r q)) as [H2| H2].
+unfold r in H1, H2; simpl in H1, H2.
+apply (ap ua) in H1.
+apply (ap ua) in H2.
+rewrite ua_idtoeqv in H1, H2.
 bbb.
+*)
 unfold r in H1; simpl in H1.
 apply (ap ua) in H1.
 rewrite ua_idtoeqv in H1.
