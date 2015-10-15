@@ -386,3 +386,7 @@ transparent assert (p : Σ (X : Type), notT (isProp (Π (x : X), x = x))).
    que j'y revienne un jour... *)
 
 Abort.
+
+(* "4.2 Half adjoint equivalences" *)
+
+Check hott_4_1_1.
