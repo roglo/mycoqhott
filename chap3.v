@@ -977,8 +977,6 @@ apply (@PT_intro_not (∀ x, Y x)).
  apply PT_intro, (Σ_type.pair_eq (eq_refl ℬ)), PT_eq.
 Defined.
 
-(* Set Printing Depth 100. *)
-
 (* "3.9 The principle of unique choice" *)
 
 (* Lemma 3.9.1 *)
