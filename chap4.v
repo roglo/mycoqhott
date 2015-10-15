@@ -348,33 +348,9 @@ transparent assert (p : Σ (X : Type), notT (isProp (Π (x : X), x = x))).
      (* "Similarly, by definition of X and equalities in subset types
          we have (ii)." *)
      assert (tax : ∀ x : X, ∥(a = x)∥).
-      intros (B, BB); unfold a.
-assert (ℬ = B).
-Focus 2.
-destruct H.
-SearchAbout (∥(_ = _)∥).
-
-bbb.
-
-set (C :=
-   ∥(existT (λ A : Type, ∥(ℬ = A)∥) B BB =
-     existT (λ A : Type, ∥(ℬ = A)∥) bool ╎(eq_refl ℬ)╎)∥) in |-*.
-simpl in C.
-      pose proof PT_rec (ℬ = B) C.
-assert (f : (ℬ = B) → C).
-intros p; unfold C.
-destruct p.
-apply PT_intro.
-apply Σ_type.pair_eq with (p := eq_refl _).
-simpl.
-bbb.
-
-      apply PT_intro.
-      pose proof @PT_elim (ℬ = B).
-
-      eapply Σ_type.pair_eq.
-SearchAbout (∥(_ = _)∥).
-
+      intros p.
+      set (P A := ∥(ℬ = A)∥); simpl in P.
+      pose proof hott_3_5_1 Type P (λ A, PT_eq (ℬ = A)) a p.
 bbb.
 
 Focus 2.

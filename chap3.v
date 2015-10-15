@@ -633,7 +633,7 @@ Definition hott_3_5_1_my_proof {A} (P : A → Type) :
 
 (* their proof *)
 
-Definition hott_3_5_1_tac {A} (P : A → Type) :
+Definition hott_3_5_1_tac A (P : A → Type) :
   (Π (x : A), isProp (P x))
   → ∀ u v : (Σ (x : A), P x),
   pr₁ u = pr₁ v
@@ -645,7 +645,7 @@ destruct H as (f, ((g, Hg), (h, Hh))).
 apply g, (existT _ p), HP.
 Defined.
 
-Definition hott_3_5_1 {A} (P : A → Type) :
+Definition hott_3_5_1 A (P : A → Type) :
   (Π (x : A), isProp (P x))
   → ∀ u v : (Σ (x : A), P x),
   pr₁ u = pr₁ v
@@ -669,7 +669,7 @@ exists
    | eq_refl _ => eq_refl A
    end).
 apply qinv_isequiv.
-exists (hott_3_5_1 isSet hott_3_3_5_ii (existT isSet A s) (existT isSet B t)).
+exists (hott_3_5_1 _ isSet hott_3_3_5_ii (existT isSet A s) (existT isSet B t)).
 unfold "◦", "~~", id; simpl.
 split.
  intros p.
