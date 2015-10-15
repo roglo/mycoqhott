@@ -347,13 +347,25 @@ transparent assert (p : Σ (X : Type), notT (isProp (Π (x : X), x = x))).
 
      (* "Similarly, by definition of X and equalities in subset types
          we have (ii)." *)
+     (* reminder: (ii) For all x:A we have ∥a=x∥. *)
      assert (tax : ∀ x : X, ∥(a = x)∥).
       intros p.
       set (P A := ∥(ℬ = A)∥); simpl in P.
       pose proof hott_3_5_1 Type P (λ A, PT_eq (ℬ = A)) a p as s.
-      unfold a; destruct p as (B, BB); simpl.
-      unfold a in s; simpl in s.
-SearchAbout ∥(_ = _)∥.
+      set (B := Σ_type.pr₁ a = Σ_type.pr₁ p).
+      apply (PT_rec B ∥(a = p)∥ (λ p, PT_intro (s p)) (PT_eq _)); unfold B.
+      destruct p as (C, BC); apply BC.
+
+      (* "Finally, Exercise 2.13 implies that every equivalence 2≃2
+          is equal to either id₂ or e, so we can show (iii) by a
+          four-way case analysis." *)
+      (* reminder: ex_2_13 : (bool ≃ bool) ≃ bool
+                   (iii) For all p:a=a we have p•q=q•p *)
+      assert (cpq : ∀ p, p • q = q • p).
+       intros p.
+       assert (ab : (a = a) ≃ (ℬ = ℬ)).
+SearchAbout (isSet (_ ≃ _)).
+
 bbb.
 
 apply PT_intro, s.
