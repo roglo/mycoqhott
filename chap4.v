@@ -380,7 +380,18 @@ transparent assert (p : Σ (X : Type), notT (isProp (Π (x : X), x = x))).
         apply bool_equiv_dec.
 
         simpl in pbb.
-        destruct (pbb (Σ_pr₁ r p)) as [H1 | H1].
+        destruct (pbb (Σ_pr₁ r p)) as [H1| H1].
+         destruct (pbb (Σ_pr₁ r q)) as [H2| H2].
+bbb.
+unfold r in H1; simpl in H1.
+apply (ap ua) in H1.
+rewrite ua_idtoeqv in H1.
+unfold Σ_type.pr₁ in H1; simpl in H1.
+unfold Σ_pr₁ in H1; simpl in H1.
+unfold ap in H1; simpl in H1.
+bbb.
+unfold bool_eq_bool_id in H1; simpl in H1.
+unfold "◦", "~~", id in H1; simpl in H1.
 bbb.
        transparent assert (aab : (a = a : Type) ≃ ℬ).
         eapply equiv_compose; [ apply r | apply ex_2_13 ].
