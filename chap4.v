@@ -395,6 +395,7 @@ transparent assert (p : Σ (X : Type), notT (isProp (Π (x : X), x = x))).
          apply eq_refl.
 
          unfold transport in Ht.
+         unfold id in Ht.
 bbb.
         destruct aab as (f, ((g, Hg), (h, Hh))).
         pose proof EqStr.quasi_inv_l_eq_r f g h Hg Hh as H.
