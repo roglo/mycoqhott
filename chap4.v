@@ -390,3 +390,14 @@ Abort.
 (* "4.2 Half adjoint equivalences" *)
 
 Check hott_4_1_1.
+
+(* "Definition 4.2.1. A function f : A → B is a *half adjoint
+    equivalence* if there are g : B → A and homotopies η : g ◦ f ∼
+    id_A and ε : f ◦ g ∼ id_B such that there exists a homotopy
+          τ : Π (x:A) f(ηx)=ε(fx).
+    Thus we have a type ishae(f), defined to be
+          Σ (g:B→A) Σ (η:g◦f~id_A) Σ (ε:f◦g~id_B) Π (x:A) f(ηx)=ε(fx)." *)
+
+Definition ishae {A B} f :=
+  Σ (g : B → A), Σ (η : g ◦ f ~~ id), Σ (ε : f ◦ g ~~ id),
+    Π (x : A), ap f (η x) = ε (f x).
