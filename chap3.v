@@ -1556,16 +1556,6 @@ Defined.
    if A is a mere proposition, we indeed have ∥A∥ → A. We named
    this particular case "PT_elim". *)
 
-(* Print PT_rec.
-*** [ PT_rec :
-∀ (A B : Type) (f : A → B),
-isProp B → {g : ∥A∥ → B & ∀ a : A, g (PT_intro a) = f a} ] *)
-
-(* Print PT_elim.
-PT_elim =
-λ (A : Type) (PA : isProp A), Σ_type.pr₁ (PT_rec A A id PA)
-     : ∀ A : Type, isProp A → ∥A∥ → A *)
-
 (* and since ∥qinv f∥ ≃ isequiv f (exercise 3.8), there is a function
    of type ∥qinv f∥ → isequiv f. But by the property (ii) of isequiv
    in §2.4, we have isequiv f → qinv f. So ∥qinv f∥ → qinv f. *)
