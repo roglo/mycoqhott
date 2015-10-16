@@ -377,10 +377,71 @@ transparent assert (p : Σ (X : Type), notT (isProp (Π (x : X), x = x))).
       assert (pbb : ∀ p : ℬ ≃ ℬ, {p = bool_eq_bool_id} + {p = e}).
        apply bool_equiv_dec.
 
-       assert (cpq : ∀ p, p • q = q • p).
-        intros p.
-        destruct (pbb (Σ_pr₁ r q)) as [H1| H1].
+       transparent assert (aab : (a = a) ≃ ℬ).
+        eapply equiv_compose; [ apply r | apply ex_2_13 ].
+
+        set (h := Σ_pr₁ (snd (Σ_pr₂ aab))).
+        assert (aad : ∀ p : a = a, {p = h true} + {p = h false}).
+         intros p.
+         remember (Σ_pr₁ aab p) as b eqn:Hb; symmetry in Hb.
+         destruct b; [ left | right ].
+          unfold h.
+          pose proof (Σ_pr₂ (snd (Σ_pr₂ aab)) p) as u; simpl in u.
+          unfold "◦", "~~", id in u; simpl in u.
+          rewrite <- u; clear u.
+remember (
+             @transport Type (@id Type) bool bool
+               (@ap (@sigT Type (fun y : Type => PT (@eq Type bool y))) Type
+                  (@existT Type (fun A0 : Type => PT (@eq Type bool A0)) bool
+                     (@PT_intro (@eq Type bool bool) (@eq_refl Type bool)))
+                  (@existT Type (fun A0 : Type => PT (@eq Type bool A0)) bool
+                     (@PT_intro (@eq Type bool bool) (@eq_refl Type bool)))
+                  (@Σ_type.pr₁ Type (fun A0 : Type => PT (@eq Type bool A0)))
+                  p) true) as v.
+symmetry in Heqv.
+destruct v; [ apply eq_refl | simpl ].
+unfold transport in Heqv.
+set (v :=
+            @ap (@sigT Type (fun y : Type => PT (@eq Type bool y))) Type
+              (@existT Type (fun A0 : Type => PT (@eq Type bool A0)) bool
+                 (@PT_intro (@eq Type bool bool) (@eq_refl Type bool)))
+              (@existT Type (fun A0 : Type => PT (@eq Type bool A0)) bool
+                 (@PT_intro (@eq Type bool bool) (@eq_refl Type bool)))
+              (@Σ_type.pr₁ Type (fun A0 : Type => PT (@eq Type bool A0))) p)
+in Heqv.
+destruct v.
+bbb.
+
+set (u := ap Σ_type.pr₁ p) in Heqv.
+
+
+remember (transport id (ap Σ_type.pr₁ p) true) as v in |-*.
+symmetry in Heqv.
+destruct v.
+simpl.
+bbb.
+Check (Σ_pr₁ aab).
+
+bbb.
+
+        assert (cpq : ∀ p, p • q = q • p).
+         intros p.
+bbb.
+        assert (cpq : ∀ p, p • q = q • p).
+         intros p.
+bbb.
+        assert (cpq : ∀ p, p • q = q • p).
+         intros p.
+bbb.
+
+         destruct (pbb (Σ_pr₁ r q)) as [H1| H1].
+          set (s := Σ_pr₁ (fst (Σ_pr₂ r))); simpl in s.
+Check (Σ_pr₁ r q).
+Check (s (Σ_pr₁ r q)).
+bbb.
          destruct (pbb (Σ_pr₁ r p)) as [H2| H2].
+
+bbb.
 
 (* bon, j'y arrive pas, je laisse tomber temporairement ; il faudra
    que j'y revienne un jour... *)
