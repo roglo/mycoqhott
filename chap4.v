@@ -419,6 +419,14 @@ Definition hott_4_2_2 A B (f : A → B) (g : B → A)
     (Π (x : A), ap f (η x) = ε (f x)) ↔ (Π (y : B), ap g (ε y) = η (g y)).
 Proof.
 split; intros τ; [ intros y | intros x ].
+(*
+  set (u := ap (g ◦ f ◦ g) (ε y) : (g ◦ f ◦ g ◦ f ◦ g) y = (g ◦ f ◦ g) y).
+  set (d := ap g (ε y) : (g ◦ f ◦ g) y = g y); simpl in u, d.
+  set (l := η ((g ◦ f ◦ g) y) : (g ◦ f ◦ g ◦ f ◦ g) y = (g ◦ f ◦ g) y).
+  set (r := η (g y) : (g ◦ f ◦ g) y = g y); simpl in l, r.
+  assert (u • r = l • d).
+   unfold u, r, l, d, "◦"; simpl.
+*)
  (* "Using naturality of ε and applying g, we get the following
      commuting diagram of paths:
                         gfg(εy)
@@ -433,6 +441,17 @@ split; intros τ; [ intros y | intros x ].
   set (d := ap g (ε y) : (g ◦ f ◦ g) y = g y); simpl in u, d.
   set (l := ap g (ε ((f ◦ g) y)) : (g ◦ f ◦ g ◦ f ◦ g) y = (g ◦ f ◦ g) y).
   set (r := ap g (ε y) : (g ◦ f ◦ g) y = g y); simpl in l, r.
+  assert (u • r = l • d).
+   subst u r l d; apply dotr.
+   assert (ap (g ◦ f ◦ g) (ε y) = ap (g ◦ (f ◦ g)) (ε y)) by apply eq_refl.
+   eapply compose; [ apply H | ].
+   assert (H1 : ap g (ap (f ◦ g) (ε y)) = ap (g ◦ (f ◦ g)) (ε y)).
+    apply ap_composite.
+
+    eapply compose; [ eapply invert, H1 | apply ap ].
+    eapply compose; [ | apply hott_2_2_2_iv ].
+bbb.
+
   (* "Using τ(gy) on the left side of the diagram gives us
                         gfg(εy)
                 gfgfgy ========= gfgy
@@ -444,7 +463,7 @@ split; intros τ; [ intros y | intros x ].
     " *)
   (* what does the word "using" mean? *)
   set (l' := ap (g ◦ f) (η (g y)) : (g ◦ f ◦ g ◦ f ◦ g) y = (g ◦ f ◦ g) y).
-  assert (l = l').
+  assert (ll' : l = l').
    unfold l, l'.
    rewrite <- (@ap_composite A B A).
    apply ap, invert, τ.
