@@ -433,7 +433,7 @@ split; intros τ; [ intros y | intros x ].
   set (d := ap g (ε y) : (g ◦ f ◦ g) y = g y); simpl in u, d.
   set (l := ap g (ε ((f ◦ g) y)) : (g ◦ f ◦ g ◦ f ◦ g) y = (g ◦ f ◦ g) y).
   set (r := ap g (ε y) : (g ◦ f ◦ g) y = g y); simpl in l, r.
-  (* "Using τ ( gy ) on the left side of the diagram gives us
+  (* "Using τ(gy) on the left side of the diagram gives us
                         gfg(εy)
                 gfgfgy ========= gfgy
                   ||              ||
@@ -442,7 +442,9 @@ split; intros τ; [ intros y | intros x ].
                  gfgy =========== gy
                          g(εy)
     " *)
+  (* what does the word "using" mean? *)
   Check (τ (g y)).
+  (* τ (g y) : ap f (η (g y)) = ε (f (g y)) *)
   rewrite <- (τ (g y)) in l.
 
 Toplevel input, characters 0-27:
