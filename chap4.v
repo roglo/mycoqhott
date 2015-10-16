@@ -416,6 +416,5 @@ Definition hott_4_2_2 A B (f : A → B) (g : B → A)
   (η : g ◦ f ~~ id) (ε : f ◦ g ~~ id) :
     (Π (x : A), ap f (η x) = ε (f x)) ↔ (Π (y : B), ap g (ε y) = η (g y)).
 Proof.
-split; intros p.
- intros y.
+split; intros p; [ intros y | intros x ].
 bbb.
