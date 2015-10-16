@@ -421,6 +421,28 @@ Proof.
 split; intros p; [ intros y | intros x ].
  replace y with (f (g y)) by apply ε.
  rewrite <- p, (@ap_composite A B A (g (f (g y))) (g y) f g).
+ clear p.
+ unfold "◦", "~", id in η, ε.
+2 subgoals, subgoal 1 (ID 251)
+  
+  A : Type
+  B : Type
+  f : A → B
+  g : B → A
+  η : (λ x : A, g (f x)) ∼ (λ x : A, x)
+  ε : (λ x : B, f (g x)) ∼ (λ x : B, x)
+  y : B
+  ============================
+   ap (g ◦ f) (η (g y)) = η (g (f (g y)))
+
+subgoal 2 (ID 241) is:
+ ap f (η x) = ε (f x)bbb.
+
+ replace (g (f (g y))) with ((g ◦ f) (g y)).
+
+ remember (g ◦ f) as u.
+bbb.
+
  pose proof (Π_type.funext η) as u.
 replace (g ◦ f) with (@id A).
 
