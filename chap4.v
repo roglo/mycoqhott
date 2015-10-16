@@ -418,8 +418,7 @@ Definition hott_4_2_2 A B (f : A → B) (g : B → A)
   (η : g ◦ f ∼ id) (ε : f ◦ g ∼ id) :
     (Π (x : A), ap f (η x) = ε (f x)) ↔ (Π (y : B), ap g (ε y) = η (g y)).
 Proof.
-split; intros p; [ intros y | intros x ].
- set (τ := Π (x : A), ap f (η x) = ε (f x)).
+split; intros τ; [ intros y | intros x ].
  (* "Using naturality of ε and applying g, we get the following
      commuting diagram of paths:
                         gfg(εy)
@@ -434,6 +433,22 @@ split; intros p; [ intros y | intros x ].
   set (d := ap g (ε y) : (g ◦ f ◦ g) y = g y); simpl in u, d.
   set (l := ap g (ε ((f ◦ g) y)) : (g ◦ f ◦ g ◦ f ◦ g) y = (g ◦ f ◦ g) y).
   set (r := ap g (ε y) : (g ◦ f ◦ g) y = g y); simpl in l, r.
+  (* "Using τ ( gy ) on the left side of the diagram gives us
+                        gfg(εy)
+                gfgfgy ========= gfgy
+                  ||              ||
+        gf(η(gy)) ||              || g(εy)
+                  ||              ||
+                 gfgy =========== gy
+                         g(εy)
+    " *)
+  Check (τ (g y)).
+  rewrite <- (τ (g y)) in l.
+
+Toplevel input, characters 0-27:
+Error: Found no subterm matching "ε (f (g y))" in l.
+
+bbb.
   assert (u • r = l • d).
    unfold u, r, l, d; simpl.
 bbb.
