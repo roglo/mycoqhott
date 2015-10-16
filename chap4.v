@@ -409,7 +409,8 @@ set (v :=
                  (@PT_intro (@eq Type bool bool) (@eq_refl Type bool)))
               (@Σ_type.pr₁ Type (fun A0 : Type => PT (@eq Type bool A0))) p)
 in Heqv.
-destruct v.
+unfold id in Heqv.
+refine (match v with eq_refl _ => _ end).
 bbb.
 
 set (u := ap Σ_type.pr₁ p) in Heqv.
