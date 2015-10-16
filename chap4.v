@@ -401,3 +401,21 @@ Check hott_4_1_1.
 Definition ishae {A B} f :=
   Σ (g : B → A), Σ (η : g ◦ f ~~ id), Σ (ε : f ◦ g ~~ id),
     Π (x : A), ap f (η x) = ε (f x).
+
+Definition ishae' {A B} f :=
+  Σ (g : B → A), Σ (η : g ◦ f ~~ id), Σ (ε : f ◦ g ~~ id),
+    Π (y : B), ap g (ε y) = η (g y).
+
+(* "Lemma 4.2.2. For functions f : A → B and g : B → A and homotopies
+    η : g ◦ f ∼ id_A and ε : f ◦ g ∼ id_B, the following conditions
+    are logically equivalent:
+      • Π (x:A) f(ηx)=ε(fx)
+      • Π (y:B) g(εy)=η(gy)" *)
+
+Definition hott_4_2_2 A B (f : A → B) (g : B → A)
+  (η : g ◦ f ~~ id) (ε : f ◦ g ~~ id) :
+    (Π (x : A), ap f (η x) = ε (f x)) ↔ (Π (y : B), ap g (ε y) = η (g y)).
+Proof.
+split; intros p.
+ intros y.
+bbb.
