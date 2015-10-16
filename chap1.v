@@ -77,7 +77,7 @@ Abort. (* to be done *)
     Show that we have h o (g o f ) ≡ (h o g) o f. *)
 
 Definition composite {A B C} (f : A → B) (g : B → C) x := g (f x).
-Notation "g '◦' f" := (composite f g) (at level 40).
+Notation "g '◦' f" := (composite f g) (at level 40, left associativity).
 (* composite : ∀ A B C : Type, (A → B) → (B → C) → A → C *)
 
 Theorem composite_assoc {A B C D} : ∀ (f : A → B) (g : B → C) (h : C → D),

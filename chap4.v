@@ -420,42 +420,20 @@ Definition hott_4_2_2 A B (f : A → B) (g : B → A)
 Proof.
 split; intros p; [ intros y | intros x ].
  set (τ := Π (x : A), ap f (η x) = ε (f x)).
-bbb.
-
- replace y with (f (g y)) by apply ε.
-bbb.
-
- rewrite <- p, (@ap_composite A B A (g (f (g y))) (g y) f g).
- clear p.
- unfold "◦", "∼", id in η, ε.
-Check @ap.
-bbb.
-
-Check (@ap A A (g ◦ f)).
-
- replace (ap (g ◦ f) (η (g y))) with (ap (@id B) (η (g y))).
-
- replace (η (g (f (g y)))) with (η ((g ◦ f) (g y))) by reflexivity.
- remember (g ◦ f) as u.
-bbb.
-
- pose proof (Π_type.funext η) as u.
-replace (g ◦ f) with (@id A).
-
-(*
-  u : g ◦ f = id
-  ============================
-   ap (g ◦ f) (η (g y)) = η (g (f (g y)))
-*)
-simpl in u.
-erewrite u at 1.
- eapply compose.
-  eapply apf.
-bbb.
-
-  clear p.
-  apply Π_type.funext in η.
-  rewrite η.
-SearchAbout (ap id).
-
+ (* "Using naturality of ε and applying g, we get the following
+     commuting diagram of paths:
+                        gfg(εy)
+                gfgfgy ========= gfgy
+                  ||              ||
+        g(ε(fgy)) ||              || g(εy)
+                  ||              ||
+                 gfgy =========== gy
+                         g(εy)
+    " *)
+  set (u := ap (g ◦ f ◦ g) (ε y) : (g ◦ f ◦ g ◦ f ◦ g) y = (g ◦ f ◦ g) y).
+  set (d := ap g (ε y) : (g ◦ f ◦ g) y = g y); simpl in u, d.
+  set (l := ap g (ε ((f ◦ g) y)) : (g ◦ f ◦ g ◦ f ◦ g) y = (g ◦ f ◦ g) y).
+  set (r := ap g (ε y) : (g ◦ f ◦ g) y = g y); simpl in l, r.
+  assert (u • r = l • d).
+   unfold u, r, l, d; simpl.
 bbb.
