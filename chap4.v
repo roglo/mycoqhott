@@ -443,13 +443,11 @@ split; intros τ; [ intros y | intros x ].
                          g(εy)
     " *)
   (* what does the word "using" mean? *)
-  set (a :=τ (g y) : ap f (η (g y)) = ε ((f ◦ g) y)).
-  (* τ (g y) : ap f (η (g y)) = ε (f (g y)) *)
-  rewrite <- a in l.
-
-Toplevel input, characters 0-18:
-Error: Found no subterm matching "ε ((f ◦ g) y)" in l.
-
+  set (l' := ap (g ◦ f) (η (g y)) : (g ◦ f ◦ g ◦ f ◦ g) y = (g ◦ f ◦ g) y).
+  assert (l = l').
+   unfold l, l'.
+   rewrite <- (@ap_composite A B A).
+   apply ap, invert, τ.
 
 bbb.
   assert (u • r = l • d).
