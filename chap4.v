@@ -43,7 +43,7 @@ exists
      (match p in (_ = f) return (f (Σ_pr₁ q) → P (Σ_pr₁ q)) with
       | eq_refl _ => id
       end (Σ_pr₂ q)) : Σ (x : A), P x).
-unfold "◦", "~~", id; simpl.
+unfold "◦", "∼", id; simpl.
 split; intros (x, q); destruct p; apply eq_refl.
 Defined.
 
@@ -97,13 +97,13 @@ subst fe; injection t; clear t; intros t u; subst f.
 unfold qinv.
 apply (@equiv_compose _ {g : A → A & ((g = id) * (g = id))%type}).
  apply Σ_equiv, Π_type.funext; intros f.
- unfold "◦", "~~"; simpl.
+ unfold "◦", "∼"; simpl.
  apply type_pair_eq.
   apply ua.
   exists (λ g, Π_type.funext g).
   apply qinv_isequiv.
   exists (λ g x, Π_type.happly g x).
-  unfold "◦", "~~"; simpl.
+  unfold "◦", "∼"; simpl.
   split; [ intros p; apply invert, Π_type.funext_prop_uniq_princ |  ].
   intros p; apply Π_type.funext; intros x.
   apply (Π_type.funext_quasi_inverse_of_happly f id p x).
@@ -112,7 +112,7 @@ apply (@equiv_compose _ {g : A → A & ((g = id) * (g = id))%type}).
   exists (λ g, Π_type.funext g).
   apply qinv_isequiv.
   exists (λ g x, Π_type.happly g x).
-  unfold "◦", "~~"; simpl.
+  unfold "◦", "∼"; simpl.
   split; [ intros p; apply invert, Π_type.funext_prop_uniq_princ |  ].
   intros p; apply Π_type.funext; intros x.
   apply (Π_type.funext_quasi_inverse_of_happly f id p x).
@@ -126,7 +126,7 @@ apply (@equiv_compose _ {g : A → A & ((g = id) * (g = id))%type}).
   exists (λ p, existT (λ _, x = id) (fst p) (snd p)).
   apply qinv_isequiv.
   exists (λ p : {_ : x = id & x = id}, (Σ_pr₁ p, Σ_pr₂ p)).
-  unfold "◦", "~~", id; simpl.
+  unfold "◦", "∼", id; simpl.
   split; [ intros (p, u); apply eq_refl |  ].
   intros p; apply invert, surjective_pairing.
 
@@ -153,7 +153,7 @@ apply (@equiv_compose _ {g : A → A & ((g = id) * (g = id))%type}).
   exists (λ (p : @id A = @id A) (x : A), Π_type.happly p x).
   apply qinv_isequiv.
   exists (λ g, Π_type.funext g).
-  unfold "◦", "~~", id; simpl.
+  unfold "◦", "∼", id; simpl.
   split.
    intros u.
    apply Π_type.funext; intros x.
@@ -298,7 +298,7 @@ transparent assert (t: (bool ≃ bool) ≃ bool); [ apply ex_2_13 | ].
 set (f := Σ_type.pr₁ t); simpl in f.
 set (h := Σ_type.pr₁ (snd (Σ_type.pr₂ t))); simpl in h.
 set (Hh := Σ_type.pr₂ (snd (Σ_type.pr₂ t))).
-unfold "◦", "~~", id in Hh.
+unfold "◦", "∼", id in Hh.
 remember (f p) as u eqn:Hu; symmetry in Hu.
 apply (ap h) in Hu.
 rewrite Hh in Hu.
@@ -401,11 +401,11 @@ Check hott_4_1_1.
           Σ (g:B→A) Σ (η:g◦f~id_A) Σ (ε:f◦g~id_B) Π (x:A) f(ηx)=ε(fx)." *)
 
 Definition ishae {A B} f :=
-  Σ (g : B → A), Σ (η : g ◦ f ~~ id), Σ (ε : f ◦ g ~~ id),
+  Σ (g : B → A), Σ (η : g ◦ f ∼ id), Σ (ε : f ◦ g ∼ id),
     Π (x : A), ap f (η x) = ε (f x).
 
 Definition ishae' {A B} f :=
-  Σ (g : B → A), Σ (η : g ◦ f ~~ id), Σ (ε : f ◦ g ~~ id),
+  Σ (g : B → A), Σ (η : g ◦ f ∼ id), Σ (ε : f ◦ g ∼ id),
     Π (y : B), ap g (ε y) = η (g y).
 
 (* "Lemma 4.2.2. For functions f : A → B and g : B → A and homotopies
@@ -415,7 +415,7 @@ Definition ishae' {A B} f :=
       • Π (y:B) g(εy)=η(gy)" *)
 
 Definition hott_4_2_2 A B (f : A → B) (g : B → A)
-  (η : g ◦ f ~~ id) (ε : f ◦ g ~~ id) :
+  (η : g ◦ f ∼ id) (ε : f ◦ g ∼ id) :
     (Π (x : A), ap f (η x) = ε (f x)) ↔ (Π (y : B), ap g (ε y) = η (g y)).
 Proof.
 split; intros p; [ intros y | intros x ].
@@ -423,7 +423,7 @@ split; intros p; [ intros y | intros x ].
 bbb.
 
  set (u := p (g y)).
- unfold "◦", "~~", id in ε.
+ unfold "◦", "∼", id in ε.
  rewrite ε in u.
 
 bbb.

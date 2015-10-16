@@ -408,33 +408,33 @@ Definition hott_2_3_11 {A x y} : ∀ (P Q : A → Type) (f : Π (x : A), P x →
 
 Definition homotopy {A B} (f g : A → B) := Π (x : A), (f x = g x).
 
-Notation "f '~~' g" := (homotopy f g) (at level 70).
+Notation "f '∼' g" := (homotopy f g) (at level 70).
 
 Definition homotopy_eq_refl {A B} : reflexive _ (@homotopy A B) :=
   λ _ _, eq_refl _.
 
-Definition homotopy_eq_refl2 {A B} : Π (f : A → B), (f ~~ f) :=
+Definition homotopy_eq_refl2 {A B} : Π (f : A → B), (f ∼ f) :=
   λ _ _, eq_refl _.
 
 Definition homotopy_sym {A B} : symmetric _ (@homotopy A B) :=
-  λ f g (p : f ~~ g) x,
+  λ f g (p : f ∼ g) x,
   match p x with eq_refl _ => eq_refl (f x) end.
 
 Definition homotopy_sym2 {A B} : Π (f : A → B), Π (g : A → B),
-    (f ~~ g) → (g ~~ f) :=
-  λ f g (p : f ~~ g) x,
+    (f ∼ g) → (g ∼ f) :=
+  λ f g (p : f ∼ g) x,
   match p x with eq_refl _ => eq_refl (f x) end.
 
 Definition homotopy_trans {A B} : transitive _ (@homotopy A B) :=
-  λ f g h (p : f ~~ g) (q : g ~~ h) x,
+  λ f g h (p : f ∼ g) (q : g ∼ h) x,
   match q x with
   | eq_refl _ => p x
   end.
 
 Definition homotopy_trans2 {A B}
   : Π (f : A → B), Π (g : A → B), Π (h : A → B),
-    (f ~~ g) → (g ~~ h) → (f ~~ h)
-  := λ f g h (p : f ~~ g) (q : g ~~ h) x,
+    (f ∼ g) → (g ∼ h) → (f ∼ h)
+  := λ f g h (p : f ∼ g) (q : g ∼ h) x,
      match q x with
      | eq_refl _ => p x
      end.
@@ -446,7 +446,7 @@ Add Parametric Relation {A B} : _ (@homotopy A B)
  as homotopy_equivalence.
 
 Definition hott_2_4_3 {A B x y}
-  : ∀ (f g : A → B) (H : f ~~ g) (p : x = y), H x • ap g p = ap f p • H y
+  : ∀ (f g : A → B) (H : f ∼ g) (p : x = y), H x • ap g p = ap f p • H y
   := λ f g H p,
      match p with
      | eq_refl _ =>
@@ -460,7 +460,7 @@ Definition hott_2_4_3 {A B x y}
      end.
 
 Definition hott_2_4_4 {A x}
-  : ∀ (f : A → A) (H : f ~~ id), H (f x) = ap f (H x).
+  : ∀ (f : A → A) (H : f ∼ id), H (f x) = ap f (H x).
 Proof.
 intros.
 assert (ap f (H x) • H x = H (f x) • H x) as p.
@@ -486,7 +486,7 @@ Qed.
 (* quasi-inverse *)
 
 Definition qinv {A B} (f : A → B) :=
-  Σ (g : B → A), ((f ◦ g ~~ id) * (g ◦ f ~~ id))%type.
+  Σ (g : B → A), ((f ◦ g ∼ id) * (g ◦ f ∼ id))%type.
 
 Example ex_2_4_7 A : qinv (id : A → A) :=
  existT _ id (reflexivity id, reflexivity id).
@@ -579,7 +579,7 @@ Definition equiv_prop {A B} isequiv :=
   (∀ e₁ e₂ : isequiv f, e₁ = e₂).
 
 Definition isequiv {A B : Type} f :=
-  ((Σ (g : B → A), (f ◦ g ~~ id)) * (Σ (h : B → A), (h ◦ f ~~ id)))%type.
+  ((Σ (g : B → A), (f ◦ g ∼ id)) * (Σ (h : B → A), (h ◦ f ∼ id)))%type.
 
 Definition qinv_isequiv {A B} (f : A → B) : qinv f → isequiv f.
 Proof.
@@ -645,8 +645,8 @@ destruct H1 as (g1, p1).
 destruct H2 as (h1, q1).
 destruct H3 as (g2, p2).
 destruct H4 as (h2, q2).
-unfold "~~", id in p1, q1, p2, q2.
-unfold "~~", id.
+unfold "∼", id in p1, q1, p2, q2.
+unfold "∼", id.
 Admitted. (* proof postponed, they say, to sections §2.6, §2.7 and §4.3...
 bbb.
 *)
@@ -663,7 +663,7 @@ Definition eqv_eq_refl A : A ≃ A :=
 (* quasi-inverse : lemma 2.4.12 ii *)
 
 Definition composite_cancel {A B C} {x y : B → C} {z t : A → B} :
-  (x ~~ y) → (z ~~ t) → (x ◦ z ~~ y ◦ t).
+  (x ∼ y) → (z ∼ t) → (x ◦ z ∼ y ◦ t).
 Proof.
 intros p q a.
 transitivity (y (z a)); [ apply p | unfold "◦"; apply ap, q ].
@@ -676,7 +676,7 @@ destruct eqf as (f, ((g, Hg), (h, Hh))).
 exists g.
 split; [ idtac | exists f; apply Hg ].
 exists f.
-unfold "~~", "◦", id in Hg, Hh |-*; intros x.
+unfold "∼", "◦", id in Hg, Hh |-*; intros x.
 apply (@compose _ _ (h (f x))); [ idtac | apply Hh ].
 apply (@compose _ _ (h (f (g (f x))))); [ apply invert, Hh | apply ap, Hg ].
 Defined.
@@ -719,12 +719,12 @@ Definition equiv_compose {A B C} : A ≃ B → B ≃ C → A ≃ C :=
       match eqg with
       | existT _ g (existT _ g₁ eqg₁, existT _ g₂ eqg₂) =>
           existT _ (g ◦ f)
-            (existT (λ h, (g ◦ f) ◦ h ~~ id) (f₁ ◦ g₁)
+            (existT (λ h, (g ◦ f) ◦ h ∼ id) (f₁ ◦ g₁)
                (λ c,
                 match eqg₁ c with
                 | eq_refl _ => ap g (eqf₁ (g₁ c))
                 end),
-             existT (λ h, h ◦ (g ◦ f) ~~ id) (f₂ ◦ g₂)
+             existT (λ h, h ◦ (g ◦ f) ∼ id) (f₂ ◦ g₂)
                (λ a,
                 match eqf₂ a with
                 | eq_refl _ => ap f₂ (eqg₂ (f a))
@@ -1387,8 +1387,8 @@ Definition isequiv_transport {A B} : ∀ (p : A = B), isequiv (transport id p)
   λ p,
   match p with
   | eq_refl _ =>
-      (existT (λ g, g ~~ id) id (@eq_refl A),
-       existT (λ h, h ~~ id) id (@eq_refl A))
+      (existT (λ g, g ∼ id) id (@eq_refl A),
+       existT (λ h, h ∼ id) id (@eq_refl A))
   end.
 
 Definition idtoeqv {A B : Type} : A = B → A ≃ B :=
@@ -1542,12 +1542,12 @@ destruct f; simpl.
 unfold ua.
 set (q := univalence A A).
 destruct q as ((g, Hg), (h, Hh)); simpl.
-unfold "◦", "~~", id in Hg, Hh.
+unfold "◦", "∼", id in Hg, Hh.
 pose proof Hh (eq_refl A) as H.
 unfold id in H.
 rewrite <- H; simpl.
 unfold idtoeqv; simpl.
-assert (g ~~ h) as Hgh.
+assert (g ∼ h) as Hgh.
  intros x; set (y := g x).
  apply (@compose _ _ (h (idtoeqv y))); [ apply invert, Hh | apply ap, Hg ].
 
@@ -1606,7 +1606,7 @@ unfold qinv.
 set (g := λ r, (β a)⁻¹ • ap f₁ r • β a').
 unfold "◦", id in g; simpl in g.
 exists g; subst g.
-unfold "◦", "~~", id; simpl.
+unfold "◦", "∼", id; simpl.
 split; intros q.
  set (r := @compose _ _ _ a' (@invert _ (f₁ (f a)) a (β a) • ap f₁ q) (β a')).
  apply (@compose _ _ ((α (f a))⁻¹ • α (f a) • ap f r)).
@@ -1657,7 +1657,7 @@ split; intros q.
 
  rewrite (ap_composite f f₁ q).
  destruct q; simpl.
- unfold "◦", "~~", id in β; simpl in β.
+ unfold "◦", "∼", id in β; simpl in β.
  unfold "◦"; simpl; rewrite β; reflexivity.
 Defined.
 
@@ -1686,7 +1686,7 @@ Definition split_pair_eq {A B} : ∀ (a b : A) (c d : B),
    end.
 
 Definition split_pair_eq_id {A B} : ∀ (a b : A) (c d : B),
-  split_pair_eq a b c d ◦ pair_eq_split a b c d ~~ id
+  split_pair_eq a b c d ◦ pair_eq_split a b c d ∼ id
 := λ a b c d p,
    match p in (_ = q)
      return
@@ -1698,7 +1698,7 @@ Definition split_pair_eq_id {A B} : ∀ (a b : A) (c d : B),
    end.
 
 Definition pair_eq_split_id {A B} : ∀ (a b : A) (c d : B),
-  pair_eq_split a b c d ◦ split_pair_eq a b c d ~~ id
+  pair_eq_split a b c d ◦ split_pair_eq a b c d ∼ id
 := λ a b c d p,
    let (q, r) as p0
    return (pair_eq_split a b c d (split_pair_eq a b c d p0) = p0) := p in
@@ -1725,14 +1725,14 @@ apply qinv_isequiv.
 unfold qinv.
 exists g; split.
  subst f g.
- unfold "◦", "~~", id; intros (v, v').
+ unfold "◦", "∼", id; intros (v, v').
  apply split_pair_eq; split.
   apply cartesian.ap_pr₁_pair.
 
   apply cartesian.ap_pr₂_pair.
 
  subst f g.
- unfold "◦", "~~", id; intros r.
+ unfold "◦", "∼", id; intros r.
  apply invert, cartesian.pair_uniqueness.
 Defined.
 
@@ -1865,7 +1865,7 @@ apply qinv_isequiv.
 exists (@inl_equal _ _ a₁ a₂).
 split; [ intros p; destruct p; reflexivity | idtac ].
 intros p; simpl.
-unfold "◦", "~~", id; simpl.
+unfold "◦", "∼", id; simpl.
 refine (match p with eq_refl _ => _ end).
 reflexivity.
 Defined.
@@ -1880,7 +1880,7 @@ apply qinv_isequiv.
 exists (@inr_equal _ _ b₁ b₂).
 split; [ intros p; destruct p; reflexivity | idtac ].
 intros p; simpl.
-unfold "◦", "~~", id; simpl.
+unfold "◦", "∼", id; simpl.
 refine (match p with eq_refl _ => _ end).
 reflexivity.
 Defined.
@@ -1931,11 +1931,11 @@ Definition decode {A B} a₀ (x : A + B) : ∀ (c : code a₀ x), (inl a₀ = x)
   end.
 
 Definition encode_decode {A B} a₀ (x : A + B) :
-  encode a₀ x ◦ decode a₀ x ~~ id.
+  encode a₀ x ◦ decode a₀ x ∼ id.
 Proof. intros y; destruct x, y; reflexivity. Defined.
 
 Definition decode_encode {A B} a₀ (x : A + B) :
-  decode a₀ x ◦ encode a₀ x ~~ id.
+  decode a₀ x ◦ encode a₀ x ∼ id.
 Proof. intros y; destruct x, y; reflexivity. Defined.
 
 Theorem hott_2_12_5_bis {A B} a₀ : ∀ x : A + B, (inl a₀ = x) ≃ code a₀ x.
@@ -1980,11 +1980,11 @@ Definition decode_r {A B} b₀ (x : A + B) (c : code_r b₀ x) : (inr b₀ = x) 
   end c.
 
 Definition encode_r_decode_r {A B} b₀ (x : A + B) :
-  encode_r b₀ x ◦ decode_r b₀ x ~~ id.
+  encode_r b₀ x ◦ decode_r b₀ x ∼ id.
 Proof. intros y; destruct x, y; reflexivity. Defined.
 
 Definition decode_r_encode_r {A B} b₀ (x : A + B) :
-  decode_r b₀ x ◦ encode_r b₀ x ~~ id.
+  decode_r b₀ x ◦ encode_r b₀ x ∼ id.
 Proof. intros y; destruct x, y; reflexivity. Defined.
 
 Theorem hott_2_12_5_ter {A B} b₀ : ∀ x : A + B, (inr b₀ = x) ≃ code_r b₀ x.
@@ -2098,7 +2098,7 @@ Proof.
 intros.
 exists (encode m n); apply qinv_isequiv.
 exists (decode m n).
-unfold "◦", "~~", id; simpl.
+unfold "◦", "∼", id; simpl.
 split; intros p; [ apply encode_decode | apply decode_encode ].
 Defined.
 
@@ -2264,12 +2264,12 @@ Definition transport_op {A B} (e : A ≃ B) m b₁ b₂ :
 (* misc theorems *)
 
 Definition quasi_inv_l_eq_r_tac {A B} (f : A → B) (g h : B → A) :
-  f ◦ g ~~ id
-  → h ◦ f ~~ id
-  → g ~~ h.
+  f ◦ g ∼ id
+  → h ◦ f ∼ id
+  → g ∼ h.
 Proof.
 intros Hfg Hhf x.
-unfold "◦", "~~", id in Hfg, Hhf.
+unfold "◦", "∼", id in Hfg, Hhf.
 pose proof Hfg x as H.
 apply (ap h) in H.
 eapply compose; [ idtac | eassumption ].
@@ -2277,9 +2277,9 @@ apply invert, Hhf.
 Defined.
 
 Definition quasi_inv_l_eq_r {A B} (f : A → B) (g h : B → A) :
-  f ◦ g ~~ id
-  → h ◦ f ~~ id
-  → g ~~ h
+  f ◦ g ∼ id
+  → h ◦ f ∼ id
+  → g ∼ h
 :=
   λ Hfg Hhf x, (Hhf (g x))⁻¹ • ap h (Hfg x).
 
@@ -2291,20 +2291,20 @@ destruct p as (f, ((g, Hg), (h, Hh))).
 exists f, g.
 split; [ intros x | intros y; apply Hg ].
 pose proof quasi_inv_l_eq_r f g h Hg Hh as p.
-unfold "~~" in p.
+unfold "∼" in p.
 etransitivity; [ apply p | apply Hh ].
 Defined.
 
-Definition quasi_inv_comp_l {A B} (e : A ≃ B) : pr₁ e⁻⁻¹ ◦ pr₁ e ~~ id.
+Definition quasi_inv_comp_l {A B} (e : A ≃ B) : pr₁ e⁻⁻¹ ◦ pr₁ e ∼ id.
 Proof.
 intros x.
 destruct e as (f, ((g, Hg), (h, Hh))); simpl.
 pose proof quasi_inv_l_eq_r f g h Hg Hh as H.
-unfold "~~" in H.
+unfold "∼" in H.
 eapply compose; [ apply H | apply Hh ].
 Defined.
 
-Definition quasi_inv_comp_r {A B} (e : A ≃ B) : pr₁ e ◦ pr₁ e⁻⁻¹ ~~ id.
+Definition quasi_inv_comp_r {A B} (e : A ≃ B) : pr₁ e ◦ pr₁ e⁻⁻¹ ∼ id.
 Proof.
 intros x.
 destruct e as (f, ((g, Hg), (h, Hh))); simpl.
@@ -2436,7 +2436,7 @@ set
  (g xy :=
     existT B (pr₁ HAC⁻⁻¹ (fst xy))
       (pr₁ (HBD (pr₁ HAC⁻⁻¹ (fst xy)))⁻⁻¹ (snd xy))).
-exists g; split; unfold "◦", "~~", id.
+exists g; split; unfold "◦", "∼", id.
  intros (x, y).
  subst f g; simpl.
  destruct HAC as (f, ((g, Hg), (h, Hh))); simpl.
@@ -2448,11 +2448,11 @@ exists g; split; unfold "◦", "~~", id.
  subst f g; simpl.
  destruct HAC as (f, ((g, Hg), (h, Hh))); simpl.
  pose proof quasi_inv_l_eq_r f g h Hg Hh as H.
- unfold "◦", "~~", id in Hh, H.
+ unfold "◦", "∼", id in Hh, H.
  rewrite H, Hh.
  destruct (HBD x) as (f₁, ((g₁, Hg₁), (h₁, Hh₁))); simpl.
  pose proof quasi_inv_l_eq_r f₁ g₁ h₁ Hg₁ Hh₁ as H₁.
- unfold "◦", "~~", id in H₁, Hh₁.
+ unfold "◦", "∼", id in H₁, Hh₁.
  rewrite H₁, Hh₁; reflexivity.
 Defined.
 
@@ -2566,7 +2566,7 @@ apply eq_pair_dep_pair.
  split; simpl.
   unfold semigroup_path_fun, semigroup_path_inv; simpl.
   subst e; destruct p₁; simpl.
-  unfold "◦", "~~", id; intros f.
+  unfold "◦", "∼", id; intros f.
   apply Π_type.funext; intros y₁.
   apply Π_type.funext; intros y₂.
   do 2 rewrite Π_type.funext_quasi_inverse_of_happly.
@@ -2574,7 +2574,7 @@ apply eq_pair_dep_pair.
 
   unfold semigroup_path_fun, semigroup_path_inv; simpl.
   subst e; destruct p₁; simpl.
-  unfold "◦", "~~", id; intros f.
+  unfold "◦", "∼", id; intros f.
   destruct f; simpl.
   eapply invert, compose; [ apply Π_type.funext_identity | idtac ].
   apply ap, Π_type.funext; intros x.
@@ -2606,7 +2606,7 @@ Definition hott_2_15_2_tac {X A B} : (X → A * B) ≃ (X → A) * (X → B).
 Proof.
 exists hott_2_15_1; apply qinv_isequiv.
 exists fun_prod_prod.
-unfold hott_2_15_1, fun_prod_prod, "◦", "~~", id; simpl.
+unfold hott_2_15_1, fun_prod_prod, "◦", "∼", id; simpl.
 split; [ intros (Ha, Hb); reflexivity | idtac ].
 intros p.
 eapply Π_type.funext; intros x.
@@ -2643,7 +2643,7 @@ Definition hott_2_15_5_tac {X A B} :
 Proof.
 exists hott_2_15_4; apply qinv_isequiv.
 exists fun_dep_fun_prod_prod.
-unfold hott_2_15_4, fun_dep_fun_prod_prod, "◦", "~~", id; simpl.
+unfold hott_2_15_4, fun_dep_fun_prod_prod, "◦", "∼", id; simpl.
 split; [ intros (Ha, Hb); reflexivity | idtac ].
 intros p.
 eapply Π_type.funext; intros x.
@@ -2694,7 +2694,7 @@ Definition hott_2_15_7 {X A} P :
 Proof.
 exists (hott_2_15_6 P); apply qinv_isequiv.
 exists (fun_dep_prod_prod P).
-unfold hott_2_15_6, fun_dep_prod_prod, "◦", "~~", id; simpl.
+unfold hott_2_15_6, fun_dep_prod_prod, "◦", "∼", id; simpl.
 split; [ intros (Ha, Hb); reflexivity | idtac ].
 intros p.
 eapply Π_type.funext; intros x.
@@ -2717,7 +2717,7 @@ Definition cart_clos_adjun {A B C} : ((A * B) → C) ≃ (A → (B → C)).
 Proof.
 exists (λ g a b, g (a, b)); apply qinv_isequiv.
 exists (λ f x, f (pr₁ x) (pr₂ x)).
-unfold "◦", "~~", id; simpl.
+unfold "◦", "∼", id; simpl.
 split.
  intros x.
  apply Π_type.funext; intros a.
@@ -2737,7 +2737,7 @@ Definition dep_clos_adjun {A B C} :
 Proof.
 exists (λ g a b, g (a, b)); apply qinv_isequiv.
 exists (λ f (w : A * B), let (a, b) return (C _) := w in f a b).
-unfold "◦", "~~", id; simpl.
+unfold "◦", "∼", id; simpl.
 split.
  intros f.
  apply Π_type.funext; intros a.
@@ -2756,7 +2756,7 @@ Definition Σ_clos_adjun {A B C} :
 Proof.
 exists (λ f a (b : B a), f (existT _ a b)); apply qinv_isequiv.
 exists (λ f (w : Σ (x : A), B x), let (a, b) return (C _) := w in f a b).
-unfold "◦", "~~", id; simpl.
+unfold "◦", "∼", id; simpl.
 split.
  intros f.
  apply Π_type.funext; intros a.
@@ -2776,7 +2776,7 @@ Definition path_ind_equiv {A} a B :
 Proof.
 exists (λ f : ∀ x p, B x p, f a (eq_refl a)); apply qinv_isequiv.
 exists (λ p x q, match q in (_ = y) return (B y q) with eq_refl _ => p end).
-unfold "◦", "~~", id; simpl.
+unfold "◦", "∼", id; simpl.
 split; [ reflexivity | idtac ].
 intros f.
 apply Π_type.funext; intros x.
@@ -3040,7 +3040,7 @@ Proof.
 exists (hott_2_3_6 p f); apply qinv_isequiv.
 exists (hott_2_3_7 p f).
 unfold hott_2_3_6, hott_2_3_7.
-unfold "◦", "~~", id; simpl.
+unfold "◦", "∼", id; simpl.
 split.
  intros q.
  eapply compose; [ eapply compose_assoc | idtac ].
@@ -3082,7 +3082,7 @@ Definition ex_2_6_tac {A} {x y z : A} (p : x = y) : (y = z) ≃ (x = z).
 Proof.
 exists (λ q, p • q); apply qinv_isequiv.
 exists (λ q, p⁻¹ • q).
-unfold "◦", "~~", id.
+unfold "◦", "∼", id.
 split.
  intros q.
  eapply compose; [ eapply compose_assoc | idtac ].
@@ -3164,7 +3164,7 @@ Definition ex_2_9_tac {X A B : Type} : (A + B → X) ≃ (A → X) * (B → X).
 Proof.
 exists (λ f, (f ◦ inl, f ◦ inr)); apply qinv_isequiv.
 exists (λ f x, coproduct_map (pr₁ f) (pr₂ f) x).
-unfold "◦", "~~", id; simpl.
+unfold "◦", "∼", id; simpl.
 split; [ intros (f, g); reflexivity | intros f ].
 apply Π_type.funext; intros x.
 destruct x as [a| b]; reflexivity.
@@ -3201,7 +3201,7 @@ exists
    match fg with
    | (f, g) => dep_fun_map f g x
    end).
-unfold "◦", "~~", id; simpl.
+unfold "◦", "∼", id; simpl.
 split; [ intros (f, g); reflexivity | intros f ].
 apply Π_type.funext; intros x.
 destruct x as [a| b]; reflexivity.
@@ -3250,7 +3250,7 @@ exists
    | existT _ (existT _ x y) f =>
        (λ f : C (existT B x y), existT _ x (existT _ y f)) f
    end).
-unfold "◦", "~~", id; simpl.
+unfold "◦", "∼", id; simpl.
 split; [ intros ((x, y), f) | intros (x, (y, f)) ]; reflexivity.
 Defined.
 
@@ -3305,7 +3305,7 @@ Definition bool_eq_bool_id : bool ≃ bool :=
 Definition bool_eq_bool_negb : bool ≃ bool :=
   existT isequiv negb
     (qinv_isequiv negb
-       (existT (λ g, ((negb ◦ g ~~ id) * (g ◦ negb ~~ id))%type) negb
+       (existT (λ g, ((negb ◦ g ∼ id) * (g ◦ negb ∼ id))%type) negb
           (λ b : bool,
            if b return (negb (negb b) = b) then eq_refl true
            else eq_refl false,
@@ -3319,16 +3319,16 @@ exists (λ p : bool ≃ bool, Π_type.pr₁ p true).
 apply qinv_isequiv.
 exists (λ b : bool, if b then bool_eq_bool_id else bool_eq_bool_negb).
 unfold bool_eq_bool_id, bool_eq_bool_negb.
-unfold "◦", "~~", id; simpl.
+unfold "◦", "∼", id; simpl.
 split; [ intros x; destruct x; reflexivity |  ].
 intros (f, ((g, Hg), (h, Hh))); simpl.
 pose proof (EqStr.quasi_inv_l_eq_r f g h Hg Hh) as Hgh.
-unfold "◦", "~~", id in Hg, Hh, Hgh.
+unfold "◦", "∼", id in Hg, Hh, Hgh.
 pose proof (EqStr.quasi_inv_l_eq_r f g h Hg Hh) as H.
 set (b := f true).
 assert (Hb : f true = b) by (subst b; reflexivity).
 destruct b.
- assert (H1 : f ~~ id).
+ assert (H1 : f ∼ id).
   intros b.
   destruct b; [ assumption | unfold id ].
   destruct (bool_dec (f false) false) as [H1| H1]; [ assumption | ].
@@ -3337,7 +3337,7 @@ destruct b.
   destruct (g false); [  | assumption ].
   rewrite Hb in H2; discriminate H2.
 
-  assert (H2 : g ~~ id).
+  assert (H2 : g ∼ id).
    intros b.
    destruct (bool_dec (g b) b) as [H2| H2]; [ assumption |  ].
    destruct b.
@@ -3352,7 +3352,7 @@ destruct b.
     rewrite H2, Hb in H3.
     discriminate H3.
 
-   assert (H3 : h ~~ id).
+   assert (H3 : h ∼ id).
     eapply homotopy_trans2; [  | apply H2 ].
     apply homotopy_sym2; assumption.
 
@@ -3370,7 +3370,7 @@ destruct b.
      apply Π_type.funext; intros b.
      symmetry; apply uip_refl_bool.
 
- assert (H1 : f ~~ negb).
+ assert (H1 : f ∼ negb).
   intros b.
   destruct b; [ assumption |  ].
   destruct (bool_dec (f false) true) as [H1| H1]; [ assumption | ].
@@ -3379,7 +3379,7 @@ destruct b.
   destruct (g true); [  | assumption ].
   rewrite Hb in H2; discriminate H2.
 
-  assert (H2 : g ~~ negb).
+  assert (H2 : g ∼ negb).
    intros b.
    destruct (bool_dec (g b) (negb b)) as [H2| H2]; [ assumption |  ].
    destruct b.
@@ -3391,7 +3391,7 @@ destruct b.
     pose proof (Hh true) as H3.
     rewrite Hb, <- H, H2 in H3; discriminate H3.
 
-   assert (H3 : h ~~ negb).
+   assert (H3 : h ∼ negb).
     eapply homotopy_trans2; [  | apply H2 ].
     apply homotopy_sym2; assumption.
 
@@ -3455,7 +3455,7 @@ exists
    end).
 apply qinv_isequiv.
 exists (funext2 A B f g).
-unfold "◦", "~~", id.
+unfold "◦", "∼", id.
 split.
  intros h.
  apply funext2; intros x.
@@ -3509,7 +3509,7 @@ intros (f, ((f₁, Hf₁), (f₂, Hf₂))) (g, ((g₁, Hg₁), (g₂, Hg₂))).
 exists (λ x : A * B, (f (pr₁ x), g (pr₂ x))).
 apply qinv_isequiv.
 exists (λ x' : A' * B', (f₁ (pr₁ x'), g₁ (pr₂ x'))).
-unfold "◦", "~~", id; simpl.
+unfold "◦", "∼", id; simpl.
 split.
  intros (a', b'); simpl.
  apply split_pair_eq.

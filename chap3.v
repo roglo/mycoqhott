@@ -68,7 +68,7 @@ Proof.
 intros x y p q.
 pose proof hott_2_8_1 x y as r.
 destruct r as (f, ((g, Hg), (h, Hh))).
-unfold "◦", "~~", id in Hg, Hh.
+unfold "◦", "∼", id in Hg, Hh.
 pose proof Hh p as Hp.
 pose proof Hh q as Hq.
 destruct (f p), (f q).
@@ -115,14 +115,14 @@ destruct (eq_nat_dec m n) as [H1| H1].
  left; subst m.
  exists (λ c, I); apply qinv_isequiv.
  exists (λ _, N.r n).
- unfold "◦", "~~", id; simpl.
+ unfold "◦", "∼", id; simpl.
  split; [ intros u; destruct u; reflexivity | intros c ].
  induction n; [ destruct c; reflexivity | apply IHn ].
 
  right.
  exists (λ c, H1 (N.decode m n c)); apply qinv_isequiv.
  exists (λ p : False, match p with end).
- unfold "◦", "~~", id.
+ unfold "◦", "∼", id.
  split; [ intros p; destruct p | ].
  intros c; destruct (H1 (N.decode m n c)).
 Defined.
@@ -137,7 +137,7 @@ pose proof N_code_equiv_1_or_0 m n as s.
 destruct s as [s| s].
  eapply equiv_compose in s; [ | apply r ].
  destruct s as (f, ((g, Hg), (h, Hh))).
- unfold "◦", "~~", id in Hg, Hh.
+ unfold "◦", "∼", id in Hg, Hh.
  pose proof Hh p as Hp.
  pose proof Hh q as Hq.
  destruct (f p), (f q).
@@ -185,7 +185,7 @@ destruct x as (xa, xb).
 destruct y as (ya, yb); simpl in e.
 apply quasi_inv in e.
 destruct e as (f, ((g, Hg), (h, Hh))).
-unfold "◦", "~~", id in Hg, Hh.
+unfold "◦", "∼", id in Hg, Hh.
 pose proof Hh p as Hhp.
 pose proof Hh q as Hhq.
 destruct (f p) as (fpa, fpb).
@@ -209,7 +209,7 @@ pose proof Σ_type.hott_2_7_2 B x y as e.
 destruct x as (xa, xb).
 destruct y as (ya, yb); simpl in e.
 destruct e as (f, ((g, Hg), (h, Hh))).
-unfold "◦", "~~", id in Hg, Hh.
+unfold "◦", "∼", id in Hg, Hh.
 pose proof Hh p as Hhp.
 pose proof Hh q as Hhq.
 destruct (f p) as (fpa, fpb).
@@ -670,7 +670,7 @@ exists
    end).
 apply qinv_isequiv.
 exists (hott_3_5_1 _ isSet hott_3_3_5_ii (existT isSet A s) (existT isSet B t)).
-unfold "◦", "~~", id; simpl.
+unfold "◦", "∼", id; simpl.
 split.
  intros p.
  unfold hott_3_5_1; simpl.
@@ -921,7 +921,7 @@ exists
      (idtoeqv (ap Σ_type.pr₁ H))).
 apply qinv_isequiv.
 exists (λ r : A ≃ B, Σ_type.pair_eq (ua r) (PT_eq _ ((ua r)⁎ p) q)).
-unfold "◦", "~~", id; simpl.
+unfold "◦", "∼", id; simpl.
 split.
  intros r.
  rewrite <- idtoeqv_ua; f_equal.
@@ -1020,7 +1020,7 @@ Definition hott_3_3_2_conv P : ∀ x₀ : P, P ≃ ⊤ → isProp P.
 Proof.
 intros x₀ H x y.
 destruct H as (f, ((g, Hg), (h, Hh))).
-unfold "◦", "~~", id in Hg, Hh.
+unfold "◦", "∼", id in Hg, Hh.
 do 2 (rewrite <- Hh; symmetry).
 apply ap.
 destruct (f x), (f y); reflexivity.
@@ -1181,7 +1181,7 @@ Proof.
 intros p.
 exists pr₁; apply qinv_isequiv.
 exists (λ x, existT _ x (pr₁ (p x))).
-unfold "◦", "~~", id; simpl.
+unfold "◦", "∼", id; simpl.
 split; [ reflexivity | intros x ].
 destruct x as (a, q); simpl.
 apply (pair_eq (eq_refl a)); simpl; unfold id.
@@ -1196,7 +1196,7 @@ subst a; destruct p as (a, p); simpl.
 exists (λ q : {x : A & P x}, transport P (p (pr₁ q))⁻¹ (pr₂ q)).
 apply qinv_isequiv.
 exists (λ q : P a, existT (λ x : A, P x) a (transport P (p a) q)).
-unfold "◦", "~~", id; simpl.
+unfold "◦", "∼", id; simpl.
 split.
  intros x.
  eapply compose; [ apply transport_compose |  ].
@@ -1509,7 +1509,7 @@ exists
   (λ b : bool,
    if b then existT (λ A : Type, isProp A) ⊤ g
    else existT (λ A : Type, isProp A) ⊥ h).
-unfold "◦", "~~", id; simpl.
+unfold "◦", "∼", id; simpl.
 split.
  intros b; destruct b; simpl.
   destruct (lem ⊤ g) as [x| x]; [ apply eq_refl | destruct x; constructor ].
@@ -1530,7 +1530,7 @@ split.
 
   assert (p : ⊥ ≃ A).
    exists (λ a : ⊥, match a with end); apply qinv_isequiv; exists b.
-   unfold "◦", "~~", id.
+   unfold "◦", "∼", id.
    split; [ intros a; destruct (b a) | intros x; destruct x ].
 
    eapply (Σ_type.pair_eq (ua p)).
@@ -1755,7 +1755,7 @@ exists
    | inl a => λ (na : notT A), match na a with end
    | inr na => match PT_intro_not na x with end
    end).
-unfold "◦", "~~", id; simpl.
+unfold "◦", "∼", id; simpl.
 split.
  intros x.
  destruct (lem A) as [a| na]; [ apply PT_eq | ].
@@ -1924,7 +1924,7 @@ assert
    Show Proof.
 *)
    exists (λ _ x u, u (match PT_intro_not u (r x) with end)).
-   unfold "◦", "~~", id; simpl.
+   unfold "◦", "∼", id; simpl.
    split.
     intros x; apply Π_type.funext; intros nx; destruct (x nx).
 
@@ -2112,7 +2112,7 @@ apply hott_3_3_3.
 
  intros p q r.
  destruct p as (f, (_, (h, Hh))).
- unfold "◦", "~~", id in Hh.
+ unfold "◦", "∼", id in Hh.
  eapply compose; [ eapply invert | apply Hh ].
  eapply compose; [ eapply invert | apply Hh ].
  apply ap, PT_eq.
@@ -2142,7 +2142,7 @@ exists
    | inl (elem _ i ilt) => elem (S n) i (Nat.lt_lt_succ_r i n ilt)
    | inr _ => elem (S n) n (Nat.lt_succ_diag_r n)
    end).
-unfold "◦", "~~", id; simpl.
+unfold "◦", "∼", id; simpl.
 split.
  intros [ (i, ilt) | x].
   destruct (lt_dec i n) as [p| p]; [ | destruct (p ilt) ].
