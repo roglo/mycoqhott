@@ -419,4 +419,11 @@ Definition hott_4_2_2 A B (f : A → B) (g : B → A)
     (Π (x : A), ap f (η x) = ε (f x)) ↔ (Π (y : B), ap g (ε y) = η (g y)).
 Proof.
 split; intros p; [ intros y | intros x ].
+ Check (ap g (ε y)).
+bbb.
+
+ set (u := p (g y)).
+ unfold "◦", "~~", id in ε.
+ rewrite ε in u.
+
 bbb.
