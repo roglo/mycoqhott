@@ -419,27 +419,23 @@ Definition hott_4_2_2 A B (f : A → B) (g : B → A)
     (Π (x : A), ap f (η x) = ε (f x)) ↔ (Π (y : B), ap g (ε y) = η (g y)).
 Proof.
 split; intros p; [ intros y | intros x ].
+ set (τ := Π (x : A), ap f (η x) = ε (f x)).
+bbb.
+
  replace y with (f (g y)) by apply ε.
+bbb.
+
  rewrite <- p, (@ap_composite A B A (g (f (g y))) (g y) f g).
  clear p.
- unfold "◦", "~", id in η, ε.
-2 subgoals, subgoal 1 (ID 251)
-  
-  A : Type
-  B : Type
-  f : A → B
-  g : B → A
-  η : (λ x : A, g (f x)) ∼ (λ x : A, x)
-  ε : (λ x : B, f (g x)) ∼ (λ x : B, x)
-  y : B
-  ============================
-   ap (g ◦ f) (η (g y)) = η (g (f (g y)))
+ unfold "◦", "∼", id in η, ε.
+Check @ap.
+bbb.
 
-subgoal 2 (ID 241) is:
- ap f (η x) = ε (f x)bbb.
+Check (@ap A A (g ◦ f)).
 
- replace (g (f (g y))) with ((g ◦ f) (g y)).
+ replace (ap (g ◦ f) (η (g y))) with (ap (@id B) (η (g y))).
 
+ replace (η (g (f (g y)))) with (η ((g ◦ f) (g y))) by reflexivity.
  remember (g ◦ f) as u.
 bbb.
 
