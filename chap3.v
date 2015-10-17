@@ -281,6 +281,32 @@ Definition compose_cancel_l {A} {x y z : A} (p : x = y) (q r : y = z) :
   (p⁻¹ •l s) •
   compose_assoc p⁻¹ p r • (compose_invert_l p •r r) • (lu r)⁻¹.
 
+Definition compose_cancel_r_tac {A} {x y z : A} (p q : x = y) (r : y = z) :
+  p • r = q • r
+  → p = q.
+Proof.
+intros H.
+eapply (dotr r⁻¹) in H.
+eapply compose.
+ eapply compose; [ | apply H ].
+ eapply compose; [ | eapply compose_assoc ].
+ eapply compose; [ apply ru | apply dotl ].
+ apply invert, compose_invert_r.
+
+ eapply compose; [ eapply invert, compose_assoc | ].
+ eapply compose; [ | eapply invert, ru ].
+ apply dotl, compose_invert_r.
+Defined.
+
+Definition compose_cancel_r {A} {x y z : A} (p q : x = y) (r : y = z) :
+  p • r = q • r
+  → p = q
+:=
+  λ s,
+  ru p • (p •l (compose_invert_r r)⁻¹) • compose_assoc p r r⁻¹
+  • (s •r r⁻¹)
+  • (compose_assoc q r r⁻¹)⁻¹ • (q •l compose_invert_r r) • (ru q)⁻¹.
+
 (* magic lemma to prove isSet → is1Type and also used later for
    ispType → isSpType *)
 Definition compose_insert_tac {A x} (f : Π (y : A), x = y) {y z} (p : y = z) :

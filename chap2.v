@@ -122,7 +122,7 @@ Definition Ω2 {A} (a : A) := (eq_refl a = eq_refl a).
 
 (* whiskering *)
 Definition dotr {A} {a b c : A} {p q : a = b}
-  (α : p = q) (r : b = c) : (p • r = q • r).
+  (r : b = c) (α : p = q) : (p • r = q • r).
 Proof.
 destruct r.
 pose proof (@hott_2_1_4_i_1 A a b p) as H1.
@@ -132,7 +132,7 @@ pose proof (@hott_2_1_4_i_1 A a b q) as H3.
 eapply compose; [ apply α | apply H3 ].
 Defined.
 
-Notation "α '•r' r" := (dotr α r) (at level 50).
+Notation "α '•r' r" := (dotr r α) (at level 50).
 
 (* whiskering *)
 Definition dotl {A} {a b c : A} {r s : b = c}

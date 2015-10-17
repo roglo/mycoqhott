@@ -473,6 +473,11 @@ split; intros τ; [ intros y | intros x ].
                  gfgy =========== gy
                          g(εy)
         " *)
+     rewrite ηl in ny.
+     unfold u, r, d in ny.
+     apply compose_cancel_r in ny.
+b bb.
+
      assert (rη : r = η (g y)).
       unfold r; apply invert.
 (* @hott_2_4_3
