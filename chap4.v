@@ -442,6 +442,46 @@ split; intros τ; [ intros y | intros x ].
   set (l := ap g (ε ((f ◦ g) y)) : (g ◦ f ◦ g ◦ f ◦ g) y = (g ◦ f ◦ g) y).
   set (r := ap g (ε y) : (g ◦ f ◦ g) y = g y); simpl in l, r.
   assert (u • r = l • d).
+(**)
+   (* what is "naturality"? *)
+   subst u r l d.
+   set (u :=
+     (@ap B A (@composite B A B g f (@composite B A B g f y))
+        (@id B y) g
+        (@compose B (@composite B A B g f (@composite B A B g f y))
+           (@id B (@composite B A B g f y)) (@id B y)
+           (ε (@composite B A B g f y)) (ε y)))).
+   set (v :=
+     (@compose A
+        (@composite B A A g
+           (@composite A B A f (@composite B A A g (@composite A B A f g))) y)
+        (@composite B A A g (@composite A B A f g) y)
+        (g y)
+        (@ap B A (@composite B A B g f (@composite B A B g f y))
+           (@id B (@composite B A B g f y)) g (ε (@composite B A B g f y)))
+        (@ap B A (@composite B A B g f y) (@id B y) g (ε y)))).
+   assert (u = v).
+    subst u v.
+Check @ap_compose.
+(* @ap_compose
+     : ∀ (A B : Type) (f : A → B) (x y z : A) (p : x = y)
+       (q : y = z), ap f (p • q) = ap f p • ap f q *)
+unfold id; simpl.
+apply ap_compose.
+bbb.
+
+Focus 2.
+rewrite <- H.
+
+Check @ap_compose.
+
+
+
+eapply compose.
+Focus 2.
+eapply @ap_compose.
+
+bbb.
    subst u r l d; apply dotr.
    assert (ap (g ◦ f ◦ g) (ε y) = ap (g ◦ (f ◦ g)) (ε y)) by apply eq_refl.
    eapply compose; [ apply H | ].
@@ -453,6 +493,7 @@ split; intros τ; [ intros y | intros x ].
     unfold "◦", "∼", id in η, ε.
     unfold "◦"; simpl.
 Check (ε (f (g y))).
+SearchAbout (ap _ _ = ap _ _).
 bbb.
     replace (f (g y)) with y; [ | apply invert, ε ].
     rewrite <- ε.
