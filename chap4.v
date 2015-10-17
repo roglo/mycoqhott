@@ -476,7 +476,12 @@ split; intros τ; [ intros y | intros x ].
      rewrite ηl in ny.
      unfold u, r, d in ny.
      apply compose_cancel_r in ny.
-b bb.
+     eapply compose in ny; [ | apply (ap_composite g (g ◦ f) (ε y)) ].
+eapply compose in ny.
+Focus 2.
+Check (λ y, ap g (ε y)).
+Check @hott_2_4_4.
+bbb.
 
      assert (rη : r = η (g y)).
       unfold r; apply invert.
