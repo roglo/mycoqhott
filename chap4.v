@@ -442,9 +442,6 @@ split; intros τ; [ intros y | intros x ].
   set (l := ap g (ε ((f ◦ g) y)) : (g ◦ f ◦ g ◦ f ◦ g) y = (g ◦ f ◦ g) y).
   set (r := ap g (ε y) : (g ◦ f ◦ g) y = g y); simpl in l, r.
   assert (u • r = l • d).
-(**)
-   subst u r l d; apply dotr.
-bbb.
    subst u r l d; apply dotr.
    assert (ap (g ◦ f ◦ g) (ε y) = ap (g ◦ (f ◦ g)) (ε y)) by apply eq_refl.
    eapply compose; [ apply H | ].
@@ -453,6 +450,7 @@ bbb.
 
     eapply compose; [ eapply invert, H1 | apply ap ].
     eapply compose; [ | apply hott_2_2_2_iv ].
+bbb.
     replace (@id B) with (f ◦ g).
     rewrite (Π_type.funext ε).
 bbb.
