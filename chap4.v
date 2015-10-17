@@ -464,4 +464,21 @@ split; intros τ; [ intros y | intros x ].
      apply invert; rewrite lη.
      apply (hott_2_4_4 (g ◦ f) η).
 
+     (* "However, by naturality of η we also have
+                        gfg(εy)
+                gfgfgy ========= gfgy
+                  ||              ||
+         η(gfgy)) ||              || η(gy)
+                  ||              ||
+                 gfgy =========== gy
+                         g(εy)
+        " *)
+     assert (rη : r = η (g y)).
+      unfold r; apply invert.
+(* @hott_2_4_3
+     : ∀ (A B : Type) (x y : A) (f g : A → B) (H : f ∼ g)
+       (p : x = y), H x • ap g p = ap f p • H y *)
+(* @hott_2_4_4
+     : ∀ (A : Type) (x : A) (f : A → A) (H : f ∼ id), H (f x) = ap f (H x) *)
+
 bbb.
