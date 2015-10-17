@@ -419,14 +419,6 @@ Definition hott_4_2_2 A B (f : A → B) (g : B → A)
     (Π (x : A), ap f (η x) = ε (f x)) ↔ (Π (y : B), ap g (ε y) = η (g y)).
 Proof.
 split; intros τ; [ intros y | intros x ].
-(*
-  set (u := ap (g ◦ f ◦ g) (ε y) : (g ◦ f ◦ g ◦ f ◦ g) y = (g ◦ f ◦ g) y).
-  set (d := ap g (ε y) : (g ◦ f ◦ g) y = g y); simpl in u, d.
-  set (l := η ((g ◦ f ◦ g) y) : (g ◦ f ◦ g ◦ f ◦ g) y = (g ◦ f ◦ g) y).
-  set (r := η (g y) : (g ◦ f ◦ g) y = g y); simpl in l, r.
-  assert (u • r = l • d).
-   unfold u, r, l, d, "◦"; simpl.
-*)
  (* "Using naturality of ε and applying g, we get the following
      commuting diagram of paths:
                         gfg(εy)
@@ -441,67 +433,12 @@ split; intros τ; [ intros y | intros x ].
   set (d := ap g (ε y) : (g ◦ f ◦ g) y = g y); simpl in u, d.
   set (l := ap g (ε ((f ◦ g) y)) : (g ◦ f ◦ g ◦ f ◦ g) y = (g ◦ f ◦ g) y).
   set (r := ap g (ε y) : (g ◦ f ◦ g) y = g y); simpl in l, r.
-  assert (u • r = l • d).
-(**)
-   (* what is "naturality"? *)
-   subst u r l d.
-   set (u :=
-     (@ap B A (@composite B A B g f (@composite B A B g f y))
-        (@id B y) g
-        (@compose B (@composite B A B g f (@composite B A B g f y))
-           (@id B (@composite B A B g f y)) (@id B y)
-           (ε (@composite B A B g f y)) (ε y)))).
-   set (v :=
-     (@compose A
-        (@composite B A A g
-           (@composite A B A f (@composite B A A g (@composite A B A f g))) y)
-        (@composite B A A g (@composite A B A f g) y)
-        (g y)
-        (@ap B A (@composite B A B g f (@composite B A B g f y))
-           (@id B (@composite B A B g f y)) g (ε (@composite B A B g f y)))
-        (@ap B A (@composite B A B g f y) (@id B y) g (ε y)))).
-   assert (u = v).
-    subst u v.
-Check @ap_compose.
-(* @ap_compose
-     : ∀ (A B : Type) (f : A → B) (x y z : A) (p : x = y)
-       (q : y = z), ap f (p • q) = ap f p • ap f q *)
-unfold id; simpl.
-apply ap_compose.
-bbb.
-
-Focus 2.
-rewrite <- H.
-
-Check @ap_compose.
-
-
-
-eapply compose.
-Focus 2.
-eapply @ap_compose.
-
-bbb.
+  assert (ny : u • r = l • d).
    subst u r l d; apply dotr.
    assert (ap (g ◦ f ◦ g) (ε y) = ap (g ◦ (f ◦ g)) (ε y)) by apply eq_refl.
    eapply compose; [ apply H | ].
-   assert (H1 : ap g (ap (f ◦ g) (ε y)) = ap (g ◦ (f ◦ g)) (ε y)).
-    apply ap_composite.
-
-    eapply compose; [ eapply invert, H1 | apply ap ].
-    eapply compose; [ | apply hott_2_2_2_iv ].
-    unfold "◦", "∼", id in η, ε.
-    unfold "◦"; simpl.
-Check (ε (f (g y))).
-SearchAbout (ap _ _ = ap _ _).
-bbb.
-    replace (f (g y)) with y; [ | apply invert, ε ].
-    rewrite <- ε.
-bbb.
-    replace (@id B) with (f ◦ g).
-    rewrite (Π_type.funext ε).
-bbb.
-
+   eapply compose; [ eapply invert, (ap_composite (f ◦ g) g) | ].
+   apply ap, invert, (hott_2_4_4 (f ◦ g) ε).
   (* "Using τ(gy) on the left side of the diagram gives us
                         gfg(εy)
                 gfgfgy ========= gfgy
@@ -512,6 +449,7 @@ bbb.
                          g(εy)
     " *)
   (* what does the word "using" mean? *)
+bbb.
   set (l' := ap (g ◦ f) (η (g y)) : (g ◦ f ◦ g ◦ f ◦ g) y = (g ◦ f ◦ g) y).
   assert (ll' : l = l').
    unfold l, l'.
