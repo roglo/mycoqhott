@@ -450,6 +450,12 @@ split; intros τ; [ intros y | intros x ].
 
     eapply compose; [ eapply invert, H1 | apply ap ].
     eapply compose; [ | apply hott_2_2_2_iv ].
+    unfold "◦", "∼", id in η, ε.
+    unfold "◦"; simpl.
+Check (ε (f (g y))).
+bbb.
+    replace (f (g y)) with y; [ | apply invert, ε ].
+    rewrite <- ε.
 bbb.
     replace (@id B) with (f ◦ g).
     rewrite (Π_type.funext ε).

@@ -271,7 +271,7 @@ Definition ap_composite {A B C x y}
   := λ f g p,
      match p with eq_refl _ => eq_refl (ap g (ap f (eq_refl x))) end.
 
-Definition hott_2_2_2_iv {A} {x y : A} : ∀ (p : x = y), ap id p = p
+Definition hott_2_2_2_iv A (x y : A) : ∀ (p : x = y), ap id p = p
   := λ p, match p with eq_refl _ => eq_refl (eq_refl x) end.
 
 (* hott section 2.3 *)
