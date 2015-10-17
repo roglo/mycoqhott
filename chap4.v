@@ -439,7 +439,8 @@ split; intros τ; [ intros y | intros x ].
    eapply compose; [ apply H | ].
    eapply compose; [ eapply invert, (ap_composite (f ◦ g) g) | ].
    apply ap, invert, (hott_2_4_4 (f ◦ g) ε).
-  (* "Using τ(gy) on the left side of the diagram gives us
+
+   (* "Using τ(gy) on the left side of the diagram gives us
                         gfg(εy)
                 gfgfgy ========= gfgy
                   ||              ||
@@ -447,16 +448,8 @@ split; intros τ; [ intros y | intros x ].
                   ||              ||
                  gfgy =========== gy
                          g(εy)
-    " *)
-  (* what does the word "using" mean? *)
-bbb.
-  set (l' := ap (g ◦ f) (η (g y)) : (g ◦ f ◦ g ◦ f ◦ g) y = (g ◦ f ◦ g) y).
-  assert (ll' : l = l').
-   unfold l, l'.
-   rewrite <- (@ap_composite A B A).
-   apply ap, invert, τ.
-
-bbb.
-  assert (u • r = l • d).
-   unfold u, r, l, d; simpl.
+     " *)
+   assert (lη : l = ap (g ◦ f) (η (g y))).
+    unfold l, "◦"; rewrite <- (τ (g y)).
+    eapply compose; [ apply (@ap_composite A B A) | apply eq_refl ].
 bbb.
