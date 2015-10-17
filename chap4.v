@@ -391,8 +391,6 @@ Abort.
 
 (* "4.2 Half adjoint equivalences" *)
 
-Check hott_4_1_1.
-
 (* "Definition 4.2.1. A function f : A → B is a *half adjoint
     equivalence* if there are g : B → A and homotopies η : g ◦ f ∼
     id_A and ε : f ◦ g ∼ id_B such that there exists a homotopy
@@ -452,4 +450,18 @@ split; intros τ; [ intros y | intros x ].
    assert (lη : l = ap (g ◦ f) (η (g y))).
     unfold l, "◦"; rewrite <- (τ (g y)).
     eapply compose; [ apply (@ap_composite A B A) | apply eq_refl ].
+
+    (* "Using the commutativity of η with g◦f (Corollary 2.4.4), we have
+                        gfg(εy)
+                gfgfgy ========= gfgy
+                  ||              ||
+         η(gfgy)) ||              || g(εy)
+                  ||              ||
+                 gfgy =========== gy
+                         g(εy)
+       " *)
+    assert (ηl : l = η ((g ◦ f ◦ g) y)).
+     apply invert; rewrite lη.
+     apply (hott_2_4_4 (g ◦ f) η).
+
 bbb.
