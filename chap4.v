@@ -470,43 +470,27 @@ split; intros τ; [ intros y | intros x ].
                  gfgy =========== gy
                          g(εy)
         " *)
-bbb.
-     assert (rη : r = η (g y)).
-      unfold r.
-      rewrite ηl in ny.
-      unfold u, r, d in ny.
-      apply compose_cancel_r in ny.
-      eapply compose in ny; [ | apply (ap_composite g (g ◦ f) (ε y)) ].
-pose proof (@hott_2_4_4 A (g y) (g ◦ f) η) as v.
-eapply compose in v; [ | apply ny ].
-pose proof (λ x, hott_2_4_3 (g ◦ f) id η (η x)) as tx.
-unfold id at 1 2 3 4 5 6 8 9 10 11 12 in tx.
-pose proof (tx (g y)) as t.
-rewrite hott_2_2_2_iv in t.
-apply compose_cancel_r in t.
-eapply compose in v; [ | eapply invert, ny ].
-(* ouais, en fait ça change rien *)
+     (* reminder:
+                         f(p)
+                 f(x) ========== f(y)
+                  ||              ||
+             H(x) ||              || H(y)
+                  ||              ||
+                 g(x) ========== g(y)
+                         g(p)
 
-bbb.
-assert (ap (g ◦ f) (η (g y)) = ap id (η (g y))).
-Check hott_2_2_2_iv.
-
-rewrite (Π_type.funext η) in v.
-SearchAbout (ap id).
-Check hott_2_2_2_iv.
-
-rewrite hott_2_2_2_iv in v.
-
-eapply compose in ny.
-Focus 2.
-Check (λ y, ap g (ε y)).
-Check @hott_2_4_4.
-bbb.
-
-(* @hott_2_4_3
-     : ∀ (A B : Type) (x y : A) (f g : A → B) (H : f ∼ g)
-       (p : x = y), H x • ap g p = ap f p • H y *)
-(* @hott_2_4_4
-     : ∀ (A : Type) (x : A) (f : A → A) (H : f ∼ id), H (f x) = ap f (H x) *)
-
+        Lemma 2.4.3 : H(x) • g(p) = f(p) • H(y)
+      *)
+     set (Nf := g ◦ f ◦ g).
+     set (Ng := g).
+     set (Np := ε y).
+     set (NH := λ y, η (g y)).
+     set (Nx := (f ◦ g) y).
+     set (Ny := y).
+     pose proof (@hott_2_4_3 _ _ Nx Ny Nf Ng NH Np) as N.
+     unfold NH, Nx, Ng, Np, Nf, Ny in N.
+     rewrite ηl in ny.
+     unfold u, r, d in ny.
+     eapply compose in N; [ | apply ny ].
+     eapply compose_cancel_l, N.
 bbb.
