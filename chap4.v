@@ -497,3 +497,23 @@ split; intros τ; [ intros y | intros x ].
 
  apply hott_4_2_2_one_dir, τ.
 Defined.
+
+(* "Of course, it is obvious that ishae(f) → qinv(f): simply
+    forget the coherence datum." *)
+(* The "coherence datum" seems to be
+     ∀ x : A, ap f (η x) = ε (f x) *)
+
+Definition ishae_qinv A B (f : A → B) : ishae f → qinv f.
+Proof.
+intros (g, (η, (ε, p))).
+exists g; split; [ apply ε | apply η ].
+Defined.
+
+(* "Theorem 4.2.3. For any f : A → B we have qinv(f) → ishae(f)." *)
+
+Definition hott_4_2_3 A B (f : A → B) : qinv f → ishae f.
+Proof.
+intros (g, (ε, η)).
+unfold ishae.
+exists g, η, ε; intros x.
+bbb.
