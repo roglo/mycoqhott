@@ -516,4 +516,6 @@ Proof.
 intros (g, (ε, η)).
 unfold ishae.
 exists g, η, ε; intros x.
+pose proof (hott_4_2_2 A B f g η ε) as pq.
+destruct pq as (p, q).
 bbb.
