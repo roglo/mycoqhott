@@ -481,8 +481,20 @@ Check (@hott_2_4_4 A (g y) (g ◦ f) η).
      eapply compose in ny; [ | apply (ap_composite g (g ◦ f) (ε y)) ].
 pose proof (@hott_2_4_4 A (g y) (g ◦ f) η) as v.
 eapply compose in v; [ | apply ny ].
+assert (∀ p q : (g ◦ f ◦ g) y = g y, ap (g ◦ f) p = ap (g ◦ f) q → p = q).
+intros p q s.
+Check (Π_type.funext η).
+About compose.
+About hap.
+eapply (@compose _ _ (ap id q)) in s.
+eapply (@compose) in s.
+
+bbb.
+Focus 2.
+apply H, invert, v.
 bbb.
 
+bbb.
 assert (ap (g ◦ f) (η (g y)) = ap id (η (g y))).
 Check hott_2_2_2_iv.
 
