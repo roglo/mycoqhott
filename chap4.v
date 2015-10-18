@@ -518,4 +518,14 @@ unfold ishae.
 exists g, η, ε; intros x.
 pose proof (hott_4_2_2 A B f g η ε) as pq.
 destruct pq as (p, q).
+set (P := λ (x : A), ap f (η x) = ε (f x)).
+pose proof (@transport A P (g (f x)) x (η x)) as r.
+bbb.
+
+apply r; unfold P.
+bbb.
+
+set (P := λ y : B, ap g (ε y) = η (g y)).
+pose proof (@transport B P ((f ◦ g ◦ f) x) (f x) (ε (f x))) as r.
+unfold P in r; simpl in r.
 bbb.
