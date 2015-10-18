@@ -14,9 +14,6 @@ Notation "A ⇔ B" := ((A → B) * (B → A))%type (at level 100).
 Notation "( x , y ) '_{' P }" := (existT P x y)
   (at level 0, format "'[' ( x ,  y ) _{ P } ']'", only parsing).
 
-Tactic Notation "transparent" "assert" "(" ident(H) ":" lconstr(type) ")" :=
- refine (let H := (_ : type) in _).
-
 Open Scope nat_scope.
 
 (* "Chapter 4 - Equivalences" *)
