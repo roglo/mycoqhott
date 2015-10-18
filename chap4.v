@@ -470,18 +470,34 @@ split; intros τ; [ intros y | intros x ].
                  gfgy =========== gy
                          g(εy)
         " *)
+     assert (rη : r = η (g y)).
+      unfold r; apply invert.
+Check (@hott_2_4_4 A (g y) (g ◦ f) η).
+(* hott_2_4_4 (g ◦ f) η
+     : η ((g ◦ f) (g y)) = ap (g ◦ f) (η (g y)) *)
      rewrite ηl in ny.
      unfold u, r, d in ny.
      apply compose_cancel_r in ny.
      eapply compose in ny; [ | apply (ap_composite g (g ◦ f) (ε y)) ].
+pose proof (@hott_2_4_4 A (g y) (g ◦ f) η) as v.
+eapply compose in v; [ | apply ny ].
+bbb.
+
+assert (ap (g ◦ f) (η (g y)) = ap id (η (g y))).
+Check hott_2_2_2_iv.
+
+rewrite (Π_type.funext η) in v.
+SearchAbout (ap id).
+Check hott_2_2_2_iv.
+
+rewrite hott_2_2_2_iv in v.
+
 eapply compose in ny.
 Focus 2.
 Check (λ y, ap g (ε y)).
 Check @hott_2_4_4.
 bbb.
 
-     assert (rη : r = η (g y)).
-      unfold r; apply invert.
 (* @hott_2_4_3
      : ∀ (A B : Type) (x y : A) (f g : A → B) (H : f ∼ g)
        (p : x = y), H x • ap g p = ap f p • H y *)
