@@ -409,88 +409,91 @@ Definition ishae' {A B} f :=
       • Π (x:A) f(ηx)=ε(fx)
       • Π (y:B) g(εy)=η(gy)" *)
 
+Definition hott_4_2_2_one_dir A B (f : A → B) (g : B → A)
+  (η : g ◦ f ∼ id) (ε : f ◦ g ∼ id) :
+    (Π (x : A), ap f (η x) = ε (f x)) → (Π (y : B), ap g (ε y) = η (g y)).
+Proof.
+intros τ y.
+(* "Using naturality of ε and applying g, we get the following
+    commuting diagram of paths:
+                       gfg(εy)
+               gfgfgy ========= gfgy
+                 ||              ||
+       g(ε(fgy)) ||              || g(εy)
+                 ||              ||
+                gfgy =========== gy
+                        g(εy)
+   " *)
+ set (u := ap (g ◦ f ◦ g) (ε y) : (g ◦ f ◦ g ◦ f ◦ g) y = (g ◦ f ◦ g) y).
+ set (d := ap g (ε y) : (g ◦ f ◦ g) y = g y); simpl in u, d.
+ set (l := ap g (ε ((f ◦ g) y)) : (g ◦ f ◦ g ◦ f ◦ g) y = (g ◦ f ◦ g) y).
+ set (r := ap g (ε y) : (g ◦ f ◦ g) y = g y); simpl in l, r.
+ assert (ny : u • r = l • d).
+  subst u r l d; apply dotr.
+  assert (ap (g ◦ f ◦ g) (ε y) = ap (g ◦ (f ◦ g)) (ε y)) by apply eq_refl.
+  eapply compose; [ apply H | ].
+  eapply compose; [ eapply invert, (ap_composite (f ◦ g) g) | ].
+  apply ap, invert, (hott_2_4_4 (f ◦ g) ε).
+
+  (* "Using τ(gy) on the left side of the diagram gives us
+                       gfg(εy)
+               gfgfgy ========= gfgy
+                 ||              ||
+       gf(η(gy)) ||              || g(εy)
+                 ||              ||
+                gfgy =========== gy
+                        g(εy)
+    " *)
+  assert (lη : l = ap (g ◦ f) (η (g y))).
+   unfold l, "◦"; rewrite <- (τ (g y)).
+   eapply compose; [ apply (@ap_composite A B A) | apply eq_refl ].
+
+   (* "Using the commutativity of η with g◦f (Corollary 2.4.4), we have
+                       gfg(εy)
+               gfgfgy ========= gfgy
+                 ||              ||
+        η(gfgy)) ||              || g(εy)
+                 ||              ||
+                gfgy =========== gy
+                        g(εy)
+      " *)
+   assert (ηl : l = η ((g ◦ f ◦ g) y)).
+    apply invert; rewrite lη.
+    apply (hott_2_4_4 (g ◦ f) η).
+
+    (* "However, by naturality of η we also have
+                       gfg(εy)
+               gfgfgy ========= gfgy
+                 ||              ||
+        η(gfgy)) ||              || η(gy)
+                 ||              ||
+                gfgy =========== gy
+                        g(εy)
+       " *)
+    (* reminder:
+                        f(p)
+                f(x) ========== f(y)
+                 ||              ||
+            H(x) ||              || H(y)
+                 ||              ||
+                g(x) ========== g(y)
+                        g(p)
+
+       Lemma 2.4.3 : H(x) • g(p) = f(p) • H(y)
+     *)
+    pose proof (hott_2_4_3 (g ◦ f ◦ g) g (λ y, η (g y)) (ε y)) as N.
+    rewrite ηl in ny.
+    unfold u, r, d in ny.
+    eapply compose in N; [ | apply ny ].
+    eapply compose_cancel_l, N.
+Defined.
+
 Definition hott_4_2_2 A B (f : A → B) (g : B → A)
   (η : g ◦ f ∼ id) (ε : f ◦ g ∼ id) :
     (Π (x : A), ap f (η x) = ε (f x)) ↔ (Π (y : B), ap g (ε y) = η (g y)).
 Proof.
 split; intros τ; [ intros y | intros x ].
- (* "Using naturality of ε and applying g, we get the following
-     commuting diagram of paths:
-                        gfg(εy)
-                gfgfgy ========= gfgy
-                  ||              ||
-        g(ε(fgy)) ||              || g(εy)
-                  ||              ||
-                 gfgy =========== gy
-                         g(εy)
-    " *)
-  set (u := ap (g ◦ f ◦ g) (ε y) : (g ◦ f ◦ g ◦ f ◦ g) y = (g ◦ f ◦ g) y).
-  set (d := ap g (ε y) : (g ◦ f ◦ g) y = g y); simpl in u, d.
-  set (l := ap g (ε ((f ◦ g) y)) : (g ◦ f ◦ g ◦ f ◦ g) y = (g ◦ f ◦ g) y).
-  set (r := ap g (ε y) : (g ◦ f ◦ g) y = g y); simpl in l, r.
-  assert (ny : u • r = l • d).
-   subst u r l d; apply dotr.
-   assert (ap (g ◦ f ◦ g) (ε y) = ap (g ◦ (f ◦ g)) (ε y)) by apply eq_refl.
-   eapply compose; [ apply H | ].
-   eapply compose; [ eapply invert, (ap_composite (f ◦ g) g) | ].
-   apply ap, invert, (hott_2_4_4 (f ◦ g) ε).
+ apply hott_4_2_2_one_dir, τ.
 
-   (* "Using τ(gy) on the left side of the diagram gives us
-                        gfg(εy)
-                gfgfgy ========= gfgy
-                  ||              ||
-        gf(η(gy)) ||              || g(εy)
-                  ||              ||
-                 gfgy =========== gy
-                         g(εy)
-     " *)
-   assert (lη : l = ap (g ◦ f) (η (g y))).
-    unfold l, "◦"; rewrite <- (τ (g y)).
-    eapply compose; [ apply (@ap_composite A B A) | apply eq_refl ].
-
-    (* "Using the commutativity of η with g◦f (Corollary 2.4.4), we have
-                        gfg(εy)
-                gfgfgy ========= gfgy
-                  ||              ||
-         η(gfgy)) ||              || g(εy)
-                  ||              ||
-                 gfgy =========== gy
-                         g(εy)
-       " *)
-    assert (ηl : l = η ((g ◦ f ◦ g) y)).
-     apply invert; rewrite lη.
-     apply (hott_2_4_4 (g ◦ f) η).
-
-     (* "However, by naturality of η we also have
-                        gfg(εy)
-                gfgfgy ========= gfgy
-                  ||              ||
-         η(gfgy)) ||              || η(gy)
-                  ||              ||
-                 gfgy =========== gy
-                         g(εy)
-        " *)
-     (* reminder:
-                         f(p)
-                 f(x) ========== f(y)
-                  ||              ||
-             H(x) ||              || H(y)
-                  ||              ||
-                 g(x) ========== g(y)
-                         g(p)
-
-        Lemma 2.4.3 : H(x) • g(p) = f(p) • H(y)
-      *)
-     set (Nf := g ◦ f ◦ g).
-     set (Ng := g).
-     set (Np := ε y).
-     set (NH := λ y, η (g y)).
-     set (Nx := (f ◦ g) y).
-     set (Ny := y).
-     pose proof (@hott_2_4_3 _ _ Nx Ny Nf Ng NH Np) as N.
-     unfold NH, Nx, Ng, Np, Nf, Ny in N.
-     rewrite ηl in ny.
-     unfold u, r, d in ny.
-     eapply compose in N; [ | apply ny ].
-     eapply compose_cancel_l, N.
-bbb.
+ apply hott_4_2_2_one_dir, τ.
+Defined.
