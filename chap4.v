@@ -471,18 +471,16 @@ split; intros τ; [ intros y | intros x ].
                          g(εy)
         " *)
      assert (rη : r = η (g y)).
-      unfold r; apply invert.
-Check (@hott_2_4_4 A (g y) (g ◦ f) η).
-(* hott_2_4_4 (g ◦ f) η
-     : η ((g ◦ f) (g y)) = ap (g ◦ f) (η (g y)) *)
-     rewrite ηl in ny.
-     unfold u, r, d in ny.
-     apply compose_cancel_r in ny.
-     eapply compose in ny; [ | apply (ap_composite g (g ◦ f) (ε y)) ].
+      unfold r.
+      rewrite ηl in ny.
+      unfold u, r, d in ny.
+      apply compose_cancel_r in ny.
+      eapply compose in ny; [ | apply (ap_composite g (g ◦ f) (ε y)) ].
 pose proof (@hott_2_4_4 A (g y) (g ◦ f) η) as v.
 eapply compose in v; [ | apply ny ].
 pose proof (λ x, hott_2_4_3 (g ◦ f) id η (η x)) as tx.
 unfold id at 1 2 3 4 5 6 8 9 10 11 12 in tx.
+pose proof (tx (g y)) as t.
 
 bbb.
 assert (ap (g ◦ f) (η (g y)) = ap id (η (g y))).
