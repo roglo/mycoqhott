@@ -555,21 +555,33 @@ Defined.
 (* "Definition 4.2.4. The *fiber* of a map f:A→B over a point y:B is
          fib_f(y) := Σ (x : A) (f x = y)." *)
 
-Definition fiber {A B} (f : A → B) (y : B) := Σ (x : A), (f x = y).
+Definition fib {A B} (f : A → B) (y : B) := Σ (x : A), (f x = y).
 
 (* "Lemma 4.2.5. For any f:A→B, y:B, and (x,p),(x',p') : fib_f(y),
     we have ((x,p) = (x',p')) ≃ (Σ (γ : x = x') f(γ) • p' = p)" *)
 
-Definition hott_4_2_5 A B (f : A → B) (y : B) (xp xp' : fiber f y) :
+Definition hott_4_2_5 A B (f : A → B) (y : B) (xp xp' : fib f y) :
   (xp = xp') ≃ (Σ (γ : Σ_pr₁ xp = Σ_pr₁ xp'), ap f γ • Σ_pr₂ xp' = Σ_pr₂ xp).
 Proof.
 transparent assert
   (f : (xp = xp')
    → (Σ (γ : Σ_pr₁ xp = Σ_pr₁ xp'), ap f γ • Σ_pr₂ xp' = Σ_pr₂ xp)).
  intros q.
- unfold fiber in xp, xp'.
+ unfold fib in xp, xp'.
  destruct xp as (x, p).
  destruct xp' as (x', p'); simpl.
+ injection q; intros r.
+ Check (p • p'⁻¹).
+bbb.
+ exists r.
+ destruct r; simpl; unfold id.
+ Check (p • p'⁻¹).
+bbb.
+
+SearchAbout (ap _ _ • _).
+SearchAbout transport.
+About Σ_type2.hott_2_11_2_i.
+rewrite <- Σ_type2.hott_2_11_2_i.
 bbb.
 
 About transport_pair.
