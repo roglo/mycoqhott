@@ -524,30 +524,23 @@ assert (τ : ∀ a, ε' (f a) = ap f (η a)).
   rewrite (ap_composite f g (η a)).
   apply (hott_2_4_4 (g ◦ f) η).
 
-About hott_2_4_3.
-bbb.
+  apply (ap (ap f)) in p.
+  apply (dotr (ε (f a))) in p.
+  pose proof (hott_2_4_3 (f ◦ g ◦ f) f (λ x, ε (f x)) (η a)) as q.
+  unfold id in q; simpl in q; apply invert in q.
+  eapply compose in q; [ | eapply compose; [ eapply p | ] ].
+  Focus 2.
+   apply dotr.
+   eapply compose; [ apply (ap_composite g f (ap f (η a))) | ].
+   apply (ap_composite f (f ◦ g) (η a)).
 
-Print ishae.
-Check (ap f (η x)).
-Check (ε (f x)).
-ap f (η x)
-     : f ((g ◦ f) x) = f (id x)
-ε (f x)
-     : (f ◦ g) (f x) = id (f x)
-bbb.
+   unfold ε'.
+   rewrite <- compose_assoc.
+   unfold id, composite in q; simpl.
+   unfold id, composite; simpl.
+   rewrite q, compose_assoc, compose_invert_l.
+   apply invert, hott_2_1_4_i_2.
+   apply invert, τ.
+Defined.
 
-Check hott_4_2_2.
-pose proof (hott_4_2_2 A B f g η ε) as pq.
-pose proof (hott_4_2_2 A B f g η ε') as pq'.
-destruct pq as (p, q).
-destruct pq' as (p', q').
-bbb.
-
-exists g, η, ε; intros x.
-pose proof (hott_4_2_2 A B f g η ε) as pq.
-destruct pq as (p, q).
-set (P := λ (x : A), ap f (η x) = ε (f x)).
-pose proof (@transport A P (g (f x)) x (η x)) as r.
-set (Q := λ y : B, ap g (ε y) = η (g y)).
-pose proof (@transport B Q ((f ◦ g ◦ f) x) (f x) (ε (f x))) as s.
 bbb.
