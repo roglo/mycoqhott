@@ -567,21 +567,14 @@ transparent assert
   (f : (xp = xp')
    → (Σ (γ : Σ_pr₁ xp = Σ_pr₁ xp'), ap f γ • Σ_pr₂ xp' = Σ_pr₂ xp)).
  intros q.
- unfold fib in xp, xp'.
  destruct xp as (x, p).
  destruct xp' as (x', p'); simpl.
  injection q; intros r.
- Check (p • p'⁻¹).
-bbb.
- exists r.
- destruct r; simpl; unfold id.
- Check (p • p'⁻¹).
-bbb.
+ assert (s : ap f r • transport (λ x, f x = y) r p = p).
+  unfold transport.
+  destruct r; simpl; apply eq_refl.
 
-SearchAbout (ap _ _ • _).
-SearchAbout transport.
-About Σ_type2.hott_2_11_2_i.
-rewrite <- Σ_type2.hott_2_11_2_i.
+  exists r.
 bbb.
 
 About transport_pair.
