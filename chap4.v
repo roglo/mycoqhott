@@ -574,6 +574,11 @@ transparent assert
   unfold transport.
   destruct r; simpl; apply eq_refl.
 
+pose proof (@transport_pair A (λ _, A) (λ x, (f x = y)) x x' r x p) as u.
+simpl in u.
+assert (transport (λ _, A) r x = x').
+destruct r; simpl; apply eq_refl.
+rewrite H in u; clear H.
   exists r.
 bbb.
 
