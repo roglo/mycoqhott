@@ -543,4 +543,27 @@ assert (τ : ∀ a, ε' (f a) = ap f (η a)).
  apply invert, τ.
 Defined.
 
+Definition hott_4_2_3' A B (f : A → B) : qinv f → ishae' f.
+Proof.
+intros p.
+pose proof hott_4_2_3 _ _ _ p as q.
+destruct p as (g, (ε, η)).
+exists g, η, ε.
+apply hott_4_2_2.
+unfold ishae in q.
+destruct q as (g', (η', ε')).
+bbb.
+
+ishae = 
+λ (A B : Type) (f : A → B),
+{g : B → A &
+{η : g ◦ f ∼ id & {ε : f ◦ g ∼ id & ∀ x : A, ap f (η x) = ε (f x)}}}
+     : ∀ A B : Type, (A → B) → Type
+
+ishae' = 
+λ (A B : Type) (f : A → B),
+{g : B → A &
+{η : g ◦ f ∼ id & {ε : f ◦ g ∼ id & ∀ y : B, ap g (ε y) = η (g y)}}}
+     : ∀ A B : Type, (A → B) → Type
+
 bbb.
