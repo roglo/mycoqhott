@@ -578,14 +578,9 @@ pose proof (@transport_pair A (λ _, A) (λ x, (f x = y)) x x' r x p) as u.
 simpl in u.
 assert (transport (λ _, A) r x = x').
  destruct r; simpl; apply eq_refl.
+
  rewrite H in u; clear H.
-
- assert (transport (λ x, f x = y) r p = p').
-  destruct r; simpl.
-simpl in s, u.
-bbb.
-
-  exists r.
+ exists r.
 
 About transport_pair.
 bbb.
