@@ -580,9 +580,9 @@ assert (transport (λ _, A) r x = x').
 destruct r; simpl; apply eq_refl.
 rewrite H in u; clear H.
   exists r.
-bbb.
 
 About transport_pair.
+bbb.
 (* transport_pair :
 ∀ (A : Type) (B C : A → Type) (x y : A) (p : x = y)
 (b : B x) (c : C x),
