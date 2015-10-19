@@ -551,3 +551,25 @@ destruct q as (g, (η, (ε, q))).
 unfold ishae'; exists g, η, ε.
 apply (proj1 (hott_4_2_2 A B f g η ε) q).
 Defined.
+
+(* "Definition 4.2.4. The *fiber* of a map f:A→B over a point y:B is
+         fib_f(y) := Σ (x : A) (f x = y)." *)
+
+Definition fiber {A B} (f : A → B) (y : B) := Σ (x : A), (f x = y).
+
+(* "Lemma 4.2.5. For any f:A→B, y:B, and (x,p),(x',p') : fib_f(y),
+    we have
+        (x,p) = (x,p) ≃ (Σ (γ : x = x') f(γ) • p' = p)" *)
+
+Definition hott_4_2_5 A B (f : A → B) (y : B) (xp xp' : fiber f y) :
+  (xp = xp') ≃ (Σ (γ : Σ_pr₁ xp = Σ_pr₁ xp'), ap f γ • Σ_pr₂ xp' = Σ_pr₂ xp).
+Proof.
+About transport_pair.
+bbb.
+
+Definition toto A B (f : A → B) : isProp (ishae f).
+Proof.
+intros x y.
+destruct x as (g, (η, (ε, q))).
+destruct y as (g', (η', (ε', q'))).
+simpl.
