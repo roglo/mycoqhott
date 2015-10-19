@@ -515,6 +515,18 @@ Definition hott_4_2_3 A B (f : A → B) : qinv f → ishae f.
 Proof.
 intros (g, (ε, η)).
 unfold ishae.
+set (ε' := (λ b, (ε (f (g b)))⁻¹ • ap f (η (g b)) • ε b) : f ◦ g ∼ id).
+simpl in ε'.
+exists g, η, ε'; intros x.
+bbb.
+
+Check hott_4_2_2.
+pose proof (hott_4_2_2 A B f g η ε) as pq.
+pose proof (hott_4_2_2 A B f g η ε') as pq'.
+destruct pq as (p, q).
+destruct pq' as (p', q').
+bbb.
+
 exists g, η, ε; intros x.
 pose proof (hott_4_2_2 A B f g η ε) as pq.
 destruct pq as (p, q).
