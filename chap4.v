@@ -558,13 +558,40 @@ Defined.
 Definition fiber {A B} (f : A → B) (y : B) := Σ (x : A), (f x = y).
 
 (* "Lemma 4.2.5. For any f:A→B, y:B, and (x,p),(x',p') : fib_f(y),
-    we have
-        (x,p) = (x,p) ≃ (Σ (γ : x = x') f(γ) • p' = p)" *)
+    we have ((x,p) = (x',p')) ≃ (Σ (γ : x = x') f(γ) • p' = p)" *)
 
 Definition hott_4_2_5 A B (f : A → B) (y : B) (xp xp' : fiber f y) :
   (xp = xp') ≃ (Σ (γ : Σ_pr₁ xp = Σ_pr₁ xp'), ap f γ • Σ_pr₂ xp' = Σ_pr₂ xp).
 Proof.
+transparent assert
+  (f : (xp = xp')
+   → (Σ (γ : Σ_pr₁ xp = Σ_pr₁ xp'), ap f γ • Σ_pr₂ xp' = Σ_pr₂ xp)).
+ intros q.
+ unfold fiber in xp, xp'.
+ destruct xp as (x, p).
+ destruct xp' as (x', p'); simpl.
+bbb.
+
 About transport_pair.
+(* transport_pair :
+∀ (A : Type) (B C : A → Type) (x y : A) (p : x = y)
+(b : B x) (c : C x),
+transport (λ z : A, (B z * C z)%type) p (b, c) =
+(transport B p b, transport C p c)
+
+Argument A is implicit and maximally inserted *)
+
+bbb.
+
+ injection q; intros r.
+bbb.
+
+ exists r; simpl.
+ destruct r; simpl.
+ unfold id; simpl.
+inversion q.
+
+
 bbb.
 
 Definition toto A B (f : A → B) : isProp (ishae f).
