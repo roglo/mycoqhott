@@ -518,6 +518,22 @@ unfold ishae.
 set (ε' := (λ b, (ε (f (g b)))⁻¹ • ap f (η (g b)) • ε b) : f ◦ g ∼ id).
 simpl in ε'.
 exists g, η, ε'; intros x.
+assert (τ : ∀ a, ε' (f a) = ap f (η a)).
+ intros a.
+ assert (p : η (g (f a)) = ap g (ap f (η a))).
+  rewrite (ap_composite f g (η a)).
+  apply (hott_2_4_4 (g ◦ f) η).
+
+About hott_2_4_3.
+bbb.
+
+Print ishae.
+Check (ap f (η x)).
+Check (ε (f x)).
+ap f (η x)
+     : f ((g ◦ f) x) = f (id x)
+ε (f x)
+     : (f ◦ g) (f x) = id (f x)
 bbb.
 
 Check hott_4_2_2.
