@@ -528,19 +528,19 @@ assert (τ : ∀ a, ε' (f a) = ap f (η a)).
   apply (dotr (ε (f a))) in p.
   pose proof (hott_2_4_3 (f ◦ g ◦ f) f (λ x, ε (f x)) (η a)) as q.
   unfold id in q; simpl in q; apply invert in q.
-  eapply compose in q; [ | eapply compose; [ eapply p | ] ].
-  Focus 2.
-   apply dotr.
-   eapply compose; [ apply (ap_composite g f (ap f (η a))) | ].
-   apply (ap_composite f (f ◦ g) (η a)).
-
+  eapply compose in q; [  | eapply compose; [ eapply p |  ] ].
    unfold ε'.
    rewrite <- compose_assoc.
    unfold id, composite in q; simpl.
    unfold id, composite; simpl.
    rewrite q, compose_assoc, compose_invert_l.
    apply invert, hott_2_1_4_i_2.
-   apply invert, τ.
+
+   apply dotr.
+   eapply compose; [ apply (ap_composite g f (ap f (η a))) |  ].
+   apply (ap_composite f (f ◦ g) (η a)).
+
+ apply invert, τ.
 Defined.
 
 bbb.
