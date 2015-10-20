@@ -601,6 +601,14 @@ split.
  apply eq_refl.
 
  intros q.
+ unfold hott_4_2_5_rev.
+ set (r := hott_4_2_5_dir f y x x' p p' q).
+ destruct r as (γ, r).
+ destruct r; simpl.
+ destruct γ; simpl in q; unfold id in q.
+
+bbb.
+ intros q.
  injection q; intros r.
  destruct r.
  unfold hott_4_2_5_rev.
