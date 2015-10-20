@@ -607,3 +607,14 @@ Defined.
 
 (* "Theorem 4.2.6. If f : A → B is a half adjoint equivalence, then
     for any y : B the fiber fib_f(y) is contractible." *)
+
+Definition hott_4_2_6 A B (f : A → B) : ishae f → ∀ y, isContr (fib f y).
+Proof.
+intros p y.
+unfold isContr.
+unfold ishae in p.
+destruct p as (g, (η, (ε, q))).
+exists (fib_intro f y (g y) (ε y)).
+intros (x, p).
+unfold fib_intro; simpl.
+destruct p.
