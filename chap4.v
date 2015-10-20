@@ -563,10 +563,13 @@ Definition fib {A B} (f : A → B) (y : B) := Σ (x : A), (f x = y).
 About EqdepFacts.eq_sigT_snd.
 Definition toto (X : Type) (P : X → Type) (x1 x2 : X) (H1 : P x1)
       (H2 : P x2) (H : existT P x1 H1 = existT P x2 H2) :
-    eq_rect x1 P H1 x2
-      match H in (_ = y) return (x1 = projT1 y) with
-      | eq_refl _ => eq_refl x1
-      end = H2
+  match
+    match H in (_ = s) return (x1 = projT1 s) with
+    | eq_refl _ => eq_refl x1
+    end in (_ = z) return (P z)
+  with
+  | eq_refl _ => H1
+  end = projT2 (existT P x2 H2)
 :=
   match
     H in (_ = y)
@@ -581,7 +584,6 @@ Definition toto (X : Type) (P : X → Type) (x1 x2 : X) (H1 : P x1)
   | eq_refl _ => eq_refl H1
   end.
 
-Print eq_rect.
 bbb.
 
 Definition hott_4_2_5 A B (f : A → B) (y : B) (xp xp' : fib f y) :
