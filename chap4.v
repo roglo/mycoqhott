@@ -568,6 +568,19 @@ transparent assert ( f₁ :
  intros q.
  destruct xp as (x, p).
  destruct xp' as (x', p'); simpl.
+About EqdepFacts.eq_sigT_snd.
+(* EqdepFacts.eq_sigT_snd :
+∀ (X : Type) (P : X → Type) (x1 x2 : X) (H1 : P x1)
+(H2 : P x2) (H : existT P x1 H1 = existT P x2 H2),
+eq_rect x1 P H1 x2 (EqdepFacts.eq_sigT_fst H) = H2
+
+Arguments X, P, x1, x2, H1, H2 are implicit *)
+About EqdepFacts.eq_sigT_fst.
+(* EqdepFacts.eq_sigT_fst :
+∀ (X : Type) (P : X → Type) (x1 x2 : X) (H1 : P x1)
+(H2 : P x2), existT P x1 H1 = existT P x2 H2 → x1 = x2
+
+Arguments X, P, x1, x2, H1, H2 are implicit *)
  pose proof (EqdepFacts.eq_sigT_snd q) as t.
  unfold eq_rect in t; simpl in t.
  destruct (EqdepFacts.eq_sigT_fst q).
