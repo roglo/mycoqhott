@@ -568,7 +568,7 @@ transparent assert ( f₁ :
  intros q.
  destruct xp as (x, p).
  destruct xp' as (x', p'); simpl.
- pose proof (@EqdepFacts.eq_sigT_snd A (λ x, f x = y) x x' p p' q) as t.
+ pose proof (EqdepFacts.eq_sigT_snd q) as t.
  unfold eq_rect in t; simpl in t.
  destruct (EqdepFacts.eq_sigT_fst q).
  subst p'; clear q.
