@@ -584,6 +584,9 @@ assert (s : x' = Σ_pr₁ w') by apply eq_refl.
 assert (t : p = Σ_pr₂ w) by apply eq_refl.
 assert (u : p' = Σ_pr₂ w') by apply eq_refl.
 rewrite t, u.
+rewrite r.
+(* oops *)
+
 clear t u.
 clear r s.
 destruct q.
