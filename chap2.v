@@ -945,6 +945,22 @@ destruct p; simpl.
 exists (eq_refl _); reflexivity.
 Defined.
 
+(* like above, formulated differently *)
+Definition pair_eq_if A (P : A → Type) x x' p p' :
+  existT P x p = existT P x' p'
+  → Σ (γ : x = x'), γ⁎ p = p'.
+Proof.
+intros q.
+assert
+  (u : ∀ w w' : Σ (x : A), P x,
+   w = w' -> Σ (p : Σ_pr₁ w = Σ_pr₁ w'), p⁎ (Σ_pr₂ w) = Σ_pr₂ w').
+ intros w w' r.
+ destruct r; simpl.
+ exists (eq_refl _); reflexivity.
+
+ apply u in q; apply q.
+Defined.
+
 Lemma hott_2_7_2_g {A} : ∀ P (w w' : Σ (x : A), P x),
   (Σ (p : pr₁ w = pr₁ w'), p⁎ (pr₂ w) = pr₂ w') → w = w'.
 Proof.

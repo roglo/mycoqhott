@@ -564,46 +564,6 @@ Definition fib {A B} (f : A → B) (y : B) := Σ (x : A), (f x = y).
    characterization of paths in fibers", but it is not §2.5
    but §2.7! *)
 
-Lemma hott_2_7_2_f' {A} : ∀ P (w w' : Σ (x : A), P x),
-  w = w' → Σ (p : Σ_pr₁ w = Σ_pr₁ w'), p⁎ (Σ_pr₂ w) = Σ_pr₂ w'.
-Proof.
-intros P w w' p.
-destruct p; simpl.
-exists (eq_refl _); reflexivity.
-Defined.
-
-Definition toto A (P : A → Type) x x' p p' :
-  existT P x p = existT P x' p'
-  → Σ (γ : x = x'), transport P γ p = p'.
-Proof.
-intros q.
-set (w := existT P x p) in q.
-set (w' := existT P x' p') in q.
-assert (r : x = Σ_pr₁ w) by apply eq_refl.
-assert (s : x' = Σ_pr₁ w') by apply eq_refl.
-assert (t : p = Σ_pr₂ w) by apply eq_refl.
-assert (u : p' = Σ_pr₂ w') by apply eq_refl.
-rewrite t, u.
-rewrite r.
-(* oops *)
-
-clear t u.
-clear r s.
-destruct q.
-bbb.
-
-destruct q; simpl in s.
-destruct s.
-exists (eq_refl _).
-simpl in r.
-
-(* why doesn't it work this way ? I must call hott_2_7_2_f *)
-bbb.
-intros q.
-apply hott_2_7_2_f' in q.
-apply q.
-Defined.
-
 Definition fib_intro {A B} (f : A → B) y x p := (existT _ x p : fib f y).
 
 Definition hott_4_2_5_dir {A B} (f : A → B) y x x' p p' :
@@ -611,11 +571,9 @@ Definition hott_4_2_5_dir {A B} (f : A → B) y x x' p p' :
   → (Σ (γ : x = x'), ap f γ • p' = p).
 Proof.
 intros q.
-pose proof (EqdepFacts.eq_sigT_snd q) as t.
-unfold eq_rect in t; simpl in t.
-destruct (EqdepFacts.eq_sigT_fst q).
-subst p'; clear q.
-exists (eq_refl _); apply eq_refl.
+apply Σ_type.pair_eq_if in q.
+destruct q as (γ, q).
+exists γ; destruct γ; simpl in q; destruct q; apply eq_refl.
 Defined.
 
 Definition hott_4_2_5_rev {A B} (f : A → B) y x x' p p' :
@@ -624,8 +582,7 @@ Definition hott_4_2_5_rev {A B} (f : A → B) y x x' p p' :
 Proof.
 intros q.
 destruct q as (γ, q).
-destruct γ; simpl in q; unfold id in q.
-destruct q; apply eq_refl.
+destruct q, γ; apply eq_refl.
 Defined.
 
 Definition hott_4_2_5 A B (f : A → B) y x x' p p' :
@@ -638,14 +595,26 @@ exists (hott_4_2_5_rev f y x x' p p').
 unfold "◦", "∼", id; simpl.
 split.
  intros q.
- unfold EqdepFacts.eq_sigT_fst; simpl.
  destruct q.
  destruct x0.
  destruct e.
  apply eq_refl.
 
  intros q.
- unfold EqdepFacts.eq_sigT_fst; simpl.
  injection q; intros r.
  destruct r.
+ unfold hott_4_2_5_rev.
+ set (r := hott_4_2_5_dir f y x x p p' q).
+ destruct r as (γ, r).
+ destruct r; simpl.
+
+bbb.
+ intros q.
+ injection q; intros r.
+ destruct r.
+ unfold hott_4_2_5_dir; simpl.
+ unfold Σ_type.pair_eq_if; simpl.
+ pose proof (hott_4_2_5_dir f y x x p p' q) as r.
+ destruct r as (γ, r).
+ unfold hott_4_2_5_rev; simpl.
 bbb.
