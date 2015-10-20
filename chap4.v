@@ -577,6 +577,23 @@ Definition toto A (P : A → Type) x x' p p' :
   → Σ (γ : x = x'), transport P γ p = p'.
 Proof.
 intros q.
+set (w := existT P x p) in q.
+set (w' := existT P x' p') in q.
+assert (r : x = Σ_pr₁ w) by apply eq_refl.
+assert (s : x' = Σ_pr₁ w') by apply eq_refl.
+assert (t : p = Σ_pr₂ w) by apply eq_refl.
+assert (u : p' = Σ_pr₂ w') by apply eq_refl.
+rewrite t, u.
+clear t u.
+clear r s.
+destruct q.
+bbb.
+
+destruct q; simpl in s.
+destruct s.
+exists (eq_refl _).
+simpl in r.
+
 (* why doesn't it work this way ? I must call hott_2_7_2_f *)
 bbb.
 intros q.
