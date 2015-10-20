@@ -604,3 +604,6 @@ exists (λ q, q⁻¹).
 unfold "◦", "∼", id.
 split; intros z; apply hott_2_1_4_iii.
 Defined.
+
+(* "Theorem 4.2.6. If f : A → B is a half adjoint equivalence, then
+    for any y : B the fiber fib_f(y) is contractible." *)
