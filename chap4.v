@@ -585,44 +585,22 @@ destruct q as (γ, q).
 destruct q, γ; apply eq_refl.
 Defined.
 
+(* well, not using hott_4_2_5_dir and hott_4_2_5_rev defined above,
+   because I did not manage to prove their reversivity; so I used
+   Σ_type.hott_2_7_2, but I had also to use function extensionality
+   and univalence axioms. *)
 Definition hott_4_2_5 A B (f : A → B) y x x' p p' :
   (fib_intro f y x p = fib_intro f y x' p')
   ≃ (Σ (γ : x = x'), ap f γ • p' = p).
 Proof.
-exists (hott_4_2_5_dir f y x x' p p').
+eapply equiv_compose; [ apply Σ_type.hott_2_7_2 | simpl ].
+apply Σ_equiv, Π_type.funext; intros q.
+unfold transport.
+destruct q; simpl; unfold id.
+apply ua.
+exists (λ q, q⁻¹).
 apply qinv_isequiv.
-exists (hott_4_2_5_rev f y x x' p p').
-unfold "◦", "∼", id; simpl.
-split.
- intros q.
- destruct q.
- destruct x0.
- destruct e.
- apply eq_refl.
-
- intros q.
- unfold hott_4_2_5_rev.
- set (r := hott_4_2_5_dir f y x x' p p' q).
- destruct r as (γ, r).
- destruct r; simpl.
- destruct γ; simpl in q; unfold id in q.
-
-bbb.
- intros q.
- injection q; intros r.
- destruct r.
- unfold hott_4_2_5_rev.
- set (r := hott_4_2_5_dir f y x x p p' q).
- destruct r as (γ, r).
- destruct r; simpl.
-
-bbb.
- intros q.
- injection q; intros r.
- destruct r.
- unfold hott_4_2_5_dir; simpl.
- unfold Σ_type.pair_eq_if; simpl.
- pose proof (hott_4_2_5_dir f y x x p p' q) as r.
- destruct r as (γ, r).
- unfold hott_4_2_5_rev; simpl.
-bbb.
+exists (λ q, q⁻¹).
+unfold "◦", "∼", id.
+split; intros z; apply hott_2_1_4_iii.
+Defined.
