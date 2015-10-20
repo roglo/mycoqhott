@@ -563,6 +563,17 @@ Definition fib {A B} (f : A → B) (y : B) := Σ (x : A), (f x = y).
 Definition hott_4_2_5 A B (f : A → B) (y : B) (xp xp' : fib f y) :
   (xp = xp') ≃ (Σ (γ : Σ_pr₁ xp = Σ_pr₁ xp'), ap f γ • Σ_pr₂ xp' = Σ_pr₂ xp).
 Proof.
+(* to be kept: it is the reverse, which works
+transparent assert
+  (g : (Σ (γ : Σ_pr₁ xp = Σ_pr₁ xp'), ap f γ • Σ_pr₂ xp' = Σ_pr₂ xp)
+   → (xp = xp')).
+ intros q.
+ destruct xp as (x, p).
+ destruct xp' as (x', p'); simpl in q.
+ destruct q as (γ, q).
+ destruct γ; simpl in q; unfold id in q.
+ destruct q; apply eq_refl.
+*)
 transparent assert
   (f : (xp = xp')
    → (Σ (γ : Σ_pr₁ xp = Σ_pr₁ xp'), ap f γ • Σ_pr₂ xp' = Σ_pr₂ xp)).
@@ -580,7 +591,6 @@ assert (transport (λ _, A) r x = x').
  destruct r; simpl; apply eq_refl.
 
  rewrite H in u; clear H.
-
 bbb.
 assert (v : x' = pr₁ (transport (λ z : A, (A * (f z = y))%type) r (x, p))).
  rewrite u; apply eq_refl.
