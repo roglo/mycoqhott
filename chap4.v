@@ -563,71 +563,42 @@ Definition fib {A B} (f : A → B) (y : B) := Σ (x : A), (f x = y).
 Definition hott_4_2_5 A B (f : A → B) (y : B) (xp xp' : fib f y) :
   (xp = xp') ≃ (Σ (γ : Σ_pr₁ xp = Σ_pr₁ xp'), ap f γ • Σ_pr₂ xp' = Σ_pr₂ xp).
 Proof.
-(* to be kept: it is the reverse, which works
-transparent assert
-  (g : (Σ (γ : Σ_pr₁ xp = Σ_pr₁ xp'), ap f γ • Σ_pr₂ xp' = Σ_pr₂ xp)
-   → (xp = xp')).
- intros q.
- destruct xp as (x, p).
- destruct xp' as (x', p'); simpl in q.
- destruct q as (γ, q).
- destruct γ; simpl in q; unfold id in q.
- destruct q; apply eq_refl.
-*)
-transparent assert
-  (f : (xp = xp')
-   → (Σ (γ : Σ_pr₁ xp = Σ_pr₁ xp'), ap f γ • Σ_pr₂ xp' = Σ_pr₂ xp)).
+transparent assert ( f₁ :
+ (xp = xp' → Σ (γ : Σ_pr₁ xp = Σ_pr₁ xp'), ap f γ • Σ_pr₂ xp' = Σ_pr₂ xp) ).
  intros q.
  destruct xp as (x, p).
  destruct xp' as (x', p'); simpl.
- injection q; intros r.
- assert (s : ap f r • transport (λ x, f x = y) r p = p).
-  unfold transport.
-  destruct r; simpl; apply eq_refl.
+ pose proof (@EqdepFacts.eq_sigT_snd A (λ x, f x = y) x x' p p' q) as t.
+ unfold eq_rect in t; simpl in t.
+ destruct (EqdepFacts.eq_sigT_fst q).
+ subst p'; clear q.
+ exists (eq_refl _); apply eq_refl.
 
-pose proof (@transport_pair A (λ _, A) (λ x, (f x = y)) x x' r x p) as u.
-simpl in u.
-assert (transport (λ _, A) r x = x').
- destruct r; simpl; apply eq_refl.
+ transparent assert ( g₁ :
+  (Σ (γ : Σ_pr₁ xp = Σ_pr₁ xp'), ap f γ • Σ_pr₂ xp' = Σ_pr₂ xp) → xp = xp').
+  intros q.
+  destruct xp as (x, p).
+  destruct xp' as (x', p'); simpl in q.
+  destruct q as (γ, q).
+  destruct γ; simpl in q; unfold id in q.
+  destruct q; apply eq_refl.
 
- rewrite H in u; clear H.
+  exists f₁; subst f₁.
+  apply qinv_isequiv.
+  exists g₁; subst g₁; simpl.
+  destruct xp as (x, p); simpl.
+  destruct xp' as (x', p'); simpl.
+  unfold "◦", "∼", id; simpl.
+  split.
+   intros q.
+   unfold EqdepFacts.eq_sigT_fst; simpl.
+   destruct q.
+   destruct x0.
+   destruct e.
+   apply eq_refl.
+
+   intros q.
+   unfold EqdepFacts.eq_sigT_fst; simpl.
+   injection q; intros r.
+   destruct r.
 bbb.
-assert (v : x' = pr₁ (transport (λ z : A, (A * (f z = y))%type) r (x, p))).
- rewrite u; apply eq_refl.
-
- assert (t : x =  pr₁ (transport (λ z : A, (A * (f z = y))%type) r (x, p))).
-  destruct r; apply eq_refl.
-
-exists (t • v⁻¹).
-rewrite ap_compose.
-rewrite hott_2_2_2_ii.
-SearchAbout (ap _ (pr₁ _)).
-
-bbb.
-(* transport_pair :
-∀ (A : Type) (B C : A → Type) (x y : A) (p : x = y)
-(b : B x) (c : C x),
-transport (λ z : A, (B z * C z)%type) p (b, c) =
-(transport B p b, transport C p c)
-
-Argument A is implicit and maximally inserted *)
-
-bbb.
-
- injection q; intros r.
-bbb.
-
- exists r; simpl.
- destruct r; simpl.
- unfold id; simpl.
-inversion q.
-
-
-bbb.
-
-Definition toto A B (f : A → B) : isProp (ishae f).
-Proof.
-intros x y.
-destruct x as (g, (η, (ε, q))).
-destruct y as (g', (η', (ε', q'))).
-simpl.
