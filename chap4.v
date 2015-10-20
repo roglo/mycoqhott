@@ -581,6 +581,7 @@ assert (transport (λ _, A) r x = x').
 
  rewrite H in u; clear H.
 
+bbb.
 assert (v : x' = pr₁ (transport (λ z : A, (A * (f z = y))%type) r (x, p))).
  rewrite u; apply eq_refl.
 
@@ -589,8 +590,8 @@ assert (v : x' = pr₁ (transport (λ z : A, (A * (f z = y))%type) r (x, p))).
 
 exists (t • v⁻¹).
 rewrite ap_compose.
-SearchAbout (ap _ _⁻¹).
 rewrite hott_2_2_2_ii.
+SearchAbout (ap _ (pr₁ _)).
 
 bbb.
 (* transport_pair :
