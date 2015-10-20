@@ -560,6 +560,7 @@ Definition fib {A B} (f : A → B) (y : B) := Σ (x : A), (f x = y).
 (* "Lemma 4.2.5. For any f:A→B, y:B, and (x,p),(x',p') : fib_f(y),
     we have ((x,p) = (x',p')) ≃ (Σ (γ : x = x') f(γ) • p' = p)" *)
 
+(*
 About EqdepFacts.eq_sigT_snd.
 Definition toto (X : Type) (P : X → Type) (x1 x2 : X) (H1 : P x1)
       (H2 : P x2) (H : existT P x1 H1 = existT P x2 H2) :
@@ -583,61 +584,50 @@ Definition toto (X : Type) (P : X → Type) (x1 x2 : X) (H1 : P x1)
   with
   | eq_refl _ => eq_refl H1
   end.
+*)
 
-bbb.
+Definition fib_intro {A B} (f : A → B) y x p := (existT _ x p : fib f y).
 
-Definition hott_4_2_5 A B (f : A → B) (y : B) (xp xp' : fib f y) :
-  (xp = xp') ≃ (Σ (γ : Σ_pr₁ xp = Σ_pr₁ xp'), ap f γ • Σ_pr₂ xp' = Σ_pr₂ xp).
+Definition hott_4_2_5_dir {A B} (f : A → B) y x x' p p' :
+  (fib_intro f y x p = fib_intro f y x' p')
+  → (Σ (γ : x = x'), ap f γ • p' = p).
 Proof.
-transparent assert ( f₁ :
- (xp = xp' → Σ (γ : Σ_pr₁ xp = Σ_pr₁ xp'), ap f γ • Σ_pr₂ xp' = Σ_pr₂ xp) ).
+intros q.
+pose proof (EqdepFacts.eq_sigT_snd q) as t.
+unfold eq_rect in t; simpl in t.
+destruct (EqdepFacts.eq_sigT_fst q).
+subst p'; clear q.
+exists (eq_refl _); apply eq_refl.
+Defined.
+
+Definition hott_4_2_5_rev {A B} (f : A → B) y x x' p p' :
+  (Σ (γ : x = x'), ap f γ • p' = p)
+  → (fib_intro f y x p = fib_intro f y x' p').
+Proof.
+intros q.
+destruct q as (γ, q).
+destruct γ; simpl in q; unfold id in q.
+destruct q; apply eq_refl.
+Defined.
+
+Definition hott_4_2_5 A B (f : A → B) y x x' p p' :
+  (fib_intro f y x p = fib_intro f y x' p')
+  ≃ (Σ (γ : x = x'), ap f γ • p' = p).
+Proof.
+exists (hott_4_2_5_dir f y x x' p p').
+apply qinv_isequiv.
+exists (hott_4_2_5_rev f y x x' p p').
+unfold "◦", "∼", id; simpl.
+split.
  intros q.
- destruct xp as (x, p).
- destruct xp' as (x', p'); simpl.
-About EqdepFacts.eq_sigT_snd.
-(* EqdepFacts.eq_sigT_snd :
-∀ (X : Type) (P : X → Type) (x1 x2 : X) (H1 : P x1)
-(H2 : P x2) (H : existT P x1 H1 = existT P x2 H2),
-eq_rect x1 P H1 x2 (EqdepFacts.eq_sigT_fst H) = H2
+ unfold EqdepFacts.eq_sigT_fst; simpl.
+ destruct q.
+ destruct x0.
+ destruct e.
+ apply eq_refl.
 
-Arguments X, P, x1, x2, H1, H2 are implicit *)
-About EqdepFacts.eq_sigT_fst.
-(* EqdepFacts.eq_sigT_fst :
-∀ (X : Type) (P : X → Type) (x1 x2 : X) (H1 : P x1)
-(H2 : P x2), existT P x1 H1 = existT P x2 H2 → x1 = x2
-
-Arguments X, P, x1, x2, H1, H2 are implicit *)
- pose proof (EqdepFacts.eq_sigT_snd q) as t.
- unfold eq_rect in t; simpl in t.
- destruct (EqdepFacts.eq_sigT_fst q).
- subst p'; clear q.
- exists (eq_refl _); apply eq_refl.
-
- transparent assert ( g₁ :
-  (Σ (γ : Σ_pr₁ xp = Σ_pr₁ xp'), ap f γ • Σ_pr₂ xp' = Σ_pr₂ xp) → xp = xp').
-  intros q.
-  destruct xp as (x, p).
-  destruct xp' as (x', p'); simpl in q.
-  destruct q as (γ, q).
-  destruct γ; simpl in q; unfold id in q.
-  destruct q; apply eq_refl.
-
-  exists f₁; subst f₁.
-  apply qinv_isequiv.
-  exists g₁; subst g₁; simpl.
-  destruct xp as (x, p); simpl.
-  destruct xp' as (x', p'); simpl.
-  unfold "◦", "∼", id; simpl.
-  split.
-   intros q.
-   unfold EqdepFacts.eq_sigT_fst; simpl.
-   destruct q.
-   destruct x0.
-   destruct e.
-   apply eq_refl.
-
-   intros q.
-   unfold EqdepFacts.eq_sigT_fst; simpl.
-   injection q; intros r.
-   destruct r.
+ intros q.
+ unfold EqdepFacts.eq_sigT_fst; simpl.
+ injection q; intros r.
+ destruct r.
 bbb.
