@@ -560,31 +560,28 @@ Definition fib {A B} (f : A → B) (y : B) := Σ (x : A), (f x = y).
 (* "Lemma 4.2.5. For any f:A→B, y:B, and (x,p),(x',p') : fib_f(y),
     we have ((x,p) = (x',p')) ≃ (Σ (γ : x = x') f(γ) • p' = p)" *)
 
-(*
-About EqdepFacts.eq_sigT_snd.
-Definition toto (X : Type) (P : X → Type) (x1 x2 : X) (H1 : P x1)
-      (H2 : P x2) (H : existT P x1 H1 = existT P x2 H2) :
-  match
-    match H in (_ = s) return (x1 = projT1 s) with
-    | eq_refl _ => eq_refl x1
-    end in (_ = z) return (P z)
-  with
-  | eq_refl _ => H1
-  end = projT2 (existT P x2 H2)
-:=
-  match
-    H in (_ = y)
-    return
-      match
-        match H in (_ = s) return (x1 = projT1 s) with
-        | eq_refl _ => eq_refl x1
-        end in (_ = z) return (P z)
-      with
-      | eq_refl _ => H1 end = projT2 y
-  with
-  | eq_refl _ => eq_refl H1
-  end.
-*)
+(* they say "The path lemmas in §2.5 yield the following
+   characterization of paths in fibers", but it is not §2.5
+   but §2.7! *)
+
+Lemma hott_2_7_2_f' {A} : ∀ P (w w' : Σ (x : A), P x),
+  w = w' → Σ (p : Σ_pr₁ w = Σ_pr₁ w'), p⁎ (Σ_pr₂ w) = Σ_pr₂ w'.
+Proof.
+intros P w w' p.
+destruct p; simpl.
+exists (eq_refl _); reflexivity.
+Defined.
+
+Definition toto A (P : A → Type) x x' p p' :
+  existT P x p = existT P x' p'
+  → Σ (γ : x = x'), transport P γ p = p'.
+Proof.
+intros q.
+(* why doesn't it work this way ? I must call hott_2_7_2_f *)
+bbb.
+apply hott_2_7_2_f' in q.
+apply q.
+Defined.
 
 Definition fib_intro {A B} (f : A → B) y x p := (existT _ x p : fib f y).
 
