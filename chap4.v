@@ -579,6 +579,7 @@ Proof.
 intros q.
 (* why doesn't it work this way ? I must call hott_2_7_2_f *)
 bbb.
+intros q.
 apply hott_2_7_2_f' in q.
 apply q.
 Defined.
