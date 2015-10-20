@@ -560,6 +560,23 @@ Definition fib {A B} (f : A → B) (y : B) := Σ (x : A), (f x = y).
 (* "Lemma 4.2.5. For any f:A→B, y:B, and (x,p),(x',p') : fib_f(y),
     we have ((x,p) = (x',p')) ≃ (Σ (γ : x = x') f(γ) • p' = p)" *)
 
+About EqdepFacts.eq_sigT_snd.
+Definition toto (X : Type) (P : X → Type) (x1 x2 : X) (H1 : P x1)
+      (H2 : P x2) (H : existT P x1 H1 = existT P x2 H2) :
+    eq_rect x1 P H1 x2 (EqdepFacts.eq_sigT_fst H) = H2 :=
+  match
+    H in (_ = y)
+    return
+      let e :=
+        match H in (_ = s) return (x1 = projT1 s) with
+        | eq_refl _ => eq_refl x1
+        end
+      in
+      match e in (_ = z) return (P z) with eq_refl _ => H1 end = projT2 y
+  with
+  | eq_refl _ => eq_refl H1
+  end.
+
 Definition hott_4_2_5 A B (f : A → B) (y : B) (xp xp' : fib f y) :
   (xp = xp') ≃ (Σ (γ : Σ_pr₁ xp = Σ_pr₁ xp'), ap f γ • Σ_pr₂ xp' = Σ_pr₂ xp).
 Proof.
