@@ -663,26 +663,25 @@ intros p.
 split.
  destruct p as (g, (ε, η)).
  exists (existT _ g ε).
- intros x.
- destruct x as (h, p).
- assert (g = h).
+ intros p.
+ destruct p as (h, p).
+ assert (q : g = h).
   apply Π_type.funext; intros b.
-  unfold "◦", "∼", id in ε.
-  rewrite <- (ε b).
+  unfold "◦", "∼", id in η, p.
+  rewrite <- η, p; apply eq_refl.
+
+Check (Σ_type.hott_2_7_2 (λ g : B → A, f ◦ g ∼ id)).
+pose proof (Σ_type.hott_2_7_2 (λ g : B → A, f ◦ g ∼ id) (existT _ g ε) (existT _ h p)).
+simpl in X.
+apply (Σ_pr₁ (fst (Σ_pr₂ X))).
+exists q.
+destruct q; simpl.
+bordel à queue.
 bbb.
 
- assert (h ◦ f ∼ id).
-  intros a; simpl; unfold "◦", id.
-  unfold "◦", "∼", id in η.
-  rewrite <- (η a) at 2.
-  apply apf.
-
-bbb.
-
- pose proof EqStr.quasi_inv_l_eq_r f g h ε.
- eapply compose; [ apply H | apply Hh ].
-bbb.
-EqStr.quasi_inv_l_eq_r:
-  ∀ (A B : Type) (f : A → B) (g h : B → A), f ◦ g ∼ id → h ◦ f ∼ id → g ∼ h
-
-Definition rinv {A B} (f : A → B) := Σ (g : B → A), (f ◦ g ∼ id).
+     : ∀ w w' : {x : B → A & f ◦ x ∼ id},
+       (w = w')
+       ≃ {p : Σ_type.pr₁ w = Σ_type.pr₁ w' &
+         transport (λ g : B → A, f ◦ g ∼ id) p (Σ_type.pr₂ w) = Σ_type.pr₂ w'}
+  eapply (Σ_type.pair_eq q).
+  destruct q; simpl.
