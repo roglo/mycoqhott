@@ -660,6 +660,29 @@ Definition hott_4_2_9 A B (f : A → B) :
   qinv f → isContr (rinv f) * isContr (linv f).
 Proof.
 intros p.
+assert (q : linv f ≃ Σ (g : B → A), g ◦ f = id).
+ transparent assert (q : linv f → Σ (g : B → A), g ◦ f = id).
+  intros q.
+  destruct p as (g, (p, r)).
+  exists g; apply Π_type.funext, r.
+
+  exists q; unfold q; clear q.
+  apply qinv_isequiv.
+  transparent assert (q : (Σ (g : B → A), g ◦ f = id) → linv f).
+   intros (g, q).
+   exists g.
+   destruct q.
+   apply homotopy_eq_refl.
+
+   exists q; unfold q; clear q.
+   unfold "◦", "∼", id.
+   split.
+    intros (g, q).
+    destruct p as (h, r).
+    destruct r as (_, r).
+
+bbb.
+intros p.
 split.
  destruct p as (g, (ε, η)).
  exists (existT _ g ε).
@@ -676,6 +699,7 @@ simpl in X.
 apply (Σ_pr₁ (fst (Σ_pr₂ X))).
 exists q.
 destruct q; simpl.
+
 bordel à queue.
 bbb.
 
