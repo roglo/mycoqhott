@@ -642,3 +642,38 @@ Definition hott_4_2_8 A B C (f : A → B) :
 Proof.
 intros p.
 split.
+ destruct p as (g, (ε, η)).
+ exists (λ h c, g (h c)).
+ unfold "◦", "∼", id.
+ split; intros h; apply Π_type.funext; intros c; [ apply ε | apply η ].
+
+ destruct p as (g, (ε, η)).
+ exists (λ (h : A → C) (b : B), h (g b)).
+ unfold "◦", "∼", id.
+ split; intros; apply Π_type.funext; intros; apply ap; [ apply η | apply ε ].
+Defined.
+
+(* "Lemma 4.2.9. If f : A → B has a quasi-inverse, then the types
+    rinv(f) and linv(f) are contractible." *)
+
+Definition hott_4_2_9 A B (f : A → B) :
+  qinv f → isContr (rinv f) * isContr (linv f).
+Proof.
+intros p.
+split.
+ destruct p as (g, (ε, η)).
+ exists (existT _ g ε).
+ intros x.
+ destruct x as (h, p).
+SearchAbout (_ ∼ _ → _ ∼ _).
+ assert (h ◦ f ∼ id).
+  intros a; simpl.
+bbb.
+
+ pose proof EqStr.quasi_inv_l_eq_r f g h ε.
+ eapply compose; [ apply H | apply Hh ].
+bbb.
+EqStr.quasi_inv_l_eq_r:
+  ∀ (A B : Type) (f : A → B) (g h : B → A), f ◦ g ∼ id → h ◦ f ∼ id → g ∼ h
+
+Definition rinv {A B} (f : A → B) := Σ (g : B → A), (f ◦ g ∼ id).
