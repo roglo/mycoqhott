@@ -611,10 +611,34 @@ Defined.
 Definition hott_4_2_6 A B (f : A → B) : ishae f → ∀ y, isContr (fib f y).
 Proof.
 intros p y.
-unfold isContr.
-unfold ishae in p.
 destruct p as (g, (η, (ε, q))).
 exists (fib_intro f y (g y) (ε y)).
 intros (x, p).
-unfold fib_intro; simpl.
-destruct p.
+apply (Σ_pr₁ (fst (Σ_pr₂ (hott_4_2_5 A B f y (g y) x (ε y) p)))).
+exists (ap g p⁻¹ • η x).
+rewrite ap_compose.
+destruct p; simpl; unfold id.
+eapply compose; [ eapply invert, ru | apply q ].
+Defined.
+
+(* "Definition 4.2.7. Given a function f : A → B, we define the types
+         linv(f) :≡ Σ (g : B → A) (g ◦ f ∼ id_A)
+         rinv(f) :≡ Σ (g : B → A) (f ◦ g ∼ id_B)
+    of *left inverses* and *right inverses* to f, respectively. We
+    call f *left invertible* if linv(f) is inhabited, and similarly
+    *right invertible* if rinv(f) is inhabited." *)
+
+Definition linv {A B} (f : A → B) := Σ (g : B → A), (g ◦ f ∼ id).
+Definition rinv {A B} (f : A → B) := Σ (g : B → A), (f ◦ g ∼ id).
+
+(* "Lemma 4.2.8. If f : A → B has a quasi-inverse, then so do
+          (f ◦ -) : (C → A) → (C → B)
+          (- ◦ f) : (B → C) → (A → C)." *)
+
+About qinv.
+
+Definition hott_4_2_8 A B C (f : A → B) :
+  qinv f → qinv (λ g : C → A, f ◦ g) * qinv (λ g : B → C, g ◦ f).
+Proof.
+intros p.
+split.
