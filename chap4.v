@@ -665,9 +665,18 @@ split.
  exists (existT _ g ε).
  intros x.
  destruct x as (h, p).
-SearchAbout (_ ∼ _ → _ ∼ _).
+ assert (g = h).
+  apply Π_type.funext; intros b.
+  unfold "◦", "∼", id in ε.
+  rewrite <- (ε b).
+bbb.
+
  assert (h ◦ f ∼ id).
-  intros a; simpl.
+  intros a; simpl; unfold "◦", id.
+  unfold "◦", "∼", id in η.
+  rewrite <- (η a) at 2.
+  apply apf.
+
 bbb.
 
  pose proof EqStr.quasi_inv_l_eq_r f g h ε.
