@@ -660,7 +660,9 @@ Definition hott_4_2_9 A B (f : A → B) :
   qinv f → isContr (rinv f) * isContr (linv f).
 Proof.
 intros p.
+(* "By function extensionality, we have" *)
 assert (q : linv f ≃ Σ (g : B → A), g ◦ f = id).
+ (* not so obvious for me... *)
  transparent assert (q : linv f → Σ (g : B → A), g ◦ f = id).
   intros q.
   destruct p as (g, (p, r)).
@@ -670,16 +672,36 @@ assert (q : linv f ≃ Σ (g : B → A), g ◦ f = id).
   apply qinv_isequiv.
   transparent assert (q : (Σ (g : B → A), g ◦ f = id) → linv f).
    intros (g, q).
-   exists g.
-   destruct q.
-   apply homotopy_eq_refl.
+   exists g; destruct q.
+   intros x; apply eq_refl.
 
    exists q; unfold q; clear q.
    unfold "◦", "∼", id.
    split.
-    intros (g, q).
-    destruct p as (h, r).
-    destruct r as (_, r).
+    destruct p as (g, (ε, η)).
+    intros (h, q).
+    pose proof hap q as r; simpl in r.
+    pose proof EqStr.quasi_inv_l_eq_r f g h ε r as s.
+    apply Π_type.funext in s.
+    apply (Σ_type.pair_eq s); simpl.
+    unfold transport.
+    destruct s; unfold id.
+bbb.
+
+  rewrite <- η; apply eq_refl.
+bbb.
+Check
+  (@transport (B → A) (λ g0 : B → A, (λ x : A, g0 (f x)) = (λ x : A, x)) h g).
+
+SearchAbout (existT _ _ _ = existT _ _ _).
+eapply Σ_type.pair_eq.
+Focus 1.
+Set Printing Implicit. Show.
+  ============================
+   @transport (B → A) (λ g0 : B → A, (λ x : A, g0 (f x)) = (λ x : A, x)) h g
+     ?p (@Π_type.funext A (λ _ : A, A) (λ x : A, h (f x)) (λ x : A, x) r) = q
+unfold transport.
+    assert (g = h).
 
 bbb.
 intros p.
