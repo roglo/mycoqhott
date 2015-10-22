@@ -676,12 +676,10 @@ assert (q : linv f ≃ Σ (g : B → A), g ◦ f = id).
    intros x; apply eq_refl.
 
    exists q; unfold q; clear q.
-   unfold "◦", "∼", id.
    split.
     destruct p as (g, (ε, η)).
     intros (h, q).
-    pose proof hap q as r; simpl in r.
-    pose proof EqStr.quasi_inv_l_eq_r f g h ε r as s.
+    pose proof EqStr.quasi_inv_l_eq_r f g h ε (hap q) as s.
     apply Π_type.funext in s.
     apply (Σ_type.pair_eq s); simpl.
     unfold transport.
