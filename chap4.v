@@ -683,28 +683,22 @@ clear p.
 
    exists q; unfold q; clear q.
    split.
-unfold "◦", "∼", id.
-intros (h, q).
 (*
-destruct p as (g, (ε, η)).
-clear p.
+unfold "◦", "∼", id.
 *)
-bbb.
-eapply Σ_type.pair_eq.
-Check (@transport (B → A) (λ g0 : B → A, (λ x : A, g0 (f x)) = (λ x : A, x)) h ).
+intros (h, q); simpl.
+destruct p as (g, (ε, η)).
+unfold "◦" at 2; simpl.
+unfold id at 4.
+Check (@transport (B → A) (λ g : B → A, g ◦ f = id) h g).
 bbb.
 destruct q.
-
-About transport.
-Check (@transport (B → A) (λ g0 : B → A, (λ x : A, g0 (f x)) = (λ x : A, x)) h h).
-bbb.
 
     pose proof EqStr.quasi_inv_l_eq_r f g h ε (hap q) as s.
     apply Π_type.funext in s.
     apply (Σ_type.pair_eq s); simpl.
     unfold transport.
     destruct s; unfold id.
-
 
    split.
     destruct p as (g, (ε, η)).
