@@ -665,17 +665,47 @@ assert (q : linv f ≃ Σ (g : B → A), g ◦ f = id).
  (* not so obvious for me... *)
  transparent assert (q : linv f → Σ (g : B → A), g ◦ f = id).
   intros q.
+clear p.
+(*
   destruct p as (g, (p, r)).
-  exists g; apply Π_type.funext, r.
+*)
+unfold linv in q.
+destruct q as (g, q).
+  exists g; apply Π_type.funext, q.
 
   exists q; unfold q; clear q.
   apply qinv_isequiv.
   transparent assert (q : (Σ (g : B → A), g ◦ f = id) → linv f).
+clear p.
    intros (g, q).
    exists g; destruct q.
    intros x; apply eq_refl.
 
    exists q; unfold q; clear q.
+   split.
+unfold "◦", "∼", id.
+intros (h, q).
+(*
+destruct p as (g, (ε, η)).
+clear p.
+*)
+bbb.
+eapply Σ_type.pair_eq.
+Check (@transport (B → A) (λ g0 : B → A, (λ x : A, g0 (f x)) = (λ x : A, x)) h ).
+bbb.
+destruct q.
+
+About transport.
+Check (@transport (B → A) (λ g0 : B → A, (λ x : A, g0 (f x)) = (λ x : A, x)) h h).
+bbb.
+
+    pose proof EqStr.quasi_inv_l_eq_r f g h ε (hap q) as s.
+    apply Π_type.funext in s.
+    apply (Σ_type.pair_eq s); simpl.
+    unfold transport.
+    destruct s; unfold id.
+
+
    split.
     destruct p as (g, (ε, η)).
     intros (h, q).
@@ -684,6 +714,9 @@ assert (q : linv f ≃ Σ (g : B → A), g ◦ f = id).
     apply (Σ_type.pair_eq s); simpl.
     unfold transport.
     destruct s; unfold id.
+Check @hott_2_4_4.
+Check (@hott_2_4_4 (A → B) f id).
+
 bbb.
 
   rewrite <- η; apply eq_refl.
