@@ -699,8 +699,8 @@ assert (g ∼ h).
  rewrite ε in s; apply s.
 
  apply Π_type.funext in H.
-About Σ_type.pair_eq.
-Check (Σ_type.pair_eq H).
+ apply (Σ_type.pair_eq (eq_refl _)).
+ destruct q; simpl; unfold id.
 bbb.
 
 Check (@transport (B → A) (λ g : B → A, g ◦ f = h ◦ f) g h H).
