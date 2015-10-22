@@ -660,117 +660,33 @@ Definition hott_4_2_9 A B (f : A → B) :
   qinv f → isContr (rinv f) * isContr (linv f).
 Proof.
 intros p.
-(* "By function extensionality, we have" *)
 assert (q : linv f ≃ Σ (g : B → A), g ◦ f = id).
- (* not so obvious for me... *)
  transparent assert (q : linv f → Σ (g : B → A), g ◦ f = id).
   intros q.
-clear p.
-(*
-  destruct p as (g, (p, r)).
-*)
-unfold linv in q.
-destruct q as (g, q).
+  unfold linv in q.
+  destruct q as (g, q).
   exists g; apply Π_type.funext, q.
 
   exists q; unfold q; clear q.
   apply qinv_isequiv.
   transparent assert (q : (Σ (g : B → A), g ◦ f = id) → linv f).
-clear p.
    intros (g, q).
    exists g; destruct q.
    intros x; apply eq_refl.
 
    exists q; unfold q; clear q.
    split.
-(*
-unfold "◦", "∼", id.
-*)
-intros (h, q); simpl.
-destruct p as (g, (ε, η)).
-unfold "◦" at 2; simpl.
-unfold id at 4.
-assert (g ∼ h).
- intros b.
- destruct q.
- pose proof η (g b) as s; simpl in s.
- unfold "◦" in s; simpl in s.
- unfold "◦", "∼" in ε.
- rewrite ε in s; apply s.
+    intros (h, q); simpl.
+    assert (g ∼ h).
+     intros b.
+     destruct q.
+     pose proof (η (g b)) as s; simpl in s.
+     unfold "◦" in s; simpl in s.
+     unfold "◦", "∼" in ε.
+     rewrite ε in s; apply s.
 
- apply Π_type.funext in H.
- apply (Σ_type.pair_eq (eq_refl _)).
- destruct q; simpl; unfold id.
+     apply Π_type.funext in H.
+     apply (Σ_type.pair_eq (eq_refl _)).
+     destruct q; simpl; unfold id.
+     apply invert, Π_type.funext_identity.
 bbb.
-
-Check (@transport (B → A) (λ g : B → A, g ◦ f = h ◦ f) g h H).
-
-    pose proof EqStr.quasi_inv_l_eq_r f g h ε as s.
-
-
-eapply Σ_type.pair_eq.
-Check (@transport (B → A) (λ g : B → A, g ◦ f = h ◦ f) g h).
-bbb.
-
-    pose proof EqStr.quasi_inv_l_eq_r f g h ε (hap q) as s.
-    apply Π_type.funext in s.
-    apply (Σ_type.pair_eq s); simpl.
-    unfold transport.
-    destruct s; unfold id.
-
-   split.
-    destruct p as (g, (ε, η)).
-    intros (h, q).
-    pose proof EqStr.quasi_inv_l_eq_r f g h ε (hap q) as s.
-    apply Π_type.funext in s.
-    apply (Σ_type.pair_eq s); simpl.
-    unfold transport.
-    destruct s; unfold id.
-Check @hott_2_4_4.
-Check (@hott_2_4_4 (A → B) f id).
-
-bbb.
-
-  rewrite <- η; apply eq_refl.
-bbb.
-Check
-  (@transport (B → A) (λ g0 : B → A, (λ x : A, g0 (f x)) = (λ x : A, x)) h g).
-
-SearchAbout (existT _ _ _ = existT _ _ _).
-eapply Σ_type.pair_eq.
-Focus 1.
-Set Printing Implicit. Show.
-  ============================
-   @transport (B → A) (λ g0 : B → A, (λ x : A, g0 (f x)) = (λ x : A, x)) h g
-     ?p (@Π_type.funext A (λ _ : A, A) (λ x : A, h (f x)) (λ x : A, x) r) = q
-unfold transport.
-    assert (g = h).
-
-bbb.
-intros p.
-split.
- destruct p as (g, (ε, η)).
- exists (existT _ g ε).
- intros p.
- destruct p as (h, p).
- assert (q : g = h).
-  apply Π_type.funext; intros b.
-  unfold "◦", "∼", id in η, p.
-  rewrite <- η, p; apply eq_refl.
-
-Check (Σ_type.hott_2_7_2 (λ g : B → A, f ◦ g ∼ id)).
-pose proof (Σ_type.hott_2_7_2 (λ g : B → A, f ◦ g ∼ id) (existT _ g ε) (existT _ h p)).
-simpl in X.
-apply (Σ_pr₁ (fst (Σ_pr₂ X))).
-exists q.
-destruct q; simpl.
-
-bordel à queue.
-bbb.
-
-     : ∀ w w' : {x : B → A & f ◦ x ∼ id},
-       (w = w')
-       ≃ {p : Σ_type.pr₁ w = Σ_type.pr₁ w' &
-         transport (λ g : B → A, f ◦ g ∼ id) p (Σ_type.pr₂ w) = Σ_type.pr₂ w'}
-  eapply (Σ_type.pair_eq q).
-  destruct q; simpl.
