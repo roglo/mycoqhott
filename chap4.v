@@ -682,7 +682,6 @@ assert (q : linv f ≃ Σ (g : B → A), g ◦ f = id).
     apply invert, Π_type.funext_identity.
 
     intros (h, q).
-(*
     assert (s : g ∼ h).
      intros b.
      unfold "◦", "∼", id in ε, q.
@@ -690,8 +689,33 @@ assert (q : linv f ≃ Σ (g : B → A), g ◦ f = id).
      rewrite q; apply eq_refl.
 
      apply Π_type.funext in s.
-*)
-     apply (Σ_type.pair_eq (eq_refl _)).
+unfold "◦" at 1; simpl; unfold id.
+apply (Σ_type.pair_eq (eq_refl _)).
+bbb.
+
+eapply Σ_type.pair_eq.
+Check (transport (λ g0, g0 ◦ f ∼ id) s).
+
+bbb.
+clear Heqr.
+destruct r; simpl; unfold id.
+apply Π_type.funext; intros a; simpl.
+unfold "◦"; simpl.
+
+simpl.
+Check (Π_type.funext q).
+bbb.
+assert (uu : h = h).
+Focus 2.
+     apply (Σ_type.pair_eq uu).
+
+bbb.
+     destruct (Π_type.funext q); simpl; unfold id.
+apply Π_type.funext.
+intros a.
+unfold "◦"; simpl.
+
+SearchAbout (transport _ _ _ = _).
 bbb.
      destruct (Π_type.funext q); simpl; unfold id.
      destruct q; simpl; unfold id.
