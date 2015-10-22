@@ -690,7 +690,24 @@ intros (h, q); simpl.
 destruct p as (g, (ε, η)).
 unfold "◦" at 2; simpl.
 unfold id at 4.
-destruct q.
+assert (g ∼ h).
+ intros b.
+ destruct q.
+ pose proof η (g b) as s; simpl in s.
+ unfold "◦" in s; simpl in s.
+ unfold "◦", "∼" in ε.
+ rewrite ε in s; apply s.
+
+ apply Π_type.funext in H.
+About Σ_type.pair_eq.
+Check (Σ_type.pair_eq H).
+bbb.
+
+Check (@transport (B → A) (λ g : B → A, g ◦ f = h ◦ f) g h H).
+
+    pose proof EqStr.quasi_inv_l_eq_r f g h ε as s.
+
+
 eapply Σ_type.pair_eq.
 Check (@transport (B → A) (λ g : B → A, g ◦ f = h ◦ f) g h).
 bbb.
