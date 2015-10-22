@@ -677,16 +677,23 @@ assert (q : linv f ≃ Σ (g : B → A), g ◦ f = id).
    exists q; unfold q; clear q.
    split.
     intros (h, q); simpl.
-    assert (g ∼ h).
-     intros b.
-     destruct q.
-     pose proof (η (g b)) as s; simpl in s.
-     unfold "◦" in s; simpl in s.
-     unfold "◦", "∼" in ε.
-     rewrite ε in s; apply s.
+    apply (Σ_type.pair_eq (eq_refl _)).
+    destruct q; simpl; unfold id.
+    apply invert, Π_type.funext_identity.
 
-     apply Π_type.funext in H.
+    intros (h, q).
+(*
+    assert (s : g ∼ h).
+     intros b.
+     unfold "◦", "∼", id in ε, q.
+     rewrite <- (ε b) at 2.
+     rewrite q; apply eq_refl.
+
+     apply Π_type.funext in s.
+*)
      apply (Σ_type.pair_eq (eq_refl _)).
+bbb.
+     destruct (Π_type.funext q); simpl; unfold id.
      destruct q; simpl; unfold id.
      apply invert, Π_type.funext_identity.
 bbb.
