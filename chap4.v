@@ -635,8 +635,6 @@ Definition rinv {A B} (f : A → B) := Σ (g : B → A), (f ◦ g ∼ id).
           (f ◦ -) : (C → A) → (C → B)
           (- ◦ f) : (B → C) → (A → C)." *)
 
-About qinv.
-
 Definition hott_4_2_8 A B C (f : A → B) :
   qinv f → qinv (λ g : C → A, f ◦ g) * qinv (λ g : B → C, g ◦ f).
 Proof.
@@ -656,68 +654,82 @@ Defined.
 (* "Lemma 4.2.9. If f : A → B has a quasi-inverse, then the types
     rinv(f) and linv(f) are contractible." *)
 
+Definition linv_equiv A B (f : A → B) : linv f ≃ Σ (g : B → A), g ◦ f = id.
+Proof.
+unfold linv.
+apply Σ_equiv, Π_type.funext; intros g; apply ua.
+exists Π_type.funext.
+apply qinv_isequiv.
+exists Π_type.happly.
+split; [ intros x; apply invert, Π_type.funext_prop_uniq_princ | ].
+intros p; apply Π_type.funext; intros x.
+apply (Π_type.funext_quasi_inverse_of_happly (g ◦ f) id p x).
+Defined.
+
+Definition rinv_equiv A B (f : A → B) : rinv f ≃ Σ (g : B → A), f ◦ g = id.
+Proof.
+unfold rinv.
+apply Σ_equiv, Π_type.funext; intros g; apply ua.
+exists Π_type.funext.
+apply qinv_isequiv.
+exists Π_type.happly.
+split; [ intros x; apply invert, Π_type.funext_prop_uniq_princ | ].
+intros p; apply Π_type.funext; intros x.
+apply (Π_type.funext_quasi_inverse_of_happly (f ◦ g) id p x).
+Defined.
+
 Definition hott_4_2_9 A B (f : A → B) :
   qinv f → isContr (rinv f) * isContr (linv f).
 Proof.
 intros p.
-assert (q : linv f ≃ Σ (g : B → A), g ◦ f = id).
- transparent assert (q : linv f → Σ (g : B → A), g ◦ f = id).
-  intros q.
-  unfold linv in q.
-  destruct q as (g, q).
-  exists g; apply Π_type.funext, q.
+split.
+ assert (q : rinv f ≃ Σ (g : B → A), f ◦ g = id) by apply rinv_equiv.
+ assert (r : qinv (λ g : B → A, f ◦ g)) by apply hott_4_2_8, p.
+ apply hott_4_2_3 in r.
+ assert (s : ∀ y, isContr (fib (λ g : B → A, f ◦ g) y)).
+  apply hott_4_2_6, r.
 
-  exists q; unfold q; clear q.
-  apply qinv_isequiv.
-  transparent assert (q : (Σ (g : B → A), g ◦ f = id) → linv f).
-   intros (g, q).
-   exists g; destruct q.
-   intros x; apply eq_refl.
+  assert (t : isContr (fib (λ g, f ◦ g) id)) by apply s.
+  unfold fib in t.
+  eapply equiv_contr in t; [ apply t | eapply quasi_inv, q ].
 
-   exists q; unfold q; clear q.
-   split.
-    intros (h, q); simpl.
-    apply (Σ_type.pair_eq (eq_refl _)).
-    destruct q; simpl; unfold id.
-    apply invert, Π_type.funext_identity.
+ assert (q : linv f ≃ Σ (g : B → A), g ◦ f = id) by apply linv_equiv.
+ assert (r : qinv (λ g : B → A, g ◦ f)) by apply hott_4_2_8, p.
+ apply hott_4_2_3 in r.
+ assert (s : ∀ y, isContr (fib (λ g : B → A, g ◦ f) y)).
+  apply hott_4_2_6, r.
 
-    intros (h, q).
-    assert (s : g ∼ h).
-     intros b.
-     unfold "◦", "∼", id in ε, q.
-     rewrite <- (ε b) at 2.
-     rewrite q; apply eq_refl.
+  assert (t : isContr (fib (λ g, g ◦ f) id)) by apply s.
+  unfold fib in t.
+  eapply equiv_contr in t; [ apply t | eapply quasi_inv, q ].
+Defined.
 
-     apply Π_type.funext in s.
-unfold "◦" at 1; simpl; unfold id.
-apply (Σ_type.pair_eq (eq_refl _)).
-bbb.
+(* "Definition 4.2.10. For f : A → B, a left inverse (g, η) : linv (f),
+    and a right inverse (g, ε) : rinv(f), we denote
+        lcoh_f(g, η) :≡ Σ (ε : f◦g~id_B) Π (y : B) g(εy) = η(gy)
+        rcoh_f(g, ε) :≡ Σ (η : g◦f~id_A) Π (x : A) f(ηx) = ε(fx)." *)
 
-eapply Σ_type.pair_eq.
-Check (transport (λ g0, g0 ◦ f ∼ id) s).
+Definition lcoh {A B} (f : A → B) (g : B → A) (η : g ◦ f ∼ id) :=
+  Σ (ε : f ◦ g ∼ id), Π (y : B), ap g (ε y) = η (g y).
 
-bbb.
-clear Heqr.
-destruct r; simpl; unfold id.
-apply Π_type.funext; intros a; simpl.
-unfold "◦"; simpl.
+Definition rcoh {A B} (f : A → B) (g : B → A) (ε : f ◦ g ∼ id) :=
+  Σ (η : g ◦ f ∼ id), Π (x : A), ap f (η x) = ε (f x).
 
-simpl.
-Check (Π_type.funext q).
-bbb.
-assert (uu : h = h).
-Focus 2.
-     apply (Σ_type.pair_eq uu).
+(* "Lemma 4.2.11. For any f, g, ε, η, we have
+        lcoh_f(g, η) ≃ Π (y : B) (f g y, η (g y)) =_fib_g(gy) (y, refl_gy)
+        lcoh_f(g, ε) ≃ Π (x : A) (g f x, ε (f x)) =_fib_f(fx) (x, refl_fx)" *)
 
-bbb.
-     destruct (Π_type.funext q); simpl; unfold id.
-apply Π_type.funext.
-intros a.
-unfold "◦"; simpl.
+About fib_intro.
 
-SearchAbout (transport _ _ _ = _).
-bbb.
-     destruct (Π_type.funext q); simpl; unfold id.
-     destruct q; simpl; unfold id.
-     apply invert, Π_type.funext_identity.
-bbb.
+Definition hott_4_2_11_l A B (f : A → B) (g : B → A) (η : g ◦ f ∼ id) :
+  lcoh f g η ≃
+  Π (y : B),
+    fib_intro g (g y) (f (g y)) (η (g y)) =
+    fib_intro g (g y) y (eq_refl (g y)).
+Proof.
+Check @hott_4_2_5.
+(* hott_4_2_5
+     : ∀ (A B : Type) (f : A → B) (y : B) (x x' : A)
+       (p : f x = y) (p' : f x' = y),
+       (fib_intro f y x p = fib_intro f y x' p')
+       ≃ {γ : x = x' & ap f γ • p' = p} *)
