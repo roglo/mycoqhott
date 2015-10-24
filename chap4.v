@@ -719,17 +719,64 @@ Definition rcoh {A B} (f : A → B) (g : B → A) (ε : f ◦ g ∼ id) :=
         lcoh_f(g, η) ≃ Π (y : B) (f g y, η (g y)) =_fib_g(gy) (y, refl_gy)
         lcoh_f(g, ε) ≃ Π (x : A) (g f x, ε (f x)) =_fib_f(fx) (x, refl_fx)" *)
 
-About fib_intro.
-
-Definition hott_4_2_11_l A B (f : A → B) (g : B → A) (η : g ◦ f ∼ id) :
+(* I have a problem of the ε of the hypothesis and the ε existing in
+   lcoh, which are both of the same type, but should be the same for
+   the equivalence to be true, I guess. *)
+Definition hott_4_2_11_l A B (f : A → B) (g : B → A)
+    (ε : f ◦ g ∼ id) (η : g ◦ f ∼ id) :
   lcoh f g η ≃
   Π (y : B),
     fib_intro g (g y) (f (g y)) (η (g y)) =
     fib_intro g (g y) y (eq_refl (g y)).
 Proof.
-Check @hott_4_2_5.
-(* hott_4_2_5
-     : ∀ (A B : Type) (f : A → B) (y : B) (x x' : A)
-       (p : f x = y) (p' : f x' = y),
-       (fib_intro f y x p = fib_intro f y x' p')
-       ≃ {γ : x = x' & ap f γ • p' = p} *)
+transparent assert (f₁ :
+ (lcoh f g η
+  → Π (y : B),
+    fib_intro g (g y) (f (g y)) (η (g y)) =
+    fib_intro g (g y) y (eq_refl (g y)))).
+ intros p y.
+ apply
+  (Σ_pr₁
+     (fst (Σ_pr₂ (hott_4_2_5 _ _ _ _ (f (g y)) y (η (g y)) (eq_refl (g y)))))).
+ unfold lcoh in p.
+ destruct p as (ε', p).
+ exists (ε' y).
+ eapply compose; [ eapply invert, ru | apply p ].
+
+ exists f₁; subst f₁.
+ apply qinv_isequiv.
+ transparent assert (g₁ :
+  (Π (y : B),
+   fib_intro g (g y) (f (g y)) (η (g y)) =
+   fib_intro g (g y) y (eq_refl (g y))) → lcoh f g η).
+  intros p.
+  unfold lcoh.
+  set (ε' := (λ b, (ε (f (g b)))⁻¹ • ap f (η (g b)) • ε b) : f ◦ g ∼ id).
+  simpl in ε'.
+  exists ε'; intros y.
+  assert (τ : ∀ a, ε' (f a) = ap f (η a)).
+   intros a.
+   assert (p' : η (g (f a)) = ap g (ap f (η a))).
+    rewrite (ap_composite f g (η a)).
+    apply (hott_2_4_4 (g ◦ f) η).
+
+    apply (ap (ap f)) in p'.
+    apply (dotr (ε (f a))) in p'.
+    pose proof (hott_2_4_3 (f ◦ g ◦ f) f (λ x, ε (f x)) (η a)) as q.
+    unfold id in q; simpl in q; apply invert in q.
+    eapply compose in q; [  | eapply compose; [ eapply p' |  ] ].
+     unfold ε'.
+     rewrite <- compose_assoc.
+     unfold id, composite in q; simpl.
+     unfold id, composite; simpl.
+     rewrite q, compose_assoc, compose_invert_l.
+     apply invert, hott_2_1_4_i_2.
+
+     apply dotr.
+     eapply compose; [ apply (ap_composite g f (ap f (η a))) |  ].
+     apply (ap_composite f (f ◦ g) (η a)).
+
+   apply hott_4_2_2; intros z.
+   apply invert, τ.
+
+  exists g₁; subst g₁; simpl.
