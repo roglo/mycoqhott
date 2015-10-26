@@ -942,7 +942,7 @@ Lemma hott_2_7_2_f {A} : ∀ P (w w' : Σ (x : A), P x),
 Proof.
 intros P w w' p.
 destruct p; simpl.
-exists (eq_refl _); reflexivity.
+exists (eq_refl _); apply eq_refl.
 Defined.
 
 (* like above, formulated differently *)
@@ -956,7 +956,7 @@ assert
    w = w' -> Σ (p : Σ_pr₁ w = Σ_pr₁ w'), p⁎ (Σ_pr₂ w) = Σ_pr₂ w').
  intros w w' r.
  destruct r; simpl.
- exists (eq_refl _); reflexivity.
+ exists (eq_refl _); apply eq_refl.
 
  apply u in q; apply q.
 Defined.
@@ -988,7 +988,7 @@ exists (hott_2_7_2_g P w w'); split.
  unfold hott_2_7_2_f; simpl.
  unfold hott_2_7_2_g; simpl.
  unfold "◦"; simpl.
- reflexivity.
+ apply eq_refl.
 
  intros r; unfold id; simpl.
  destruct r.
@@ -996,7 +996,7 @@ exists (hott_2_7_2_g P w w'); split.
  unfold hott_2_7_2_f; simpl.
  unfold hott_2_7_2_g; simpl.
  unfold "◦"; simpl.
- reflexivity.
+ apply eq_refl.
 Defined.
 
 (* Corollary 2.7.3... but I don't see in what it is a corollary... *)

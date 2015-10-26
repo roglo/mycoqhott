@@ -511,36 +511,69 @@ Defined.
 
 (* "Theorem 4.2.3. For any f : A → B we have qinv(f) → ishae(f)." *)
 
+Definition alt_τ A B (f : A → B) (g : B → A)
+    (ε : f ◦ g ∼ id) (η : g ◦ f ∼ id)
+    (ε' := ((λ b, (ε (f (g b)))⁻¹ • ap f (η (g b)) • ε b) : f ◦ g ∼ id)) :
+  ∀ a, ap f (η a) = ε' (f a).
+Proof.
+intros a; simpl in ε'.
+assert (p' : η (g (f a)) = ap g (ap f (η a))).
+ rewrite (ap_composite f g (η a)).
+ apply (hott_2_4_4 (g ◦ f) η).
+
+ apply (ap (ap f)) in p'.
+ apply (dotr (ε (f a))) in p'.
+ pose proof (hott_2_4_3 (f ◦ g ◦ f) f (λ x, ε (f x)) (η a)) as q.
+ unfold id in q; simpl in q; apply invert in q.
+ eapply compose in q; [  | eapply compose; [ eapply p' |  ] ].
+  unfold ε'.
+  rewrite <- compose_assoc.
+  unfold id, composite in q; simpl.
+  unfold id, composite; simpl.
+  rewrite q, compose_assoc, compose_invert_l.
+  apply invert, hott_2_1_4_i_2.
+
+  apply dotr.
+  eapply compose; [ apply (ap_composite g f (ap f (η a))) |  ].
+  apply (ap_composite f (f ◦ g) (η a)).
+Defined.
+
+Definition alt_ν A B (f : A → B) (g : B → A)
+    (ε : f ◦ g ∼ id) (η : g ◦ f ∼ id)
+    (η' := ((λ a : A, (η (g (f a)))⁻¹ • ap g (ε (f a)) • η a) : g ◦ f ∼ id)) :
+  ∀ b, ap g (ε b) = η' (g b).
+Proof.
+intros b; simpl in η'.
+assert (p' : ε (f (g b)) = ap f (ap g (ε b))).
+ rewrite (ap_composite g f (ε b)).
+ apply (hott_2_4_4 (f ◦ g) ε).
+
+ apply (ap (ap g)) in p'.
+ apply (dotr (η (g b))) in p'.
+ pose proof (hott_2_4_3 (g ◦ f ◦ g) g (λ y, η (g y)) (ε b)) as q.
+ unfold id in q; simpl in q; apply invert in q.
+ eapply compose in q; [  | eapply compose; [ eapply p' |  ] ].
+  unfold η'.
+  rewrite <- compose_assoc.
+  unfold id, composite in q; simpl.
+  unfold id, composite; simpl.
+  rewrite q, compose_assoc, compose_invert_l.
+  apply invert, hott_2_1_4_i_2.
+
+  apply dotr.
+  eapply compose; [ apply (ap_composite f g (ap g (ε b))) |  ].
+  apply (ap_composite g (g ◦ f) (ε b)).
+Defined.
+
 Definition hott_4_2_3 A B (f : A → B) : qinv f → ishae f.
 Proof.
 intros (g, (ε, η)).
 unfold ishae.
-set (ε' := (λ b, (ε (f (g b)))⁻¹ • ap f (η (g b)) • ε b) : f ◦ g ∼ id).
-simpl in ε'.
-exists g, η, ε'; intros x.
-assert (τ : ∀ a, ε' (f a) = ap f (η a)).
- intros a.
- assert (p : η (g (f a)) = ap g (ap f (η a))).
-  rewrite (ap_composite f g (η a)).
-  apply (hott_2_4_4 (g ◦ f) η).
-
-  apply (ap (ap f)) in p.
-  apply (dotr (ε (f a))) in p.
-  pose proof (hott_2_4_3 (f ◦ g ◦ f) f (λ x, ε (f x)) (η a)) as q.
-  unfold id in q; simpl in q; apply invert in q.
-  eapply compose in q; [  | eapply compose; [ eapply p |  ] ].
-   unfold ε'.
-   rewrite <- compose_assoc.
-   unfold id, composite in q; simpl.
-   unfold id, composite; simpl.
-   rewrite q, compose_assoc, compose_invert_l.
-   apply invert, hott_2_1_4_i_2.
-
-   apply dotr.
-   eapply compose; [ apply (ap_composite g f (ap f (η a))) |  ].
-   apply (ap_composite f (f ◦ g) (η a)).
-
- apply invert, τ.
+exists g, η.
+pose proof alt_τ A B f g ε η as τ.
+set (ε' := (λ b, (ε (f (g b)))⁻¹ • ap f (η (g b)) • ε b) : f ◦ g ∼ id) in τ.
+simpl in τ.
+exists ε'; intros x; apply τ.
 Defined.
 
 Definition hott_4_2_3' A B (f : A → B) : qinv f → ishae' f.
@@ -564,7 +597,8 @@ Definition fib {A B} (f : A → B) (y : B) := Σ (x : A), (f x = y).
    characterization of paths in fibers", but it is not §2.5
    but §2.7! *)
 
-Definition fib_intro {A B} (f : A → B) y x p := (existT _ x p : fib f y).
+Definition fib_intro {A B} (f : A → B) y x (p : f x = y) :=
+  (existT (λ z, f z = y) x p : fib f y).
 
 Definition hott_4_2_5_dir {A B} (f : A → B) y x x' p p' :
   (fib_intro f y x p = fib_intro f y x' p')
@@ -585,6 +619,34 @@ destruct q as (γ, q).
 destruct q, γ; apply eq_refl.
 Defined.
 
+(*
+Definition hott_4_2_5 A B (f : A → B) y x x' p p' :
+  (fib_intro f y x p = fib_intro f y x' p')
+  ≃ (Σ (γ : x = x'), ap f γ • p' = p).
+Proof.
+exists (hott_4_2_5_dir f y x x' p p').
+apply qinv_isequiv.
+exists (hott_4_2_5_rev f y x x' p p').
+split.
+ unfold "◦", "∼", id; simpl.
+ intros (γ, q); simpl.
+ destruct q, γ.
+ apply eq_refl.
+
+ unfold "◦", "∼", id; simpl.
+ intros q; simpl.
+ unfold hott_4_2_5_dir; simpl.
+ set (u := Σ_type.pair_eq_if A (λ z : A, f z = y) x x' p p' q).
+ destruct u as (r, s).
+ destruct r; simpl; simpl in s; unfold id in s.
+ destruct s.
+ unfold fib_intro; simpl.
+ unfold fib_intro in q; simpl in q.
+ destruct p; simpl in q.
+ destruct q.
+bbb.
+*)
+
 (* well, not using hott_4_2_5_dir and hott_4_2_5_rev defined above,
    because I did not manage to prove their reversivity; so I used
    Σ_type.hott_2_7_2, but I had also to use function extensionality
@@ -598,9 +660,9 @@ apply Σ_equiv, Π_type.funext; intros q.
 unfold transport.
 destruct q; simpl; unfold id.
 apply ua.
-exists (λ q, q⁻¹).
+exists invert.
 apply qinv_isequiv.
-exists (λ q, q⁻¹).
+exists invert.
 unfold "◦", "∼", id.
 split; intros z; apply hott_2_1_4_iii.
 Defined.
@@ -719,9 +781,42 @@ Definition rcoh {A B} (f : A → B) (g : B → A) (ε : f ◦ g ∼ id) :=
         lcoh_f(g, η) ≃ Π (y : B) (f g y, η (g y)) =_fib_g(gy) (y, refl_gy)
         lcoh_f(g, ε) ≃ Π (x : A) (g f x, ε (f x)) =_fib_f(fx) (x, refl_fx)" *)
 
-(* I have a problem of the ε of the hypothesis and the ε existing in
-   lcoh, which are both of the same type, but should be the same for
-   the equivalence to be true, I guess. *)
+Definition hott_4_2_11_l_dir {A B} f (g : B → A) η :
+  lcoh f g η
+  → Π (y : B),
+    fib_intro g (g y) (f (g y)) (η (g y)) =
+    fib_intro g (g y) y (eq_refl (g y)).
+Proof.
+intros p y.
+apply
+ (Σ_pr₁
+    (fst (Σ_pr₂ (hott_4_2_5 _ _ _ _ (f (g y)) y (η (g y)) (eq_refl (g y)))))).
+unfold lcoh in p.
+destruct p as (ε, p).
+exists (ε y).
+eapply compose; [ eapply invert, ru | apply p ].
+Defined.
+
+Definition hott_4_2_11_l_rev {A B} (f : A → B) g (η : g ◦ f ∼ id) :
+  (Π (y : B),
+   fib_intro g (g y) (f (g y)) (η (g y)) =
+   fib_intro g (g y) y (eq_refl (g y)))
+  → lcoh f g η.
+Proof.
+intros p; unfold lcoh.
+transparent assert (ε : f ◦ g ∼ id).
+ intros y; unfold "◦", id.
+ pose proof hott_4_2_5 B A g (g y) (f (g y)) y (η (g y)) (eq_refl (g y)).
+ pose proof Σ_pr₁ X (p y).
+ destruct H as (h, s); apply h.
+
+ simpl in ε.
+ pose proof alt_τ A B f g ε η as τ.
+ set (ε' := (λ b, (ε (f (g b)))⁻¹ • ap f (η (g b)) • ε b) : f ◦ g ∼ id) in τ.
+ simpl in τ; exists ε'; intros y.
+ apply hott_4_2_2, τ.
+Defined.
+
 Definition hott_4_2_11_l A B (f : A → B) (g : B → A)
     (ε : f ◦ g ∼ id) (η : g ◦ f ∼ id) :
   lcoh f g η ≃
@@ -729,54 +824,66 @@ Definition hott_4_2_11_l A B (f : A → B) (g : B → A)
     fib_intro g (g y) (f (g y)) (η (g y)) =
     fib_intro g (g y) y (eq_refl (g y)).
 Proof.
-transparent assert (f₁ :
- (lcoh f g η
-  → Π (y : B),
-    fib_intro g (g y) (f (g y)) (η (g y)) =
-    fib_intro g (g y) y (eq_refl (g y)))).
- intros p y.
- apply
-  (Σ_pr₁
-     (fst (Σ_pr₂ (hott_4_2_5 _ _ _ _ (f (g y)) y (η (g y)) (eq_refl (g y)))))).
- unfold lcoh in p.
- destruct p as (ε', p).
- exists (ε' y).
- eapply compose; [ eapply invert, ru | apply p ].
+exists (hott_4_2_11_l_dir f g η).
+apply qinv_isequiv.
+exists (hott_4_2_11_l_rev f g η).
+split.
+ unfold "◦", "∼", id; simpl.
+ intros p; apply Π_type.funext; intros y.
+unfold hott_4_2_11_l_dir, hott_4_2_11_l_rev.
+simpl.
+unfold hott_4_2_5; simpl.
+unfold "◦"; simpl.
+unfold Σ_type.hott_2_7_2_f; simpl.
+(* blocked; I am tired; I give up for the moment *)
+Abort.
 
- exists f₁; subst f₁.
- apply qinv_isequiv.
- transparent assert (g₁ :
-  (Π (y : B),
-   fib_intro g (g y) (f (g y)) (η (g y)) =
-   fib_intro g (g y) y (eq_refl (g y))) → lcoh f g η).
-  intros p.
-  unfold lcoh.
-  set (ε' := (λ b, (ε (f (g b)))⁻¹ • ap f (η (g b)) • ε b) : f ◦ g ∼ id).
-  simpl in ε'.
-  exists ε'; intros y.
-  assert (τ : ∀ a, ε' (f a) = ap f (η a)).
-   intros a.
-   assert (p' : η (g (f a)) = ap g (ap f (η a))).
-    rewrite (ap_composite f g (η a)).
-    apply (hott_2_4_4 (g ◦ f) η).
+(* other lemmas of this section to do *)
 
-    apply (ap (ap f)) in p'.
-    apply (dotr (ε (f a))) in p'.
-    pose proof (hott_2_4_3 (f ◦ g ◦ f) f (λ x, ε (f x)) (η a)) as q.
-    unfold id in q; simpl in q; apply invert in q.
-    eapply compose in q; [  | eapply compose; [ eapply p' |  ] ].
-     unfold ε'.
-     rewrite <- compose_assoc.
-     unfold id, composite in q; simpl.
-     unfold id, composite; simpl.
-     rewrite q, compose_assoc, compose_invert_l.
-     apply invert, hott_2_1_4_i_2.
+(* "4.3 Bi-invertible maps" *)
 
-     apply dotr.
-     eapply compose; [ apply (ap_composite g f (ap f (η a))) |  ].
-     apply (ap_composite f (f ◦ g) (η a)).
+(* "Definition 4.3.1. We say f : A → B is bi-invertible if it has both
+    a left inverse and a right inverse:
+             biinv(f) :≡ linv(f) × rinv(f)." *)
 
-   apply hott_4_2_2; intros z.
-   apply invert, τ.
+Definition biinv {A B} (f : A → B) := (linv f * rinv f)%type.
 
-  exists g₁; subst g₁; simpl.
+Definition qinv_biinv A B (f : A → B) : qinv f ⇔ biinv f.
+Proof.
+split; intros p.
+ unfold qinv in p; unfold biinv, linv, rinv.
+ destruct p as (g, (ε, η)).
+ split; exists g; [ apply η | apply ε ].
+
+ unfold qinv; unfold biinv, linv, rinv in p.
+ destruct p as ((g, p), (h, q)).
+ exists g; split; [ | apply p ].
+ pose proof EqStr.quasi_inv_l_eq_r f h g q p as H.
+ intros y; unfold "∼" in H; unfold "◦".
+ rewrite <- H; apply q.
+Defined.
+
+(* "Theorem 4.3.2. For any f : A → B, the type biinv(f) is a mere
+    proposition." *)
+
+Definition isContr_prod A B : isContr A * isContr B → isContr (A * B).
+Proof.
+intros (p, q).
+unfold isContr in p, q; unfold isContr.
+destruct p as (a, p).
+destruct q as (b, q).
+exists (a, b); intros (x, y).
+bbb.
+
+Definition hott_4_3_2 A B (f : A → B) : biinv f → isProp (biinv f).
+Proof.
+intros p; unfold biinv.
+apply qinv_biinv, hott_4_2_9 in p.
+apply isContr_isProp.
+
+bbb.
+
+set (q := snd (qinv_biinv A B f)).
+
+Definition hott_4_2_9 A B (f : A → B) :
+  qinv f → isContr (rinv f) * isContr (linv f).
