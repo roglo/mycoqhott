@@ -824,6 +824,30 @@ Definition hott_4_2_11_l A B (f : A → B) (g : B → A)
     fib_intro g (g y) (f (g y)) (η (g y)) =
     fib_intro g (g y) y (eq_refl (g y)).
 Proof.
+pose proof (λ y, hott_4_2_5 B A g (g y) (f (g y)) y (η (g y)) (eq_refl (g y))).
+eapply quasi_inv.
+set (toto y := fib_intro g (g y) (f (g y)) (η (g y)) =
+    fib_intro g (g y) y (eq_refl (g y)) : Type).
+simpl in toto.
+change ((∀ y, toto y) ≃ lcoh f g η).
+assert (p : ∀ y, toto y ≃ Σ (γ : f (g y) = y), ap g γ = η (g y)).
+ intros y; unfold toto.
+bb.
+ pose proof (λ y, hott_4_2_5 B A g (g y) (f (g y)) y (η (g y)) (eq_refl (g y))).
+ eapply (hott_4_2_5 B A g (g y) (f (g y)) y).
+
+bbb.
+
+eapply equiv_compose.
+2:eapply quasi_inv.
+
+assert (εε : ∀ y, f (g (f (g y))) = y).
+ intros y; eapply compose; apply ε.
+
+ Check (λ y, hott_4_2_5 B A g (g y) (f (g y)) y (η (g y)) (eq_refl (g y))).
+ Check (λ y, hott_4_2_5 A B f y (g (f (g y))) (g y) (εε y) (ε y)).
+bbb.
+
 exists (hott_4_2_11_l_dir f g η).
 apply qinv_isequiv.
 exists (hott_4_2_11_l_rev f g η).
