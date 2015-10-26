@@ -830,21 +830,25 @@ set
    fib_intro g (g y) y (eq_refl (g y)) : Type).
 simpl in p.
 change ((∀ y, p y) ≃ lcoh f g η).
-assert (q : ∀ y, p y ≃ Σ (γ : f (g y) = y), ap g γ = η (g y)).
+assert (q : ∀ y, p y ≃ Σ (γ : f (g y) = y), ap g γ • eq_refl (g y) = η (g y)).
  intros y; unfold p.
  eapply equiv_compose; [ apply hott_4_2_5 | ].
  apply Σ_equiv, Π_type.funext; intros q.
- rewrite <- ru; apply eq_refl.
+ apply eq_refl.
 
  unfold lcoh.
  transparent assert
-   (f : (∀ y : B, p y) → {ε0 : f ◦ g ∼ id & ∀ y : B, ap g (ε0 y) = η (g y)}).
+   (f : (∀ y : B, p y) → {γ : f ◦ g ∼ id & ∀ y : B, ap g (γ y) = η (g y)}).
   intros r.
   exists ε; intros y.
-  pose proof q y as s.
-  pose proof (Σ_type.pr₁ s (r y)) as t.
-  destruct t as (γ, t).
+  pose proof (Σ_type.pr₁ (q y) (r y)) as t.
+  destruct t as (γ, t); rewrite <- t; apply invert.
+About compose_insert.
+Check @compose_insert (f (g y) = y) (ε y).
 
+  Focus 2.
+  simpl in f.
+  exists f.
 bbb.
  pose proof (λ y, hott_4_2_5 B A g (g y) (f (g y)) y (η (g y)) (eq_refl (g y))).
  eapply (hott_4_2_5 B A g (g y) (f (g y)) y).
