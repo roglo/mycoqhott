@@ -838,10 +838,49 @@ assert (q : ∀ y, p y ≃ Σ (γ : f (g y) = y), ap g γ = η (g y)).
 
  unfold lcoh.
 About equiv_compose.
+Definition toto A (f g : A → Type) :
+  (Π (x : A), (f x ≃ g x)) → ((Π (x : A), f x) ≃ (Π (x : A), g x)).
+Proof.
+intros p.
+
+Definition titi A (f g : A → Type) :
+  (Π (x : A), (f x ≃ g x)) → (∀ x, f x) → (∀ x, g x).
+Proof.
+intros p q x.
+apply p, q.
+Defined.
+Show.
+
+exists (titi A f g p).
+apply qinv_isequiv.
+transparent assert (q : ∀ x : A, g x ≃ f x).
+ intros x; apply quasi_inv, p.
+exists (titi A g f q).
+split.
+ unfold "◦", "∼", id.
+ intros r.
+ unfold titi; simpl.
+ apply Π_type.funext; intros x.
+ destruct (p x) as (u, up).
+ destruct (q x) as (v, vp).
+
+bbb.
+Show.
+apply toto in q.
+eapply equiv_compose; [ apply q | ].
+
+
+bbb.
+
 Check (@equiv_compose (∀ y, p y)).
 Check (@equiv_compose (∀ y, p y) (∀ y, {γ : f (g y) = y & ap g γ = η (g y)})).
+bbb.
+
 apply (@equiv_compose (∀ y, p y) (∀ y, {γ : f (g y) = y & ap g γ = η (g y)})).
 Focus 2.
+
+eapply equiv_compose.
+eapply quasi_inv.
 
 bbb.
 
