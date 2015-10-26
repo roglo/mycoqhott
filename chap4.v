@@ -875,3 +875,12 @@ destruct q as (b, q).
 exists (a, b); intros (x, y).
 destruct (p x), (q y); apply eq_refl.
 Defined.
+
+Definition hott_4_3_2 A B (f : A → B) : biinv f → isProp (biinv f).
+Proof.
+intros p; unfold biinv.
+apply qinv_biinv, hott_4_2_9 in p.
+apply isContr_isProp, isContr_prod.
+destruct p as (p, q).
+split; [ apply q | apply p ].
+Defined.
