@@ -863,9 +863,6 @@ split; intros p.
  rewrite <- H; apply q.
 Defined.
 
-(* "Theorem 4.3.2. For any f : A → B, the type biinv(f) is a mere
-    proposition." *)
-
 Definition isContr_prod A B : isContr A * isContr B → isContr (A * B).
 Proof.
 intros (p, q).
@@ -876,6 +873,10 @@ exists (a, b); intros (x, y).
 destruct (p x), (q y); apply eq_refl.
 Defined.
 
+(* "Theorem 4.3.2. For any f : A → B, the type biinv(f) is a mere
+    proposition." *)
+(* well, we must also suppose biinv(f) *)
+
 Definition hott_4_3_2 A B (f : A → B) : biinv f → isProp (biinv f).
 Proof.
 intros p; unfold biinv.
@@ -884,3 +885,14 @@ apply isContr_isProp, isContr_prod.
 destruct p as (p, q).
 split; [ apply q | apply p ].
 Defined.
+
+(* "Corollary 4.3.3. For any f : A → B we have biinv(f) ≃ ishae(f)." *)
+
+Definition hott_4_3_3 A B (f : A → B) : biinv f → biinv f ≃ ishae f.
+Proof.
+intros p.
+apply hott_3_3_3.
+ apply hott_4_3_2, p.
+
+SearchAbout (isProp (ishae _)).
+bbb.
