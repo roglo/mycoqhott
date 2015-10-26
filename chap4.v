@@ -818,10 +818,27 @@ transparent assert (ε : f ◦ g ∼ id).
 Defined.
 
 Definition pi_equiv_imp A (f g : A → Type) :
-  (Π (x : A), (f x ≃ g x)) → (∀ x, f x) → (∀ x, g x).
+    (Π (x : A), (f x ≃ g x)) → (∀ x, f x) → (∀ x, g x) :=
+  λ p q x, Σ_pr₁ (p x) (q x).
+
+Definition pi_equiv_imp_equiv A (f g : A → Type) :
+  (Π (x : A), (f x ≃ g x)) → ((∀ x, f x) ≃ (∀ x, g x)).
 Proof.
-intros p q x.
-apply p, q.
+intros p.
+exists (pi_equiv_imp A f g p).
+apply qinv_isequiv.
+transparent assert (q : ∀ x, g x ≃ f x).
+ intros x; apply quasi_inv, p.
+
+ exists (pi_equiv_imp A g f q).
+ split.
+  intros r.
+  apply Π_type.funext; intros x.
+  apply EqStr.quasi_inv_comp_r.
+
+  intros r.
+  apply Π_type.funext; intros x.
+  apply EqStr.quasi_inv_comp_l.
 Defined.
 
 Definition hott_4_2_11_l A B (f : A → B) (g : B → A)
@@ -844,6 +861,9 @@ assert (q : ∀ y, p y ≃ Σ (γ : f (g y) = y), ap g γ = η (g y)).
  rewrite <- ru; apply eq_refl.
 
  unfold lcoh.
+ apply pi_equiv_imp_equiv in q.
+ eapply equiv_compose; [ apply q | ].
+
 bbb.
 
 About equiv_compose.
