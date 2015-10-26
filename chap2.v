@@ -951,14 +951,11 @@ Definition pair_eq_if A (P : A → Type) x x' p p' :
   → Σ (γ : x = x'), γ⁎ p = p'.
 Proof.
 intros q.
-assert
-  (u : ∀ w w' : Σ (x : A), P x,
-   w = w' -> Σ (p : Σ_pr₁ w = Σ_pr₁ w'), p⁎ (Σ_pr₂ w) = Σ_pr₂ w').
- intros w w' r.
- destruct r; simpl.
- exists (eq_refl _); apply eq_refl.
-
- apply u in q; apply q.
+set (w := existT P x p).
+set (w' := existT P x' p').
+change {γ : Σ_pr₁ w = Σ_pr₁ w' & transport P γ (Σ_pr₂ w) = Σ_pr₂ w'}.
+destruct q; simpl.
+exists (eq_refl _); apply eq_refl.
 Defined.
 
 Lemma hott_2_7_2_g {A} : ∀ P (w w' : Σ (x : A), P x),
@@ -969,7 +966,7 @@ destruct w as (w₁, w₂).
 destruct w' as (w'₁, w'₂); simpl.
 simpl in p.
 destruct p as (p, q).
-destruct p, q; reflexivity.
+destruct p, q; apply eq_refl.
 Defined.
 
 Theorem hott_2_7_2 {A} : ∀ (P : A → Type) (w w' : Σ (x : A), P x),
