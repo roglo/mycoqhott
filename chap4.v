@@ -830,13 +830,21 @@ set
    fib_intro g (g y) y (eq_refl (g y)) : Type).
 simpl in p.
 change ((∀ y, p y) ≃ lcoh f g η).
-assert (q : ∀ y, p y ≃ Σ (γ : f (g y) = y), ap g γ • eq_refl (g y) = η (g y)).
+assert (q : ∀ y, p y ≃ Σ (γ : f (g y) = y), ap g γ = η (g y)).
  intros y; unfold p.
  eapply equiv_compose; [ apply hott_4_2_5 | ].
  apply Σ_equiv, Π_type.funext; intros q.
- apply eq_refl.
+ rewrite <- ru; apply eq_refl.
 
  unfold lcoh.
+About equiv_compose.
+Check (@equiv_compose (∀ y, p y)).
+Check (@equiv_compose (∀ y, p y) (∀ y, {γ : f (g y) = y & ap g γ = η (g y)})).
+apply (@equiv_compose (∀ y, p y) (∀ y, {γ : f (g y) = y & ap g γ = η (g y)})).
+Focus 2.
+
+bbb.
+
  transparent assert
    (f : (∀ y : B, p y) → {γ : f ◦ g ∼ id & ∀ y : B, ap g (γ y) = η (g y)}).
   intros r.
