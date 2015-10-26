@@ -873,17 +873,5 @@ unfold isContr in p, q; unfold isContr.
 destruct p as (a, p).
 destruct q as (b, q).
 exists (a, b); intros (x, y).
-bbb.
-
-Definition hott_4_3_2 A B (f : A → B) : biinv f → isProp (biinv f).
-Proof.
-intros p; unfold biinv.
-apply qinv_biinv, hott_4_2_9 in p.
-apply isContr_isProp.
-
-bbb.
-
-set (q := snd (qinv_biinv A B f)).
-
-Definition hott_4_2_9 A B (f : A → B) :
-  qinv f → isContr (rinv f) * isContr (linv f).
+destruct (p x), (q y); apply eq_refl.
+Defined.
