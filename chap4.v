@@ -781,51 +781,17 @@ Definition rcoh {A B} (f : A → B) (g : B → A) (ε : f ◦ g ∼ id) :=
         lcoh_f(g, η) ≃ Π (y : B) (f g y, η (g y)) =_fib_g(gy) (y, refl_gy)
         lcoh_f(g, ε) ≃ Π (x : A) (g f x, ε (f x)) =_fib_f(fx) (x, refl_fx)" *)
 
-Definition hott_4_2_11_l_dir {A B} f (g : B → A) η :
-  lcoh f g η
-  → Π (y : B),
-    fib_intro g (g y) (f (g y)) (η (g y)) =
-    fib_intro g (g y) y (eq_refl (g y)).
-Proof.
-intros p y.
-apply
- (Σ_pr₁
-    (fst (Σ_pr₂ (hott_4_2_5 _ _ _ _ (f (g y)) y (η (g y)) (eq_refl (g y)))))).
-unfold lcoh in p.
-destruct p as (ε, p).
-exists (ε y).
-eapply compose; [ eapply invert, ru | apply p ].
-Defined.
-
-Definition hott_4_2_11_l_rev {A B} (f : A → B) g (η : g ◦ f ∼ id) :
-  (Π (y : B),
-   fib_intro g (g y) (f (g y)) (η (g y)) =
-   fib_intro g (g y) y (eq_refl (g y)))
-  → lcoh f g η.
-Proof.
-intros p; unfold lcoh.
-transparent assert (ε : f ◦ g ∼ id).
- intros y; unfold "◦", id.
- pose proof hott_4_2_5 B A g (g y) (f (g y)) y (η (g y)) (eq_refl (g y)).
- pose proof Σ_pr₁ X (p y).
- destruct H as (h, s); apply h.
-
- simpl in ε.
- pose proof alt_τ A B f g ε η as τ.
- set (ε' := (λ b, (ε (f (g b)))⁻¹ • ap f (η (g b)) • ε b) : f ◦ g ∼ id) in τ.
- simpl in τ; exists ε'; intros y.
- apply hott_4_2_2, τ.
-Defined.
-
+(**)
 Definition pi_equiv_imp A (f g : A → Type) :
     (Π (x : A), (f x ≃ g x)) → (∀ x, f x) → (∀ x, g x) :=
   λ p q x, Σ_pr₁ (p x) (q x).
+(**)
 
 Definition pi_equiv_imp_equiv A (f g : A → Type) :
   (Π (x : A), (f x ≃ g x)) → ((∀ x, f x) ≃ (∀ x, g x)).
 Proof.
 intros p.
-exists (pi_equiv_imp A f g p).
+exists (λ q x, Σ_pr₁ (p x) (q x)).
 apply qinv_isequiv.
 transparent assert (q : ∀ x, g x ≃ f x).
  intros x; apply quasi_inv, p.
@@ -848,6 +814,7 @@ Definition hott_4_2_11_l A B (f : A → B) (g : B → A)
     fib_intro g (g y) (f (g y)) (η (g y)) =
     fib_intro g (g y) y (eq_refl (g y)).
 Proof.
+clear ε.
 eapply quasi_inv.
 set
   (p y := fib_intro g (g y) (f (g y)) (η (g y)) =
@@ -863,158 +830,38 @@ assert (q : ∀ y, p y ≃ Σ (γ : f (g y) = y), ap g γ = η (g y)).
  unfold lcoh.
  apply pi_equiv_imp_equiv in q.
  eapply equiv_compose; [ apply q | ].
-
-bbb.
-
-About equiv_compose.
-
-transparent assert
-   (r : (∀ y, p y) → (∀ y, Σ (γ : f (g y) = y), ap g γ = η (g y))).
- apply titi, q.
-
- eapply equiv_compose.
-  exists r.
-  apply qinv_isequiv.
-  transparent assert (g :
-    (∀ y : B, {γ : f (g y) = y & ap g γ = η (g y)})
-    → (∀ y : B, p y)).
-   apply titi; intros y.
-   apply quasi_inv, q.
-
-   exists g.
-   split.
-    unfold r, g.
-    unfold "◦", "∼", id.
-    intros s.
-    unfold titi.
-    apply Π_type.funext.
-    intros y.
-    destruct (q y); simpl.
-    destruct i; simpl.
-destruct s0; simpl.
-destruct s1;simpl.
-apply h.
-unfold r, g.
-    unfold "◦", "∼", id.
-    intros s.
-    unfold titi.
-    apply Π_type.funext.
-    intros y.
-    destruct (q y); simpl.
-    destruct i; simpl.
-destruct s0; simpl.
-destruct s1;simpl.
- pose proof EqStr.quasi_inv_l_eq_r x x0 x1 h h0.
-eapply compose; [ apply H | apply h0 ].
-
-transparent assert (ff :
-   (∀ y : B, {γ : f (g y) = y & ap g γ = η (g y)})
-   → {ε0 : f ◦ g ∼ id & ∀ y : B, ap g (ε0 y) = η (g y)}).
-intros s.
-exists ε.
-intros y.
-pose proof s y.
-destruct H as (γ, H).
-bbb.
-  H : ap g γ = η (g y)
-  ============================
-   ap g (ε y) = η (g y)
-
-subgoal 2 (ID 956) is:
- (∀ y : B, {γ : f (g y) = y & ap g γ = η (g y)})
- ≃ {ε0 : f ◦ g ∼ id & ∀ y : B, ap g (ε0 y) = η (g y)}
-
-  ============================
-   (∀ y : B, {γ : f (g y) = y & ap g γ = η (g y)})
-   ≃ {ε0 : f ◦ g ∼ id & ∀ y : B, ap g (ε0 y) = η (g y)}
-
-
-bbb.
-Definition toto A (f g : A → Type) :
-  (Π (x : A), (f x ≃ g x)) → ((Π (x : A), f x) ≃ (Π (x : A), g x)).
-Proof.
-intros p.
-exists (titi A f g p).
-apply qinv_isequiv.
-transparent assert (q : ∀ x : A, g x ≃ f x).
- intros x; apply quasi_inv, p.
-exists (titi A g f q).
-split.
- unfold "◦", "∼", id.
- intros r.
- unfold titi; simpl.
- apply Π_type.funext; intros x.
- destruct (p x) as (fu, ((gu, Hgu), (hu, Hhu))).
- destruct (q x) as (fv, ((gv, Hgv), (hv, Hhv))).
- pose proof EqStr.quasi_inv_l_eq_r fu gu hu Hgu Hhu as ghu.
- pose proof EqStr.quasi_inv_l_eq_r fv gv hv Hgv Hhv as ghv.
-
-bbb.
-
-Abort.
-Show.
-
-bbb.
-Show.
-apply toto in q.
-eapply equiv_compose; [ apply q | ].
-
-
-bbb.
-
-Check (@equiv_compose (∀ y, p y)).
-Check (@equiv_compose (∀ y, p y) (∀ y, {γ : f (g y) = y & ap g γ = η (g y)})).
-bbb.
-
-apply (@equiv_compose (∀ y, p y) (∀ y, {γ : f (g y) = y & ap g γ = η (g y)})).
-Focus 2.
-
-eapply equiv_compose.
-eapply quasi_inv.
-
-bbb.
-
- transparent assert
-   (f : (∀ y : B, p y) → {γ : f ◦ g ∼ id & ∀ y : B, ap g (γ y) = η (g y)}).
+ transparent assert (ff :
+   (∀ x : B, {γ : f (g x) = x & ap g γ = η (g x)})
+   → {ε : f ◦ g ∼ id & ∀ y : B, ap g (ε y) = η (g y)}).
   intros r.
-  exists ε; intros y.
-  pose proof (Σ_type.pr₁ (q y) (r y)) as t.
-  destruct t as (γ, t); rewrite <- t; apply invert.
-About compose_insert.
-Check @compose_insert (f (g y) = y) (ε y).
+  exists (λ y, Σ_pr₁ (r y)).
+  intros y.
+  destruct (r y) as (ε, t); apply t.
 
-  Focus 2.
-  simpl in f.
-  exists f.
+  exists ff; unfold ff; clear ff; simpl.
+  apply qinv_isequiv.
+  transparent assert (gg :
+    {ε : f ◦ g ∼ id & ∀ y : B, ap g (ε y) = η (g y)}
+    → (∀ x : B, {γ : f (g x) = x & ap g γ = η (g x)})).
+   intros r y.
+   destruct r as (ε, r).
+   exists (ε y); apply r.
+
+   exists gg; unfold gg; clear gg; simpl.
+   split.
+    unfold "◦", "∼", id; simpl.
+    intros (ε, r); simpl.
+    apply eq_refl.
+
+    unfold "◦", "∼", id; simpl.
+    intros r.
+    apply Π_type.funext; intros y.
+    destruct (r y).
+    apply eq_refl.
+Defined.
+
+Inspect 1.
 bbb.
- pose proof (λ y, hott_4_2_5 B A g (g y) (f (g y)) y (η (g y)) (eq_refl (g y))).
- eapply (hott_4_2_5 B A g (g y) (f (g y)) y).
-
-bbb.
-
-eapply equiv_compose.
-2:eapply quasi_inv.
-
-assert (εε : ∀ y, f (g (f (g y))) = y).
- intros y; eapply compose; apply ε.
-
- Check (λ y, hott_4_2_5 B A g (g y) (f (g y)) y (η (g y)) (eq_refl (g y))).
- Check (λ y, hott_4_2_5 A B f y (g (f (g y))) (g y) (εε y) (ε y)).
-bbb.
-
-exists (hott_4_2_11_l_dir f g η).
-apply qinv_isequiv.
-exists (hott_4_2_11_l_rev f g η).
-split.
- unfold "◦", "∼", id; simpl.
- intros p; apply Π_type.funext; intros y.
-unfold hott_4_2_11_l_dir, hott_4_2_11_l_rev.
-simpl.
-unfold hott_4_2_5; simpl.
-unfold "◦"; simpl.
-unfold Σ_type.hott_2_7_2_f; simpl.
-(* blocked; I am tired; I give up for the moment *)
-Abort.
 
 (* other lemmas of this section to do *)
 
