@@ -817,6 +817,13 @@ transparent assert (ε : f ◦ g ∼ id).
  apply hott_4_2_2, τ.
 Defined.
 
+Definition pi_equiv_imp A (f g : A → Type) :
+  (Π (x : A), (f x ≃ g x)) → (∀ x, f x) → (∀ x, g x).
+Proof.
+intros p q x.
+apply p, q.
+Defined.
+
 Definition hott_4_2_11_l A B (f : A → B) (g : B → A)
     (ε : f ◦ g ∼ id) (η : g ◦ f ∼ id) :
   lcoh f g η ≃
@@ -837,15 +844,72 @@ assert (q : ∀ y, p y ≃ Σ (γ : f (g y) = y), ap g γ = η (g y)).
  rewrite <- ru; apply eq_refl.
 
  unfold lcoh.
+bbb.
+
 About equiv_compose.
 
-Definition titi A (f g : A → Type) :
-  (Π (x : A), (f x ≃ g x)) → (∀ x, f x) → (∀ x, g x).
-Proof.
-intros p q x.
-apply p, q.
-Defined.
+transparent assert
+   (r : (∀ y, p y) → (∀ y, Σ (γ : f (g y) = y), ap g γ = η (g y))).
+ apply titi, q.
 
+ eapply equiv_compose.
+  exists r.
+  apply qinv_isequiv.
+  transparent assert (g :
+    (∀ y : B, {γ : f (g y) = y & ap g γ = η (g y)})
+    → (∀ y : B, p y)).
+   apply titi; intros y.
+   apply quasi_inv, q.
+
+   exists g.
+   split.
+    unfold r, g.
+    unfold "◦", "∼", id.
+    intros s.
+    unfold titi.
+    apply Π_type.funext.
+    intros y.
+    destruct (q y); simpl.
+    destruct i; simpl.
+destruct s0; simpl.
+destruct s1;simpl.
+apply h.
+unfold r, g.
+    unfold "◦", "∼", id.
+    intros s.
+    unfold titi.
+    apply Π_type.funext.
+    intros y.
+    destruct (q y); simpl.
+    destruct i; simpl.
+destruct s0; simpl.
+destruct s1;simpl.
+ pose proof EqStr.quasi_inv_l_eq_r x x0 x1 h h0.
+eapply compose; [ apply H | apply h0 ].
+
+transparent assert (ff :
+   (∀ y : B, {γ : f (g y) = y & ap g γ = η (g y)})
+   → {ε0 : f ◦ g ∼ id & ∀ y : B, ap g (ε0 y) = η (g y)}).
+intros s.
+exists ε.
+intros y.
+pose proof s y.
+destruct H as (γ, H).
+bbb.
+  H : ap g γ = η (g y)
+  ============================
+   ap g (ε y) = η (g y)
+
+subgoal 2 (ID 956) is:
+ (∀ y : B, {γ : f (g y) = y & ap g γ = η (g y)})
+ ≃ {ε0 : f ◦ g ∼ id & ∀ y : B, ap g (ε0 y) = η (g y)}
+
+  ============================
+   (∀ y : B, {γ : f (g y) = y & ap g γ = η (g y)})
+   ≃ {ε0 : f ◦ g ∼ id & ∀ y : B, ap g (ε0 y) = η (g y)}
+
+
+bbb.
 Definition toto A (f g : A → Type) :
   (Π (x : A), (f x ≃ g x)) → ((Π (x : A), f x) ≃ (Π (x : A), g x)).
 Proof.
@@ -862,6 +926,9 @@ split.
  apply Π_type.funext; intros x.
  destruct (p x) as (fu, ((gu, Hgu), (hu, Hhu))).
  destruct (q x) as (fv, ((gv, Hgv), (hv, Hhv))).
+ pose proof EqStr.quasi_inv_l_eq_r fu gu hu Hgu Hhu as ghu.
+ pose proof EqStr.quasi_inv_l_eq_r fv gv hv Hgv Hhv as ghv.
+
 bbb.
 
 Abort.
