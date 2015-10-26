@@ -781,30 +781,21 @@ Definition rcoh {A B} (f : A → B) (g : B → A) (ε : f ◦ g ∼ id) :=
         lcoh_f(g, η) ≃ Π (y : B) (f g y, η (g y)) =_fib_g(gy) (y, refl_gy)
         lcoh_f(g, ε) ≃ Π (x : A) (g f x, ε (f x)) =_fib_f(fx) (x, refl_fx)" *)
 
-(**)
-Definition pi_equiv_imp A (f g : A → Type) :
-    (Π (x : A), (f x ≃ g x)) → (∀ x, f x) → (∀ x, g x) :=
-  λ p q x, Σ_pr₁ (p x) (q x).
-(**)
-
 Definition pi_equiv_imp_equiv A (f g : A → Type) :
   (Π (x : A), (f x ≃ g x)) → ((∀ x, f x) ≃ (∀ x, g x)).
 Proof.
 intros p.
 exists (λ q x, Σ_pr₁ (p x) (q x)).
 apply qinv_isequiv.
-transparent assert (q : ∀ x, g x ≃ f x).
- intros x; apply quasi_inv, p.
+exists (λ q x, Σ_pr₁ (p x)⁻⁻¹ (q x)).
+split.
+ intros r.
+ apply Π_type.funext; intros x.
+ apply EqStr.quasi_inv_comp_r.
 
- exists (pi_equiv_imp A g f q).
- split.
-  intros r.
-  apply Π_type.funext; intros x.
-  apply EqStr.quasi_inv_comp_r.
-
-  intros r.
-  apply Π_type.funext; intros x.
-  apply EqStr.quasi_inv_comp_l.
+ intros r.
+ apply Π_type.funext; intros x.
+ apply EqStr.quasi_inv_comp_l.
 Defined.
 
 Definition hott_4_2_11_l A B (f : A → B) (g : B → A)
@@ -860,7 +851,6 @@ assert (q : ∀ y, p y ≃ Σ (γ : f (g y) = y), ap g γ = η (g y)).
     apply eq_refl.
 Defined.
 
-Inspect 1.
 bbb.
 
 (* other lemmas of this section to do *)
