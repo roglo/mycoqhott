@@ -1014,3 +1014,11 @@ apply hott_3_3_3.
 
  intros q; apply qinv_biinv, ishae_qinv, q.
 Defined.
+
+(* "4.4 Contractible fibers" *)
+
+(* "Definition 4.4.1 (Contractible maps). A map f : A → B is
+    contractible if for all y : B, the fiber fib_f(y) is
+    contractible." *)
+
+Definition isContrMap {A B} (f : A → B) := Π (y : B), isContr (fib f y).
