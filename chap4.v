@@ -906,6 +906,12 @@ apply hott_3_11_10.
 apply isContr_isProp, hott_4_2_6, p.
 Defined.
 
+(* "Theorem 4.2.13. For any f : A → B, the type ishae(f) is a mere
+    proposition." *)
+
+Definition hott_4_2_13 A B (f : A → B) : isProp (ishae f).
+Proof.
+
 bbb.
 
 (* other lemmas of this section to do *)
