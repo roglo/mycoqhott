@@ -909,6 +909,24 @@ Defined.
 (* "Theorem 4.2.13. For any f : A → B, the type ishae(f) is a mere
     proposition." *)
 
+Definition sigma_comm A B (P : A → B → Type) :
+  (Σ (x : A), Σ (y : B), P x y) ≃
+  (Σ (y : B), Σ (x : A), P x y).
+Proof.
+exists
+  (λ (X : Σ (x : A), Σ (y : B), P x y),
+   match X with
+   | existT _ x (existT _ y p) => existT _ y (existT _ x p)
+   end : Σ (y : B), Σ (x : A), P x y).
+apply qinv_isequiv.
+exists
+  (λ (X : Σ (y : B), Σ (x : A), P x y),
+   match X with
+   | existT _ y (existT _ x p) => existT _ x (existT _ y p)
+   end : Σ (x : A), Σ (y : B), P x y).
+split; intros (y, (x, p)); apply eq_refl.
+Defined.
+
 Definition hott_4_2_13 A B (f : A → B) : isProp (ishae f).
 Proof.
 apply (pr₁ (Σ_pr₂ (@ex_3_5 (ishae f)))); intros p.
@@ -916,6 +934,7 @@ assert (ishae f ≃ Σ (u : rinv f), rcoh f (Σ_pr₁ u) (Σ_pr₂ u)).
  eapply equiv_compose; [ | apply ex_2_10 ]; simpl.
  apply Σ_equiv, Π_type.funext; intros g.
  unfold rcoh.
+ apply ua, sigma_comm.
 
 bbb.
 
