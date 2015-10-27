@@ -956,8 +956,6 @@ assert (q : ishae f ≃ Σ (u : rinv f), rcoh f (Σ_pr₁ u) (Σ_pr₂ u)).
  apply hott_4_2_12, p.
 Defined.
 
-bbb.
-
 (* "4.3 Bi-invertible maps" *)
 
 (* "Definition 4.3.1. We say f : A → B is bi-invertible if it has both
@@ -1012,5 +1010,5 @@ intros p.
 apply hott_3_3_3.
  apply hott_4_3_2, p.
 
-SearchAbout (isProp (ishae _)).
+ apply hott_4_2_13.
 bbb.
