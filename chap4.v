@@ -991,8 +991,12 @@ Defined.
 
 (* "Theorem 4.3.2. For any f : A → B, the type biinv(f) is a mere
     proposition." *)
-(* well, we must also suppose biinv(f) *)
 
+Definition hott_4_3_2 A B (f : A → B) : isProp (biinv f).
+Proof.
+bbb.
+
+(* well, we must also suppose biinv(f) *)
 Definition hott_4_3_2 A B (f : A → B) : biinv f → isProp (biinv f).
 Proof.
 intros p; unfold biinv.
@@ -1004,6 +1008,12 @@ Defined.
 
 (* "Corollary 4.3.3. For any f : A → B we have biinv(f) ≃ ishae(f)." *)
 
+Definition hott_4_3_3 A B (f : A → B) : biinv f ≃ ishae f.
+Proof.
+apply hott_3_3_3.
+SearchAbout (isProp (biinv _)).
+bbb.
+
 Definition hott_4_3_3 A B (f : A → B) : biinv f → biinv f ≃ ishae f.
 Proof.
 intros p.
@@ -1011,4 +1021,9 @@ apply hott_3_3_3.
  apply hott_4_3_2, p.
 
  apply hott_4_2_13.
-bbb.
+
+ intros q.
+ apply hott_4_2_3, qinv_biinv, q.
+
+ intros q; apply p.
+Defined.
