@@ -913,7 +913,9 @@ Definition hott_4_2_13 A B (f : A → B) : isProp (ishae f).
 Proof.
 apply (pr₁ (Σ_pr₂ (@ex_3_5 (ishae f)))); intros p.
 assert (ishae f ≃ Σ (u : rinv f), rcoh f (Σ_pr₁ u) (Σ_pr₂ u)).
-Check @ex_2_10.
+ eapply equiv_compose; [ | apply ex_2_10 ]; simpl.
+ apply Σ_equiv, Π_type.funext; intros g.
+ unfold rcoh.
 
 bbb.
 
