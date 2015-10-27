@@ -927,26 +927,36 @@ exists
 split; intros (y, (x, p)); apply eq_refl.
 Defined.
 
+Definition isContr_sigma A P :
+  isContr A → (∀ x, isContr (P x)) → isContr (Σ (x : A), P x).
+Proof.
+intros p q.
+unfold isContr.
+destruct p as (a, p).
+exists (existT _ a (Σ_pr₁ (q a))); intros (x, r).
+apply (Σ_type.pair_eq (p x)).
+destruct (p x); simpl.
+destruct (q a) as (s, t); apply t.
+Defined.
+
 Definition hott_4_2_13 A B (f : A → B) : isProp (ishae f).
 Proof.
 apply (pr₁ (Σ_pr₂ (@ex_3_5 (ishae f)))); intros p.
-assert (ishae f ≃ Σ (u : rinv f), rcoh f (Σ_pr₁ u) (Σ_pr₂ u)).
- eapply equiv_compose; [ | apply ex_2_10 ]; simpl.
+assert (q : ishae f ≃ Σ (u : rinv f), rcoh f (Σ_pr₁ u) (Σ_pr₂ u)).
+ eapply equiv_compose; [  | apply ex_2_10 ]; simpl.
  apply Σ_equiv, Π_type.funext; intros g.
- unfold rcoh.
- apply ua, sigma_comm.
+ unfold rcoh; apply ua, sigma_comm.
+
+ pose proof (hott_4_2_9 A B f (ishae_qinv A B f p)) as r.
+ destruct r as (r, s).
+ eapply equiv_contr; [ eapply quasi_inv, q |  ].
+ apply isContr_sigma; [ apply r | intros t ].
+ unfold isContr in r.
+ destruct r as (a, r).
+ apply hott_4_2_12, p.
+Defined.
 
 bbb.
-
-exists p; intros q.
-pose proof (hott_4_2_12 A B f p (Σ_pr₁ p) (Σ_pr₁ (Σ_pr₂ (Σ_pr₂ p)))) as r.
-unfold isContr in r.
-destruct r as (r, s).
-destruct q as (g, (η, (ε, q))).
-
-bbb.
-
-(* other lemmas of this section to do *)
 
 (* "4.3 Bi-invertible maps" *)
 
