@@ -1022,3 +1022,30 @@ Defined.
     contractible." *)
 
 Definition isContrMap {A B} (f : A → B) := Π (y : B), isContr (fib f y).
+
+Definition isContrMap_isContr {A} (f : A → True) : isContrMap f → isContr A.
+Proof.
+intros p.
+unfold isContrMap in p.
+pose proof p I as q.
+simpl in q.
+unfold isContr in q; unfold isContr.
+destruct q as (y, q).
+unfold fib in y.
+exists (Σ_pr₁ y).
+intros x.
+assert (r : f x = I) by (destruct (f x); apply eq_refl).
+pose proof q (existT _ x r) as s.
+subst y; simpl.
+apply eq_refl.
+Defined.
+
+(* "Theorem 4.4.3. For any f : A → B we have isContr(f) → ishae(f)." *)
+
+Definition hott_4_4_3 A B (f : A → B) : isContrMap f → ishae f.
+Proof.
+intros p.
+unfold isContrMap in p.
+Check @hott_4_2_6.
+(* hott_4_2_6
+     : ∀ (A B : Type) (f : A → B), ishae f → ∀ y : B, isContr (fib f y) *)
