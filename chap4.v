@@ -911,6 +911,17 @@ Defined.
 
 Definition hott_4_2_13 A B (f : A → B) : isProp (ishae f).
 Proof.
+apply (pr₁ (Σ_pr₂ (@ex_3_5 (ishae f)))); intros p.
+assert (ishae f ≃ Σ (u : rinv f), rcoh f (Σ_pr₁ u) (Σ_pr₂ u)).
+Check @ex_2_10.
+
+bbb.
+
+exists p; intros q.
+pose proof (hott_4_2_12 A B f p (Σ_pr₁ p) (Σ_pr₁ (Σ_pr₂ (Σ_pr₂ p)))) as r.
+unfold isContr in r.
+destruct r as (r, s).
+destruct q as (g, (η, (ε, q))).
 
 bbb.
 
