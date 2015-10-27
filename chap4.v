@@ -900,6 +900,12 @@ Definition hott_4_2_12 A B (f : A → B) : ishae f
   → ∀ g ε, isContr (rcoh f g ε).
 Proof.
 intros p g ε.
+eapply equiv_contr; [ eapply quasi_inv, hott_4_2_11_r | ].
+apply hott_3_11_6; intros a.
+apply hott_3_11_10.
+apply isContr_isProp, hott_4_2_6, p.
+Defined.
+
 bbb.
 
 (* other lemmas of this section to do *)
