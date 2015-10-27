@@ -994,14 +994,9 @@ Defined.
 
 Definition hott_4_3_2 A B (f : A → B) : isProp (biinv f).
 Proof.
-bbb.
-
-(* well, we must also suppose biinv(f) *)
-Definition hott_4_3_2 A B (f : A → B) : biinv f → isProp (biinv f).
-Proof.
-intros p; unfold biinv.
+eapply (Σ_pr₁ (pr₁ (Σ_pr₂ ex_3_5))); intros p.
 apply qinv_biinv, hott_4_2_9 in p.
-apply isContr_isProp, isContr_prod.
+apply isContr_prod.
 destruct p as (p, q).
 split; [ apply q | apply p ].
 Defined.
@@ -1011,19 +1006,11 @@ Defined.
 Definition hott_4_3_3 A B (f : A → B) : biinv f ≃ ishae f.
 Proof.
 apply hott_3_3_3.
-SearchAbout (isProp (biinv _)).
-bbb.
-
-Definition hott_4_3_3 A B (f : A → B) : biinv f → biinv f ≃ ishae f.
-Proof.
-intros p.
-apply hott_3_3_3.
- apply hott_4_3_2, p.
+ apply hott_4_3_2.
 
  apply hott_4_2_13.
 
- intros q.
- apply hott_4_2_3, qinv_biinv, q.
+ intros q; apply hott_4_2_3, qinv_biinv, q.
 
- intros q; apply p.
+ intros q; apply qinv_biinv, ishae_qinv, q.
 Defined.
