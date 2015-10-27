@@ -798,14 +798,12 @@ split.
  apply EqStr.quasi_inv_comp_l.
 Defined.
 
-Definition hott_4_2_11_l A B (f : A → B) (g : B → A)
-    (ε : f ◦ g ∼ id) (η : g ◦ f ∼ id) :
+Definition hott_4_2_11_l A B (f : A → B) (g : B → A) (η : g ◦ f ∼ id) :
   lcoh f g η ≃
   Π (y : B),
     fib_intro g (g y) (f (g y)) (η (g y)) =
     fib_intro g (g y) y (eq_refl (g y)).
 Proof.
-clear ε.
 eapply quasi_inv.
 set
   (p y := fib_intro g (g y) (f (g y)) (η (g y)) =
@@ -822,18 +820,17 @@ assert (q : ∀ y, p y ≃ Σ (γ : f (g y) = y), ap g γ = η (g y)).
  apply pi_equiv_imp_equiv in q.
  eapply equiv_compose; [ apply q | ].
  transparent assert (ff :
-   (∀ x : B, {γ : f (g x) = x & ap g γ = η (g x)})
-   → {ε : f ◦ g ∼ id & ∀ y : B, ap g (ε y) = η (g y)}).
+   (Π (y : B), Σ (γ : f (g y) = y), ap g γ = η (g y))
+   → Σ (ε : f ◦ g ∼ id), Π (y : B), ap g (ε y) = η (g y)).
   intros r.
-  exists (λ y, Σ_pr₁ (r y)).
-  intros y.
+  exists (λ y, Σ_pr₁ (r y)); intros y.
   destruct (r y) as (ε, t); apply t.
 
   exists ff; unfold ff; clear ff; simpl.
   apply qinv_isequiv.
   transparent assert (gg :
-    {ε : f ◦ g ∼ id & ∀ y : B, ap g (ε y) = η (g y)}
-    → (∀ x : B, {γ : f (g x) = x & ap g γ = η (g x)})).
+    (Σ (ε : f ◦ g ∼ id), Π (y : B), ap g (ε y) = η (g y))
+    → Π (y : B), Σ (γ : f (g y) = y), ap g γ = η (g y)).
    intros r y.
    destruct r as (ε, r).
    exists (ε y); apply r.
@@ -841,14 +838,59 @@ assert (q : ∀ y, p y ≃ Σ (γ : f (g y) = y), ap g γ = η (g y)).
    exists gg; unfold gg; clear gg; simpl.
    split.
     unfold "◦", "∼", id; simpl.
-    intros (ε, r); simpl.
-    apply eq_refl.
+    intros (ε, r); apply eq_refl.
 
     unfold "◦", "∼", id; simpl.
     intros r.
     apply Π_type.funext; intros y.
-    destruct (r y).
-    apply eq_refl.
+    destruct (r y); apply eq_refl.
+Defined.
+
+Definition hott_4_2_11_r A B (f : A → B) (g : B → A) (ε : f ◦ g ∼ id) :
+  rcoh f g ε ≃
+  Π (x : A),
+    fib_intro f (f x) (g (f x)) (ε (f x)) =
+    fib_intro f (f x) x (eq_refl (f x)).
+Proof.
+eapply quasi_inv.
+set
+  (p x := fib_intro f (f x) (g (f x)) (ε (f x)) =
+   fib_intro f (f x) x (eq_refl (f x)) : Type).
+simpl in p.
+change ((∀ y, p y) ≃ rcoh f g ε).
+assert (q : ∀ x, p x ≃ Σ (γ : g (f x) = x), ap f γ = ε (f x)).
+ intros x; unfold p.
+ eapply equiv_compose; [ apply hott_4_2_5 | ].
+ apply Σ_equiv, Π_type.funext; intros q.
+ rewrite <- ru; apply eq_refl.
+
+ unfold rcoh.
+ apply pi_equiv_imp_equiv in q.
+ eapply equiv_compose; [ apply q | ].
+ transparent assert (ff :
+   (Π (x : A), Σ (γ : g (f x) = x), ap f γ = ε (f x))
+   → Σ (η : g ◦ f ∼ id), Π (x : A), ap f (η x) = ε (f x)).
+  intros r.
+  exists (λ x, Σ_pr₁ (r x)); intros x.
+  destruct (r x) as (η, t); apply t.
+
+  exists ff; unfold ff; clear ff; simpl.
+  apply qinv_isequiv.
+  transparent assert (gg :
+    (Σ (η : g ◦ f ∼ id), Π (x : A), ap f (η x) = ε (f x))
+    → Π (x : A), Σ (γ : g (f x) = x), ap f γ = ε (f x)).
+   intros r x.
+   destruct r as (η, r).
+   exists (η x); apply r.
+
+   exists gg; unfold gg; clear gg; simpl.
+   split.
+    unfold "◦", "∼", id; simpl.
+    intros (η, r); apply eq_refl.
+
+    unfold "◦", "∼", id; simpl; intros r.
+    apply Π_type.funext; intros x.
+    destruct (r x); apply eq_refl.
 Defined.
 
 bbb.
