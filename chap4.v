@@ -1045,7 +1045,17 @@ Defined.
 Definition hott_4_4_3 A B (f : A → B) : isContrMap f → ishae f.
 Proof.
 intros p.
-unfold isContrMap in p.
+set (g y := Σ_pr₁ (Σ_pr₁ (p y))).
+exists g.
+transparent assert (η : g ◦ f ∼ id).
+ unfold "◦", "∼", id, g; simpl.
+ intros x.
+ destruct (p (f x)) as (q, r); simpl.
+ destruct q as (x', q); simpl.
+bbb.
+
 Check @hott_4_2_6.
 (* hott_4_2_6
      : ∀ (A B : Type) (f : A → B), ishae f → ∀ y : B, isContr (fib f y) *)
+SearchAbout ishae.
+unfold isContr in p.
