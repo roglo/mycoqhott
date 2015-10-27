@@ -893,6 +893,13 @@ assert (q : ∀ x, p x ≃ Σ (γ : g (f x) = x), ap f γ = ε (f x)).
     destruct (r x); apply eq_refl.
 Defined.
 
+(* "Lemma 4.2.12. If f is a half adjoint equivalence, then for any
+    (g, ε) : rinv(f), the type rcoh_f(g, ε) is contractible." *)
+
+Definition hott_4_2_12 A B (f : A → B) : ishae f
+  → ∀ g ε, isContr (rcoh f g ε).
+Proof.
+intros p g ε.
 bbb.
 
 (* other lemmas of this section to do *)
