@@ -1053,18 +1053,13 @@ Proof.
 intros P.
 set (g y := Σ_pr₁ (Σ_pr₁ (P y))).
 set (ε := (λ y, Σ_pr₂ (Σ_pr₁ (P y))) : f ◦ g ∼ id); simpl in ε.
-transparent assert (p : rcoh f g ε).
+assert (p : rcoh f g ε).
  eapply equiv_imp; [ eapply quasi_inv, hott_4_2_11_r | ].
- intros x; unfold g, ε.
-bbb.
+ intros x.
+ set (fib₁ := fib_intro f (f x) (g (f x)) (ε (f x))).
+ set (fib₂ := fib_intro f (f x) x (eq_refl (f x))).
+ apply ((Σ_pr₂ (P (f x)) fib₁)⁻¹ • Σ_pr₂ (P (f x)) fib₂).
 
- unfold isContrMap in P.
-SearchAbout fib_intro.
- apply hott_4_2_5_rev.
-
-bbb.
-Check @hott_4_2_6.
-(* hott_4_2_6
-     : ∀ (A B : Type) (f : A → B), ishae f → ∀ y : B, isContr (fib f y) *)
-SearchAbout ishae.
-unfold isContr in p.
+ destruct p as (η, p).
+ exists g, η, ε; intros x; apply p.
+Defined.
