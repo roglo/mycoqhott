@@ -1076,16 +1076,8 @@ Defined.
 
 Definition ishae_isContrMap {A B} (f : A → B) : ishae f → isContrMap f.
 Proof.
-intros p.
-unfold ishae in p.
-unfold isContrMap, isContr.
-intros y.
-destruct p as (g, (η, (ε, p))).
-exists (fib_intro f y (g y) (ε y)).
-intros x; destruct x as (x, q); simpl.
-subst y; unfold fib_intro.
-apply (Σ_pr₁ (hott_4_2_11_r A B f g ε)).
-unfold rcoh; exists η; intros x'; apply p.
+intros p y.
+apply hott_4_2_6, p.
 Defined.
 
 Definition hott_4_4_5 {A B} (f : A → B) : isContrMap f ≃ ishae f.
@@ -1097,6 +1089,6 @@ apply hott_3_3_3.
 
  apply hott_4_4_3.
 
- apply ishae_isContrMap.
+ intros p y; apply hott_4_2_6, p.
 Defined.
 
