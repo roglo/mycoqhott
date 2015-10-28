@@ -1084,9 +1084,28 @@ destruct p as (g, (η, (ε, p))).
 exists (fib_intro f y (g y) (ε y)).
 intros x.
 destruct x as (x, q); simpl.
-subst y.
+subst y; unfold fib_intro.
+About Σ_type.pair_eq.
+Check (p x).
+Check (Σ_type.pair_eq (p x)).
+bbb.
+
+p x
+     : ap f (η x) = ε (f x)
+
+
+
 set (fib₁ := fib_intro f (f x) (g (f x)) (ε (f x))).
 set (fib₂ := existT _ x (eq_refl (f x))).
+
+isContr = λ A : Type, {a : A & ∀ x : A, a = x}
+     : Type → Type
+isContrMap = 
+λ (A B : Type) (f : A → B), ∀ y : B, isContr (fib f y)
+     : ∀ A B : Type, (A → B) → Type
+
+Arguments A, B are implicit and maximally inserted
+Argument scopes are [type_scope type_scope _]
 bbb.
 
 apply ((Σ_pr₂ (p (f x)) fib₁)⁻¹ • Σ_pr₂ (p (f x)) fib₂).
