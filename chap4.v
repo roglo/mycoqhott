@@ -1044,9 +1044,13 @@ Defined.
 
 Definition hott_4_4_3 A B (f : A → B) : isContrMap f → ishae f.
 Proof.
-intros p.
-set (g y := Σ_pr₁ (Σ_pr₁ (p y))).
+intros P.
+set (g y := Σ_pr₁ (Σ_pr₁ (P y))).
+set (ε := (λ y, Σ_pr₂ (Σ_pr₁ (P y))) : f ◦ g ∼ id); simpl in ε.
+bbb.
+
 exists g.
+
 transparent assert (η : g ◦ f ∼ id).
  unfold "◦", "∼", id, g; simpl.
  intros x.
