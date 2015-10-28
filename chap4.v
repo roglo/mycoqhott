@@ -1048,7 +1048,7 @@ intros p q.
 apply (Σ_pr₁ p), q.
 Defined.
 
-Definition hott_4_4_3 A B (f : A → B) : isContrMap f → ishae f.
+Definition hott_4_4_3 {A B} (f : A → B) : isContrMap f → ishae f.
 Proof.
 intros P.
 set (g y := Σ_pr₁ (Σ_pr₁ (P y))).
@@ -1071,3 +1071,45 @@ Proof.
 pose proof (λ y, hott_3_11_4 (fib f y)) as p.
 apply ex_3_6_2 in p; apply p.
 Defined.
+
+(* "Theorem 4.4.5. For any f : A → B we have isContr(f) ≃ ishae(f)." *)
+
+Definition ishae_isContrMap {A B} (f : A → B) : ishae f → isContrMap f.
+Proof.
+intros p.
+unfold ishae in p.
+unfold isContrMap, isContr.
+intros y.
+destruct p as (g, (η, (ε, p))).
+exists (fib_intro f y (g y) (ε y)).
+intros x.
+destruct x as (x, q); simpl.
+subst y.
+set (fib₁ := fib_intro f (f x) (g (f x)) (ε (f x))).
+set (fib₂ := existT _ x (eq_refl (f x))).
+bbb.
+
+apply ((Σ_pr₂ (p (f x)) fib₁)⁻¹ • Σ_pr₂ (p (f x)) fib₂).
+bbb.
+
+  P : isContrMap f
+  g := λ y : B, Σ_pr₁ (Σ_pr₁ (P y)) : B → A
+  ε := λ y : B, Σ_pr₂ (Σ_pr₁ (P y)) : f ◦ g ∼ id
+  x : A
+  fib₁ := fib_intro f (f x) (g (f x)) (ε (f x)) : fib f (f x)
+  fib₂ := fib_intro f (f x) x (eq_refl (f x)) : fib f (f x)
+  ============================
+   fib₁ = fib₂
+bbb.
+
+Definition hott_4_4_5 {A B} (f : A → B) : isContrMap f ≃ ishae f.
+Proof.
+apply hott_3_3_3.
+ apply hott_4_4_4.
+
+ apply hott_4_2_13.
+
+ apply hott_4_4_3.
+
+ apply ishae_isContrMap.
+bbb.
