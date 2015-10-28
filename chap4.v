@@ -1092,3 +1092,12 @@ apply hott_3_3_3.
  intros p y; apply hott_4_2_6, p.
 Defined.
 
+(* "Corollary 4.4.6. If f : A → B is such that B → isequiv(f), then f
+    is an equivalence." *)
+
+Definition hott_4_4_6 A B (f : A → B) : (B → isequiv f) → isequiv f.
+Proof.
+intros p.
+apply qinv_isequiv, ishae_qinv, hott_4_4_5; intros y.
+apply hott_4_2_6, hott_4_2_3, isequiv_qinv, p, y.
+Defined.
