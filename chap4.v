@@ -1063,3 +1063,11 @@ assert (p : rcoh f g ε).
  destruct p as (η, p).
  exists g, η, ε; intros x; apply p.
 Defined.
+
+(* "Lemma 4.4.4. For any f, the type isContr(f) is a mere proposition." *)
+
+Definition hott_4_4_4 {A B} (f : A → B) : isProp (isContrMap f).
+Proof.
+pose proof (λ y, hott_3_11_4 (fib f y)) as p.
+apply ex_3_6_2 in p; apply p.
+Defined.
