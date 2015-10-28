@@ -1055,7 +1055,12 @@ set (g y := Σ_pr₁ (Σ_pr₁ (P y))).
 set (ε := (λ y, Σ_pr₂ (Σ_pr₁ (P y))) : f ◦ g ∼ id); simpl in ε.
 transparent assert (p : rcoh f g ε).
  eapply equiv_imp; [ eapply quasi_inv, hott_4_2_11_r | ].
- intros x.
+ intros x; unfold g, ε.
+bbb.
+
+ unfold isContrMap in P.
+SearchAbout fib_intro.
+ apply hott_4_2_5_rev.
 
 bbb.
 Check @hott_4_2_6.
