@@ -1101,3 +1101,7 @@ intros p.
 apply qinv_isequiv, ishae_qinv, hott_4_4_5; intros y.
 apply hott_4_2_6, hott_4_2_3, isequiv_qinv, p, y.
 Defined.
+
+(* "4.5 On the definition of equivalences" *)
+
+(* "4.6 Surjections and embeddings" *)
