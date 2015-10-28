@@ -1042,22 +1042,22 @@ Defined.
 
 (* "Theorem 4.4.3. For any f : A → B we have isContr(f) → ishae(f)." *)
 
+Definition equiv_imp A B : A ≃ B → A → B.
+Proof.
+intros p q.
+apply (Σ_pr₁ p), q.
+Defined.
+
 Definition hott_4_4_3 A B (f : A → B) : isContrMap f → ishae f.
 Proof.
 intros P.
 set (g y := Σ_pr₁ (Σ_pr₁ (P y))).
 set (ε := (λ y, Σ_pr₂ (Σ_pr₁ (P y))) : f ◦ g ∼ id); simpl in ε.
-bbb.
-
-exists g.
-
-transparent assert (η : g ◦ f ∼ id).
- unfold "◦", "∼", id, g; simpl.
+transparent assert (p : rcoh f g ε).
+ eapply equiv_imp; [ eapply quasi_inv, hott_4_2_11_r | ].
  intros x.
- destruct (p (f x)) as (q, r); simpl.
- destruct q as (x', q); simpl.
-bbb.
 
+bbb.
 Check @hott_4_2_6.
 (* hott_4_2_6
      : ∀ (A B : Type) (f : A → B), ishae f → ∀ y : B, isContr (fib f y) *)
