@@ -1124,8 +1124,6 @@ Definition hott_4_6_2 {A B} (f : A → B) : isSet A → isSet B
   → (Π (x : A), Π (y : A), (f x = f y) → x = y) → isEmbed f.
 Proof.
 intros SA SB g x y.
-eapply hott_3_3_3; [ intros p q; apply SA | intros p q; apply SB | | ].
- apply ap.
-
- apply g.
+eapply hott_3_3_3; [ | | apply ap | apply g ]; intros p q; [ apply SA | ].
+apply SB.
 Defined.
