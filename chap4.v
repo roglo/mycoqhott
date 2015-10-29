@@ -1147,28 +1147,69 @@ split; intros p.
 
    destruct p as ((g, ε), p); exists (g y); apply ε.
 
-  intros x x'.
-  exists (ap f); apply qinv_isequiv.
-  transparent assert (gg : (f x = f x') → (x = x')).
-   intros q; unfold isequiv in p.
-   destruct p as ((g, ε), (h, η)).
-   apply (ap h) in q.
-   eapply compose; [ | apply η ].
-   eapply compose; [ | apply q ].
-   eapply invert, η.
+  intros x x'; apply hott_2_11_1, p.
 
-   exists gg; unfold gg; clear gg; simpl.
-   split.
-    unfold "◦", "∼", id; intros q.
-    destruct p as ((g, ε), (h, η)).
-    do 2 rewrite ap_compose.
-    pose proof @ap_composite B A B (f x) (f x') h f q as r.
-    rewrite r; clear r.
-    pose proof EqStr.quasi_inv_l_eq_r f g h ε η as H.
-    pose proof Π_type.funext H as r; destruct r.
-    pose proof (Π_type.funext ε) as r.
+ destruct p as (p, q).
+ unfold isSurj in p.
+ unfold isEmbed in q.
+ unfold isequiv.
+ split.
+(*
+  assert (∀ b, isContr (Σ (x : A), (f x = b))).
+   intros b.
+   pose proof p b as r.
 bbb.
 
-Set Printing All. Show.
-unfold id in r.
-rewrite r at 3.
+   apply PT_elim in r.
+    exists r; intros a.
+    destruct a as (a, s).
+    destruct r.
+
+    destruct r as (a, r).
+unfold isContr.
+
+SearchAbout (isProp (fib _ _)).
+
+SearchAbout (isContr (Σ (_ : _), _)).
+apply isContr_sigma.
+
+
+eapply hott_3_11_8.
+*)
+  assert (g : B → A).
+   intros b.
+   assert (isContr (Σ (x : A), (f x = b))).
+    pose proof p b as r.
+    assert (s : isProp (fib f b)).
+     intros x y.
+     destruct x as (x, p').
+     destruct y as (y, q').
+     set (u := Σ_pr₁ (pr₁ (Σ_pr₂ (q x y))) (p' • q'⁻¹)).
+SearchAbout (existT _ _ _ = existT _ _ _).
+
+     apply (Σ_type.pair_eq u).
+About transport.
+
+
+     transparent assert (u : f x = f y); [ destruct s, t; apply eq_refl | ].
+     simpl in u.
+     destruct (Σ_pr₁ (pr₁ (Σ_pr₂ (q x y))) u).
+     apply (Σ_type.pair_eq (eq_refl _)); simpl; unfold id.
+     destruct s; simpl.
+pose proof q x x.
+(*
+unfold equivalence in X.
+SearchAbout isequiv.
+*)
+pose proof @equivalence_isequiv A B.
+unfold equiv_prop in X0.
+pose proof X0 f.
+destruct X1.
+
+    apply PT_elim in r.
+
+
+    pose proof (PT_rec (fib f b) A (λ u, (Σ_type.pr₁ u))).
+    pose proof (PT_rec (fib f b) ∥A∥ (λ u, ╎(Σ_type.pr₁ u)╎) (PT_eq A)) as s.
+    destruct s as (g, s).
+bbb.
