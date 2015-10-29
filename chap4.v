@@ -1181,57 +1181,8 @@ eapply hott_3_11_8.
     assert (s : isProp (fib f b)).
      intros (x, p') (y, q').
      set (r' := Σ_pr₁ (pr₁ (Σ_pr₂ (q x y))) (p' • q'⁻¹)).
-     apply (Σ_type.pair_eq r').
+Check (ap f).
 bbb.
 
-About transport.
-Check (@apd A (λ _, A) id x y r').
-bbb.
-
-     subst u; simpl.
-     destruct (q x y) as (g, s); simpl.
-     destruct s as ((h, hh), (i, hi)); simpl.
-     destruct (h (p' • q'⁻¹)); simpl.
-
-     destruct i; simpl.
-bbb.
-
-SearchAbout (existT _ _ _ = existT _ _ _).
-unfold transport.
-destruct u.
-Check q x (g b).
-
-     unfold u; simpl.
-     unfold transport.
-
-bbb.
-
-SearchAbout (transport _ _ _ = _).
-Check Σ_type.pair_eq_if.
-pose proof (Σ_type.pair_eq_if A (λ x, f x = b) x y p' q').
-unfold transport.
-destruct u.
-
-
-     transparent assert (u : f x = f y); [ destruct s, t; apply eq_refl | ].
-     simpl in u.
-     destruct (Σ_pr₁ (pr₁ (Σ_pr₂ (q x y))) u).
-     apply (Σ_type.pair_eq (eq_refl _)); simpl; unfold id.
-     destruct s; simpl.
-pose proof q x x.
-(*
-unfold equivalence in X.
-SearchAbout isequiv.
-*)
-pose proof @equivalence_isequiv A B.
-unfold equiv_prop in X0.
-pose proof X0 f.
-destruct X1.
-
-    apply PT_elim in r.
-
-
-    pose proof (PT_rec (fib f b) A (λ u, (Σ_type.pr₁ u))).
-    pose proof (PT_rec (fib f b) ∥A∥ (λ u, ╎(Σ_type.pr₁ u)╎) (PT_eq A)) as s.
-    destruct s as (g, s).
+assert (ap f r' = p' • q'⁻¹).
 bbb.
