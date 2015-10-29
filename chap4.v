@@ -1133,3 +1133,10 @@ intros ((SA, SB), g) x y.
 eapply hott_3_3_3; [ | | apply ap | apply g ]; intros p q; [ apply SA | ].
 apply SB.
 Defined.
+
+(* "Theorem 4.6.3. A function f : A → B is an equivalence if and only
+    if it is both surjective and an embedding." *)
+
+Definition hott_4_6_3 {A B} (f : A → B) : isequiv f ⇔ (isSurj f * isEmbed f).
+Proof.
+split; intros p.
