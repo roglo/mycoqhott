@@ -1105,3 +1105,27 @@ Defined.
 (* "4.5 On the definition of equivalences" *)
 
 (* "4.6 Surjections and embeddings" *)
+
+(* "Definition 4.6.1. Let f : A → B.
+    (i) We say f is *surjective* (or a *surjection*.) if for every b : B
+        we have ∥fib_f(b)∥.
+   (ii) We say f is an *embedding* if for every x, y : A the function
+        ap_f : (x =_A y) → (f(x) =_B f(y)) is an equivalence." *)
+
+Definition isSurj {A B} (f : A → B) :=
+  Π (b : B), ∥(fib f b)∥.
+Definition isEmbed {A B} (f : A → B) :=
+  Π (x : A), Π (y : A), (x = y) ≃ (f x = f y).
+
+Definition isSplitSurj {A B} (f : A → B) :=
+  Π (b : B), fib f b.
+
+Definition hott_4_6_2 {A B} (f : A → B) : isSet A → isSet B
+  → (Π (x : A), Π (y : A), (f x = f y) → x = y) → isEmbed f.
+Proof.
+intros SA SB g x y.
+eapply hott_3_3_3; [ intros p q; apply SA | intros p q; apply SB | | ].
+ apply ap.
+
+ apply g.
+Defined.
