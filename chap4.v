@@ -1140,3 +1140,35 @@ Defined.
 Definition hott_4_6_3 {A B} (f : A → B) : isequiv f ⇔ (isSurj f * isEmbed f).
 Proof.
 split; intros p.
+ split.
+  intros y.
+  apply hott_3_9_1.
+   apply isContr_isProp, hott_4_2_6, hott_4_2_3, isequiv_qinv, p.
+
+   destruct p as ((g, ε), p); exists (g y); apply ε.
+
+  intros x x'.
+  exists (ap f); apply qinv_isequiv.
+  transparent assert (gg : (f x = f x') → (x = x')).
+   intros q; unfold isequiv in p.
+   destruct p as ((g, ε), (h, η)).
+   apply (ap h) in q.
+apply (ap η) in q.
+
+   change (id x = id x'); do 2 rewrite <- η.
+   unfold "◦"; destruct q; apply eq_refl.
+
+   exists gg; unfold gg; clear gg; simpl.
+   split.
+    unfold "◦", "∼", id; intros q.
+    destruct p as ((g, ε), (h, η)).
+    unfold eq_ind, eq_rect; simpl.
+    destruct (η x).
+
+
+
+Check PT_rec.
+Check (PT_rec A (fib f y)).
+assert ((Σ  → fib f y).
+ intros x.
+ unfold fib.
