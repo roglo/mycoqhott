@@ -1112,20 +1112,24 @@ Defined.
    (ii) We say f is an *embedding* if for every x, y : A the function
         ap_f : (x =_A y) → (f(x) =_B f(y)) is an equivalence." *)
 
+(* "If A and B are sets, then by Lemma 3.3.3, f is an embedding just
+    when
+          Π (x, y : A), f(x) =_B f(y) → (x =_A y).       (4.6.2)
+    In this case we say that f is *injective*, or an *injection*." *)
+
 Definition isSurj {A B} (f : A → B) :=
   Π (b : B), ∥(fib f b)∥.
 Definition isInj {A B} (f : A → B) :=
-  Π (x : A), Π (y : A), (f x = f y) → x = y.
+  (isSet A * isSet B * Π (x : A), Π (y : A), (f x = f y) → x = y)%type.
 
 Definition isEmbed {A B} (f : A → B) :=
   Π (x : A), Π (y : A), (x = y) ≃ (f x = f y).
 Definition isSplitSurj {A B} (f : A → B) :=
   Π (b : B), fib f b.
 
-Definition hott_4_6_2 {A B} (f : A → B) : isSet A → isSet B
-  → isInj f → isEmbed f.
+Definition hott_4_6_2 {A B} (f : A → B) : isInj f → isEmbed f.
 Proof.
-intros SA SB g x y.
+intros ((SA, SB), g) x y.
 eapply hott_3_3_3; [ | | apply ap | apply g ]; intros p q; [ apply SA | ].
 apply SB.
 Defined.
