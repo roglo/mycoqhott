@@ -1180,8 +1180,12 @@ eapply hott_3_11_8.
     pose proof p b as r.
     assert (s : isProp (fib f b)).
      intros (x, p') (y, q').
-     set (u := Σ_pr₁ (pr₁ (Σ_pr₂ (q x y))) (p' • q'⁻¹)).
-     apply (Σ_type.pair_eq u).
+     set (r' := Σ_pr₁ (pr₁ (Σ_pr₂ (q x y))) (p' • q'⁻¹)).
+     apply (Σ_type.pair_eq r').
+bbb.
+
+About transport.
+Check (@apd A (λ _, A) id x y r').
 bbb.
 
      subst u; simpl.
