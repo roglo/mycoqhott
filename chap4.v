@@ -1186,9 +1186,17 @@ eapply hott_3_11_8.
      destruct y as (y, q').
      set (u := Σ_pr₁ (pr₁ (Σ_pr₂ (q x y))) (p' • q'⁻¹)).
 SearchAbout (existT _ _ _ = existT _ _ _).
-
      apply (Σ_type.pair_eq u).
-About transport.
+     unfold u; simpl.
+     unfold transport.
+destruct (Σ_pr₁ (pr₁ (Σ_pr₂ (q x y))) (p' • q'⁻¹)).
+bbb.
+
+SearchAbout (transport _ _ _ = _).
+Check Σ_type.pair_eq_if.
+pose proof (Σ_type.pair_eq_if A (λ x, f x = b) x y p' q').
+unfold transport.
+destruct u.
 
 
      transparent assert (u : f x = f y); [ destruct s, t; apply eq_refl | ].
