@@ -1172,8 +1172,6 @@ SearchAbout (isProp (fib _ _)).
 
 SearchAbout (isContr (Σ (_ : _), _)).
 apply isContr_sigma.
-
-
 eapply hott_3_11_8.
 *)
   assert (g : B → A).
@@ -1181,15 +1179,27 @@ eapply hott_3_11_8.
    assert (isContr (Σ (x : A), (f x = b))).
     pose proof p b as r.
     assert (s : isProp (fib f b)).
-     intros x y.
-     destruct x as (x, p').
-     destruct y as (y, q').
+     intros (x, p') (y, q').
      set (u := Σ_pr₁ (pr₁ (Σ_pr₂ (q x y))) (p' • q'⁻¹)).
-SearchAbout (existT _ _ _ = existT _ _ _).
      apply (Σ_type.pair_eq u).
+bbb.
+
+     subst u; simpl.
+     destruct (q x y) as (g, s); simpl.
+     destruct s as ((h, hh), (i, hi)); simpl.
+     destruct (h (p' • q'⁻¹)); simpl.
+
+     destruct i; simpl.
+bbb.
+
+SearchAbout (existT _ _ _ = existT _ _ _).
+unfold transport.
+destruct u.
+Check q x (g b).
+
      unfold u; simpl.
      unfold transport.
-destruct (Σ_pr₁ (pr₁ (Σ_pr₂ (q x y))) (p' • q'⁻¹)).
+
 bbb.
 
 SearchAbout (transport _ _ _ = _).
