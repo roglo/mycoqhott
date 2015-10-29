@@ -1153,22 +1153,22 @@ split; intros p.
    intros q; unfold isequiv in p.
    destruct p as ((g, ε), (h, η)).
    apply (ap h) in q.
-apply (ap η) in q.
-
-   change (id x = id x'); do 2 rewrite <- η.
-   unfold "◦"; destruct q; apply eq_refl.
+   eapply compose; [ | apply η ].
+   eapply compose; [ | apply q ].
+   eapply invert, η.
 
    exists gg; unfold gg; clear gg; simpl.
    split.
     unfold "◦", "∼", id; intros q.
     destruct p as ((g, ε), (h, η)).
-    unfold eq_ind, eq_rect; simpl.
-    destruct (η x).
+    do 2 rewrite ap_compose.
+    pose proof @ap_composite B A B (f x) (f x') h f q as r.
+    rewrite r; clear r.
+    pose proof EqStr.quasi_inv_l_eq_r f g h ε η as H.
+    pose proof Π_type.funext H as r; destruct r.
+    pose proof (Π_type.funext ε) as r.
+bbb.
 
-
-
-Check PT_rec.
-Check (PT_rec A (fib f y)).
-assert ((Σ  → fib f y).
- intros x.
- unfold fib.
+Set Printing All. Show.
+unfold id in r.
+rewrite r at 3.
