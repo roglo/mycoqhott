@@ -1242,6 +1242,10 @@ Abort.
     B → C. If any two of f, g, and g ◦ f are equivalences, so is the
     third." *)
 
+Definition composite_cancel_r A B C (f g : B → C) (h : A → B) :
+  f ∼ g → f ◦ h ∼ g ◦ h.
+Proof. intros p x; apply p. Defined.
+
 Definition hott_4_7_1_i A B C (f : A → B) (g : B → C) :
   isequiv (g ◦ f) → isequiv g → isequiv f.
 Proof.
@@ -1256,15 +1260,19 @@ exists (igf ◦ g).
 split.
  assert (H : f ◦ (igf ◦ g) ∼ ig ◦ g ◦ f ◦ igf ◦ g).
   rewrite composite_assoc.
-SearchAbout (_ ◦ _ = _ ◦ _).
-Definition composite_cancel_r A B C (f g : B → C) (h : A → B) :
-  f ∼ g → f ◦ h ∼ g ◦ h.
+  do 2 apply composite_cancel_r.
+  intros x; unfold "◦", "∼" in q₂; unfold "◦".
+  rewrite q₂; apply eq_refl.
 
-bbb.
+  transitivity (ig ◦ g ◦ f ◦ igf ◦ g); [ apply H | clear H ].
+  transitivity (ig ◦ (g ◦ f ◦ igf) ◦ g).
+   do 2 rewrite composite_assoc; reflexivity.
 
-assert ((g ◦ f)⁻¹ ◦ g = f⁻¹).
+   intros x; unfold "◦", "∼", id in p₁; unfold "◦".
+   rewrite p₁; apply q₂.
 
-bbb.
+ rewrite <- composite_assoc; apply p₂.
+Defined.
 
 Definition hott_4_7_1_ii A B C (f : A → B) (g : B → C) :
   isequiv (g ◦ f) → isequiv f → isequiv g.
