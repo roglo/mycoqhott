@@ -1235,3 +1235,30 @@ Definition hott_4_6_4 {A B} (f : A → B) :
   isequiv f ≃ (isEmbedding f * isSurjective f).
 Proof.
 Abort.
+
+(* "4.7 Closure properties of equivalences" *)
+
+(* "Theorem 4.7.1 (The 2-out-of-3 property). Suppose f : A → B and g :
+    B → C. If any two of f, g, and g ◦ f are equivalences, so is the
+    third." *)
+
+Definition hott_4_7_1_i A B C (f : A → B) (g : B → C) :
+  isequiv (g ◦ f) → isequiv g → isequiv f.
+Proof.
+intros p q.
+(* "(g ◦ f)⁻¹ ◦ g is a quasi-inverse to f." *)
+Print quasi_inv.
+Check (@quasi_inv).
+bbb.
+
+assert ((g ◦ f)⁻¹ ◦ g = f⁻¹).
+
+bbb.
+
+Definition hott_4_7_1_ii A B C (f : A → B) (g : B → C) :
+  isequiv (g ◦ f) → isequiv f → isequiv g.
+Proof.
+bbb.
+
+Definition hott_4_7_1_iii A B C (f : A → B) (g : B → C) :
+  ??? (* it is more fun to complete *)
