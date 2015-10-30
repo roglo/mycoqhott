@@ -1303,4 +1303,14 @@ assert (H : f ◦ Igf ◦ g ∼ f ◦ Igf ◦ g ◦ f ◦ If).
 Defined.
 
 Definition hott_4_7_1_iii A B C (f : A → B) (g : B → C) :
-  ??? (* it is more fun to complete *)
+  isequiv f → isequiv g → isequiv (g ◦ f).
+Proof.
+intros p q.
+apply isequiv_qinv in p.
+apply isequiv_qinv in q.
+apply qinv_isequiv.
+destruct p as (If, (p₁, p₂)).
+destruct q as (Ig, (q₁, q₂)).
+exists (If ◦ Ig).
+split.
+bbb.
