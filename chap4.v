@@ -1183,6 +1183,8 @@ eapply hott_3_11_8.
      assert (Σ (r' : x = y), ap f r' = p' • q'⁻¹).
 pose proof (q x y).
 pose proof (p' • q'⁻¹).
+bbb.
+
 Focus 2.
 destruct H as (r', H).
      apply (Σ_type.pair_eq r').
@@ -1190,6 +1192,11 @@ unfold ap in H.
 unfold transport.
 destruct r'.
 unfold id.
+destruct p'.
+rewrite <- lu in H.
+apply (ap invert) in H.
+rewrite hott_2_1_4_iii in H.
+apply H.
 bbb.
 
      set (r' := Σ_pr₁ (pr₁ (Σ_pr₂ (q x y))) (p' • q'⁻¹)).
