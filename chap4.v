@@ -1181,8 +1181,37 @@ eapply hott_3_11_8.
     assert (s : isProp (fib f b)).
      intros (x, p') (y, q').
      set (r' := Σ_pr₁ (pr₁ (Σ_pr₂ (q x y))) (p' • q'⁻¹)).
-Check (ap f).
+     apply (Σ_type.pair_eq r').
+     set (t' := Σ_pr₂ (pr₁ (Σ_pr₂ (q x y))) (p' • q'⁻¹)).
+     unfold id in t'.
+     assert (ap f r' = p' • q'⁻¹).
+      unfold r'.
+Check (Σ_pr₂ (pr₁ (Σ_pr₂ (q x y))) (p' • q'⁻¹)).
+(*
+   match
+     Σ_pr₁ (pr₁ (Σ_pr₂ (q x y))) (p' • q'⁻¹) in (_ = a) return (f x = f a)
+   with
+   | eq_refl _ => eq_refl (f x)
+   end = p' • q'⁻¹
+*)
+rewrite <- t'.
+unfold "◦"; simpl.
+unfold ap; simpl.
+unfold "◦" in t'; simpl in t'.
+rewrite t'.
 bbb.
 
-assert (ap f r' = p' • q'⁻¹).
+     set (r' := Σ_pr₁ (pr₂ (Σ_pr₂ (q x y))) (p' • q'⁻¹)).
+     assert (ap f r' = p' • q'⁻¹).
+      unfold r'.
+unfold r'; simpl.
+destruct (q x y); simpl.
+destruct i; simpl; simpl in r'.
+destruct s0; simpl; simpl in r'.
+destruct x1; simpl; simpl in r'.
+destruct p'.
+destruct q'.
+simpl.
+bbb.
+
 bbb.
