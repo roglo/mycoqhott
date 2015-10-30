@@ -1181,8 +1181,30 @@ eapply hott_3_11_8.
     assert (s : isProp (fib f b)).
      intros (x, p') (y, q').
      assert (Σ (r' : x = y), ap f r' = p' • q'⁻¹).
+assert (isequiv (@ap A B x y f)).
+ split.
+bbb.
+
+  exists (Σ_pr₁ (pr₁ (Σ_pr₂ (q x y)))).
+  unfold "◦", "∼", id; intros s.
+destruct (q x y).
+simpl.
+destruct i.
+simpl.
+destruct s0.
+simpl.
+destruct x1.
+simpl.
+bbb.
+
+SearchAbout isequiv.
+
 pose proof (q x y).
-pose proof (p' • q'⁻¹).
+set (H := p' • q'⁻¹).
+     set (r' := Σ_pr₁ (pr₁ (Σ_pr₂ (q x y))) H).
+exists r'.
+destruct r'.
+simpl.
 bbb.
 
 Focus 2.
