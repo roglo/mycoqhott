@@ -1313,4 +1313,13 @@ destruct p as (If, (p₁, p₂)).
 destruct q as (Ig, (q₁, q₂)).
 exists (If ◦ Ig).
 split.
-bbb.
+ transitivity (g ◦ (f ◦ If) ◦ Ig).
+  do 2 rewrite composite_assoc; reflexivity.
+
+  intros x; unfold "◦"; unfold "◦" in p₁; rewrite p₁; apply q₁.
+
+ transitivity (If ◦ (Ig ◦ g) ◦ f).
+  do 2 rewrite composite_assoc; reflexivity.
+
+  intros x; unfold "◦"; unfold "◦" in q₂; rewrite q₂; apply p₂.
+Defined.
