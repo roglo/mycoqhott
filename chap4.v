@@ -1277,6 +1277,33 @@ Defined.
 Definition hott_4_7_1_ii A B C (f : A → B) (g : B → C) :
   isequiv (g ◦ f) → isequiv f → isequiv g.
 Proof.
+intros p q.
+(* "f ◦ (g ◦ f)⁻¹ is a quasi-inverse to g." *)
+apply isequiv_qinv in p.
+destruct p as (Igf, (p₁, p₂)).
+apply isequiv_qinv in q.
+destruct q as (If, (q₁, q₂)).
+apply qinv_isequiv.
+exists (f ◦ Igf).
+split.
+ assert (H : g ◦ (f ◦ Igf) ∼ g ◦ f ◦ Igf ◦ If ◦ f).
+
+ig ◦ g ◦ f ◦ igf ◦ g).
+ assert (H : f ◦ (igf ◦ g) ∼ ig ◦ g ◦ f ◦ igf ◦ g).
+
+  rewrite composite_assoc.
+  do 2 apply composite_cancel_r.
+  intros x; unfold "◦", "∼" in q₂; unfold "◦".
+  rewrite q₂; apply eq_refl.
+
+  transitivity (ig ◦ g ◦ f ◦ igf ◦ g); [ apply H | clear H ].
+  transitivity (ig ◦ (g ◦ f ◦ igf) ◦ g).
+   do 2 rewrite composite_assoc; reflexivity.
+
+   intros x; unfold "◦", "∼", id in p₁; unfold "◦".
+   rewrite p₁; apply q₂.
+
+ rewrite <- composite_assoc; apply p₂.
 bbb.
 
 Definition hott_4_7_1_iii A B C (f : A → B) (g : B → C) :
