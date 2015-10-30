@@ -1180,6 +1180,18 @@ eapply hott_3_11_8.
     pose proof p b as r.
     assert (s : isProp (fib f b)).
      intros (x, p') (y, q').
+     assert (Σ (r' : x = y), ap f r' = p' • q'⁻¹).
+pose proof (q x y).
+pose proof (p' • q'⁻¹).
+Focus 2.
+destruct H as (r', H).
+     apply (Σ_type.pair_eq r').
+unfold ap in H.
+unfold transport.
+destruct r'.
+unfold id.
+bbb.
+
      set (r' := Σ_pr₁ (pr₁ (Σ_pr₂ (q x y))) (p' • q'⁻¹)).
      apply (Σ_type.pair_eq r').
      set (t' := Σ_pr₂ (pr₁ (Σ_pr₂ (q x y))) (p' • q'⁻¹)).
