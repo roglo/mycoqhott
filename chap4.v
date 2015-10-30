@@ -1242,6 +1242,10 @@ Abort.
     B → C. If any two of f, g, and g ◦ f are equivalences, so is the
     third." *)
 
+Definition composite_cancel_l A B C (f : B → C) (g h : A → B) :
+  g ∼ h → f ◦ g ∼ f ◦ h.
+Proof. intros p x; unfold "◦"; apply ap, p. Defined.
+
 Definition composite_cancel_r A B C (f g : B → C) (h : A → B) :
   f ∼ g → f ◦ h ∼ g ◦ h.
 Proof. intros p x; apply p. Defined.
@@ -1252,26 +1256,24 @@ Proof.
 intros p q.
 (* "(g ◦ f)⁻¹ ◦ g is a quasi-inverse to f." *)
 apply isequiv_qinv in p.
-destruct p as (igf, (p₁, p₂)).
+destruct p as (Igf, (p₁, p₂)).
 apply isequiv_qinv in q.
-destruct q as (ig, (q₁, q₂)).
+destruct q as (Ig, (q₁, q₂)).
 apply qinv_isequiv.
-exists (igf ◦ g).
-split.
- assert (H : f ◦ (igf ◦ g) ∼ ig ◦ g ◦ f ◦ igf ◦ g).
-  rewrite composite_assoc.
-  do 2 apply composite_cancel_r.
-  intros x; unfold "◦", "∼" in q₂; unfold "◦".
-  rewrite q₂; apply eq_refl.
+exists (Igf ◦ g).
+split; [ | rewrite <- composite_assoc; apply p₂ ].
+assert (H : f ◦ (Igf ◦ g) ∼ Ig ◦ g ◦ f ◦ Igf ◦ g).
+ rewrite composite_assoc.
+ do 2 apply composite_cancel_r.
+ intros x; unfold "◦", "∼" in q₂; unfold "◦".
+ rewrite q₂; apply eq_refl.
 
-  transitivity (ig ◦ g ◦ f ◦ igf ◦ g); [ apply H | clear H ].
-  transitivity (ig ◦ (g ◦ f ◦ igf) ◦ g).
-   do 2 rewrite composite_assoc; reflexivity.
+ transitivity (Ig ◦ g ◦ f ◦ Igf ◦ g); [ apply H | clear H ].
+ transitivity (Ig ◦ (g ◦ f ◦ Igf) ◦ g).
+  do 2 rewrite composite_assoc; reflexivity.
 
-   intros x; unfold "◦", "∼", id in p₁; unfold "◦".
-   rewrite p₁; apply q₂.
-
- rewrite <- composite_assoc; apply p₂.
+  intros x; unfold "◦", "∼", id in p₁; unfold "◦".
+  rewrite p₁; apply q₂.
 Defined.
 
 Definition hott_4_7_1_ii A B C (f : A → B) (g : B → C) :
@@ -1285,26 +1287,20 @@ apply isequiv_qinv in q.
 destruct q as (If, (q₁, q₂)).
 apply qinv_isequiv.
 exists (f ◦ Igf).
-split.
- assert (H : g ◦ (f ◦ Igf) ∼ g ◦ f ◦ Igf ◦ If ◦ f).
+split; [ rewrite composite_assoc; apply p₁ | ].
+assert (H : f ◦ Igf ◦ g ∼ f ◦ Igf ◦ g ◦ f ◦ If).
+ do 4 rewrite <- composite_assoc.
+ do 2 apply composite_cancel_l.
+ intros y; unfold "◦", "∼" in q₁; unfold "◦".
+ rewrite q₁; apply eq_refl.
 
-ig ◦ g ◦ f ◦ igf ◦ g).
- assert (H : f ◦ (igf ◦ g) ∼ ig ◦ g ◦ f ◦ igf ◦ g).
+ etransitivity; [ eapply H | clear H ].
+ transitivity (f ◦ (Igf ◦ g ◦ f) ◦ If).
+  do 2 rewrite composite_assoc; reflexivity.
 
-  rewrite composite_assoc.
-  do 2 apply composite_cancel_r.
-  intros x; unfold "◦", "∼" in q₂; unfold "◦".
-  rewrite q₂; apply eq_refl.
-
-  transitivity (ig ◦ g ◦ f ◦ igf ◦ g); [ apply H | clear H ].
-  transitivity (ig ◦ (g ◦ f ◦ igf) ◦ g).
-   do 2 rewrite composite_assoc; reflexivity.
-
-   intros x; unfold "◦", "∼", id in p₁; unfold "◦".
-   rewrite p₁; apply q₂.
-
- rewrite <- composite_assoc; apply p₂.
-bbb.
+  intros x; unfold "◦", "∼", id in p₂; unfold "◦".
+  rewrite p₂; apply q₁.
+Defined.
 
 Definition hott_4_7_1_iii A B C (f : A → B) (g : B → C) :
   ??? (* it is more fun to complete *)
