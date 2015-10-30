@@ -1247,8 +1247,19 @@ Definition hott_4_7_1_i A B C (f : A → B) (g : B → C) :
 Proof.
 intros p q.
 (* "(g ◦ f)⁻¹ ◦ g is a quasi-inverse to f." *)
-Print quasi_inv.
-Check (@quasi_inv).
+apply isequiv_qinv in p.
+destruct p as (igf, (p₁, p₂)).
+apply isequiv_qinv in q.
+destruct q as (ig, (q₁, q₂)).
+apply qinv_isequiv.
+exists (igf ◦ g).
+split.
+ assert (H : f ◦ (igf ◦ g) ∼ ig ◦ g ◦ f ◦ igf ◦ g).
+  rewrite composite_assoc.
+SearchAbout (_ ◦ _ = _ ◦ _).
+Definition composite_cancel_r A B C (f g : B → C) (h : A → B) :
+  f ∼ g → f ◦ h ∼ g ◦ h.
+
 bbb.
 
 assert ((g ◦ f)⁻¹ ◦ g = f⁻¹).
