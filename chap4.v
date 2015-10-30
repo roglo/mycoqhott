@@ -1181,10 +1181,15 @@ eapply hott_3_11_8.
     assert (s : isProp (fib f b)).
      intros (x, p') (y, q').
      assert (Σ (r' : x = y), ap f r' = p' • q'⁻¹).
+
+(* "Then since ap f is an equivalence, there exists r : x = y with
+    ap_f(r) = p • q⁻¹." *)
 assert (isequiv (@ap A B x y f)).
  split.
-bbb.
 
+(* I don't manage to prove it; if it is proved, the proof of isProp works:
+   see 'Focus 2' below *)
+Abort. (*
   exists (Σ_pr₁ (pr₁ (Σ_pr₂ (q x y)))).
   unfold "◦", "∼", id; intros s.
 destruct (q x y).
@@ -1196,8 +1201,6 @@ simpl.
 destruct x1.
 simpl.
 bbb.
-
-SearchAbout isequiv.
 
 pose proof (q x y).
 set (H := p' • q'⁻¹).
@@ -1220,39 +1223,4 @@ apply (ap invert) in H.
 rewrite hott_2_1_4_iii in H.
 apply H.
 bbb.
-
-     set (r' := Σ_pr₁ (pr₁ (Σ_pr₂ (q x y))) (p' • q'⁻¹)).
-     apply (Σ_type.pair_eq r').
-     set (t' := Σ_pr₂ (pr₁ (Σ_pr₂ (q x y))) (p' • q'⁻¹)).
-     unfold id in t'.
-     assert (ap f r' = p' • q'⁻¹).
-      unfold r'.
-Check (Σ_pr₂ (pr₁ (Σ_pr₂ (q x y))) (p' • q'⁻¹)).
-(*
-   match
-     Σ_pr₁ (pr₁ (Σ_pr₂ (q x y))) (p' • q'⁻¹) in (_ = a) return (f x = f a)
-   with
-   | eq_refl _ => eq_refl (f x)
-   end = p' • q'⁻¹
 *)
-rewrite <- t'.
-unfold "◦"; simpl.
-unfold ap; simpl.
-unfold "◦" in t'; simpl in t'.
-rewrite t'.
-bbb.
-
-     set (r' := Σ_pr₁ (pr₂ (Σ_pr₂ (q x y))) (p' • q'⁻¹)).
-     assert (ap f r' = p' • q'⁻¹).
-      unfold r'.
-unfold r'; simpl.
-destruct (q x y); simpl.
-destruct i; simpl; simpl in r'.
-destruct s0; simpl; simpl in r'.
-destruct x1; simpl; simpl in r'.
-destruct p'.
-destruct q'.
-simpl.
-bbb.
-
-bbb.
