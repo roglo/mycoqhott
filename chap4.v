@@ -1117,17 +1117,17 @@ Defined.
           Π (x, y : A), f(x) =_B f(y) → (x =_A y).       (4.6.2)
     In this case we say that f is *injective*, or an *injection*." *)
 
-Definition isSurj {A B} (f : A → B) :=
+Definition isSurjective {A B} (f : A → B) :=
   Π (b : B), ∥(fib f b)∥.
-Definition isInj {A B} (f : A → B) :=
+Definition isInjective {A B} (f : A → B) :=
   (isSet A * isSet B * Π (x : A), Π (y : A), (f x = f y) → x = y)%type.
 
-Definition isEmbed {A B} (f : A → B) :=
+Definition isEmbedding {A B} (f : A → B) :=
   Π (x : A), Π (y : A), (x = y) ≃ (f x = f y).
-Definition isSplitSurj {A B} (f : A → B) :=
+Definition isSplitSurjection {A B} (f : A → B) :=
   Π (b : B), fib f b.
 
-Definition hott_4_6_2 {A B} (f : A → B) : isInj f → isEmbed f.
+Definition hott_4_6_2 {A B} (f : A → B) : isInjective f → isEmbedding f.
 Proof.
 intros ((SA, SB), g) x y.
 eapply hott_3_3_3; [ | | apply ap | apply g ]; intros p q; [ apply SA | ].
@@ -1137,7 +1137,8 @@ Defined.
 (* "Theorem 4.6.3. A function f : A → B is an equivalence if and only
     if it is both surjective and an embedding." *)
 
-Definition hott_4_6_3 {A B} (f : A → B) : isequiv f ⇔ (isSurj f * isEmbed f).
+Definition hott_4_6_3 {A B} (f : A → B) :
+  isequiv f ⇔ (isSurjective f * isEmbedding f).
 Proof.
 split; intros p.
  split.
@@ -1150,8 +1151,8 @@ split; intros p.
   intros x x'; apply hott_2_11_1, p.
 
  destruct p as (p, q).
- unfold isSurj in p.
- unfold isEmbed in q.
+ unfold isSurjective in p.
+ unfold isEmbedding in q.
  unfold isequiv.
  split.
 (*
@@ -1224,3 +1225,13 @@ rewrite hott_2_1_4_iii in H.
 apply H.
 bbb.
 *)
+
+(* "Corollary 4.6.4. For any f : A → B we have
+       isequiv(f) ≃ (isEmbedding(f) × isSurjective(f))." *)
+
+(* cannot be done while I have not done 4.6.3 *)
+
+Definition hott_4_6_4 {A B} (f : A → B) :
+  isequiv f ≃ (isEmbedding f * isSurjective f).
+Proof.
+Abort.
