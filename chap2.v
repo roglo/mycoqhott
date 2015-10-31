@@ -462,10 +462,23 @@ Add Parametric Relation {A B} : _ (@homotopy A B)
  transitivity proved by homotopy_trans2
  as homotopy_equivalence.
 
-Definition hott_2_4_3 {A B x y}
-  : ∀ (f g : A → B) (H : f ∼ g) (p : x = y), H x • ap g p = ap f p • H y
-  := λ f g H p,
-     match p with
+(* "Lemma 2.4.3. Suppose H : f ∼ g is a homotopy between functions f,
+    g : A → B and let p : x =_A y. Then we have
+         H(x) • g(p) = f(p) • H(y).
+
+    We may also draw this as a commutative diagram:
+                 f(p)
+           f(x) ====== f(y)
+            ||          ||
+       H(x) ||          || H(y)
+            ||          ||
+           g(x) ====== g(y)
+                 g(p)
+   " *)
+
+Definition hott_2_4_3 {A B x y} (f g : A → B) (H : f ∼ g) (p : x = y)
+  : H x • ap g p = ap f p • H y
+  := match p with
      | eq_refl _ =>
          match
            match H x as q return (q = q • eq_refl _) with
