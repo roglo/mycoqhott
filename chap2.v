@@ -489,8 +489,7 @@ Definition hott_2_4_3 {A B x y} (f g : A → B) (H : f ∼ g) (p : x = y)
          end
      end.
 
-Definition hott_2_4_4 {A x}
-  : ∀ (f : A → A) (H : f ∼ id), H (f x) = ap f (H x).
+Definition hott_2_4_4 {A x} (f : A → A) (H : f ∼ id) : H (f x) = ap f (H x).
 Proof.
 intros.
 assert (ap f (H x) • H x = H (f x) • H x) as p.
