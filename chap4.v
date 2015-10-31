@@ -1356,6 +1356,18 @@ Definition retract A B {X Y} (f : X → Y) :=
   Σ (L : f ◦ s ∼ s' ◦ g), Σ (K : g ◦ r ∼ r' ◦ f),
   ∀ a : A, K (s a) • ap r' (L a) = ap g (R a) • (R' (g a))⁻¹.
 
+Definition toto A B {X Y} (f : X → Y) (g : retract A B f) :
+  match g with
+  | existT _ g (existT _  s (existT _ r (existT _ s'
+      (existT _ r' (existT _ R (existT _ R' (existT _ L
+      (existT _ K H)))))))) =>
+      ∀ a : A, K (s a) • ap r' (L a) = ap g (R a) • (R' (g a))⁻¹
+  end.
+Proof.
+destruct g as (g, (s, (r, (s', (r', (R, (R', (L, (K, H))))))))).
+clear H; intros a.
+bbb.
+
 (*
 Goal ∀ A B X Y (f : X → Y) (g : retract A B f), False.
 intros.

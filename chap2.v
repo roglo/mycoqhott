@@ -406,6 +406,16 @@ Definition hott_2_3_11 {A x y} : ∀ (P Q : A → Type) (f : Π (x : A), P x →
 
 (* hott section 2.4 - Homotopies and Equivalences *)
 
+(* "Traditionally, we regard two functions as the same if they take
+    equal values on all inputs. Under the propositions-as-types
+    interpretation, this suggests that two functions f and g (perhaps
+    dependently typed) should be the same if the type Π (x:A) (f(x) =
+    g(x)) is inhabited. Under the homotopical interpretation, this
+    dependent function type consists of *continuous* paths or
+    *functorial* equivalences, and thus may be regarded as the type of
+    *homotopies* or of *natural isomorphisms*. We will adopt the
+    topological terminology for this." *)
+
 Definition homotopy {A B} (f g : A → B) := Π (x : A), (f x = g x).
 
 Notation "f '∼' g" := (homotopy f g) (at level 70).
