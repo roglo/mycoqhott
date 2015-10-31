@@ -1356,6 +1356,35 @@ Definition retract A B {X Y} (f : X → Y) :=
   Σ (L : f ◦ s ∼ s' ◦ g), Σ (K : g ◦ r ∼ r' ◦ f),
   ∀ a : A, K (s a) • ap r' (L a) = ap g (R a) • (R' (g a))⁻¹.
 
+Definition type_retract_fun_retract {A} (B : chap3.retract A) :
+  retract (Σ_type.pr₁ B) ⊤ (λ _ : A, I).
+Proof.
+unfold chap3.retract, retraction in B; unfold retract.
+destruct B as (B, (f, (g, p))); simpl.
+exists (λ _, I), g, f, id, id, p, (homotopy_eq_refl id).
+exists (λ _, eq_refl I), (λ _, eq_refl I).
+intros b; simpl; unfold "◦", id.
+rewrite <- ru; destruct (p b); apply eq_refl.
+Defined.
+
+(* "Lemma 4.7.3. If a function g : A → B is a retract of a function f
+    : X → Y, then fib_g(b) is a retract of fib_f(s'(b)) for every b :
+    B, where s' : B → Y is as in Definition 4.7.2." *)
+
+Definition hott_4_7_3 A B {X Y} (f : X → Y) (r : retract A B f)
+    (b : B) (s' : B → Y) (r' : chap3.retract (fib f (s' b)))
+  :
+    let g := Σ_pr₁ r in
+    fib g b = Σ_pr₁ r'.
+Proof.
+intros g; subst g.
+rename r' into r''.
+rename s' into s''.
+destruct r as (g, (s, (r, (s', (r', (R, (R', (L, (K, H))))))))); simpl.
+unfold chap3.retract in r''; unfold retraction in r''.
+destruct r'' as (B₁, (r₁, (s₁, r''))); simpl.
+bbb.
+
 (*
 Definition toto A B {X Y} (f : X → Y) (g : retract A B f) :
   match g with
@@ -1367,30 +1396,3 @@ Definition toto A B {X Y} (f : X → Y) (g : retract A B f) :
 Proof.
 destruct g as (g, (s, (r, (s', (r', (R, (R', (L, (K, H))))))))).
 *)
-
-Goal ∀ A X (f : X → ⊤) (p : A ≃ X), retract A ⊤ f.
-intros.
-exists (λ _, I), (Σ_pr₁ p), (Σ_pr₁ (pr₂ (Σ_pr₂ p))), id, id.
-exists (Σ_pr₂ (pr₂ (Σ_pr₂ p))), (homotopy_eq_refl2 id).
-transparent assert (L : f ◦ Σ_pr₁ p ∼ id ◦ (λ _ : A, I)).
- unfold "◦", "∼", id; intros x.
- destruct (f (Σ_pr₁ p x)); apply eq_refl.
-
- simpl in L; exists L.
- transparent assert (K : (λ _ : A, I) ◦ Σ_pr₁ (pr₂ (Σ_pr₂ p)) ∼ id ◦ f).
-  unfold "◦", "∼", id; intros x.
-  destruct (f x); apply eq_refl.
-
-  simpl in K; exists K.
-  intros a; simpl; rewrite <- ru; unfold L.
-  rewrite hott_2_2_2_iv; unfold ap.
-  destruct (Σ_pr₂ (pr₂ (Σ_pr₂ p)) a).
-set (K' := λ x : X,
-       match f x as t return (@eq True t I) with
-       | I => @eq_refl True I
-       end).
-change (K (Σ_pr₁ p a) • K' (Σ_pr₁ p a) = eq_refl I).
-assert (∀ x, K' x = (K x)⁻¹).
-intros x.
-
-bbb.
