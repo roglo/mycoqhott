@@ -1372,13 +1372,17 @@ Goal ∀ A X (f : X → ⊤) (p : A ≃ X), retract A ⊤ f.
 intros.
 exists (λ _, I), (Σ_pr₁ p), (Σ_pr₁ (pr₂ (Σ_pr₂ p))), id, id.
 exists (Σ_pr₂ (pr₂ (Σ_pr₂ p))), (homotopy_eq_refl2 id).
-assert (L : f ◦ Σ_pr₁ p ∼ id ◦ (λ _ : A, I)); [ | exists L ].
+transparent assert (L : f ◦ Σ_pr₁ p ∼ id ◦ (λ _ : A, I)).
  unfold "◦", "∼", id; intros x.
  destruct (f (Σ_pr₁ p x)); apply eq_refl.
 
- assert (K : (λ _ : A, I) ◦ Σ_pr₁ (pr₂ (Σ_pr₂ p)) ∼ id ◦ f); [ | exists K ].
+ simpl in L; exists L.
+ transparent assert (K : (λ _ : A, I) ◦ Σ_pr₁ (pr₂ (Σ_pr₂ p)) ∼ id ◦ f).
   unfold "◦", "∼", id; intros x.
   destruct (f x); apply eq_refl.
 
-  intros a; simpl; rewrite <- ru.
+  simpl in K; exists K.
+  intros a; simpl; rewrite <- ru; unfold L.
+  rewrite hott_2_2_2_iv; unfold ap.
+  destruct (Σ_pr₂ (pr₂ (Σ_pr₂ p)) a).
 bbb.
