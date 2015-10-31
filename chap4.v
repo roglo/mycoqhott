@@ -1346,12 +1346,22 @@ Defined.
              ||                     ||
       g(R(a) ||                     || r'(L(a))
              ||                     ||
-             g(a) ============ r'(s'(g(a)))
+            g(a) ============= r'(s'(g(a)))
                    R'(g(a))⁻¹
    " *)
 
-Definition retract {A B X Y} (f : X → Y) :=
+Definition retract A B {X Y} (f : X → Y) :=
   Σ (g : A → B), Σ (s : A → X), Σ (r : X → A), Σ (s' : B → Y), Σ (r' : Y → B),
   Σ (R : r ◦ s ∼ id), Σ (R' : r' ◦ s' ∼ id),
   Σ (L : f ◦ s ∼ s' ◦ g), Σ (K : g ◦ r ∼ r' ◦ f),
   ∀ a : A, K (s a) • ap r' (L a) = ap g (R a) • (R' (g a))⁻¹.
+
+(*
+Goal ∀ A B X Y (f : X → Y) (g : retract A B f), False.
+intros.
+destruct g as (g, (s, (r, (s', (r', (R, (R', (L, (K, H))))))))).
+Check (λ a, K (s a)).
+Check (λ a, ap r' (L a)).
+Check (λ a, ap g (R a)).
+Check (λ a, (R' (g a))⁻¹).
+*)
