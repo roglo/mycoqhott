@@ -416,9 +416,16 @@ Definition hott_2_3_11 {A x y} : ∀ (P Q : A → Type) (f : Π (x : A), P x →
     *homotopies* or of *natural isomorphisms*. We will adopt the
     topological terminology for this." *)
 
-Definition homotopy {A B} (f g : A → B) := Π (x : A), (f x = g x).
+(* "Definition 2.4.1. Let f, g : Π (x:A) P(x) be two sections of a
+    type family P : A → U. A homotopy from f to g is a dependent
+    function of type
+         (f ∼ g) :≡ Π (x : A) (f(x) = g(x))." *)
 
+Definition homotopy {A B} (f g : A → B) := Π (x : A), (f x = g x).
 Notation "f '∼' g" := (homotopy f g) (at level 70).
+
+(* "Lemma 2.4.2. Homotopy is an equivalence relation on each function
+    type A → B." *)
 
 Definition homotopy_eq_refl {A B} : reflexive _ (@homotopy A B) :=
   λ _ _, eq_refl _.
