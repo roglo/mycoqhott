@@ -1356,6 +1356,7 @@ Definition retract A B {X Y} (f : X → Y) :=
   Σ (L : f ◦ s ∼ s' ◦ g), Σ (K : g ◦ r ∼ r' ◦ f),
   ∀ a : A, K (s a) • ap r' (L a) = ap g (R a) • (R' (g a))⁻¹.
 
+(*
 Definition toto A B {X Y} (f : X → Y) (g : retract A B f) :
   match g with
   | existT _ g (existT _  s (existT _ r (existT _ s'
@@ -1365,16 +1366,19 @@ Definition toto A B {X Y} (f : X → Y) (g : retract A B f) :
   end.
 Proof.
 destruct g as (g, (s, (r, (s', (r', (R, (R', (L, (K, H))))))))).
-clear H; intros a.
-About hott_2_4_3.
-bbb.
-
-(*
-Goal ∀ A B X Y (f : X → Y) (g : retract A B f), False.
-intros.
-destruct g as (g, (s, (r, (s', (r', (R, (R', (L, (K, H))))))))).
-Check (λ a, K (s a)).
-Check (λ a, ap r' (L a)).
-Check (λ a, ap g (R a)).
-Check (λ a, (R' (g a))⁻¹).
 *)
+
+Goal ∀ A X (f : X → ⊤) (p : A ≃ X), retract A ⊤ f.
+intros.
+exists (λ _, I), (Σ_pr₁ p), (Σ_pr₁ (pr₂ (Σ_pr₂ p))), id, id.
+exists (Σ_pr₂ (pr₂ (Σ_pr₂ p))), (homotopy_eq_refl2 id).
+assert (L : f ◦ Σ_pr₁ p ∼ id ◦ (λ _ : A, I)); [ | exists L ].
+ unfold "◦", "∼", id; intros x.
+ destruct (f (Σ_pr₁ p x)); apply eq_refl.
+
+ assert (K : (λ _ : A, I) ◦ Σ_pr₁ (pr₂ (Σ_pr₂ p)) ∼ id ◦ f); [ | exists K ].
+  unfold "◦", "∼", id; intros x.
+  destruct (f x); apply eq_refl.
+
+  intros a; simpl; rewrite <- ru.
+bbb.
