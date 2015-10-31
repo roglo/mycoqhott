@@ -1366,6 +1366,7 @@ Definition toto A B {X Y} (f : X → Y) (g : retract A B f) :
 Proof.
 destruct g as (g, (s, (r, (s', (r', (R, (R', (L, (K, H))))))))).
 clear H; intros a.
+About hott_2_4_3.
 bbb.
 
 (*
