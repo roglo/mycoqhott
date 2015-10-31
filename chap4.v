@@ -1323,3 +1323,35 @@ split.
 
   intros x; unfold "◦"; unfold "◦" in q₂; rewrite q₂; apply p₂.
 Defined.
+
+(* "Definition 4.7.2. A function g : A → B is said to be a *retract*
+    of a function f : X → Y if there is a diagram
+             s      r
+          A ---> X ---> A
+          |      |      |
+        g |    f |      | g
+          v      v      v
+          B ---> Y ---> B
+             s'     r'
+    for which there are
+      (i) a homotopy R : r ◦ s ∼ id_A.
+     (ii) a homotopy R' : r' ◦ s' ∼ id_B.
+    (iii) a homotopy L : f ◦ s ∼ s' ◦ g.
+     (iv) a homotopy K : g ◦ r ∼ r' ◦ f .
+      (v) for every a : A, a path H(a) witnessing the commutativity of
+          the square
+
+                     K(s(a))
+         g(r(s(a))) ========== r'(f(s(a)))
+             ||                     ||
+      g(R(a) ||                     || r'(L(a))
+             ||                     ||
+             g(a) ============ r'(s'(g(a)))
+                   R'(g(a))⁻¹
+   " *)
+
+Definition retract {A B X Y} (f : X → Y) :=
+  Σ (g : A → B), Σ (s : A → X), Σ (r : X → A), Σ (s' : B → Y), Σ (r' : Y → B),
+  Σ (R : r ◦ s ∼ id), Σ (R' : r' ◦ s' ∼ id),
+  Σ (L : f ◦ s ∼ s' ◦ g), Σ (K : g ◦ r ∼ r' ◦ f),
+  ∀ a : A, K (s a) • ap r' (L a) = ap g (R a) • (R' (g a))⁻¹.
