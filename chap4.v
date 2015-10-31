@@ -1385,4 +1385,12 @@ transparent assert (L : f ◦ Σ_pr₁ p ∼ id ◦ (λ _ : A, I)).
   intros a; simpl; rewrite <- ru; unfold L.
   rewrite hott_2_2_2_iv; unfold ap.
   destruct (Σ_pr₂ (pr₂ (Σ_pr₂ p)) a).
+set (K' := λ x : X,
+       match f x as t return (@eq True t I) with
+       | I => @eq_refl True I
+       end).
+change (K (Σ_pr₁ p a) • K' (Σ_pr₁ p a) = eq_refl I).
+assert (∀ x, K' x = (K x)⁻¹).
+intros x.
+
 bbb.
