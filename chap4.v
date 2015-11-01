@@ -1395,4 +1395,7 @@ set
    let q := fib_p u in
    fib_intro _ _ (r x) (K x • ap r' q • R' b)).
 unfold id in ψ.
+assert
+  (∀ a p, ψ b (φ b (fib_intro _ _ a p)) =
+   fib_intro _ _ (r (s a)) (K (s a) • ap r' (L a • ap s' p) • R' b)).
 bbb.
