@@ -589,6 +589,8 @@ Defined.
          fib_f(y) := Σ (x : A) (f x = y)." *)
 
 Definition fib {A B} (f : A → B) (y : B) := Σ (x : A), (f x = y).
+Definition fib_a {A B} {f : A → B} {y : B} (w : fib f y) := Σ_pr₁ w.
+Definition fib_p {A B} {f : A → B} {y : B} (w : fib f y) := Σ_pr₂ w.
 
 (* "Lemma 4.2.5. For any f:A→B, y:B, and (x,p),(x',p') : fib_f(y),
     we have ((x,p) = (x',p')) ≃ (Σ (γ : x = x') f(γ) • p' = p)" *)
@@ -1381,6 +1383,10 @@ intros g; subst g.
 rename r' into r''.
 rename s' into s''.
 destruct r as (g, (s, (r, (s', (r', (R, (R', (L, (K, H))))))))); simpl.
+set
+  (φ b x := fib_intro f (s' b) (s (fib_a x)) (L (fib_a x) • ap s' (fib_p x))).
+bbb.
+
 unfold chap3.retract in r''; unfold retraction in r''.
 destruct r'' as (B₁, (r₁, (s₁, r''))); simpl.
 bbb.
