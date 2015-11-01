@@ -1384,21 +1384,15 @@ rename r' into r''.
 rename s' into s''.
 destruct r as (g, (s, (r, (s', (r', (R, (R', (L, (K, H))))))))); simpl.
 set
-  (φ b x := fib_intro f (s' b) (s (fib_a x)) (L (fib_a x) • ap s' (fib_p x))).
+  (φ b u :=
+   let a := fib_a u in
+   let p := fib_p u in
+   fib_intro f (s' b) (s a) (L a • ap s' p)).
+simpl in φ.
+set
+  (ψ b u :=
+   let x := fib_a u in
+   let q := fib_p u in
+   fib_intro _ _ (r x) (K x • ap r' q • R' b)).
+unfold id in ψ.
 bbb.
-
-unfold chap3.retract in r''; unfold retraction in r''.
-destruct r'' as (B₁, (r₁, (s₁, r''))); simpl.
-bbb.
-
-(*
-Definition toto A B {X Y} (f : X → Y) (g : retract A B f) :
-  match g with
-  | existT _ g (existT _  s (existT _ r (existT _ s'
-      (existT _ r' (existT _ R (existT _ R' (existT _ L
-      (existT _ K H)))))))) =>
-      ∀ a : A, K (s a) • ap r' (L a) = ap g (R a) • (R' (g a))⁻¹
-  end.
-Proof.
-destruct g as (g, (s, (r, (s', (r', (R, (R', (L, (K, H))))))))).
-*)
