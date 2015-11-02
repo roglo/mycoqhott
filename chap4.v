@@ -1369,6 +1369,13 @@ Defined.
     : X → Y, then fib_g(b) is a retract of fib_f(s'(b)) for every b :
     B, where s' : B → Y is as in Definition 4.7.2." *)
 
+(* joujou *)
+Definition glop A B (R : A → B → Type) (x : A) := Σ (y : B), R x y.
+Definition glip A B (R : A → B → Type) (y : B) := Σ (x : A), R x y.
+Definition toto A B R (f : glop A B R) (g : glip A B R) :
+  ∀ x : A, Σ_pr₁ (g (Σ_pr₁ (f x))).
+bbb.
+
 Definition hott_4_7_3 A B {X Y} (f : X → Y) (r : retract A B f)
     (b : B) (s' : B → Y) (r' : chap3.retract (fib f (s' b)))
   :
