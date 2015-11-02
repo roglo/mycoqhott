@@ -1414,8 +1414,22 @@ assert
    apply (Σ_type.pair_eq (eq_refl _)); simpl; unfold id.
    apply dotr, dotl, ap, invert, ru.
 
-   unfold id.
+   unfold id; rewrite H.
    apply (Σ_type.pair_eq (R a₁)).
+   destruct (R a₁); simpl; unfold id.
+   apply compose_invert_l.
+
+  simpl in p.
+  unfold chap3.retract in r''.
+  destruct r'' as (C, r''); simpl.
+  unfold retraction in r''.
+  destruct r'' as (u, (v, r'')).
+
+About ua.
+pose proof @ua (fib g b) C.
+
+SearchAbout (_ ≃ _ → _ = _).
+  eapply ua.
 bbb.
 
 About hott_3_11_9_i.
