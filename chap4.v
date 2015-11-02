@@ -599,11 +599,11 @@ Definition fib_p {A B} {f : A → B} {y : B} (w : fib f y) := Σ_pr₂ w.
    characterization of paths in fibers", but it is not §2.5
    but §2.7! *)
 
-Definition fib_intro {A B} (f : A → B) y x (p : f x = y) :=
+Definition fib_intro {A B} {f : A → B} {y} x (p : f x = y) :=
   (existT (λ z, f z = y) x p : fib f y).
 
-Definition hott_4_2_5_dir {A B} (f : A → B) y x x' p p' :
-  (fib_intro f y x p = fib_intro f y x' p')
+Definition hott_4_2_5_dir {A B} {f : A → B} {y} x x' (p p' : f _ = y) :
+  (fib_intro x p = fib_intro x' p')
   → (Σ (γ : x = x'), ap f γ • p' = p).
 Proof.
 intros q.
@@ -612,9 +612,9 @@ destruct q as (γ, q).
 exists γ; destruct γ; simpl in q; destruct q; apply eq_refl.
 Defined.
 
-Definition hott_4_2_5_rev {A B} (f : A → B) y x x' p p' :
+Definition hott_4_2_5_rev {A B} {f : A → B} {y} x x' (p p' : f _ = y) :
   (Σ (γ : x = x'), ap f γ • p' = p)
-  → (fib_intro f y x p = fib_intro f y x' p').
+  → (fib_intro x p = fib_intro x' p').
 Proof.
 intros q.
 destruct q as (γ, q).
@@ -653,8 +653,8 @@ bbb.
    because I did not manage to prove their reversivity; so I used
    Σ_type.hott_2_7_2, but I had also to use function extensionality
    and univalence axioms. *)
-Definition hott_4_2_5 A B (f : A → B) y x x' p p' :
-  (fib_intro f y x p = fib_intro f y x' p')
+Definition hott_4_2_5 A B (f : A → B) y x x' (p p' : f _ = y) :
+  (fib_intro x p = fib_intro x' p')
   ≃ (Σ (γ : x = x'), ap f γ • p' = p).
 Proof.
 eapply equiv_compose; [ apply Σ_type.hott_2_7_2 | simpl ].
@@ -676,7 +676,7 @@ Definition hott_4_2_6 A B (f : A → B) : ishae f → ∀ y, isContr (fib f y).
 Proof.
 intros p y.
 destruct p as (g, (η, (ε, q))).
-exists (fib_intro f y (g y) (ε y)).
+exists (fib_intro (g y) (ε y)).
 intros (x, p).
 apply (Σ_pr₁ (fst (Σ_pr₂ (hott_4_2_5 A B f y (g y) x (ε y) p)))).
 exists (ap g p⁻¹ • η x).
@@ -803,13 +803,12 @@ Defined.
 Definition hott_4_2_11_l A B (f : A → B) (g : B → A) (η : g ◦ f ∼ id) :
   lcoh f g η ≃
   Π (y : B),
-    fib_intro g (g y) (f (g y)) (η (g y)) =
-    fib_intro g (g y) y (eq_refl (g y)).
+    fib_intro (f (g y)) (η (g y)) =
+    fib_intro y (eq_refl (g y)).
 Proof.
 eapply quasi_inv.
 set
-  (p y := fib_intro g (g y) (f (g y)) (η (g y)) =
-   fib_intro g (g y) y (eq_refl (g y)) : Type).
+  (p y := fib_intro (f (g y)) (η (g y)) = fib_intro y (eq_refl (g y)) : Type).
 simpl in p.
 change ((∀ y, p y) ≃ lcoh f g η).
 assert (q : ∀ y, p y ≃ Σ (γ : f (g y) = y), ap g γ = η (g y)).
@@ -850,14 +849,11 @@ Defined.
 
 Definition hott_4_2_11_r A B (f : A → B) (g : B → A) (ε : f ◦ g ∼ id) :
   rcoh f g ε ≃
-  Π (x : A),
-    fib_intro f (f x) (g (f x)) (ε (f x)) =
-    fib_intro f (f x) x (eq_refl (f x)).
+  Π (x : A), fib_intro (g (f x)) (ε (f x)) = fib_intro x (eq_refl (f x)).
 Proof.
 eapply quasi_inv.
 set
-  (p x := fib_intro f (f x) (g (f x)) (ε (f x)) =
-   fib_intro f (f x) x (eq_refl (f x)) : Type).
+  (p x := fib_intro (g (f x)) (ε (f x)) = fib_intro x (eq_refl (f x)) : Type).
 simpl in p.
 change ((∀ y, p y) ≃ rcoh f g ε).
 assert (q : ∀ x, p x ≃ Σ (γ : g (f x) = x), ap f γ = ε (f x)).
@@ -1058,8 +1054,8 @@ set (ε := (λ y, Σ_pr₂ (Σ_pr₁ (P y))) : f ◦ g ∼ id); simpl in ε.
 assert (p : rcoh f g ε).
  eapply equiv_imp; [ eapply quasi_inv, hott_4_2_11_r | ].
  intros x.
- set (fib₁ := fib_intro f (f x) (g (f x)) (ε (f x))).
- set (fib₂ := fib_intro f (f x) x (eq_refl (f x))).
+ set (fib₁ := fib_intro (g (f x)) (ε (f x))).
+ set (fib₂ := fib_intro x (eq_refl (f x))).
  apply ((Σ_pr₂ (P (f x)) fib₁)⁻¹ • Σ_pr₂ (P (f x)) fib₂).
 
  destruct p as (η, p).
@@ -1384,33 +1380,35 @@ rename r' into r''.
 rename s' into s''.
 destruct r as (g, (s, (r, (s', (r', (R, (R', (L, (K, H))))))))); simpl.
 set
-  (φ b u :=
+  (φ b (u : fib g b) :=
    let a := fib_a u in
    let p := fib_p u in
-   fib_intro f (s' b) (s a) (L a • ap s' p)).
+   fib_intro (s a) (L a • ap s' p)).
 set
   (ψ b u :=
    let x := fib_a u in
    let q := fib_p u in
-   fib_intro _ _ (r x) (K x • ap r' q • R' b) : fib g b).
+   fib_intro (r x) (K x • ap r' q • R' b) : fib g b).
 assert
   (e : ∀ u,
    let a := fib_a u in
    let p := fib_p u in
-   ψ b (φ b (fib_intro _ _ a p)) =
-   fib_intro _ b (r (s a)) (K (s a) • ap r' (L a • ap s' p) • R' b)).
+   ψ b (φ b (fib_intro a p)) =
+   fib_intro (r (s a)) (K (s a) • ap r' (L a • ap s' p) • R' b)).
  intros a p; apply eq_refl.
 
  assert
    (p : Π (b : B), Π (a : A), Π (p : g a = b),
-    let u := fib_intro _ _ a p in
+    let u := fib_intro a p in
     ψ b (φ b u) = u).
   intros b₁ a₁ p₁; simpl.
   unfold φ, ψ; simpl; unfold id.
   unfold "◦", "∼", id in R.
   unfold composite; simpl.
   destruct p₁; simpl.
-  apply (@compose _ _ (fib_intro g _ _ (K (s a₁) • ap r' (L a₁) • R' (g a₁)))).
+  apply
+    (compose
+       (y := fib_intro (r (s a₁)) (K (s a₁) • ap r' (L a₁) • R' (g a₁)))).
    apply (Σ_type.pair_eq (eq_refl _)); simpl; unfold id.
    apply dotr, dotl, ap, invert, ru.
 
@@ -1419,22 +1417,13 @@ assert
    destruct (R a₁); simpl; unfold id.
    apply compose_invert_l.
 
-  simpl in p.
-bbb.
-  unfold chap3.retract in r''.
-  destruct r'' as (C, r''); simpl.
-  unfold retraction in r''.
-  destruct r'' as (u, (v, r'')).
-assert (fib f (s'' b)).
-unfold fib.
+  assert (q : Π (b : B), Π (u : fib g b), ψ b (φ b u) = u).
+   intros b₁ (a₁, p₁); apply p.
 
-assert (Π (b : B), Π (u : fib g b), ...?)
-(*
-Definition pair_eq_if A (P : A → Type) x x' p p' :
-  existT P x p = existT P x' p'
-  → Σ (γ : x = x'), γ⁎ p = p'.
-*)
-bbb.
+   unfold chap3.retract in r''.
+   destruct r'' as (C, r''); simpl.
+   unfold retraction in r''.
+   destruct r'' as (u, (v, r'')).
 bbb.
 
 unfold "◦", "∼", id in *.
