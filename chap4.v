@@ -1420,10 +1420,27 @@ assert
    apply compose_invert_l.
 
   simpl in p.
+bbb.
   unfold chap3.retract in r''.
   destruct r'' as (C, r''); simpl.
   unfold retraction in r''.
   destruct r'' as (u, (v, r'')).
+assert (fib f (s'' b)).
+unfold fib.
+
+assert (Π (b : B), Π (u : fib g b), ...?)
+(*
+Definition pair_eq_if A (P : A → Type) x x' p p' :
+  existT P x p = existT P x' p'
+  → Σ (γ : x = x'), γ⁎ p = p'.
+*)
+bbb.
+bbb.
+
+unfold "◦", "∼", id in *.
+  pose proof p b (r machindetypeX).
+
+bbb.
 
 About ua.
 pose proof @ua (fib g b) C.
