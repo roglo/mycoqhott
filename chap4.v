@@ -1388,16 +1388,45 @@ set
    let a := fib_a u in
    let p := fib_p u in
    fib_intro f (s' b) (s a) (L a • ap s' p)).
-simpl in φ.
 set
   (ψ b u :=
    let x := fib_a u in
    let q := fib_p u in
-   fib_intro _ _ (r x) (K x • ap r' q • R' b)).
-unfold id in ψ.
+   fib_intro _ _ (r x) (K x • ap r' q • R' b) : fib g b).
 assert
-  (∀ a p,
+  (e : ∀ u,
+   let a := fib_a u in
+   let p := fib_p u in
    ψ b (φ b (fib_intro _ _ a p)) =
-   fib_intro _ _ (r (s a)) (K (s a) • ap r' (L a • ap s' p) • R' b)).
- intros a p.
+   fib_intro _ b (r (s a)) (K (s a) • ap r' (L a • ap s' p) • R' b)).
+ intros a p; apply eq_refl.
+
+ assert
+   (p : Π (b : B), Π (a : A), Π (p : g a = b),
+    let u := fib_intro _ _ a p in
+    ψ b (φ b u) = u).
+  intros b₁ a₁ p₁; simpl.
+  unfold φ, ψ; simpl; unfold id.
+  unfold "◦", "∼", id in R.
+  unfold composite; simpl.
+  destruct p₁; simpl.
+  apply (@compose _ _ (fib_intro g _ _ (K (s a₁) • ap r' (L a₁) • R' (g a₁)))).
+   apply (Σ_type.pair_eq (eq_refl _)); simpl; unfold id.
+   apply dotr, dotl, ap, invert, ru.
+
+   unfold id.
+   apply (Σ_type.pair_eq (R a₁)).
+bbb.
+
+About hott_3_11_9_i.
+(* hott_3_11_9_i :
+∀ (A : Type) (P : A → Type), (∀ x : A, isContr (P x)) → {x : A & P x} ≃ A
+
+Arguments A, P are implicit and maximally inserted *)
+pose proof @hott_3_11_9_i (fib g b₁).
+
+bbb.
+  rewrite R.
+  pose proof R a₁ as p.
+rewrite p.
 bbb.
