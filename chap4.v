@@ -1349,17 +1349,17 @@ Defined.
    " *)
 
 Record retract A B {X Y} (f : X → Y) :=
-  mkr
-  { g : A → B;
-    s : A → X;
-    r : X → A;
-    s' : B → Y;
-    r' : Y → B;
-    R : r ◦ s ∼ id;
-    R' : r' ◦ s' ∼ id;
-    L : f ◦ s ∼ s' ◦ g;
-    K : g ◦ r ∼ r' ◦ f;
-    H (a : A) : K (s a) • ap r' (L a) = ap g (R a) • (R' (g a))⁻¹ }.
+  retract_intro
+  { rg : A → B;
+    rs : A → X;
+    rr : X → A;
+    rs' : B → Y;
+    rr' : Y → B;
+    rR : rr ◦ rs ∼ id;
+    rR' : rr' ◦ rs' ∼ id;
+    rL : f ◦ rs ∼ rs' ◦ rg;
+    rK : rg ◦ rr ∼ rr' ◦ f;
+    rH (a : A) : rK (rs a) • ap rr' (rL a) = ap rg (rR a) • (rR' (rg a))⁻¹ }.
 
 Definition type_retract_fun_retract {A} (B : chap3.retract A) :
   retract (Σ_type.pr₁ B) ⊤ (λ _ : A, I).
@@ -1373,43 +1373,37 @@ assert
  intros b; simpl; unfold "◦", id.
  rewrite <- ru; destruct (p b); apply eq_refl.
 apply
-  (mkr B ⊤ A ⊤ (λ _, I) (λ _, I) g f id id p (homotopy_eq_refl id)
+  (retract_intro B ⊤ A ⊤ (λ _, I) (λ _, I) g f id id p (homotopy_eq_refl id)
      (λ _, eq_refl I) (λ _, eq_refl I) H).
 Defined.
-
-(*
-Definition retract A B {X Y} (f : X → Y) :=
-  Σ (g : A → B), Σ (s : A → X), Σ (r : X → A), Σ (s' : B → Y), Σ (r' : Y → B),
-  Σ (R : r ◦ s ∼ id), Σ (R' : r' ◦ s' ∼ id),
-  Σ (L : f ◦ s ∼ s' ◦ g), Σ (K : g ◦ r ∼ r' ◦ f),
-  ∀ a : A, K (s a) • ap r' (L a) = ap g (R a) • (R' (g a))⁻¹.
-
-Definition type_retract_fun_retract {A} (B : chap3.retract A) :
-  retract (Σ_type.pr₁ B) ⊤ (λ _ : A, I).
-Proof.
-unfold chap3.retract, retraction in B; unfold retract.
-destruct B as (B, (f, (g, p))); simpl.
-exists (λ _, I), g, f, id, id, p, (homotopy_eq_refl id).
-exists (λ _, eq_refl I), (λ _, eq_refl I).
-intros b; simpl; unfold "◦", id.
-rewrite <- ru; destruct (p b); apply eq_refl.
-Defined.
-*)
 
 (* "Lemma 4.7.3. If a function g : A → B is a retract of a function f
     : X → Y, then fib_g(b) is a retract of fib_f(s'(b)) for every b :
     B, where s' : B → Y is as in Definition 4.7.2." *)
 
-Arguments g [A] [B] [X] [Y] [f] r a.
-Arguments s' [A] [B] [X] [Y] [f] r a.
+Arguments rg [A] [B] [X] [Y] [f] r a.
+Arguments rs [A] [B] [X] [Y] [f] r a.
+Arguments rr [A] [B] [X] [Y] [f] r a.
+Arguments rs' [A] [B] [X] [Y] [f] r a.
+Arguments rr' [A] [B] [X] [Y] [f] r a.
+Arguments rR [A] [B] [X] [Y] [f] r x.
+Arguments rR' [A] [B] [X] [Y] [f] r x.
+Arguments rL [A] [B] [X] [Y] [f] r x.
+Arguments rK [A] [B] [X] [Y] [f] r x.
+Arguments rH [A] [B] [X] [Y] [f] r a.
 
-Definition hott_4_7_3 A B {X Y} (f : X → Y) (r : retract A B f) (b : B) :
-  retract (fib (g r) b) ⊤ (λ _ : fib f (s' r b), I).
+Definition hott_4_7_3 A B {X Y} (f : X → Y) (rt : retract A B f) (b : B)
+    (g := rg rt) (s' := rs' rt) :
+  retract (fib g b) ⊤ (λ _ : fib f (s' b), I).
 Proof.
-bbb.
-
-subst g.
-destruct r as (g, (s, (r, (s', (r', (R, (R', (L, (K, H))))))))); simpl.
+set (s := rs rt).
+set (r := rr rt).
+set (r' := rr' rt).
+set (R := rR rt).
+set (R' := rR' rt).
+set (L := rL rt).
+set (K := rK rt).
+set (H := rH rt).
 set
   (φ b (u : fib g b) :=
    let a := fib_a u in
@@ -1445,98 +1439,28 @@ assert
 
    unfold id; rewrite H.
    apply (Σ_type.pair_eq (R a₁)).
+   subst R; set (R := rR rt); unfold id.
+   unfold "◦", "∼", id in R.
    destruct (R a₁); simpl; unfold id.
    apply compose_invert_l.
 
   assert (q : Π (b : B), Π (u : fib g b), ψ b (φ b u) = u).
    intros b₁ (a₁, p₁); apply p.
 
-   unfold retract.
-   exists (λ _, I).
-bbb.
-   unfold chap3.retract in r''.
-   destruct r'' as (C, r''); simpl.
-   unfold retraction in r''.
-   destruct r'' as (u, (v, r'')).
-bbb.
+   assert
+     (u :
+       (∀ a : fib g b,
+        eq_refl (((λ _ : fib g b, I) ◦ ψ b) (φ b a))
+        • ap id (eq_refl (((λ _ : fib f (s' b), I) ◦ φ b) a)) =
+        ap (λ _ : fib g b, I) (q b a) • (homotopy_eq_refl id I)⁻¹)).
+    intros u; rewrite <- lu; simpl; unfold id.
+    rewrite <- ru; destruct (q b u); apply eq_refl.
 
-Definition old_hott_4_7_3 A B {X Y} (f : X → Y) (r : retract A B f)
-    (g := Σ_pr₁ r) (b : B) (s' : B → Y) (r' : chap3.retract (fib f (s' b)))
-  :
-    fib g b = Σ_pr₁ r'.
-Proof.
-subst g.
-rename r' into r''.
-rename s' into s''.
-destruct r as (g, (s, (r, (s', (r', (R, (R', (L, (K, H))))))))); simpl.
-set
-  (φ b (u : fib g b) :=
-   let a := fib_a u in
-   let p := fib_p u in
-   fib_intro (s a) (L a • ap s' p)).
-set
-  (ψ b u :=
-   let x := fib_a u in
-   let q := fib_p u in
-   fib_intro (r x) (K x • ap r' q • R' b) : fib g b).
-assert
-  (e : ∀ u,
-   let a := fib_a u in
-   let p := fib_p u in
-   ψ b (φ b (fib_intro a p)) =
-   fib_intro (r (s a)) (K (s a) • ap r' (L a • ap s' p) • R' b)).
- intros a p; apply eq_refl.
+    apply
+      (retract_intro (fib g b) ⊤ (fib f (s' b)) ⊤ (λ _, I) (λ _, I) (φ b)
+         (ψ b) id id (q b) (homotopy_eq_refl id) (λ _, eq_refl _)
+         (λ _, eq_refl _) u).
+Defined.
 
- assert
-   (p : Π (b : B), Π (a : A), Π (p : g a = b),
-    let u := fib_intro a p in
-    ψ b (φ b u) = u).
-  intros b₁ a₁ p₁; simpl.
-  unfold φ, ψ; simpl; unfold id.
-  unfold "◦", "∼", id in R.
-  unfold composite; simpl.
-  destruct p₁; simpl.
-  apply
-    (compose
-       (y := fib_intro (r (s a₁)) (K (s a₁) • ap r' (L a₁) • R' (g a₁)))).
-   apply (Σ_type.pair_eq (eq_refl _)); simpl; unfold id.
-   apply dotr, dotl, ap, invert, ru.
-
-   unfold id; rewrite H.
-   apply (Σ_type.pair_eq (R a₁)).
-   destruct (R a₁); simpl; unfold id.
-   apply compose_invert_l.
-
-  assert (q : Π (b : B), Π (u : fib g b), ψ b (φ b u) = u).
-   intros b₁ (a₁, p₁); apply p.
-
-   unfold chap3.retract in r''.
-   destruct r'' as (C, r''); simpl.
-   unfold retraction in r''.
-   destruct r'' as (u, (v, r'')).
-bbb.
-
-unfold "◦", "∼", id in *.
-  pose proof p b (r machindetypeX).
-
-bbb.
-
-About ua.
-pose proof @ua (fib g b) C.
-
-SearchAbout (_ ≃ _ → _ = _).
-  eapply ua.
-bbb.
-
-About hott_3_11_9_i.
-(* hott_3_11_9_i :
-∀ (A : Type) (P : A → Type), (∀ x : A, isContr (P x)) → {x : A & P x} ≃ A
-
-Arguments A, P are implicit and maximally inserted *)
-pose proof @hott_3_11_9_i (fib g b₁).
-
-bbb.
-  rewrite R.
-  pose proof R a₁ as p.
-rewrite p.
-bbb.
+(* "Theorem 4.7.4. If g is a retract of an equivalence f, then g is
+    also an equivalence." *)
