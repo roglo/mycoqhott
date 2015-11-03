@@ -1369,7 +1369,68 @@ Defined.
     : X → Y, then fib_g(b) is a retract of fib_f(s'(b)) for every b :
     B, where s' : B → Y is as in Definition 4.7.2." *)
 
+bbb.
+
+(* very slow; something strang in Coq; to do: make a version of retract
+   using a record *)
+
 Definition hott_4_7_3 A B {X Y} (f : X → Y) (r : retract A B f)
+    (g := Σ_pr₁ r) (b : B) (s' := Σ_pr₁ (Σ_pr₂ (Σ_pr₂ (Σ_pr₂ r))))
+  : retract (fib g b) ⊤ (λ _ : fib f (s' b), I).
+Proof.
+subst g.
+destruct r as (g, (s, (r, (s', (r', (R, (R', (L, (K, H))))))))); simpl.
+set
+  (φ b (u : fib g b) :=
+   let a := fib_a u in
+   let p := fib_p u in
+   fib_intro (s a) (L a • ap s' p)).
+set
+  (ψ b u :=
+   let x := fib_a u in
+   let q := fib_p u in
+   fib_intro (r x) (K x • ap r' q • R' b) : fib g b).
+assert
+  (e : ∀ u,
+   let a := fib_a u in
+   let p := fib_p u in
+   ψ b (φ b (fib_intro a p)) =
+   fib_intro (r (s a)) (K (s a) • ap r' (L a • ap s' p) • R' b)).
+ intros a p; apply eq_refl.
+
+ assert
+   (p : Π (b : B), Π (a : A), Π (p : g a = b),
+    let u := fib_intro a p in
+    ψ b (φ b u) = u).
+  intros b₁ a₁ p₁; simpl.
+  unfold φ, ψ; simpl; unfold id.
+  unfold "◦", "∼", id in R.
+  unfold composite; simpl.
+  destruct p₁; simpl.
+  apply
+    (compose
+       (y := fib_intro (r (s a₁)) (K (s a₁) • ap r' (L a₁) • R' (g a₁)))).
+   apply (Σ_type.pair_eq (eq_refl _)); simpl; unfold id.
+   apply dotr, dotl, ap, invert, ru.
+
+   unfold id; rewrite H.
+   apply (Σ_type.pair_eq (R a₁)).
+   destruct (R a₁); simpl; unfold id.
+   apply compose_invert_l.
+
+  assert (q : Π (b : B), Π (u : fib g b), ψ b (φ b u) = u).
+   intros b₁ (a₁, p₁); apply p.
+
+   unfold retract.
+   exists (λ _, I).
+bbb.
+   unfold chap3.retract in r''.
+   destruct r'' as (C, r''); simpl.
+   unfold retraction in r''.
+   destruct r'' as (u, (v, r'')).
+bbb.
+
+Definition old_hott_4_7_3 A B {X Y} (f : X → Y) (r : retract A B f)
     (g := Σ_pr₁ r) (b : B) (s' : B → Y) (r' : chap3.retract (fib f (s' b)))
   :
     fib g b = Σ_pr₁ r'.
@@ -1423,10 +1484,6 @@ assert
    destruct r'' as (C, r''); simpl.
    unfold retraction in r''.
    destruct r'' as (u, (v, r'')).
-Check (fib g).
-Check (λ b, fib f (s' b)).
-Check retract.
-
 bbb.
 
 unfold "◦", "∼", id in *.
