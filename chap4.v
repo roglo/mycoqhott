@@ -1370,12 +1370,11 @@ Defined.
     B, where s' : B → Y is as in Definition 4.7.2." *)
 
 Definition hott_4_7_3 A B {X Y} (f : X → Y) (r : retract A B f)
-    (b : B) (s' : B → Y) (r' : chap3.retract (fib f (s' b)))
+    (g := Σ_pr₁ r) (b : B) (s' : B → Y) (r' : chap3.retract (fib f (s' b)))
   :
-    let g := Σ_pr₁ r in
     fib g b = Σ_pr₁ r'.
 Proof.
-intros g; subst g.
+subst g.
 rename r' into r''.
 rename s' into s''.
 destruct r as (g, (s, (r, (s', (r', (R, (R', (L, (K, H))))))))); simpl.
@@ -1424,6 +1423,10 @@ assert
    destruct r'' as (C, r''); simpl.
    unfold retraction in r''.
    destruct r'' as (u, (v, r'')).
+Check (fib g).
+Check (λ b, fib f (s' b)).
+Check retract.
+
 bbb.
 
 unfold "◦", "∼", id in *.
