@@ -1464,3 +1464,8 @@ Defined.
 
 (* "Theorem 4.7.4. If g is a retract of an equivalence f, then g is
     also an equivalence." *)
+
+Definition hott_4_7_4 A B {X Y} (f : X → Y) (r : retract A B f)
+    (g := rg r) : isequiv f → isequiv g.
+Proof.
+intros p.
