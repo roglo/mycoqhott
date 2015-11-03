@@ -1486,9 +1486,26 @@ split.
  subst g; simpl.
  pose proof hott_4_7_3 A B f r (rg r a) as q; simpl in q.
  simpl in q.
+ assert (p : retraction (fib (rg r) (rg r a)) ⊤).
+  unfold retraction.
+  exists (λ _, I), (λ _, fib_intro a (eq_refl _)).
+  intros y; destruct y; apply eq_refl.
+
+  pose proof hott_3_11_7 (fib (rg r)(rg r a)) ⊤ p as s.
+
+Check (rg q).
+
+bbb.
  pose proof hott_3_11_7 A B as s.
  assert (retraction A B).
   unfold retraction.
+SearchAbout retraction.
+destruct q.
+destruct r.
+simpl in *.
+pose proof rH1 a.
+bbb.
+
   exists (rg r).
 Print retract.
 bbb.
