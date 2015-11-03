@@ -1482,8 +1482,15 @@ split.
  unfold "◦", "∼", id in p, ε, q.
  rewrite p, ε; apply q.
 
- unfold "◦", "∼", id; intros b.
+ unfold "◦", "∼", id; intros a.
  subst g; simpl.
+ pose proof hott_4_7_3 A B f r (rg r a) as q; simpl in q.
+ simpl in q.
+ pose proof hott_3_11_7 A B as s.
+ assert (retraction A B).
+  unfold retraction.
+  exists (rg r).
+Print retract.
 bbb.
 
 pose proof hott_4_7_3 A B f r as q; simpl in q.
