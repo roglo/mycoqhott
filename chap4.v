@@ -1469,3 +1469,42 @@ Definition hott_4_7_4 A B {X Y} (f : X → Y) (r : retract A B f)
     (g := rg r) : isequiv f → isequiv g.
 Proof.
 intros p.
+apply isequiv_qinv in p.
+unfold qinv in p.
+destruct p as (h, (ε, η)).
+apply qinv_isequiv.
+exists (λ b, rr r (h (rs' r b))).
+split.
+ unfold "◦", "∼", id; intros b.
+ subst g; simpl.
+ pose proof (rK r) as p.
+ pose proof (rR' r) as q.
+ unfold "◦", "∼", id in p, ε, q.
+ rewrite p, ε; apply q.
+
+ unfold "◦", "∼", id; intros b.
+ subst g; simpl.
+bbb.
+
+pose proof hott_4_7_3 A B f r as q; simpl in q.
+pose proof hott_3_11_7 A B.
+assert (retraction A B).
+ unfold retraction.
+ exists g.
+Print retract.
+
+unfold retraction in X0.
+destruct r; simpl in *.
+(*
+hott_4_7_3
+     : ∀ (A B X Y : Type) (f : X → Y) (rt : retract A B f)
+       (b : B) (g:=rg rt) (s':=rs' rt),
+       retract (fib g b) ⊤ (λ _ : fib f (s' b), I)
+hott_3_11_7
+     : ∀ A B : Type, retraction A B → isContr A → isContr B
+*)
+
+apply qinv_isequiv.
+unfold qinv.
+destruct r.
+Check (rr0 (h (rs'0
