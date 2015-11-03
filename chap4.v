@@ -1470,6 +1470,7 @@ Definition hott_4_7_4 A B {X Y} (f : X → Y) (r : retract A B f)
 Proof.
 intros p.
 apply isequiv_qinv in p.
+pose proof hott_4_2_3 X Y f p as ishaef.
 unfold qinv in p.
 destruct p as (h, (ε, η)).
 apply qinv_isequiv.
@@ -1484,15 +1485,43 @@ split.
 
  unfold "◦", "∼", id; intros a.
  subst g; simpl.
- pose proof hott_4_7_3 A B f r (rg r a) as q; simpl in q.
- simpl in q.
- assert (p : retraction (fib (rg r) (rg r a)) ⊤).
-  unfold retraction.
-  exists (λ _, I), (λ _, fib_intro a (eq_refl _)).
-  intros y; destruct y; apply eq_refl.
+ assert (t : retraction (fib f (rs' r (rg r a))) (fib (rg r) (rg r a))).
+  assert
+    (q : retract (fib (rg r) (rg r a)) ⊤ (λ _ : fib f (rs' r (rg r a)), I)).
+   apply hott_4_7_3.
 
-  pose proof hott_3_11_7 (fib (rg r)(rg r a)) ⊤ p as s.
+   unfold retraction.
+   exists (rr q), (rs q); intros y; apply (rR q).
 
+  assert (u : isContr (fib f (rs' r (rg r a)))).
+   apply hott_4_2_6, ishaef.
+bbb.
+
+   pose proof (hott_3_11_7 (fib f (rs' r (rg r a))) (fib (rg r) (rg r a)) t u)
+     as s.
+bbb.
+
+   unfold isContr in u, s.
+   destruct u as (u, v).
+destruct u.
+
+bbb.
+  pose proof (hott_3_11_7 (fib (rg r) (rg r a)) (fib f (rs' r (rg r a))))
+    as s.
+  assert (retraction (fib (rg r) (rg r a)) (fib f (rs' r (rg r a)))).
+   exists (rs q), (rr q); intros y.
+Print retract.
+
+bbb.
+  assert (p : retraction (fib (rg r) (rg r a)) ⊤).
+   unfold retraction.
+   exists (λ _, I), (λ _, fib_intro a (eq_refl _)).
+   intros y; destruct y; apply eq_refl.
+
+   pose proof hott_3_11_7 (fib (rg r)(rg r a)) ⊤ p as s.
+bbb.
+
+bbb.
 Check (rg q).
 
 bbb.
