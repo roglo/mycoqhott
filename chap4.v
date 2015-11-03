@@ -1348,6 +1348,36 @@ Defined.
                    R'(g(a))⁻¹
    " *)
 
+Record retract A B {X Y} (f : X → Y) :=
+  mkr
+  { g : A → B;
+    s : A → X;
+    r : X → A;
+    s' : B → Y;
+    r' : Y → B;
+    R : r ◦ s ∼ id;
+    R' : r' ◦ s' ∼ id;
+    L : f ◦ s ∼ s' ◦ g;
+    K : g ◦ r ∼ r' ◦ f;
+    H (a : A) : K (s a) • ap r' (L a) = ap g (R a) • (R' (g a))⁻¹ }.
+
+Definition type_retract_fun_retract {A} (B : chap3.retract A) :
+  retract (Σ_type.pr₁ B) ⊤ (λ _ : A, I).
+Proof.
+unfold chap3.retract, retraction in B.
+destruct B as (B, (f, (g, p))); simpl.
+assert
+  (H : ∀ a : B,
+       eq_refl I • ap id (eq_refl I) =
+       ap (λ _ : B, I) (p a) • (homotopy_eq_refl id I)⁻¹).
+ intros b; simpl; unfold "◦", id.
+ rewrite <- ru; destruct (p b); apply eq_refl.
+apply
+  (mkr B ⊤ A ⊤ (λ _, I) (λ _, I) g f id id p (homotopy_eq_refl id)
+     (λ _, eq_refl I) (λ _, eq_refl I) H).
+Defined.
+
+(*
 Definition retract A B {X Y} (f : X → Y) :=
   Σ (g : A → B), Σ (s : A → X), Σ (r : X → A), Σ (s' : B → Y), Σ (r' : Y → B),
   Σ (R : r ◦ s ∼ id), Σ (R' : r' ◦ s' ∼ id),
@@ -1364,20 +1394,20 @@ exists (λ _, eq_refl I), (λ _, eq_refl I).
 intros b; simpl; unfold "◦", id.
 rewrite <- ru; destruct (p b); apply eq_refl.
 Defined.
+*)
 
 (* "Lemma 4.7.3. If a function g : A → B is a retract of a function f
     : X → Y, then fib_g(b) is a retract of fib_f(s'(b)) for every b :
     B, where s' : B → Y is as in Definition 4.7.2." *)
 
+Arguments g [A] [B] [X] [Y] [f] r a.
+Arguments s' [A] [B] [X] [Y] [f] r a.
+
+Definition hott_4_7_3 A B {X Y} (f : X → Y) (r : retract A B f) (b : B) :
+  retract (fib (g r) b) ⊤ (λ _ : fib f (s' r b), I).
+Proof.
 bbb.
 
-(* very slow; something strang in Coq; to do: make a version of retract
-   using a record *)
-
-Definition hott_4_7_3 A B {X Y} (f : X → Y) (r : retract A B f)
-    (g := Σ_pr₁ r) (b : B) (s' := Σ_pr₁ (Σ_pr₂ (Σ_pr₂ (Σ_pr₂ r))))
-  : retract (fib g b) ⊤ (λ _ : fib f (s' b), I).
-Proof.
 subst g.
 destruct r as (g, (s, (r, (s', (r', (R, (R', (L, (K, H))))))))); simpl.
 set
