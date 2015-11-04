@@ -1561,20 +1561,10 @@ transparent assert (ff : fib (total f) (existT _ x v) → fib (f x) v).
      revert p₃; apply equiv_imp.
      apply Σ_equiv, Π_type.funext; intros y; apply ua, Σ_comm.
 
-     assert
-       (p₅ :
-          Σ (w : Σ (a : A), a = x), Σ (u : P (Σ_pr₁ w)),
-          (Σ_pr₂ w)⁎ (f (Σ_pr₁ w) u) = v).
-      revert p₄; apply equiv_imp.
-      apply
-bbb.
-
-     assert (p₅ : Σ (v : fib id a), Σ (u : P a, (Σ_pr₂ v)
-
-A), Σ (p : a = x), Σ (u : P a), p⁎ (f a u) = v).
-
      assert (p₅ : Σ (u : P x), f x u = v).
       revert p₄; apply equiv_imp.
+bbb.
+
       assert (p₆ : isContr (Σ (a : A), x = a)) by apply hott_3_11_8.
       apply isContr_Σ_inv in p₆.
 bbb.
