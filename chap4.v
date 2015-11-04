@@ -1564,6 +1564,23 @@ transparent assert (ff : fib (total f) (existT _ x v) → fib (f x) v).
      assert (p₅ : Σ (u : P x), f x u = v).
       revert p₄; apply equiv_imp.
       assert (p₆ : isContr (Σ (a : A), x = a)) by apply hott_3_11_8.
+      apply isContr_Σ_inv in p₆.
+Definition toto A P Q R :
+  isContr (Σ (a : A), P a)
+  → isContr (Σ (a : A), Σ (b : P a), Σ (c : Q a b), R a b c).
+Proof.
+intros p.
+destruct p as ((a, p), q).
+unfold isContr.
+assert ({a0 : A & {b : P a0 & {c : Q a0 b & R a0 b c}}}).
+ exists a, p.
+ Check (R a p).
+ assert (Q a p).
+bbb.
+
+bbb.
+pose proof toto A (λ a, a = x) (λ a b, P a) (λ a b c, transport Q b (f a c) = v) p₆ as p₇; simpl in p₇.
+
 bbb.
 @hott_3_11_8
      : ∀ (A : Type) (a : A), isContr {x : A & a = x}
