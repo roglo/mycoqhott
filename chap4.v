@@ -1547,6 +1547,10 @@ transparent assert (ff : fib (total f) (existT _ x v) → fib (f x) v).
         (C := λ w, existT Q (Σ_pr₁ w) (f (Σ_pr₁ w) (Σ_pr₂ w)) = existT Q x v)).
 
    assert (p₃ : Σ (a : A), Σ (u : P a), Σ (p : a = x), p⁎ (f a u) = v).
+    revert p₂; apply equiv_imp.
+    apply Σ_equiv, Π_type.funext; intros y; apply ua.
+    apply Σ_equiv, Π_type.funext; intros q; apply ua.
+    apply Σ_type.hott_2_7_2.
 bbb.
 
  destruct p as ((x', p), q).
