@@ -67,17 +67,22 @@ split; intros (x, p); exists x; intros y; apply invert, p.
 Defined.
 
 Definition isContr_Σ_inv A (x : A) :
-  isProp (Σ (y : A), y = x)
-  → isContr (Σ (y : A), x = y)
+  isContr (Σ (y : A), x = y)
   ⇔ isContr (Σ (y : A), y = x).
 Proof.
-intros P.
-unfold isContr; split; intros (p, q).
+split; intros p.
+ generalize p; intros P.
+ apply isContr_isProp in P.
+ destruct p as (p, q).
  pose proof (fst (Σ_eq_inv _ _) p) as y.
+ apply isProp_Σ_eq_inv in P.
  exists y; intros z; apply P.
 
- apply isProp_Σ_eq_inv in P.
+ generalize p; intros P.
+ apply isContr_isProp in P.
+ destruct p as (p, q).
  pose proof (snd (Σ_eq_inv _ _) p) as y.
+ apply isProp_Σ_eq_inv in P.
  exists y; intros z; apply P.
 Defined.
 
@@ -1556,8 +1561,22 @@ transparent assert (ff : fib (total f) (existT _ x v) → fib (f x) v).
      revert p₃; apply equiv_imp.
      apply Σ_equiv, Π_type.funext; intros y; apply ua, Σ_comm.
 
+     assert
+       (p₅ :
+          Σ (w : Σ (a : A), a = x), Σ (u : P (Σ_pr₁ w)),
+          (Σ_pr₂ w)⁎ (f (Σ_pr₁ w) u) = v).
+      revert p₄; apply equiv_imp.
+      apply
+bbb.
+
+     assert (p₅ : Σ (v : fib id a), Σ (u : P a, (Σ_pr₂ v)
+
+A), Σ (p : a = x), Σ (u : P a), p⁎ (f a u) = v).
+
      assert (p₅ : Σ (u : P x), f x u = v).
       revert p₄; apply equiv_imp.
+      assert (p₆ : isContr (Σ (a : A), x = a)) by apply hott_3_11_8.
+      apply isContr_Σ_inv in p₆.
 bbb.
       eapply equiv_compose; [ | eapply quasi_inv, hott_3_11_9_i ].
       eapply equiv_compose; [ apply hott_3_11_9_i | ].
