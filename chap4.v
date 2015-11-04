@@ -1540,15 +1540,13 @@ transparent assert (ff : fib (total f) (existT _ x v) → fib (f x) v).
       existT _ (Σ_pr₁ w) (f (Σ_pr₁ w) (Σ_pr₂ w)) = existT _ x v).
   apply p.
 
-  assert
-    (ff :
-       (Σ (w : Σ (x : A), P x),
-        existT _ (Σ_pr₁ w) (f (Σ_pr₁ w) (Σ_pr₂ w)) = existT _ x v) ≃
-       Σ (a : A), Σ (u : P a), existT _ a (f a u) = existT _ x v).
-  apply quasi_inv.
-About ex_2_10.
-  Check @ex_2_10 A P.
-  eapply ex_2_10.
+  assert (p₂ : Σ (a : A), Σ (u : P a), existT _ a (f a u) = existT _ x v).
+   revert p₁; apply equiv_imp, quasi_inv.
+   apply
+     (ex_2_10
+        (C := λ w, existT Q (Σ_pr₁ w) (f (Σ_pr₁ w) (Σ_pr₂ w)) = existT Q x v)).
+
+   assert (p₃ : Σ (a : A), Σ (u : P a), Σ (p : a = x), p⁎ (f a u) = v).
 bbb.
 
  destruct p as ((x', p), q).
