@@ -1563,15 +1563,8 @@ transparent assert (ff : fib (total f) (existT _ x v) → fib (f x) v).
 
      assert (p₅ : Σ (u : P x), f x u = v).
       revert p₄; apply equiv_imp.
-bbb.
-
       assert (p₆ : isContr (Σ (a : A), x = a)) by apply hott_3_11_8.
-      apply isContr_Σ_inv in p₆.
 bbb.
-      eapply equiv_compose; [ | eapply quasi_inv, hott_3_11_9_i ].
-      eapply equiv_compose; [ apply hott_3_11_9_i | ].
-      intros y.
-
 @hott_3_11_8
      : ∀ (A : Type) (a : A), isContr {x : A & a = x}
 @hott_3_11_9_i
@@ -1584,6 +1577,12 @@ bbb.
      : ∀ (A : Type) (B : A → Type) (C : {x : A & B x} → Type),
        {x : A & {y : B x & C (existT (λ x0 : A, B x0) x y)}}
        ≃ {p : {x : A & B x} & C p}
+
+      apply isContr_Σ_inv in p₆.
+bbb.
+      eapply equiv_compose; [ | eapply quasi_inv, hott_3_11_9_i ].
+      eapply equiv_compose; [ apply hott_3_11_9_i | ].
+      intros y.
 bbb.
 
  destruct p as ((x', p), q).
