@@ -1520,6 +1520,44 @@ Defined.
       total (f) :≡ λ w.(pr₁ w, f(pr₁ w, pr₂ w)) : Σ (x:A) P(x) → Σ (x:A) Q(x)
    " *)
 
-Definition total {A} {P Q : A → Type} (f : Π (x : A), P x → Q x) :=
-  λ w : Σ (x : A), P x,
-  existT _ (Σ_pr₁ w) (f (Σ_pr₁ w) (Σ_pr₂ w)) : Σ (x : A), Q x.
+Definition total {A} {P Q : A → Type} (f : Π (x : A), P x → Q x)
+  : (Σ (x : A), P x) → (Σ (x : A), Q x)
+  := λ w, existT _ (Σ_pr₁ w) (f (Σ_pr₁ w) (Σ_pr₂ w)).
+
+(* "Theorem 4.7.6. Suppose that f is a fiberwise transformation
+    between families P and Q over a type A and let x : A and v :
+    Q(x). Then we have an equivalence
+         fib_{total(f)} ((x, v)) ≃ fib_{f(x)} (v)." *)
+
+Definition hott_4_7_6 A (P Q : A → Type) (f : Π (x : A), P x → Q x) (x : A)
+    (v : Q x) : fib (total f) (existT _ x v) ≃ fib (f x) v.
+Proof.
+transparent assert (ff : fib (total f) (existT _ x v) → fib (f x) v).
+ intros p.
+ assert
+   (p₁ :
+      Σ (w : Σ (x : A), P x),
+      existT _ (Σ_pr₁ w) (f (Σ_pr₁ w) (Σ_pr₂ w)) = existT _ x v).
+  apply p.
+
+  assert
+    (ff :
+       (Σ (w : Σ (x : A), P x),
+        existT _ (Σ_pr₁ w) (f (Σ_pr₁ w) (Σ_pr₂ w)) = existT _ x v) ≃
+       Σ (a : A), Σ (u : P a), existT _ a (f a u) = existT _ x v).
+  apply quasi_inv.
+About ex_2_10.
+  Check @ex_2_10 A P.
+  eapply ex_2_10.
+bbb.
+
+ destruct p as ((x', p), q).
+ simpl in q.
+ unfold total in q; simpl in q.
+ unfold fib.
+ injection q; intros _ xx'; destruct xx'; exists p.
+ rename x' into x.
+ apply Σ_type.pair_eq_if in q.
+ destruct q as (γ, q).
+ unfold transport in q.
+ destruct γ.
