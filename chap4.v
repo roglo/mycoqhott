@@ -1492,101 +1492,20 @@ split.
    exists (rr q), (rs q); intros y; apply (rR q).
    pose proof hott_3_11_7 (fib f (rs' r (g a))) (fib g (g a)) t as p.
    assert (cg : isContr (fib g (g a))) by apply p, hott_4_2_6, ishaef.
-   unfold isContr in cg.
-   destruct cg as ((a', gg), cg).
-   pose proof (fib_intro a gg) as q.
-   destruct q as (a'', q).
-bbb.
-   pose proof cg (fib_intro a' gg) as q.
-Print retract.
-
-bbb.
-  unfold retraction in t.
-  destruct t as (r₀, (s₀, t)).
-  assert (ca : isContr A).
-   eapply hott_3_11_7.
-   unfold retraction in t.
-   unfold retract in r.
-
-Focus 2.
-apply isContr_isProp in ca.
-apply ca.
-bbb.
-
-Check hott_3_11_7 _ A.
-
-  assert (u : isContr (fib f (rs' r (rg r a)))) by apply hott_4_2_6, ishaef.
-  unfold isContr in u.
-  destruct u as (a₀, u).
-  Check (t (r₀ a₀)).
-bbb.
-
-  set (y := rs' r (rg r a)) in u |-*.
-Print retract.
-
-bbb.
-
-   pose proof (hott_3_11_7 (fib f (rs' r (rg r a))) (fib (rg r) (rg r a)) t u)
-     as s.
-bbb.
-
-   unfold isContr in u, s.
-   destruct u as (u, v).
-destruct u.
-
-bbb.
-  pose proof (hott_3_11_7 (fib (rg r) (rg r a)) (fib f (rs' r (rg r a))))
-    as s.
-  assert (retraction (fib (rg r) (rg r a)) (fib f (rs' r (rg r a)))).
-   exists (rs q), (rr q); intros y.
-Print retract.
-
-bbb.
-  assert (p : retraction (fib (rg r) (rg r a)) ⊤).
-   unfold retraction.
-   exists (λ _, I), (λ _, fib_intro a (eq_refl _)).
-   intros y; destruct y; apply eq_refl.
-
-   pose proof hott_3_11_7 (fib (rg r)(rg r a)) ⊤ p as s.
-bbb.
-
-bbb.
-Check (rg q).
-
-bbb.
- pose proof hott_3_11_7 A B as s.
- assert (retraction A B).
-  unfold retraction.
-SearchAbout retraction.
-destruct q.
-destruct r.
-simpl in *.
-pose proof rH1 a.
-bbb.
-
-  exists (rg r).
-Print retract.
-bbb.
-
-pose proof hott_4_7_3 A B f r as q; simpl in q.
-pose proof hott_3_11_7 A B.
-assert (retraction A B).
- unfold retraction.
- exists g.
-Print retract.
-
-unfold retraction in X0.
-destruct r; simpl in *.
-(*
-hott_4_7_3
-     : ∀ (A B X Y : Type) (f : X → Y) (rt : retract A B f)
-       (b : B) (g:=rg rt) (s':=rs' rt),
-       retract (fib g b) ⊤ (λ _ : fib f (s' b), I)
-hott_3_11_7
-     : ∀ A B : Type, retraction A B → isContr A → isContr B
-*)
-
-apply qinv_isequiv.
-unfold qinv.
-destruct r.
-Check (rr0 (h (rs'0
+apply isContr_isProp in cg.
+unfold isProp in cg.
+assert (g (rr r (h (rs' r (g a)))) = g a).
+subst g.
+pose proof rL r.
+pose proof (rR r).
+unfold "◦", "∼", id in H, η, H0.
+rewrite <- H, η, H0.
+apply eq_refl.
+set (u := fib_intro a (eq_refl (g a))).
+set (v := fib_intro (rr r (h (rs' r (g a)))) H).
+pose proof cg u v.
+subst u v.
+apply hott_4_2_5_dir in H0.
+destruct H0.
+apply invert, x.
+Defined.
