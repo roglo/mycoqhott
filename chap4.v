@@ -1509,3 +1509,17 @@ split.
    destruct uv as (γ, _).
    apply invert, γ.
 Defined.
+
+(* "given two type families P, Q : A → U, we may refer to a function f
+    : Π (x:A) (P(x) → Q(x)) as a *fiberwise map* or a *fiberwise
+    transformation*. Such a map induces a function on total spaces:
+
+    Definition 4.7.5. Given type families P, Q : A → U and a map
+    f : Π (x:A) P(x) → Q(x), we define
+
+      total (f) :≡ λ w.(pr₁ w, f(pr₁ w, pr₂ w)) : Σ (x:A) P(x) → Σ (x:A) Q(x)
+   " *)
+
+Definition total {A} {P Q : A → Type} (f : Π (x : A), P x → Q x) :=
+  λ w : Σ (x : A), P x,
+  existT _ (Σ_pr₁ w) (f (Σ_pr₁ w) (Σ_pr₂ w)) : Σ (x : A), Q x.
