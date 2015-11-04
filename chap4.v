@@ -1551,6 +1551,8 @@ transparent assert (ff : fib (total f) (existT _ x v) → fib (f x) v).
     apply Σ_equiv, Π_type.funext; intros y; apply ua.
     apply Σ_equiv, Π_type.funext; intros q; apply ua.
     apply Σ_type.hott_2_7_2.
+
+    assert (p₄ : Σ (a : A), Σ (p : a = x), Σ (u : P a), p⁎ (f a u) = v).
 bbb.
 
  destruct p as ((x', p), q).
