@@ -1559,7 +1559,6 @@ transparent assert (ff : fib (total f) (existT _ x v) → fib (f x) v).
      assert (p₅ : Σ (u : P x), f x u = v).
       revert p₄; apply equiv_imp.
 bbb.
-
       eapply equiv_compose; [ | eapply quasi_inv, hott_3_11_9_i ].
       eapply equiv_compose; [ apply hott_3_11_9_i | ].
       intros y.
