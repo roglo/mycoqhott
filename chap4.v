@@ -1484,17 +1484,46 @@ split.
  rewrite p, ε; apply q.
 
  unfold "◦", "∼", id; intros a.
- subst g; simpl.
- assert (t : retraction (fib f (rs' r (rg r a))) (fib (rg r) (rg r a))).
-  assert
-    (q : retract (fib (rg r) (rg r a)) ⊤ (λ _ : fib f (rs' r (rg r a)), I)).
+ assert (t : retraction (fib f (rs' r (g a))) (fib g (g a))).
+  assert (q : retract (fib g (g a)) ⊤ (λ _ : fib f (rs' r (g a)), I)).
    apply hott_4_7_3.
 
    unfold retraction.
    exists (rr q), (rs q); intros y; apply (rR q).
+   pose proof hott_3_11_7 (fib f (rs' r (g a))) (fib g (g a)) t as p.
+   assert (cg : isContr (fib g (g a))) by apply p, hott_4_2_6, ishaef.
+   unfold isContr in cg.
+   destruct cg as ((a', gg), cg).
+   pose proof (fib_intro a gg) as q.
+   destruct q as (a'', q).
+bbb.
+   pose proof cg (fib_intro a' gg) as q.
+Print retract.
 
-  assert (u : isContr (fib f (rs' r (rg r a)))).
-   apply hott_4_2_6, ishaef.
+bbb.
+  unfold retraction in t.
+  destruct t as (r₀, (s₀, t)).
+  assert (ca : isContr A).
+   eapply hott_3_11_7.
+   unfold retraction in t.
+   unfold retract in r.
+
+Focus 2.
+apply isContr_isProp in ca.
+apply ca.
+bbb.
+
+Check hott_3_11_7 _ A.
+
+  assert (u : isContr (fib f (rs' r (rg r a)))) by apply hott_4_2_6, ishaef.
+  unfold isContr in u.
+  destruct u as (a₀, u).
+  Check (t (r₀ a₀)).
+bbb.
+
+  set (y := rs' r (rg r a)) in u |-*.
+Print retract.
+
 bbb.
 
    pose proof (hott_3_11_7 (fib f (rs' r (rg r a))) (fib (rg r) (rg r a)) t u)
