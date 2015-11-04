@@ -1555,6 +1555,27 @@ transparent assert (ff : fib (total f) (existT _ x v) → fib (f x) v).
     assert (p₄ : Σ (a : A), Σ (p : a = x), Σ (u : P a), p⁎ (f a u) = v).
      revert p₃; apply equiv_imp.
      apply Σ_equiv, Π_type.funext; intros y; apply ua, Σ_comm.
+
+     assert (p₅ : Σ (u : P x), f x u = v).
+      revert p₄; apply equiv_imp.
+bbb.
+
+      eapply equiv_compose; [ | eapply quasi_inv, hott_3_11_9_i ].
+      eapply equiv_compose; [ apply hott_3_11_9_i | ].
+      intros y.
+
+@hott_3_11_8
+     : ∀ (A : Type) (a : A), isContr {x : A & a = x}
+@hott_3_11_9_i
+     : ∀ (A : Type) (P : A → Type),
+       (∀ x : A, isContr (P x)) → {x : A & P x} ≃ A
+@hott_3_11_9_ii
+     : ∀ (A : Type) (P : A → Type) (p : isContr A) 
+       (a:=Σ_type.pr₁ p), {x : A & P x} ≃ P a
+@ex_2_10
+     : ∀ (A : Type) (B : A → Type) (C : {x : A & B x} → Type),
+       {x : A & {y : B x & C (existT (λ x0 : A, B x0) x y)}}
+       ≃ {p : {x : A & B x} & C p}
 bbb.
 
  destruct p as ((x', p), q).
