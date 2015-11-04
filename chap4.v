@@ -1470,7 +1470,7 @@ Definition hott_4_7_4 A B {X Y} (f : X → Y) (r : retract A B f)
 Proof.
 intros p.
 apply isequiv_qinv in p.
-pose proof hott_4_2_3 X Y f p as ishaef.
+pose proof (hott_4_2_3 X Y f p) as ishaef.
 unfold qinv in p.
 destruct p as (h, (ε, η)).
 apply qinv_isequiv.
@@ -1490,22 +1490,22 @@ split.
 
    unfold retraction.
    exists (rr q), (rs q); intros y; apply (rR q).
-   pose proof hott_3_11_7 (fib f (rs' r (g a))) (fib g (g a)) t as p.
-   assert (cg : isContr (fib g (g a))) by apply p, hott_4_2_6, ishaef.
-apply isContr_isProp in cg.
-unfold isProp in cg.
-assert (g (rr r (h (rs' r (g a)))) = g a).
-subst g.
-pose proof rL r.
-pose proof (rR r).
-unfold "◦", "∼", id in H, η, H0.
-rewrite <- H, η, H0.
-apply eq_refl.
-set (u := fib_intro a (eq_refl (g a))).
-set (v := fib_intro (rr r (h (rs' r (g a)))) H).
-pose proof cg u v.
-subst u v.
-apply hott_4_2_5_dir in H0.
-destruct H0.
-apply invert, x.
+
+  pose proof (hott_3_11_7 (fib f (rs' r (g a))) (fib g (g a)) t) as p.
+  assert (cg : isContr (fib g (g a))) by apply p, hott_4_2_6, ishaef.
+  assert (pg : g (rr r (h (rs' r (g a)))) = g a).
+   pose proof (rL r) as L.
+   pose proof (rR r) as R.
+   unfold "◦", "∼", id in L, η, R.
+   rewrite <- L, η, R.
+   apply eq_refl.
+
+   set (u := fib_intro a (eq_refl (g a))).
+   set (v := fib_intro (rr r (h (rs' r (g a)))) pg).
+   apply isContr_isProp in cg.
+   pose proof (cg u v) as uv.
+   subst u v.
+   apply hott_4_2_5_dir in uv.
+   destruct uv as (γ, _).
+   apply invert, γ.
 Defined.
