@@ -907,7 +907,7 @@ Defined.
 (* "Theorem 4.2.13. For any f : A → B, the type ishae(f) is a mere
     proposition." *)
 
-Definition sigma_comm A B (P : A → B → Type) :
+Definition Σ_comm A B (P : A → B → Type) :
   (Σ (x : A), Σ (y : B), P x y) ≃
   (Σ (y : B), Σ (x : A), P x y).
 Proof.
@@ -943,7 +943,7 @@ apply (pr₁ (Σ_pr₂ (@ex_3_5 (ishae f)))); intros p.
 assert (q : ishae f ≃ Σ (u : rinv f), rcoh f (Σ_pr₁ u) (Σ_pr₂ u)).
  eapply equiv_compose; [  | apply ex_2_10 ]; simpl.
  apply Σ_equiv, Π_type.funext; intros g.
- unfold rcoh; apply ua, sigma_comm.
+ unfold rcoh; apply ua, Σ_comm.
 
  pose proof (hott_4_2_9 A B f (ishae_qinv A B f p)) as r.
  destruct r as (r, s).
@@ -1553,6 +1553,8 @@ transparent assert (ff : fib (total f) (existT _ x v) → fib (f x) v).
     apply Σ_type.hott_2_7_2.
 
     assert (p₄ : Σ (a : A), Σ (p : a = x), Σ (u : P a), p⁎ (f a u) = v).
+     revert p₃; apply equiv_imp.
+     apply Σ_equiv, Π_type.funext; intros y; apply ua, Σ_comm.
 bbb.
 
  destruct p as ((x', p), q).
