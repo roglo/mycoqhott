@@ -1606,6 +1606,8 @@ Definition isFiberwiseEquivalence {A P Q} (f : Π (x : A), P x → Q x) :=
 Definition hott_4_7_7 {A P Q} (f : Π (x : A), P x → Q x) :
   isFiberwiseEquivalence f ⇔ isequiv (total f).
 Proof.
-split; intros p.
- unfold isFiberwiseEquivalence in p.
-SearchAbout total.
+pose proof hott_4_7_6 A P Q f as p.
+assert (q : ∀ (x : A) (v : Q x),
+ isContr (fib (total f) (existT _ x v)) ⇔ isContr (fib (f x) v)).
+ split; apply equiv_contr; [ apply p | apply quasi_inv, p ].
+bbb.
