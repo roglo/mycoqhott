@@ -1618,6 +1618,11 @@ assert
     ∀ x v, isContr (fib (f x) v)).
   split; intros r; [ intros x v; apply q, r | intros (a, s); apply q, r ].
 
+  unfold isFiberwiseEquivalence.
+SearchAbout isContr.
+unfold fib in r.
+Check hott_3_11_8.
+
 bbb.
   split.
    intros s.
@@ -1633,6 +1638,15 @@ bbb.
     simpl in g; exists g; unfold g; clear g.
     unfold "◦", "∼", id; split; intros t.
      unfold total; destruct t as (a, t); simpl.
+     pose proof (s a) as u.
+     apply isequiv_qinv, hott_4_2_3 in u.
+     pose proof (hott_4_2_6 (P a) (Q a) (f a) u t) as v.
+     apply q in v.
+bbb.
+
+About hott_4_2_6.
+SearchAbout ishae.
+
      unfold isequiv_qinv; simpl.
      destruct (s a) as ((g, Hg), (h, Hh)); simpl.
      unfold "◦", "∼", id in Hg; rewrite Hg.
