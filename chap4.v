@@ -1607,7 +1607,63 @@ Definition hott_4_7_7 {A P Q} (f : Π (x : A), P x → Q x) :
   isFiberwiseEquivalence f ⇔ isequiv (total f).
 Proof.
 pose proof hott_4_7_6 A P Q f as p.
-assert (q : ∀ (x : A) (v : Q x),
- isContr (fib (total f) (existT _ x v)) ⇔ isContr (fib (f x) v)).
+assert
+  (q : ∀ (x : A) (v : Q x),
+   isContr (fib (total f) (existT _ x v)) ⇔ isContr (fib (f x) v)).
  split; apply equiv_contr; [ apply p | apply quasi_inv, p ].
+
+ assert
+   (r :
+    (∀ (w : Σ (x : A), Q x), isContr (fib (total f) w)) ⇔
+    ∀ x v, isContr (fib (f x) v)).
+  split; intros r; [ intros x v; apply q, r | intros (a, s); apply q, r ].
+
+Abort. (* plus tard...
 bbb.
+  split; intros s.
+   unfold isFiberwiseEquivalence in s.
+   apply qinv_isequiv.
+   unfold qinv.
+   transparent assert (g : (Σ (x : A), Q x) → (Σ (x : A), P x)).
+    intros (a, t); exists a.
+    pose proof s a as u.
+    apply isequiv_qinv in u.
+    apply (Σ_pr₁ u), t.
+
+    simpl in g; exists g.
+    unfold "◦", "∼", id; split; intros t.
+    unfold total; destruct t as (a, t); simpl.
+
+    eapply Σ_type.pair_eq.
+bbb.
+
+   pose proof @hott_4_7_6 A P Q f.
+SearchAbout total.
+bbb.
+*)
+
+(* ... *)
+
+Lemma hott_4_8_2 {A B} (f : A → B) : A ≃ Σ (b : B), fib f b.
+Proof.
+assert (p : (Σ (b : B), fib f b) ≃ Σ (a : A), Σ (b : B), f a = b).
+ apply Σ_comm.
+
+ eapply equiv_compose; [ | eapply quasi_inv, p ].
+bbb.
+
+(* my proof *)
+transparent assert (g : A → Σ (b : B), fib f b).
+ intros a; exists (f a); exists a; apply eq_refl.
+
+ exists g; unfold g; clear g.
+ apply qinv_isequiv.
+ transparent assert (g : (Σ (b : B), fib f b) → A).
+  intros (b, (a, p)); apply a.
+
+  exists g; unfold g; clear g.
+  unfold "◦", "∼", id.
+  split; [ | intros x; apply eq_refl ].
+  intros (b, (a, p)).
+  destruct p; apply eq_refl.
+Defined.
