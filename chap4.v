@@ -1618,7 +1618,6 @@ assert
     ∀ x v, isContr (fib (f x) v)).
   split; intros r; [ intros x v; apply q, r | intros (a, s); apply q, r ].
 
-Abort. (* plus tard...
 bbb.
   split; intros s.
    unfold isFiberwiseEquivalence in s.
