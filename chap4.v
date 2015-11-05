@@ -1602,3 +1602,10 @@ Definition isFiberwiseEquivalence {A P Q} (f : Π (x : A), P x → Q x) :=
 (* "Theorem 4.7.7. Suppose that f is a fiberwise transformation
     between families P and Q over a type A. Then f is a fiberwise
     equivalence if and only if total(f) is an equivalence." *)
+
+Definition hott_4_7_7 {A P Q} (f : Π (x : A), P x → Q x) :
+  isFiberwiseEquivalence f ⇔ isequiv (total f).
+Proof.
+split; intros p.
+ unfold isFiberwiseEquivalence in p.
+SearchAbout total.
