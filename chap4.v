@@ -1646,24 +1646,11 @@ bbb.
 
 Lemma hott_4_8_2 {A B} (f : A → B) : A ≃ Σ (b : B), fib f b.
 Proof.
-assert (p : (Σ (b : B), fib f b) ≃ Σ (a : A), Σ (b : B), f a = b).
- apply Σ_comm.
-
- eapply equiv_compose; [ | eapply quasi_inv, p ].
-bbb.
-
-(* my proof *)
-transparent assert (g : A → Σ (b : B), fib f b).
- intros a; exists (f a); exists a; apply eq_refl.
-
- exists g; unfold g; clear g.
- apply qinv_isequiv.
- transparent assert (g : (Σ (b : B), fib f b) → A).
-  intros (b, (a, p)); apply a.
-
-  exists g; unfold g; clear g.
-  unfold "◦", "∼", id.
-  split; [ | intros x; apply eq_refl ].
-  intros (b, (a, p)).
-  destruct p; apply eq_refl.
+eapply equiv_compose; [ | apply (Σ_comm _ _ (λ a b, f a = b)) ].
+exists (λ a, existT _ a (existT _ (f a) (eq_refl _))).
+apply qinv_isequiv; exists Σ_pr₁.
+unfold "◦", "∼", id; simpl.
+split; [ | intros x; apply eq_refl ].
+intros (a, (b, q)); simpl.
+destruct q; apply eq_refl.
 Defined.
