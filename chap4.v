@@ -1629,12 +1629,15 @@ assert (hf : ∀ x, ishae (f x)).
 assert (cf : ∀ x v, isContr (fib (f x) v)).
 intros x.
 apply hott_4_2_6, hf.
+
 pose proof r₂ cf as ct.
 apply qinv_isequiv.
 unfold qinv.
+
 transparent assert (g : ∀ x : A, Q x → P x).
 intros x qx; apply s, qx.
 
+simpl in g.
 exists (total g).
 unfold "◦", "∼", id.
 split; intros (a, t).
@@ -1643,6 +1646,10 @@ unfold g; simpl.
 destruct (s a); simpl.
 destruct s1; simpl.
 destruct s0; simpl.
+SearchAbout (_ ◦ _ ∼ id).
+Check @EqStr.quasi_inv_l_eq_r.
+
+bbb.
 unfold "◦", "∼", id in h.
 
 bbb.
