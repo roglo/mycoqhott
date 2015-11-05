@@ -1619,7 +1619,34 @@ assert
   split; intros r; [ intros x v; apply q, r | intros (a, s); apply q, r ].
 
   unfold isFiberwiseEquivalence.
-SearchAbout isContr.
+  split.
+   intros s.
+destruct r as (r₁, r₂).
+assert (hf : ∀ x, ishae (f x)).
+ intros x.
+ apply hott_4_2_3, isequiv_qinv, s.
+
+assert (cf : ∀ x v, isContr (fib (f x) v)).
+intros x.
+apply hott_4_2_6, hf.
+pose proof r₂ cf as ct.
+apply qinv_isequiv.
+unfold qinv.
+transparent assert (g : ∀ x : A, Q x → P x).
+intros x qx; apply s, qx.
+
+exists (total g).
+unfold "◦", "∼", id.
+split; intros (a, t).
+unfold total; simpl.
+unfold g; simpl.
+destruct (s a); simpl.
+destruct s1; simpl.
+destruct s0; simpl.
+unfold "◦", "∼", id in h.
+
+bbb.
+
 unfold fib in r.
 Check hott_3_11_8.
 
