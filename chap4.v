@@ -1591,3 +1591,14 @@ apply
 
      apply eqv_eq_refl.
 Defined.
+
+(* "We say that a fiberwise transformation f : Π (x:A) P(x) → Q(x) is
+    a *fiberwise equivalence* if each f(x) : P(x) → Q(x) is an
+    equivalence." *)
+
+Definition isFiberwiseEquivalence {A P Q} (f : Π (x : A), P x → Q x) :=
+  Π (x : A), isequiv (f x).
+
+(* "Theorem 4.7.7. Suppose that f is a fiberwise transformation
+    between families P and Q over a type A. Then f is a fiberwise
+    equivalence if and only if total(f) is an equivalence." *)
