@@ -1619,7 +1619,8 @@ assert
   split; intros r; [ intros x v; apply q, r | intros (a, s); apply q, r ].
 
 bbb.
-  split; intros s.
+  split.
+   intros s.
    unfold isFiberwiseEquivalence in s.
    apply qinv_isequiv.
    unfold qinv.
@@ -1629,11 +1630,66 @@ bbb.
     apply isequiv_qinv in u.
     apply (Σ_pr₁ u), t.
 
-    simpl in g; exists g.
+    simpl in g; exists g; unfold g; clear g.
     unfold "◦", "∼", id; split; intros t.
-    unfold total; destruct t as (a, t); simpl.
+     unfold total; destruct t as (a, t); simpl.
+     unfold isequiv_qinv; simpl.
+     destruct (s a) as ((g, Hg), (h, Hh)); simpl.
+     unfold "◦", "∼", id in Hg; rewrite Hg.
+     apply eq_refl.
 
-    eapply Σ_type.pair_eq.
+     unfold total; destruct t as (a, t); simpl.
+     unfold isequiv_qinv; simpl.
+     destruct (s a) as ((g, Hg), (h, Hh)); simpl.
+     pose proof EqStr.quasi_inv_l_eq_r (f a) g h Hg Hh as H.
+     unfold "◦", "∼", id in H; rewrite H.
+     unfold "◦", "∼", id in Hh; rewrite Hh.
+     apply eq_refl.
+
+   intros s.
+   unfold isFiberwiseEquivalence; intros a.
+   apply isequiv_qinv in s; apply qinv_isequiv; unfold qinv.
+   transparent assert (g₁ : Q a → P a).
+    intros u.
+    assert (cf : isContr (fib (f a) u)).
+     apply r; intros w; apply hott_4_2_6, hott_4_2_3, s.
+
+     unfold isContr in cf; destruct cf as (w, cf); apply w.
+
+     exists g₁; unfold g₁; clear g₁.
+     unfold "◦", "∼", id; simpl.
+     split.
+      intros qa.
+      destruct r as (r, _).
+
+bbb.
+
+    pose proof g (existT _ a u) as v.
+    destruct v as (a', u').
+
+   transparent assert (g₁ : (Σ (x : A), Q x) → (Σ (x : A), P x)).
+    intros (a, t); exists a.
+    pose proof s a as u.
+    apply isequiv_qinv in u.
+    apply (Σ_pr₁ u), t.
+
+    simpl in g; exists g; unfold g; clear g.
+    unfold "◦", "∼", id; split; intros t.
+     unfold total; destruct t as (a, t); simpl.
+     unfold isequiv_qinv; simpl.
+     destruct (s a) as ((g, Hg), (h, Hh)); simpl.
+     unfold "◦", "∼", id in Hg; rewrite Hg.
+     apply eq_refl.
+
+     unfold total; destruct t as (a, t); simpl.
+     unfold isequiv_qinv; simpl.
+     destruct (s a) as ((g, Hg), (h, Hh)); simpl.
+     pose proof EqStr.quasi_inv_l_eq_r (f a) g h Hg Hh as H.
+     unfold "◦", "∼", id in H; rewrite H.
+     unfold "◦", "∼", id in Hh; rewrite Hh.
+     apply eq_refl.
+
+
 bbb.
 
    pose proof @hott_4_7_6 A P Q f.
