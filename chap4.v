@@ -1537,88 +1537,57 @@ Definition total {A} {P Q : A → Type} (f : Π (x : A), P x → Q x)
 Definition hott_4_7_6 A (P Q : A → Type) (f : Π (x : A), P x → Q x) (x : A)
     (v : Q x) : fib (total f) (existT _ x v) ≃ fib (f x) v.
 Proof.
-transparent assert (ff : (fib (total f) (existT _ x v) → fib (f x) v)).
- intros p.
- assert
-  (p₁ :
-   Σ (w : Σ (x : A), P x),
-   existT _ (Σ_pr₁ w) (f (Σ_pr₁ w) (Σ_pr₂ w)) = existT _ x v).
-  apply p.
+apply
+  (equiv_compose
+     (B :=
+      Σ (w : Σ (x : A), P x),
+      existT _ (Σ_pr₁ w) (f (Σ_pr₁ w) (Σ_pr₂ w)) = existT _ x v)).
+ apply eqv_eq_refl.
 
-  assert (p₂ : Σ (a : A), Σ (u : P a), existT _ a (f a u) = existT _ x v).
-   revert p₁; apply equiv_imp, quasi_inv.
-   apply
-    (ex_2_10
-       (C:=λ w, existT Q (Σ_pr₁ w) (f (Σ_pr₁ w) (Σ_pr₂ w)) = existT Q x v)).
+ eapply
+   (equiv_compose
+      (B := Σ (a : A), Σ (u : P a), existT _ a (f a u) = existT _ x v)).
+  apply quasi_inv.
+  apply
+   (ex_2_10
+      (C:=λ w, existT Q (Σ_pr₁ w) (f (Σ_pr₁ w) (Σ_pr₂ w)) = existT Q x v)).
 
-   assert (p₃ : Σ (a : A), Σ (u : P a), Σ (p : a = x), p⁎ (f a u) = v).
-    revert p₂; apply equiv_imp.
-    apply Σ_equiv, Π_type.funext; intros y; apply ua.
-    apply Σ_equiv, Π_type.funext; intros q; apply ua.
-    apply Σ_type.hott_2_7_2.
+  eapply
+    (equiv_compose
+       (B := Σ (a : A), Σ (u : P a), Σ (p : a = x), p⁎ (f a u) = v)).
+   apply Σ_equiv, Π_type.funext; intros y; apply ua.
+   apply Σ_equiv, Π_type.funext; intros q; apply ua.
+   apply Σ_type.hott_2_7_2.
 
-    assert (p₄ : Σ (a : A), Σ (p : a = x), Σ (u : P a), p⁎ (f a u) = v).
-     revert p₃; apply equiv_imp.
-     apply Σ_equiv, Π_type.funext; intros y; apply ua, Σ_comm.
+   eapply
+     (equiv_compose
+        (B := Σ (a : A), Σ (p : a = x), Σ (u : P a), p⁎ (f a u) = v)).
+    apply Σ_equiv, Π_type.funext; intros y; apply ua, Σ_comm.
 
-     assert (p₅ : Σ (u : P x), f x u = v).
-      revert p₄; apply equiv_imp.
-      assert (p₆ : isContr Σ (a : A), x = a) by apply hott_3_11_8.
-      apply isContr_Σ_inv in p₆.
+    eapply (equiv_compose (B := Σ (u : P x), f x u = v)).
+     (* according to the manual, I was supposed to use
+        3.11.8, 3.11.9 and exercise 2.20 here, but I did not
+        manage to see how to use them; I proved this directly *)
+     transparent assert (h :
+      ({a : A & {p0 : a = x & {u : P a & transport Q p0 (f a u) = v}}}
+       → {u : P x & f x u = v})).
+      intros q.
+      destruct q as (a, (q, (u, t))).
+      destruct q; exists u; apply t.
+
+      exists h; unfold h; clear h.
+      apply qinv_isequiv.
       transparent assert (h :
-       ({a : A & {p0 : a = x & {u : P a & transport Q p0 (f a u) = v}}}
-        → {u : P x & f x u = v})).
+       ({u : P x & f x u = v}
+        → {a : A & {p0 : a = x & {u : P a & transport Q p0 (f a u) = v}}})).
        intros q.
-       destruct q as (a, (q, (u, t))).
-       destruct q; exists u; apply t.
+       destruct q as (u, q).
+       exists x, (eq_refl x), u; apply q.
 
        exists h; unfold h; clear h.
-       apply qinv_isequiv.
-       transparent assert (h :
-        ({u : P x & f x u = v}
-         → {a : A & {p0 : a = x & {u : P a & transport Q p0 (f a u) = v}}})).
-        intros q.
-        destruct q as (u, q).
-        exists x, (eq_refl x), u; apply q.
+       unfold "◦", "∼", id; simpl.
+       split; [ intros (u, q); apply eq_refl |  ].
+       intros (a, (q, (u, t))); destruct q; apply eq_refl.
 
-        exists h; unfold h; clear h.
-        unfold "◦", "∼", id; simpl.
-        split; [ intros (u, q); apply eq_refl |  ].
-        intros (a, (q, (u, t))); destruct q; apply eq_refl.
-
-      apply p₅.
-
- exists ff; unfold ff; clear ff; simpl.
- unfold qinv_isequiv.
-
-bbb.
-@hott_3_11_8
-     : ∀ (A : Type) (a : A), isContr {x : A & a = x}
-@hott_3_11_9_i
-     : ∀ (A : Type) (P : A → Type),
-       (∀ x : A, isContr (P x)) → {x : A & P x} ≃ A
-@hott_3_11_9_ii
-     : ∀ (A : Type) (P : A → Type) (p : isContr A) 
-       (a:=Σ_type.pr₁ p), {x : A & P x} ≃ P a
-@ex_2_10
-     : ∀ (A : Type) (B : A → Type) (C : {x : A & B x} → Type),
-       {x : A & {y : B x & C (existT (λ x0 : A, B x0) x y)}}
-       ≃ {p : {x : A & B x} & C p}
-
-      apply isContr_Σ_inv in p₆.
-bbb.
-      eapply equiv_compose; [ | eapply quasi_inv, hott_3_11_9_i ].
-      eapply equiv_compose; [ apply hott_3_11_9_i | ].
-      intros y.
-bbb.
-
- destruct p as ((x', p), q).
- simpl in q.
- unfold total in q; simpl in q.
- unfold fib.
- injection q; intros _ xx'; destruct xx'; exists p.
- rename x' into x.
- apply Σ_type.pair_eq_if in q.
- destruct q as (γ, q).
- unfold transport in q.
- destruct γ.
+     apply eqv_eq_refl.
+Defined.
