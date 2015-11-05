@@ -1537,19 +1537,19 @@ Definition total {A} {P Q : A → Type} (f : Π (x : A), P x → Q x)
 Definition hott_4_7_6 A (P Q : A → Type) (f : Π (x : A), P x → Q x) (x : A)
     (v : Q x) : fib (total f) (existT _ x v) ≃ fib (f x) v.
 Proof.
-transparent assert (ff : fib (total f) (existT _ x v) → fib (f x) v).
+transparent assert (ff : (fib (total f) (existT _ x v) → fib (f x) v)).
  intros p.
  assert
-   (p₁ :
-      Σ (w : Σ (x : A), P x),
-      existT _ (Σ_pr₁ w) (f (Σ_pr₁ w) (Σ_pr₂ w)) = existT _ x v).
+  (p₁ :
+   Σ (w : Σ (x : A), P x),
+   existT _ (Σ_pr₁ w) (f (Σ_pr₁ w) (Σ_pr₂ w)) = existT _ x v).
   apply p.
 
   assert (p₂ : Σ (a : A), Σ (u : P a), existT _ a (f a u) = existT _ x v).
    revert p₁; apply equiv_imp, quasi_inv.
    apply
-     (ex_2_10
-        (C := λ w, existT Q (Σ_pr₁ w) (f (Σ_pr₁ w) (Σ_pr₂ w)) = existT Q x v)).
+    (ex_2_10
+       (C:=λ w, existT Q (Σ_pr₁ w) (f (Σ_pr₁ w) (Σ_pr₂ w)) = existT Q x v)).
 
    assert (p₃ : Σ (a : A), Σ (u : P a), Σ (p : a = x), p⁎ (f a u) = v).
     revert p₂; apply equiv_imp.
@@ -1563,13 +1563,34 @@ transparent assert (ff : fib (total f) (existT _ x v) → fib (f x) v).
 
      assert (p₅ : Σ (u : P x), f x u = v).
       revert p₄; apply equiv_imp.
-      assert (p₆ : isContr (Σ (a : A), x = a)) by apply hott_3_11_8.
+      assert (p₆ : isContr Σ (a : A), x = a) by apply hott_3_11_8.
       apply isContr_Σ_inv in p₆.
-Check @ex_2_10 A (λ y, y = x).
-Check @ex_2_10 A (λ y, y = x) (λ v, Σ (u : P (Σ_pr₁ v)), transport Q (Σ_pr₂ v) (f (Σ_pr₁ v) u = v)).
+      transparent assert (h :
+       ({a : A & {p0 : a = x & {u : P a & transport Q p0 (f a u) = v}}}
+        → {u : P x & f x u = v})).
+       intros q.
+       destruct q as (a, (q, (u, t))).
+       destruct q; exists u; apply t.
 
-bbb.
-Check @hott_3_11_9_ii {y : A & y = x} _ p₆.
+       exists h; unfold h; clear h.
+       apply qinv_isequiv.
+       transparent assert (h :
+        ({u : P x & f x u = v}
+         → {a : A & {p0 : a = x & {u : P a & transport Q p0 (f a u) = v}}})).
+        intros q.
+        destruct q as (u, q).
+        exists x, (eq_refl x), u; apply q.
+
+        exists h; unfold h; clear h.
+        unfold "◦", "∼", id; simpl.
+        split; [ intros (u, q); apply eq_refl |  ].
+        intros (a, (q, (u, t))); destruct q; apply eq_refl.
+
+      apply p₅.
+
+ exists ff; unfold ff; clear ff; simpl.
+ unfold qinv_isequiv.
+
 bbb.
 @hott_3_11_8
      : ∀ (A : Type) (a : A), isContr {x : A & a = x}
