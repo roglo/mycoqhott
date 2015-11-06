@@ -1750,31 +1750,12 @@ Defined.
 (* "Theorem 4.8.3. For any type B there is an equivalence
        χ : (Σ (A : U) (A → B)) ≃ (B → U)." *)
 
-Definition qinv₁ {A B} :=
-  λ (f : A → B), {g : B → A & ((∀ x, f (g x) = x) * (∀ x, g (f x) = x))%type}.
-
-Theorem foo B : {f : {A : Type & A → B} → B → Type & qinv₁ f}.
-Proof.
-exists (λ f b, fib (Σ_pr₂ f) b).
-Abort.
-
-Definition qinv₂ {A B} :=
-  λ (f : A → B), {g : B → A & ((f ◦ g ∼ id) * (g ◦ f ∼ id))%type}.
-
-Theorem foo B : {f : {A : Type & A → B} → B → Type & qinv₂ f}.
-Proof.
-unfold qinv₂.
-unfold "◦", "∼", id.
-exists (λ f b, fib (Σ_pr₂ f) b).
-
-bbb.
-
 Theorem foo B :
   {f : {A : Type & A → B} → B → Type &
   {g : (B → Type) → {A : Type & A → B} &
   ((∀ x : B → Type, f (g x) = x) * (∀ x : {A : Type & A → B}, g (f x) = x))%type}}.
 exists (λ f b, fib (Σ_pr₂ f) b).
-*)
+Abort.
 
 Theorem foo B : {f : {A : Type & A → B} → B → Type & qinv f}.
 Proof.
