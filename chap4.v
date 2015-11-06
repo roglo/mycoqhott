@@ -1606,144 +1606,93 @@ Definition isFiberwiseEquivalence {A P Q} (f : Π (x : A), P x → Q x) :=
 Definition hott_4_7_7 {A P Q} (f : Π (x : A), P x → Q x) :
   isFiberwiseEquivalence f ⇔ isequiv (total f).
 Proof.
-pose proof hott_4_7_6 A P Q f as p.
+pose proof (hott_4_7_6 A P Q f) as p.
 assert
-  (q : ∀ (x : A) (v : Q x),
-   isContr (fib (total f) (existT _ x v)) ⇔ isContr (fib (f x) v)).
+ (q :
+  ∀ (x : A) (v : Q x),
+  isContr (fib (total f) (existT _ x v)) ⇔ isContr (fib (f x) v)).
  split; apply equiv_contr; [ apply p | apply quasi_inv, p ].
 
  assert
-   (r :
-    (∀ (w : Σ (x : A), Q x), isContr (fib (total f) w)) ⇔
-    ∀ x v, isContr (fib (f x) v)).
+  (r :
+   (∀ w : Σ (x : A), Q x, isContr (fib (total f) w))
+   ⇔ (∀ x v, isContr (fib (f x) v))).
   split; intros r; [ intros x v; apply q, r | intros (a, s); apply q, r ].
 
   unfold isFiberwiseEquivalence.
   split.
    intros s.
-destruct r as (r₁, r₂).
-assert (hf : ∀ x, ishae (f x)).
- intros x.
- apply hott_4_2_3, isequiv_qinv, s.
+   destruct r as (r₁, r₂).
+   assert (hf : ∀ x, ishae (f x)).
+    intros x.
+    apply hott_4_2_3, isequiv_qinv, s.
 
-assert (cf : ∀ x v, isContr (fib (f x) v)).
-intros x.
-apply hott_4_2_6, hf.
+    assert (cf : ∀ x v, isContr (fib (f x) v)).
+     intros x.
+     apply hott_4_2_6, hf.
 
-pose proof r₂ cf as ct.
-apply qinv_isequiv.
-unfold qinv.
+     pose proof (r₂ cf) as ct.
+     apply qinv_isequiv.
+     unfold qinv.
+     transparent assert ( g : (∀ x : A, Q x → P x) ).
+      intros x qx; apply s, qx.
 
-transparent assert (g : ∀ x : A, Q x → P x).
-intros x qx; apply s, qx.
+      simpl in g.
+      exists (total g).
+      unfold "◦", "∼", id.
+      split; intros (a, t).
+       unfold total; simpl.
+       unfold g; simpl.
+       destruct (s a); simpl.
+       destruct s1; simpl.
+       destruct s0; simpl.
+       pose proof (@EqStr.quasi_inv_l_eq_r (P a) (Q a) (f a) x0 x h0 h).
+       unfold "∼" in H; rewrite <- H.
+       unfold "◦" in h0; rewrite h0.
+       apply eq_refl.
 
-simpl in g.
-exists (total g).
-unfold "◦", "∼", id.
-split; intros (a, t).
-unfold total; simpl.
-unfold g; simpl.
-destruct (s a); simpl.
-destruct s1; simpl.
-destruct s0; simpl.
-SearchAbout (_ ◦ _ ∼ id).
-Check @EqStr.quasi_inv_l_eq_r.
-
-bbb.
-unfold "◦", "∼", id in h.
-
-bbb.
-
-unfold fib in r.
-Check hott_3_11_8.
-
-bbb.
-  split.
-   intros s.
-   unfold isFiberwiseEquivalence in s.
-   apply qinv_isequiv.
-   unfold qinv.
-   transparent assert (g : (Σ (x : A), Q x) → (Σ (x : A), P x)).
-    intros (a, t); exists a.
-    pose proof s a as u.
-    apply isequiv_qinv in u.
-    apply (Σ_pr₁ u), t.
-
-    simpl in g; exists g; unfold g; clear g.
-    unfold "◦", "∼", id; split; intros t.
-     unfold total; destruct t as (a, t); simpl.
-     pose proof (s a) as u.
-     apply isequiv_qinv, hott_4_2_3 in u.
-     pose proof (hott_4_2_6 (P a) (Q a) (f a) u t) as v.
-     apply q in v.
-bbb.
-
-About hott_4_2_6.
-SearchAbout ishae.
-
-     unfold isequiv_qinv; simpl.
-     destruct (s a) as ((g, Hg), (h, Hh)); simpl.
-     unfold "◦", "∼", id in Hg; rewrite Hg.
-     apply eq_refl.
-
-     unfold total; destruct t as (a, t); simpl.
-     unfold isequiv_qinv; simpl.
-     destruct (s a) as ((g, Hg), (h, Hh)); simpl.
-     pose proof EqStr.quasi_inv_l_eq_r (f a) g h Hg Hh as H.
-     unfold "◦", "∼", id in H; rewrite H.
-     unfold "◦", "∼", id in Hh; rewrite Hh.
-     apply eq_refl.
+       unfold total; simpl.
+       unfold g; simpl.
+       destruct (s a); simpl.
+       destruct s1; simpl.
+       destruct s0; simpl.
+       unfold "◦" in h; rewrite h.
+       apply eq_refl.
 
    intros s.
-   unfold isFiberwiseEquivalence; intros a.
-   apply isequiv_qinv in s; apply qinv_isequiv; unfold qinv.
-   transparent assert (g₁ : Q a → P a).
-    intros u.
-    assert (cf : isContr (fib (f a) u)).
-     apply r; intros w; apply hott_4_2_6, hott_4_2_3, s.
+   destruct r as (r₁, r₂).
+   assert (hf : ishae (total f)).
+    apply hott_4_2_3, isequiv_qinv, s.
 
-     unfold isContr in cf; destruct cf as (w, cf); apply w.
+    assert (cf : ∀ w, isContr (fib (total f) w)).
+     intros x.
+     apply hott_4_2_6, hf.
 
-     exists g₁; unfold g₁; clear g₁.
-     unfold "◦", "∼", id; simpl.
-     split.
+     pose proof (r₁ cf) as ct; intros a.
+     apply qinv_isequiv.
+     unfold qinv.
+     transparent assert (g : Q a → P a).
       intros qa.
-      destruct r as (r, _).
+      pose proof ct a qa.
+      unfold isContr, fib in X.
+      destruct X; destruct x; apply x.
+
+      simpl in g.
+      exists g; unfold g; clear g; simpl.
+      unfold "◦", "∼", id.
+      split; intros.
+       destruct (ct a x); destruct x0; apply e0.
+
+       destruct (ct a (f a x)).
+       destruct x0.
+       unfold fib in e.
+       pose proof (e (existT _ x (eq_refl _))).
+       injection H.
+       intros; assumption.
+Defined.
 
 bbb.
 
-    pose proof g (existT _ a u) as v.
-    destruct v as (a', u').
-
-   transparent assert (g₁ : (Σ (x : A), Q x) → (Σ (x : A), P x)).
-    intros (a, t); exists a.
-    pose proof s a as u.
-    apply isequiv_qinv in u.
-    apply (Σ_pr₁ u), t.
-
-    simpl in g; exists g; unfold g; clear g.
-    unfold "◦", "∼", id; split; intros t.
-     unfold total; destruct t as (a, t); simpl.
-     unfold isequiv_qinv; simpl.
-     destruct (s a) as ((g, Hg), (h, Hh)); simpl.
-     unfold "◦", "∼", id in Hg; rewrite Hg.
-     apply eq_refl.
-
-     unfold total; destruct t as (a, t); simpl.
-     unfold isequiv_qinv; simpl.
-     destruct (s a) as ((g, Hg), (h, Hh)); simpl.
-     pose proof EqStr.quasi_inv_l_eq_r (f a) g h Hg Hh as H.
-     unfold "◦", "∼", id in H; rewrite H.
-     unfold "◦", "∼", id in Hh; rewrite Hh.
-     apply eq_refl.
-
-
-bbb.
-
-   pose proof @hott_4_7_6 A P Q f.
-SearchAbout total.
-bbb.
-*)
 
 (* ... *)
 
