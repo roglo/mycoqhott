@@ -51,29 +51,6 @@ split; intros (x, q); simpl.
  destruct (p x); apply eq_refl.
 Defined.
 
-(*
-Definition Σ_equiv {A} {P Q : A → Type} :
-  P = Q → (Σ (x : A), P x) ≃ (Σ (x : A), Q x).
-Proof.
-intros p.
-exists
-  (λ (q : Σ (x : A), P x),
-   existT Q (Σ_pr₁ q)
-     match p in (_ = f) return f (Σ_pr₁ q) with
-     | eq_refl _ => Σ_pr₂ q
-     end : Σ (x : A), Q x).
-apply qinv_isequiv.
-exists
-  (λ (q : Σ (x : A), Q x),
-   existT P (Σ_pr₁ q)
-     (match p in (_ = f) return (f (Σ_pr₁ q) → P (Σ_pr₁ q)) with
-      | eq_refl _ => id
-      end (Σ_pr₂ q)) : Σ (x : A), P x).
-unfold "◦", "∼", id; simpl.
-split; intros (x, q); destruct p; apply eq_refl.
-Defined.
-*)
-
 Definition type_pair_eq {A B C D : Type} :
   A = C → B = D → (A * B)%type = (C * D)%type.
 Proof. intros p q; destruct p, q; apply eq_refl. Defined.
