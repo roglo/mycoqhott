@@ -1752,16 +1752,26 @@ Defined.
 
 Definition hott_4_8_3 {B} : (Σ (A : Type), A → B) ≃ (B → Type).
 Proof.
-transparent assert (f : (Σ (A : Type), A → B) → (B → Type)).
- intros (A, p) b; apply B.
+transparent assert (χ : (Σ (A : Type), A → B) → (B → Type)).
+ intros (A, f) b.
+ apply (fib f b).
 
- exists f; unfold f; clear f.
+ simpl in χ.
+ exists χ.
+bbb.
+
  apply qinv_isequiv.
  transparent assert (f : (B → Type) → (Σ (A : Type), A → B)).
-  intros p; exists B.
-  intros b; apply b.
+  intros p; exists B; intros b; apply b.
 
   exists f; unfold f; clear f.
   unfold "◦", "∼", id; simpl.
   split.
    intros p.
+   apply Π_type.funext; intros b.
+   apply ua.
+   transparent assert (f : B → p b).
+    intros b'.
+
+
+   exists (λ b', B).
