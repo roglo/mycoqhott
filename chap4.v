@@ -24,6 +24,35 @@ Open Scope nat_scope.
         qinv(f) ≃ (Π (x : A) (x = x). " *)
 
 Definition Σ_equiv {A} {P Q : A → Type} :
+  P ∼ Q → {x : A & P x} ≃ {x : A & Q x}.
+Proof.
+intros p.
+exists
+  (λ (q : Σ (x : A), P x),
+   existT Q (Σ_pr₁ q)
+     match p (Σ_pr₁ q) in (_ = y) return y with
+     | eq_refl _ => Σ_pr₂ q
+     end).
+apply qinv_isequiv.
+exists
+  (λ (q : Σ (x : A), Q x),
+   existT P (Σ_pr₁ q)
+     (match p (Σ_pr₁ q) in (_ = y) return y → P (Σ_pr₁ q) with
+      | eq_refl _ => id
+      end (Σ_pr₂ q))).
+unfold "◦", "∼", id; simpl.
+split; intros (x, q); simpl.
+ apply (Σ_type.pair_eq (eq_refl _)).
+ simpl; unfold id.
+ destruct (p x); apply eq_refl.
+
+ apply (Σ_type.pair_eq (eq_refl _)).
+ simpl; unfold id.
+ destruct (p x); apply eq_refl.
+Defined.
+
+(*
+Definition Σ_equiv {A} {P Q : A → Type} :
   P = Q → (Σ (x : A), P x) ≃ (Σ (x : A), Q x).
 Proof.
 intros p.
@@ -43,6 +72,7 @@ exists
 unfold "◦", "∼", id; simpl.
 split; intros (x, q); destruct p; apply eq_refl.
 Defined.
+*)
 
 Definition type_pair_eq {A B C D : Type} :
   A = C → B = D → (A * B)%type = (C * D)%type.
@@ -98,7 +128,7 @@ destruct p; unfold idtoeqv in t; simpl in t.
 subst fe; injection t; clear t; intros t u; subst f.
 unfold qinv.
 apply (@equiv_compose _ {g : A → A & ((g = id) * (g = id))%type}).
- apply Σ_equiv, Π_type.funext; intros f.
+ apply Σ_equiv; intros f.
  unfold "◦", "∼"; simpl.
  apply type_pair_eq.
   apply ua.
@@ -124,7 +154,7 @@ apply (@equiv_compose _ {g : A → A & ((g = id) * (g = id))%type}).
    {g : A → A & ((g = id) * (g = id))%type}
    ≃ Σ (h : Σ (g : A → A), g = @id A), Σ_pr₁ h = @id A).
   eapply equiv_compose; [  | eapply ex_2_10 ]; simpl.
-  apply Σ_equiv, Π_type.funext; intros x; apply ua.
+  apply Σ_equiv; intros x; apply ua.
   exists (λ p, existT (λ _, x = id) (fst p) (snd p)).
   apply qinv_isequiv.
   exists (λ p : {_ : x = id & x = id}, (Σ_pr₁ p, Σ_pr₂ p)).
@@ -663,7 +693,7 @@ Definition hott_4_2_5 A B (f : A → B) y x x' (p p' : f _ = y) :
   ≃ (Σ (γ : x = x'), ap f γ • p' = p).
 Proof.
 eapply equiv_compose; [ apply Σ_type.hott_2_7_2 | simpl ].
-apply Σ_equiv, Π_type.funext; intros q.
+apply Σ_equiv; intros q.
 unfold transport.
 destruct q; simpl; unfold id.
 apply ua.
@@ -726,7 +756,7 @@ Defined.
 Definition linv_equiv A B (f : A → B) : linv f ≃ Σ (g : B → A), g ◦ f = id.
 Proof.
 unfold linv.
-apply Σ_equiv, Π_type.funext; intros g; apply ua.
+apply Σ_equiv; intros g; apply ua.
 exists Π_type.funext.
 apply qinv_isequiv.
 exists Π_type.happly.
@@ -738,7 +768,7 @@ Defined.
 Definition rinv_equiv A B (f : A → B) : rinv f ≃ Σ (g : B → A), f ◦ g = id.
 Proof.
 unfold rinv.
-apply Σ_equiv, Π_type.funext; intros g; apply ua.
+apply Σ_equiv; intros g; apply ua.
 exists Π_type.funext.
 apply qinv_isequiv.
 exists Π_type.happly.
@@ -819,7 +849,7 @@ change ((∀ y, p y) ≃ lcoh f g η).
 assert (q : ∀ y, p y ≃ Σ (γ : f (g y) = y), ap g γ = η (g y)).
  intros y; unfold p.
  eapply equiv_compose; [ apply hott_4_2_5 | ].
- apply Σ_equiv, Π_type.funext; intros q.
+ apply Σ_equiv; intros q.
  rewrite <- ru; apply eq_refl.
 
  unfold lcoh.
@@ -864,7 +894,7 @@ change ((∀ y, p y) ≃ rcoh f g ε).
 assert (q : ∀ x, p x ≃ Σ (γ : g (f x) = x), ap f γ = ε (f x)).
  intros x; unfold p.
  eapply equiv_compose; [ apply hott_4_2_5 | ].
- apply Σ_equiv, Π_type.funext; intros q.
+ apply Σ_equiv; intros q.
  rewrite <- ru; apply eq_refl.
 
  unfold rcoh.
@@ -947,7 +977,7 @@ Proof.
 apply (pr₁ (Σ_pr₂ (@ex_3_5 (ishae f)))); intros p.
 assert (q : ishae f ≃ Σ (u : rinv f), rcoh f (Σ_pr₁ u) (Σ_pr₂ u)).
  eapply equiv_compose; [  | apply ex_2_10 ]; simpl.
- apply Σ_equiv, Π_type.funext; intros g.
+ apply Σ_equiv; intros g.
  unfold rcoh; apply ua, Σ_comm.
 
  pose proof (hott_4_2_9 A B f (ishae_qinv A B f p)) as r.
@@ -1555,14 +1585,14 @@ apply
   eapply
     (equiv_compose
        (B := Σ (a : A), Σ (u : P a), Σ (p : a = x), p⁎ (f a u) = v)).
-   apply Σ_equiv, Π_type.funext; intros y; apply ua.
-   apply Σ_equiv, Π_type.funext; intros q; apply ua.
+   apply Σ_equiv; intros y; apply ua.
+   apply Σ_equiv; intros q; apply ua.
    apply Σ_type.hott_2_7_2.
 
    eapply
      (equiv_compose
         (B := Σ (a : A), Σ (p : a = x), Σ (u : P a), p⁎ (f a u) = v)).
-    apply Σ_equiv, Π_type.funext; intros y; apply ua, Σ_comm.
+    apply Σ_equiv; intros y; apply ua, Σ_comm.
 
     eapply (equiv_compose (B := Σ (u : P x), f x u = v)).
      (* according to the manual, I was supposed to use
@@ -1676,14 +1706,40 @@ Defined.
 
 (* "4.8 The object classifier" *)
 
-(* "Lemma 4.8.1. For any type family B : A → U, the fiber of pr₁ : Σ
-    (x:A) B(x) → A over a : A is equivalent to B(a):
+(* "Lemma 4.8.1. For any type family B : A → U, the fiber of
+    pr₁ : Σ (x:A) B(x) → A over a : A is equivalent to B(a):
           fib_pr₁(a) ≃ B(a)" *)
 
-Definition hott_4_8_1 A (B : A → Type) (pr₁ : (Σ (x : A), B x) → A) (a : A) :
-  fib pr₁ a ≃ B a.
+Definition hott_4_8_1 A (B : A → Type) (a : A) :
+  fib (Σ_pr₁ (B := B)) a ≃ B a.
+Proof.
+assert (p : fib (Σ_pr₁ (B := B)) a ≃ Σ (x : A), Σ (b : B x), x = a).
+ eapply equiv_compose; [ eapply quasi_inv, ex_2_10 | apply eqv_eq_refl ].
 
+ eapply equiv_compose; [ apply p | clear p ].
+ assert (p : (Σ (x : A), Σ (b : B x), x = a) ≃ Σ (x : A), Σ (p : x = a), B x).
+  apply Σ_equiv; intros y.
 bbb.
+   apply Σ_equiv, Π_type.funext; intros y; apply ua.
+bbb. 
+
+(* my proof *)
+transparent assert (f : fib (Σ_pr₁ (B := B)) a → B a).
+ intros p; unfold fib in p.
+ destruct p as ((x, p), q), q; apply p.
+
+ exists f; unfold f; clear f; simpl.
+ apply qinv_isequiv.
+ transparent assert (f : B a → fib (Σ_pr₁ (B := B)) a).
+  intros p; unfold fib.
+  exists (existT _ a p); apply eq_refl.
+
+  exists f; unfold f; clear f; simpl.
+  unfold "◦", "∼", id.
+  split; [ apply eq_refl | ].
+  intros ((x, p), q); simpl in q.
+  destruct q; apply eq_refl.
+Defined.
 
 (* ... *)
 
