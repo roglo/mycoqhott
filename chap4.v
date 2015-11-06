@@ -1628,8 +1628,7 @@ assert
     apply hott_4_2_3, isequiv_qinv, s.
 
     assert (cf : ∀ x v, isContr (fib (f x) v)).
-     intros x.
-     apply hott_4_2_6, hf.
+     intros x; apply hott_4_2_6, hf.
 
      pose proof (r₂ cf) as ct.
      apply qinv_isequiv.
@@ -1640,59 +1639,51 @@ assert
       simpl in g.
       exists (total g).
       unfold "◦", "∼", id.
-      split; intros (a, t).
-       unfold total; simpl.
-       unfold g; simpl.
-       destruct (s a); simpl.
-       destruct s1; simpl.
-       destruct s0; simpl.
-       pose proof (@EqStr.quasi_inv_l_eq_r (P a) (Q a) (f a) x0 x h0 h).
+      unfold total, g; simpl.
+      split; intros (a, t); simpl.
+       destruct (s a) as ((h, Hh), (i, Hi)); simpl.
+       pose proof (EqStr.quasi_inv_l_eq_r (f a) h i Hh Hi) as H.
        unfold "∼" in H; rewrite <- H.
-       unfold "◦" in h0; rewrite h0.
-       apply eq_refl.
+       unfold "◦" in Hh; rewrite Hh; apply eq_refl.
 
-       unfold total; simpl.
-       unfold g; simpl.
-       destruct (s a); simpl.
-       destruct s1; simpl.
-       destruct s0; simpl.
-       unfold "◦" in h; rewrite h.
-       apply eq_refl.
+       destruct (s a) as ((h, Hh), (i, Hi)); simpl.
+       unfold "◦" in Hi; rewrite Hi; apply eq_refl.
 
    intros s.
    destruct r as (r₁, r₂).
-   assert (hf : ishae (total f)).
-    apply hott_4_2_3, isequiv_qinv, s.
+   assert (hf : ishae (total f)) by apply hott_4_2_3, isequiv_qinv, s.
+   assert (cf : ∀ w, isContr (fib (total f) w)).
+    intros x; apply hott_4_2_6, hf.
 
-    assert (cf : ∀ w, isContr (fib (total f) w)).
-     intros x.
-     apply hott_4_2_6, hf.
+    pose proof (r₁ cf) as ct; intros a.
+    apply qinv_isequiv.
+    transparent assert (g : Q a → P a).
+     intros qa.
+     pose proof ct a qa as cta.
+     unfold isContr, fib in cta.
+     destruct cta as ((r, u), v); apply r.
 
-     pose proof (r₁ cf) as ct; intros a.
-     apply qinv_isequiv.
-     unfold qinv.
-     transparent assert (g : Q a → P a).
-      intros qa.
-      pose proof ct a qa.
-      unfold isContr, fib in X.
-      destruct X; destruct x; apply x.
+     simpl in g; exists g; unfold g; clear g; simpl.
+     unfold "◦", "∼", id.
+     split; intros.
+      destruct (ct a x) as ((u, v), cta); apply v.
 
-      simpl in g.
-      exists g; unfold g; clear g; simpl.
-      unfold "◦", "∼", id.
-      split; intros.
-       destruct (ct a x); destruct x0; apply e0.
-
-       destruct (ct a (f a x)).
-       destruct x0.
-       unfold fib in e.
-       pose proof (e (existT _ x (eq_refl _))).
-       injection H.
-       intros; assumption.
+      destruct (ct a (f a x)) as ((u, v), cta).
+      unfold fib in cta.
+      pose proof (cta (existT _ x (eq_refl _))).
+      injection H; intros; assumption.
 Defined.
 
-bbb.
+(* "4.8 The object classifier" *)
 
+(* "Lemma 4.8.1. For any type family B : A → U, the fiber of pr₁ : Σ
+    (x:A) B(x) → A over a : A is equivalent to B(a):
+          fib_pr₁(a) ≃ B(a)" *)
+
+Definition hott_4_8_1 A (B : A → Type) (pr₁ : (Σ (x : A), B x) → A) (a : A) :
+  fib pr₁ a ≃ B a.
+
+bbb.
 
 (* ... *)
 
