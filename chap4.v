@@ -1750,27 +1750,59 @@ Defined.
 (* "Theorem 4.8.3. For any type B there is an equivalence
        χ : (Σ (A : U) (A → B)) ≃ (B → U)." *)
 
-Definition hott_4_8_3 {B} : (Σ (A : Type), A → B) ≃ (B → Type).
-Proof.
-transparent assert (χ : (Σ (A : Type), A → B) → (B → Type)).
- intros (A, f) b; apply (fib f b).
+Definition qinv₁ {A B} :=
+  λ (f : A → B), {g : B → A & ((∀ x, f (g x) = x) * (∀ x, g (f x) = x))%type}.
 
- simpl in χ.
- exists χ.
+Theorem foo B : {f : {A : Type & A → B} → B → Type & qinv₁ f}.
+Proof.
+exists (λ f b, fib (Σ_pr₂ f) b).
+Abort.
+
+Definition qinv₂ {A B} :=
+  λ (f : A → B), {g : B → A & ((f ◦ g ∼ id) * (g ◦ f ∼ id))%type}.
+
+Theorem foo B : {f : {A : Type & A → B} → B → Type & qinv₂ f}.
+Proof.
+unfold qinv₂.
+unfold "◦", "∼", id.
+exists (λ f b, fib (Σ_pr₂ f) b).
+
 bbb.
 
- apply qinv_isequiv.
- transparent assert (f : (B → Type) → (Σ (A : Type), A → B)).
-  intros p; exists B; intros b; apply b.
+Theorem foo B :
+  {f : {A : Type & A → B} → B → Type &
+  {g : (B → Type) → {A : Type & A → B} &
+  ((∀ x : B → Type, f (g x) = x) * (∀ x : {A : Type & A → B}, g (f x) = x))%type}}.
+exists (λ f b, fib (Σ_pr₂ f) b).
+*)
 
-  exists f; unfold f; clear f.
-  unfold "◦", "∼", id; simpl.
-  split.
-   intros p.
-   apply Π_type.funext; intros b.
-   apply ua.
-   transparent assert (f : B → p b).
-    intros b'.
+Theorem foo B : {f : {A : Type & A → B} → B → Type & qinv f}.
+Proof.
+unfold qinv.
+unfold "◦", "∼", id.
+exists (λ f b, fib (Σ_pr₂ f) b).
 
+Toplevel input, characters 0-36:
+Error:
+In environment
+B : Type
+The term
+ "λ (f : {y : Type & (λ A : Type, A → B) y}) (b : B), fib (Σ_pr₂ f) b"
+has type "{y : Type & y → B} → B → Type" while it is expected to have type
+ "{A : Type & A → B} → B → Type" (universe inconsistency).
 
-   exists (λ b', B).
+bbb.
+
+Definition hott_4_8_3 {B} : (Σ (A : Type), A → B) ≃ (B → Type).
+Proof.
+transparent assert (f : (Σ (A : Type), A → B) → (B → Type)).
+ intros (A, f) b.
+ apply (fib f b).
+
+unfold equivalence.
+
+exists (λ w b, fib (Σ_pr₂ w) b).
+
+Theorem foo B : {A : Type & A → B} → B → Type.
+intros p.
+Print fib.
