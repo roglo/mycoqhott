@@ -1690,18 +1690,35 @@ Defined.
 Definition hott_4_8_1 A (B : A → Type) (a : A) :
   fib (Σ_pr₁ (B := B)) a ≃ B a.
 Proof.
+(* their proof...
 assert (p : fib (Σ_pr₁ (B := B)) a ≃ Σ (x : A), Σ (b : B x), x = a).
  eapply equiv_compose; [ eapply quasi_inv, ex_2_10 | apply eqv_eq_refl ].
 
  eapply equiv_compose; [ apply p | clear p ].
  assert (p : (Σ (x : A), Σ (b : B x), x = a) ≃ Σ (x : A), Σ (p : x = a), B x).
-  apply Σ_equiv; intros y.
+  exists
+    (λ w, existT _ (Σ_pr₁ w) (existT _ (Σ_pr₂ (Σ_pr₂ w)) (Σ_pr₁ (Σ_pr₂ w)))).
+  apply qinv_isequiv.
+  exists
+    (λ w, existT _ (Σ_pr₁ w) (existT _ (Σ_pr₂ (Σ_pr₂ w)) (Σ_pr₁ (Σ_pr₂ w)))).
+  unfold "◦", "∼", id; simpl.
+  split; intros (x, (p, q)); apply eq_refl.
 
-bbb.
-   apply Σ_equiv, Π_type.funext; intros y; apply ua.
-bbb. 
+  eapply equiv_compose; [ apply p | clear p ].
+  transparent assert (f : (Σ (x : A), Σ (_ : x = a), B x) → B a).
+   intros (x, (p, q)); destruct p; apply q.
 
-(* my proof *)
+   exists f; unfold f; clear f; simpl.
+   apply qinv_isequiv.
+   transparent assert (f : B a → (Σ (x : A), Σ (_ : x = a), B x)).
+    intros p; apply (existT _ a (existT _ (eq_refl _) p)).
+
+    exists f; unfold f; clear f; simpl.
+    unfold "◦", "∼", id; simpl.
+    split; [ apply eq_refl | ].
+    intros (x, (p, q)); destruct p; apply eq_refl.
+*)
+(* my proof, shorter... *)
 transparent assert (f : fib (Σ_pr₁ (B := B)) a → B a).
  intros p; unfold fib in p.
  destruct p as ((x, p), q), q; apply p.
@@ -1719,9 +1736,7 @@ transparent assert (f : fib (Σ_pr₁ (B := B)) a → B a).
   destruct q; apply eq_refl.
 Defined.
 
-(* ... *)
-
-Lemma hott_4_8_2 {A B} (f : A → B) : A ≃ Σ (b : B), fib f b.
+Definition hott_4_8_2 {A B} (f : A → B) : A ≃ Σ (b : B), fib f b.
 Proof.
 eapply equiv_compose; [ | apply (Σ_comm _ _ (λ a b, f a = b)) ].
 exists (λ a, existT _ a (existT _ (f a) (eq_refl _))).
@@ -1731,3 +1746,22 @@ split; [ | intros x; apply eq_refl ].
 intros (a, (b, q)); simpl.
 destruct q; apply eq_refl.
 Defined.
+
+(* "Theorem 4.8.3. For any type B there is an equivalence
+       χ : (Σ (A : U) (A → B)) ≃ (B → U)." *)
+
+Definition hott_4_8_3 {B} : (Σ (A : Type), A → B) ≃ (B → Type).
+Proof.
+transparent assert (f : (Σ (A : Type), A → B) → (B → Type)).
+ intros (A, p) b; apply B.
+
+ exists f; unfold f; clear f.
+ apply qinv_isequiv.
+ transparent assert (f : (B → Type) → (Σ (A : Type), A → B)).
+  intros p; exists B.
+  intros b; apply b.
+
+  exists f; unfold f; clear f.
+  unfold "◦", "∼", id; simpl.
+  split.
+   intros p.
