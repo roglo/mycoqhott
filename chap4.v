@@ -1755,12 +1755,14 @@ Theorem foo B :
   {g : (B → Type) → {A : Type & A → B} &
   ((∀ x : B → Type, f (g x) = x) * (∀ x : {A : Type & A → B}, g (f x) = x))%type}}.
 exists (λ f b, fib (Σ_pr₂ f) b).
+(* works *)
 Abort.
 
 Theorem foo B : {f : {A : Type & A → B} → B → Type & qinv f}.
 Proof.
 unfold qinv.
 unfold "◦", "∼", id.
+(* does not work *)
 exists (λ f b, fib (Σ_pr₂ f) b).
 
 Toplevel input, characters 0-36:
