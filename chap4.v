@@ -1753,8 +1753,7 @@ Defined.
 Definition hott_4_8_3 {B} : (Σ (A : Type), A → B) ≃ (B → Type).
 Proof.
 transparent assert (χ : (Σ (A : Type), A → B) → (B → Type)).
- intros (A, f) b.
- apply (fib f b).
+ intros (A, f) b; apply (fib f b).
 
  simpl in χ.
  exists χ.
