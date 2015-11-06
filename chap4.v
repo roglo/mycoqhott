@@ -1750,41 +1750,21 @@ Defined.
 (* "Theorem 4.8.3. For any type B there is an equivalence
        χ : (Σ (A : U) (A → B)) ≃ (B → U)." *)
 
-Theorem foo B :
-  {f : {A : Type & A → B} → B → Type &
-  {g : (B → Type) → {A : Type & A → B} &
-  ((∀ x : B → Type, f (g x) = x) * (∀ x : {A : Type & A → B}, g (f x) = x))%type}}.
-exists (λ f b, fib (Σ_pr₂ f) b).
-(* works *)
-Abort.
-
-Theorem foo B : {f : {A : Type & A → B} → B → Type & qinv f}.
-Proof.
-unfold qinv.
-unfold "◦", "∼", id.
-(* does not work *)
-exists (λ f b, fib (Σ_pr₂ f) b).
-
-Toplevel input, characters 0-36:
-Error:
-In environment
-B : Type
-The term
- "λ (f : {y : Type & (λ A : Type, A → B) y}) (b : B), fib (Σ_pr₂ f) b"
-has type "{y : Type & y → B} → B → Type" while it is expected to have type
- "{A : Type & A → B} → B → Type" (universe inconsistency).
-
-bbb.
-
 Definition hott_4_8_3 {B} : (Σ (A : Type), A → B) ≃ (B → Type).
 Proof.
-transparent assert (f : (Σ (A : Type), A → B) → (B → Type)).
- intros (A, f) b.
- apply (fib f b).
-
-unfold equivalence.
-
-exists (λ w b, fib (Σ_pr₂ w) b).
+set (χ (w : Σ (A : Type), A → B) b := fib (Σ_pr₂ w) b).
+set (ψ P := existT _ (Σ (b : B), P b) Σ_pr₁ : Σ (A : Type), A → B).
+simpl in ψ.
+assert (f : ∀ x, χ (ψ x) = x).
+ intros P; unfold χ, ψ; simpl.
+ apply Π_type.funext; intros b.
+About hott_4_8_1.
+(*
+hott_4_8_1 : ∀ (A : Type) (B : A → Type) (a : A), fib Σ_pr₁ a ≃ B a
+*)
+Check @ua.
+Check @ua (fib Σ_pr₁ b) (P b).
+ eapply hott_4_8_1.
 
 Theorem foo B : {A : Type & A → B} → B → Type.
 intros p.
