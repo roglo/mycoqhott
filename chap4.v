@@ -1696,6 +1696,7 @@ assert (p : fib (Σ_pr₁ (B := B)) a ≃ Σ (x : A), Σ (b : B x), x = a).
  eapply equiv_compose; [ apply p | clear p ].
  assert (p : (Σ (x : A), Σ (b : B x), x = a) ≃ Σ (x : A), Σ (p : x = a), B x).
   apply Σ_equiv; intros y.
+
 bbb.
    apply Σ_equiv, Π_type.funext; intros y; apply ua.
 bbb. 
