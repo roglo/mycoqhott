@@ -1766,13 +1766,13 @@ Check @ua.
 (* fib =
 λ (A B : Type) (f : A → B) (y : B), {x : A & f x = y}
      : ∀ A B : Type, (A → B) → B → Type *)
-Print fib.
-Set Printing Universes.
-Print Σ_pr₁.
-Print ua.
-Print fib.
+Check B.
+Check (B → Type).
+Check Set.
+Check Type.
+
 Check (fib (@Σ_pr₁ B P) b).
-Check @ua (fib (@Σ_pr₁ B P) b).
+Check (@ua (fib (@Σ_pr₁ B P) b)).
 
 The term "fib Σ_pr₁ b" has type "Type@{Top.294}"
 while it is expected to have type "Type@{chap2.1122}"
