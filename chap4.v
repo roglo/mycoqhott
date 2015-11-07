@@ -1771,8 +1771,13 @@ Check (B → Type).
 Check Set.
 Check Type.
 
+Set Printing Implicit.
+Set Printing Universes.
+
+clear.
 Check (fib (@Σ_pr₁ B P) b).
-Check (@ua (fib (@Σ_pr₁ B P) b)).
+Check (@fib (Σ (y : B), P y) B (@Σ_pr₁ B P) b).
+Check (@ua (@fib (Σ (y : B), P y) B (@Σ_pr₁ B P) b)).
 
 The term "fib Σ_pr₁ b" has type "Type@{Top.294}"
 while it is expected to have type "Type@{chap2.1122}"
