@@ -1763,6 +1763,22 @@ About hott_4_8_1.
 hott_4_8_1 : ∀ (A : Type) (B : A → Type) (a : A), fib Σ_pr₁ a ≃ B a
 *)
 Check @ua.
+(* fib =
+λ (A B : Type) (f : A → B) (y : B), {x : A & f x = y}
+     : ∀ A B : Type, (A → B) → B → Type *)
+Print fib.
+Set Printing Universes.
+Print ua.
+Print fib.
+Print Σ_pr₁.
+Check @ua (fib (@Σ_pr₁ B P) b).
+
+The term "fib Σ_pr₁ b" has type "Type@{Top.2393}"
+while it is expected to have type "Type@{chap2.1122}"
+(universe inconsistency).
+bbb.
+
+Check (fib Σ_pr₁ b).
 Check @ua (fib Σ_pr₁ b) (P b).
  eapply hott_4_8_1.
 
