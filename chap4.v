@@ -1776,8 +1776,6 @@ Set Printing Universes.
 
 clear.
 Print fib.
-SearchAbout (_ ≃ _ → _ = _).
-
 Check (@fib (Σ (y : B), P y) B (@Σ_pr₁ B P) b).
 Check (@ua (@fib (Σ (y : B), P y) B (@Σ_pr₁ B P) b)).
 
@@ -1796,6 +1794,12 @@ ua =
 let (f, _) := @isequiv_qinv (A = B) (A ≃ B) (@idtoeqv A B) (univalence A B) in
 f
      : ∀ (A : Type@{chap2.1122}) (B : Type@{chap2.1162}), A ≃ B → A = B
+
+equivalence = 
+λ (A : Type@{chap2.418}) (B : Type@{chap2.419}), {f : A → B & @isequiv A B f}
+     : Type@{chap2.418}
+       → Type@{chap2.419}
+         → Type@{max(chap2.368, chap2.369, chap2.418, chap2.419)}
 
 fib = 
 λ (A : Type@{Top.294}) (B : Type@{Top.295}) (f : A → B) 
