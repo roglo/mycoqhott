@@ -1438,7 +1438,7 @@ Defined.
      A + (¬A). Thus, there is no need to insert a propositional
      truncation in (3.4.1)." *)
 
-Definition ex_3_6 {A} : isProp A → isProp (A + ¬A).
+Definition ex_3_6 {A} : isProp A → isProp (A + notT A).
 Proof.
 intros SA x y.
 destruct x as [x| x].
