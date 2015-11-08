@@ -604,8 +604,6 @@ Definition fib {A B} (f : A → B) (y : B) := Σ (x : A), (f x = y).
 Definition fib_a {A B} {f : A → B} {y : B} (w : fib f y) := Σ_pr₁ w.
 Definition fib_p {A B} {f : A → B} {y : B} (w : fib f y) := Σ_pr₂ w.
 Definition fib' {A B} (f : A → B) (y : B) := Σ (x : A), (f x = y).
-Definition fib'_a {A B} {f : A → B} {y : B} (w : fib' f y) := Σ_pr₁ w.
-Definition fib'_p {A B} {f : A → B} {y : B} (w : fib' f y) := Σ_pr₂ w.
 
 (* "Lemma 4.2.5. For any f:A→B, y:B, and (x,p),(x',p') : fib_f(y),
     we have ((x,p) = (x',p')) ≃ (Σ (γ : x = x') f(γ) • p' = p)" *)
