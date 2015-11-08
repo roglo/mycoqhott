@@ -1775,7 +1775,7 @@ Set Printing Implicit.
 Set Printing Universes.
 
 clear.
-Check (fib (@Σ_pr₁ B P) b).
+Print fib.
 Check (@fib (Σ (y : B), P y) B (@Σ_pr₁ B P) b).
 Check (@ua (@fib (Σ (y : B), P y) B (@Σ_pr₁ B P) b)).
 
@@ -1784,6 +1784,22 @@ while it is expected to have type "Type@{chap2.1122}"
 (universe inconsistency: Cannot enforce Top.294 <= chap2.1122 because
 chap2.1122 < chap2.418 = Top.294).
 
+@ua
+     : ∀ (A : Type@{chap2.1122}) (B : Type@{chap2.1162}), A ≃ B → A = B
+@fib {y : B & P y} B (@Σ_pr₁ B P) b
+     : Type@{Top.294}
+
+ua =
+λ (A : Type@{chap2.1122}) (B : Type@{chap2.1162}),
+let (f, _) := @isequiv_qinv (A = B) (A ≃ B) (@idtoeqv A B) (univalence A B) in
+f
+     : ∀ (A : Type@{chap2.1122}) (B : Type@{chap2.1162}), A ≃ B → A = B
+
+fib = 
+λ (A : Type@{Top.294}) (B : Type@{Top.295}) (f : A → B) 
+(y : B), {x : A & f x = y}
+     : ∀ (A : Type@{Top.294}) (B : Type@{Top.295}),
+       (A → B) → B → Type@{Top.294}
 bbb.
 
 Check (fib Σ_pr₁ b).
