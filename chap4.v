@@ -1750,8 +1750,7 @@ Defined.
 (* "Theorem 4.8.3. For any type B there is an equivalence
        χ : (Σ (A : U) (A → B)) ≃ (B → U)." *)
 
-Definition fib' :=
-  λ (A B : Type) (f : A → B) (y : B), {x : A & f x = y}.
+Definition fib' {A B} (f : A → B) (y : B) := Σ (x : A), (f x = y).
 
 Definition hott_4_8_3 {B} : (Σ (A : Type), A → B) ≃ (B → Type).
 Proof.
@@ -1761,9 +1760,9 @@ simpl in ψ.
 assert (f : ∀ x, χ (ψ x) = x).
  intros P; unfold χ, ψ; simpl.
  apply Π_type.funext; intros b.
-(* why it works with fib' and not for fib although the have the same
-   definition? *)
-Check (@ua (fib' (Σ (y : B), P y) B (@Σ_pr₁ B P) b)).
+(* why it works with fib' and not for fib although the have the exact
+   same definition? *)
+Check (@ua (@fib' (Σ (y : B), P y) B (@Σ_pr₁ B P) b)).
 Check (@ua (@fib (Σ (y : B), P y) B (@Σ_pr₁ B P) b)).
 bbb.
 
