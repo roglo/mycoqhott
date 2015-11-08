@@ -921,15 +921,6 @@ apply ex_3_1_5_bis; [ apply ex_3_1_6; intros; apply SB | idtac ].
 intros f; apply isProp_isSet, isProp_isequiv.
 Defined.
 
-(* univalence implies equality *)
-
-Definition univ_imp_eq :  ∀ (A B : Type), A ≃ B → A = B.
-Proof.
-intros A B H.
-pose proof (Σ_type.pr₁ (univalence2 A B) H) as H1.
-assumption.
-Defined.
-
 (* "Lemma 3.8.5. There exists a type X and a family Y : X → Type such
     that each Y(x) is a set, but such that (3.8.3) is false." *)
 

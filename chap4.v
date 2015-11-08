@@ -1776,6 +1776,8 @@ Set Printing Universes.
 
 clear.
 Print fib.
+SearchAbout (_ ≃ _ → _ = _).
+
 Check (@fib (Σ (y : B), P y) B (@Σ_pr₁ B P) b).
 Check (@ua (@fib (Σ (y : B), P y) B (@Σ_pr₁ B P) b)).
 
