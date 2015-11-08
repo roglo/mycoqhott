@@ -1782,36 +1782,23 @@ bbb.
           λa. (fib_f (f(a)), (a, refl_{f(a)}))." *)
 
 Definition hott_4_8_4 A B (f : A → B) :
-  False.
+  let theta (f : A → B) a :=
+    existT _ (fib f (f a)) (fib_intro a (eq_refl (f a))) : Σ (B : Type), B
+  in
+  let khi (w : Σ (A : Type), A → B) b := fib (Σ_pr₂ w) b in
+  (∀ x, Σ_pr₁ (theta f x) = khi (existT _ _ f) (f x)) *
+  (∀ X, (X → A) ≃ (X → Σ (A : Type), A) * (X → B)).
 Proof.
-(*
-set
-  (θ (f : A → B) :=
-   λ a,
-   (existT _ (fib f (f a)) (fib_intro a (eq_refl (f a))) : Σ (B : Type), B)).
-*)
-set
-  (theta (w : Σ (A : Type), A → B) :=
-   let f := Σ_pr₂ w in
-   λ a,
-   (existT _ (fib f (f a)) (fib_intro a (eq_refl (f a))) : Σ (B : Type), B)).
-simpl in theta.
-set (khi (w : Σ (A : Type), A → B) b := fib (Σ_pr₂ w) b).
+split; [ intros; apply eq_refl | ].
+intros X.
+ transparent assert (g : (X → A) → (X → {A0 : Type & A0}) * (X → B)).
+  intros p.
+  split; [ intros x; exists A; apply p, x | ]. (* ou x *)
+  intros x; apply f, p, x.
+
+  exists g; unfold g; clear g; apply qinv_isequiv.
+  transparent assert (g : (X → {A0 : Type & A0}) * (X → B) → (X → A)).
+   intros (p, q) x.
 bbb.
 
-assert (∀ u x, @Σ_pr₁ Type id (θ f x) = khi u (f x)).
-assert (∀ (u : Σ (A : Type), A → B) x, @Σ_pr₁ Type id (θ f x) = khi u (f x)).
-assert
-  (∀ (u : Σ (A : Type), A → B) x,
-   @Σ_pr₁ Type id (θ f x) = khi u (f x)).
-simpl in θ.
-assert
-  (∀ (u : Σ (A : Type), A → B) x,
-   @Σ_pr₁ Type id (θ' (Σ_pr₂ u) x) = khi u (f x)).
-
-
- intros u x.
- unfold θ, khi.
- simpl.
- destruct u.
- simpl.
+Defined.
