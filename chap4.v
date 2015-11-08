@@ -1780,3 +1780,11 @@ bbb.
     is a pullback square (see Exercise 2.11). Here the function θ_f is
     defined by
           λa. (fib_f (f(a)), (a, refl_{f(a)}))." *)
+
+Definition hott_4_8_4 A B (f : A → B) :
+  False.
+Proof.
+set
+  (θ := λ a,
+   (existT _ (fib f (f a)) (fib_intro a (eq_refl (f a))) : Σ (B : Type), B)).
+simpl in θ.
