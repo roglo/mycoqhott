@@ -1750,6 +1750,9 @@ Defined.
 (* "Theorem 4.8.3. For any type B there is an equivalence
        χ : (Σ (A : U) (A → B)) ≃ (B → U)." *)
 
+Definition fib' :=
+  λ (A B : Type) (f : A → B) (y : B), {x : A & f x = y}.
+
 Definition hott_4_8_3 {B} : (Σ (A : Type), A → B) ≃ (B → Type).
 Proof.
 set (χ (w : Σ (A : Type), A → B) b := fib (Σ_pr₂ w) b).
@@ -1758,6 +1761,12 @@ simpl in ψ.
 assert (f : ∀ x, χ (ψ x) = x).
  intros P; unfold χ, ψ; simpl.
  apply Π_type.funext; intros b.
+(* why it works with fib' and not for fib although the have the same
+   definition? *)
+Check (@ua (fib' (Σ (y : B), P y) B (@Σ_pr₁ B P) b)).
+Check (@ua (@fib (Σ (y : B), P y) B (@Σ_pr₁ B P) b)).
+bbb.
+
 About hott_4_8_1.
 (*
 hott_4_8_1 : ∀ (A : Type) (B : A → Type) (a : A), fib Σ_pr₁ a ≃ B a
@@ -1771,12 +1780,38 @@ Check (B → Type).
 Check Set.
 Check Type.
 
+Print fib.
+
 Set Printing Implicit.
 Set Printing Universes.
 
 clear.
-Print fib.
-Check (@fib (Σ (y : B), P y) B (@Σ_pr₁ B P) b).
+Print fib'.
+fib' = 
+λ (A : Type@{Top.2231}) (B : Type@{Top.2232}) (f : A → B) 
+(y : B), {x : A & f x = y}
+     : ∀ (A : Type@{Top.2231}) (B : Type@{Top.2232}),
+       (A → B) → B → Type@{Top.2231}
+(* Top.2231
+   Top.2232
+   Top.2233 |= Top.2231 <= Coq.Init.Specif.7
+               Top.2232 <= Coq.Init.Logic.8
+               Top.2233 <= Coq.Init.Logic.8
+                *)
+
+fib = 
+λ (A : Type@{Top.1408}) (B : Type@{Top.1409}) (f : A → B) 
+(y : B), {x : A & f x = y}
+     : ∀ (A : Type@{Top.1408}) (B : Type@{Top.1409}),
+       (A → B) → B → Type@{Top.1408}
+(* Top.1408
+   Top.1409
+   Top.1410 |= Top.1408 <= Coq.Init.Specif.7
+               Top.1409 <= Coq.Init.Logic.8
+               Top.1410 <= Coq.Init.Logic.8
+                *)
+
+Check (@ua (fib' (Σ (y : B), P y) B (@Σ_pr₁ B P) b)).
 Check (@ua (@fib (Σ (y : B), P y) B (@Σ_pr₁ B P) b)).
 
 The term "fib Σ_pr₁ b" has type "Type@{Top.294}"
