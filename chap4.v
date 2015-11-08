@@ -1762,91 +1762,20 @@ assert (f : ∀ x, χ (ψ x) = x).
    same definition? *)
 Definition fib' {A B} (f : A → B) (y : B) := Σ (x : A), (f x = y).
 Check (@ua (@fib' (Σ (y : B), P y) B (@Σ_pr₁ B P) b)).
+Abort. (*
 Check (@ua (@fib (Σ (y : B), P y) B (@Σ_pr₁ B P) b)).
 bbb.
-
-About hott_4_8_1.
-(*
-hott_4_8_1 : ∀ (A : Type) (B : A → Type) (a : A), fib Σ_pr₁ a ≃ B a
 *)
-Check @ua.
-(* fib =
-λ (A B : Type) (f : A → B) (y : B), {x : A & f x = y}
-     : ∀ A B : Type, (A → B) → B → Type *)
-Check B.
-Check (B → Type).
-Check Set.
-Check Type.
 
-Print fib.
+(* "Theorem 4.8.4. Let f : A → B be a function. Then the diagram
+                  θ_f
+               A ----→ U•
+               |       |
+             f |       | pr₁
+               ↓       ↓
+               B ----→ U
+                  χ_g
 
-Set Printing Implicit.
-Set Printing Universes.
-
-clear.
-Print fib'.
-bbb.
-
-fib' = 
-λ (A : Type@{Top.2231}) (B : Type@{Top.2232}) (f : A → B) 
-(y : B), {x : A & f x = y}
-     : ∀ (A : Type@{Top.2231}) (B : Type@{Top.2232}),
-       (A → B) → B → Type@{Top.2231}
-(* Top.2231
-   Top.2232
-   Top.2233 |= Top.2231 <= Coq.Init.Specif.7
-               Top.2232 <= Coq.Init.Logic.8
-               Top.2233 <= Coq.Init.Logic.8
-                *)
-
-fib = 
-λ (A : Type@{Top.1408}) (B : Type@{Top.1409}) (f : A → B) 
-(y : B), {x : A & f x = y}
-     : ∀ (A : Type@{Top.1408}) (B : Type@{Top.1409}),
-       (A → B) → B → Type@{Top.1408}
-(* Top.1408
-   Top.1409
-   Top.1410 |= Top.1408 <= Coq.Init.Specif.7
-               Top.1409 <= Coq.Init.Logic.8
-               Top.1410 <= Coq.Init.Logic.8
-                *)
-
-Check (@ua (fib' (Σ (y : B), P y) B (@Σ_pr₁ B P) b)).
-Check (@ua (@fib (Σ (y : B), P y) B (@Σ_pr₁ B P) b)).
-
-The term "fib Σ_pr₁ b" has type "Type@{Top.294}"
-while it is expected to have type "Type@{chap2.1122}"
-(universe inconsistency: Cannot enforce Top.294 <= chap2.1122 because
-chap2.1122 < chap2.418 = Top.294).
-
-@ua
-     : ∀ (A : Type@{chap2.1122}) (B : Type@{chap2.1162}), A ≃ B → A = B
-@fib {y : B & P y} B (@Σ_pr₁ B P) b
-     : Type@{Top.294}
-
-ua =
-λ (A : Type@{chap2.1122}) (B : Type@{chap2.1162}),
-let (f, _) := @isequiv_qinv (A = B) (A ≃ B) (@idtoeqv A B) (univalence A B) in
-f
-     : ∀ (A : Type@{chap2.1122}) (B : Type@{chap2.1162}), A ≃ B → A = B
-
-equivalence = 
-λ (A : Type@{chap2.418}) (B : Type@{chap2.419}), {f : A → B & @isequiv A B f}
-     : Type@{chap2.418}
-       → Type@{chap2.419}
-         → Type@{max(chap2.368, chap2.369, chap2.418, chap2.419)}
-
-fib = 
-λ (A : Type@{Top.294}) (B : Type@{Top.295}) (f : A → B) 
-(y : B), {x : A & f x = y}
-     : ∀ (A : Type@{Top.294}) (B : Type@{Top.295}),
-       (A → B) → B → Type@{Top.294}
-bbb.
-
-Check (fib Σ_pr₁ b).
-Check @ua (fib Σ_pr₁ b) (P b).
- eapply hott_4_8_1.
-
-Theorem foo B : {A : Type & A → B} → B → Type.
-intros p.
-Print fib.
+    is a pullback square (see Exercise 2.11). Here the function θ_f is
+    defined by
+          λa. (fib_f (f(a)), (a, refl_{f(a)}))." *)
