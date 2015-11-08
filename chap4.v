@@ -603,6 +603,9 @@ Defined.
 Definition fib {A B} (f : A → B) (y : B) := Σ (x : A), (f x = y).
 Definition fib_a {A B} {f : A → B} {y : B} (w : fib f y) := Σ_pr₁ w.
 Definition fib_p {A B} {f : A → B} {y : B} (w : fib f y) := Σ_pr₂ w.
+Definition fib' {A B} (f : A → B) (y : B) := Σ (x : A), (f x = y).
+Definition fib'_a {A B} {f : A → B} {y : B} (w : fib' f y) := Σ_pr₁ w.
+Definition fib'_p {A B} {f : A → B} {y : B} (w : fib' f y) := Σ_pr₂ w.
 
 (* "Lemma 4.2.5. For any f:A→B, y:B, and (x,p),(x',p') : fib_f(y),
     we have ((x,p) = (x',p')) ≃ (Σ (γ : x = x') f(γ) • p' = p)" *)
@@ -754,6 +757,20 @@ intros p; apply Π_type.funext; intros x.
 apply (Π_type.funext_quasi_inverse_of_happly (f ◦ g) id p x).
 Defined.
 
+(*1*)
+Definition hott_4_8_3 {B} : (Σ (A : Type), A → B) ≃ (B → Type).
+Proof.
+set (χ (w : Σ (A : Type), A → B) b := fib (Σ_pr₂ w) b).
+set (ψ P := existT _ (Σ (b : B), P b) Σ_pr₁ : Σ (A : Type), A → B).
+simpl in ψ.
+assert (f : ∀ x, χ (ψ x) = x).
+ intros P; unfold χ, ψ; simpl.
+ apply Π_type.funext; intros b.
+(* works with both fib and fib' here, but at (*2*) below, this is different! *)
+Check (@ua (@fib' (Σ (y : B), P y) B (@Σ_pr₁ B P) b)).
+Check (@ua (@fib (Σ (y : B), P y) B (@Σ_pr₁ B P) b)).
+Abort.
+
 Definition hott_4_2_9 A B (f : A → B) :
   qinv f → isContr (rinv f) * isContr (linv f).
 Proof.
@@ -779,6 +796,21 @@ split.
   unfold fib in t.
   eapply equiv_contr in t; [ apply t | eapply quasi_inv, q ].
 Defined.
+
+(*2*)
+Definition hott_4_8_3 {B} : (Σ (A : Type), A → B) ≃ (B → Type).
+Proof.
+set (χ (w : Σ (A : Type), A → B) b := fib (Σ_pr₂ w) b).
+set (ψ P := existT _ (Σ (b : B), P b) Σ_pr₁ : Σ (A : Type), A → B).
+simpl in ψ.
+assert (f : ∀ x, χ (ψ x) = x).
+ intros P; unfold χ, ψ; simpl.
+ apply Π_type.funext; intros b.
+(* why it works with fib' and not for fib although the have the exact
+   same definition? *)
+Check (@ua (@fib' (Σ (y : B), P y) B (@Σ_pr₁ B P) b)).
+Check (@ua (@fib (Σ (y : B), P y) B (@Σ_pr₁ B P) b)).
+Abort.
 
 (* "Definition 4.2.10. For f : A → B, a left inverse (g, η) : linv (f),
     and a right inverse (g, ε) : rinv(f), we denote
@@ -1749,8 +1781,6 @@ Defined.
 
 (* "Theorem 4.8.3. For any type B there is an equivalence
        χ : (Σ (A : U) (A → B)) ≃ (B → U)." *)
-
-Definition fib' {A B} (f : A → B) (y : B) := Σ (x : A), (f x = y).
 
 Definition hott_4_8_3 {B} : (Σ (A : Type), A → B) ≃ (B → Type).
 Proof.
