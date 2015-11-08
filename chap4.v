@@ -1784,7 +1784,34 @@ bbb.
 Definition hott_4_8_4 A B (f : A → B) :
   False.
 Proof.
+(*
 set
-  (θ := λ a,
+  (θ (f : A → B) :=
+   λ a,
    (existT _ (fib f (f a)) (fib_intro a (eq_refl (f a))) : Σ (B : Type), B)).
+*)
+set
+  (theta (w : Σ (A : Type), A → B) :=
+   let f := Σ_pr₂ w in
+   λ a,
+   (existT _ (fib f (f a)) (fib_intro a (eq_refl (f a))) : Σ (B : Type), B)).
+simpl in theta.
+set (khi (w : Σ (A : Type), A → B) b := fib (Σ_pr₂ w) b).
+bbb.
+
+assert (∀ u x, @Σ_pr₁ Type id (θ f x) = khi u (f x)).
+assert (∀ (u : Σ (A : Type), A → B) x, @Σ_pr₁ Type id (θ f x) = khi u (f x)).
+assert
+  (∀ (u : Σ (A : Type), A → B) x,
+   @Σ_pr₁ Type id (θ f x) = khi u (f x)).
 simpl in θ.
+assert
+  (∀ (u : Σ (A : Type), A → B) x,
+   @Σ_pr₁ Type id (θ' (Σ_pr₂ u) x) = khi u (f x)).
+
+
+ intros u x.
+ unfold θ, khi.
+ simpl.
+ destruct u.
+ simpl.
