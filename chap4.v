@@ -1762,6 +1762,7 @@ assert (f : ∀ x, χ (ψ x) = x).
    same definition? *)
 Definition fib' {A B} (f : A → B) (y : B) := Σ (x : A), (f x = y).
 Check (@ua (@fib' (Σ (y : B), P y) B (@Σ_pr₁ B P) b)).
+(* waiting for coq team to fix the bug... *)
 Abort. (*
 Check (@ua (@fib (Σ (y : B), P y) B (@Σ_pr₁ B P) b)).
 bbb.
