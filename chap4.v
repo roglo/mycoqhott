@@ -1866,36 +1866,6 @@ Proof.
 pose proof (ΣΣ_fib A B f) as p.
 bbb.
 
- let theta :=
-   λ (f0 : A → B) (a : A),
-   existT (λ B0 : Type, B0) (fib' f0 (f0 a)) (fib_intro a (eq_refl (f0 a)))
-   :
-   {B0 : Type & B0} in
- let khi := λ (w : {A0 : Type & A0 → B}) (b : B), fib' (Σ_pr₂ w) b in
- (∀ x : A, Σ_pr₁ (theta f x) = khi (existT (λ A0 : Type, A0 → B) A f) (f x)) *
- (∀ X : Type, (X → A) ≃ (X → {A0 : Type & A0}) * (X → B))
-
-bbb.
- let theta :=
-   λ (f0 : A → B) (a : A),
-   existT (λ B0 : Type, B0) (fib' f0 (f0 a)) (fib_intro a (eq_refl (f0 a)))
-   :
-   {B0 : Type & B0} in
- let khi := λ (w : {A0 : Type & A0 → B}) (b : B), fib' (Σ_pr₂ w) b in
- (∀ x : A, Σ_pr₁ (theta f x) = khi (existT (λ A0 : Type, A0 → B) A f) (f x)) *
- (∀ X : Type, (X → A) ≃ (X → {A0 : Type & A0}) * (X → B))
-bbb.
-
- let theta :=
-   λ (f0 : A → B) (a : A),
-   existT (λ B0 : Type, B0) (fib' f0 (f0 a)) (fib_intro a (eq_refl (f0 a)))
-   :
-   {B0 : Type & B0} in
- let khi := λ (w : {A0 : Type & A0 → B}) (b : B), fib' (Σ_pr₂ w) b in
- (∀ x : A, Σ_pr₁ (theta f x) = khi (existT (λ A0 : Type, A0 → B) A f) (f x)) *
- (∀ X : Type, (X → A) ≃ (X → {A0 : Type & A0}) * (X → B))
-bbb.
-
 split; [ intros; apply eq_refl | ].
 intros X.
  transparent assert (g : (X → A) → (X → {A0 : Type & A0}) * (X → B)).
@@ -1908,4 +1878,33 @@ intros X.
    intros (p, q) x.
 bbb.
 
-Defined.
+ let theta :=
+   λ (f0 : A → B) (a : A),
+   existT (λ B0 : Type, B0) (fib' f0 (f0 a)) (fib_intro a (eq_refl (f0 a)))
+   :
+   {B0 : Type & B0} in
+ let khi := λ (w : {A0 : Type & A0 → B}) (b : B), fib' (Σ_pr₂ w) b in
+ (∀ x : A, Σ_pr₁ (theta f x) = khi (existT (λ A0 : Type, A0 → B) A f) (f x)) *
+ (∀ X : Type, (X → A) ≃ (X → {A0 : Type & A0}) * (X → B))
+
+bbb.
+ let theta :=
+   λ (f0 : A → B) (a : A),
+   existT (λ B0 : Type, B0) (fib' f0 (f0 a)) (fib_intro a (eq_refl (f0 a)))
+   :
+   {B0 : Type & B0} in
+ let khi := λ (w : {A0 : Type & A0 → B}) (b : B), fib' (Σ_pr₂ w) b in
+ (∀ x : A, Σ_pr₁ (theta f x) = khi (existT (λ A0 : Type, A0 → B) A f) (f x)) *
+ (∀ X : Type, (X → A) ≃ (X → {A0 : Type & A0}) * (X → B))
+bbb.
+
+ let theta :=
+   λ (f0 : A → B) (a : A),
+   existT (λ B0 : Type, B0) (fib' f0 (f0 a)) (fib_intro a (eq_refl (f0 a)))
+   :
+   {B0 : Type & B0} in
+ let khi := λ (w : {A0 : Type & A0 → B}) (b : B), fib' (Σ_pr₂ w) b in
+ (∀ x : A, Σ_pr₁ (theta f x) = khi (existT (λ A0 : Type, A0 → B) A f) (f x)) *
+ (∀ X : Type, (X → A) ≃ (X → {A0 : Type & A0}) * (X → B))
+bbb.
+
