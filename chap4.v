@@ -1864,6 +1864,31 @@ Definition hott_4_8_4 A B (f : A → B) :
   (∀ X, (X → A) ≃ (X → Σ (A : Type), A) * (X → B)).
 Proof.
 pose proof (ΣΣ_fib A B f) as p.
+assert (q : A ≃ Σ (_ : B), Σ (C : Type), C).
+ eapply equiv_compose; [ apply p | ].
+ apply Σ_equiv; intros b; apply ua.
+ transparent assert
+   (g : {Y : {A0 : Type & A0} & fib' f b = Σ_pr₁ Y} → {C : Type & C}).
+  intros ((C, c), q); simpl in q.
+  exists C; apply c.
+
+  exists g; unfold g; clear g; simpl; apply qinv_isequiv.
+
+  transparent assert
+    (g : {C : Type & C} → {Y : {A0 : Type & A0} & fib' f b = Σ_pr₁ Y}).
+   intros q; exists q.
+   destruct q as (C, c); simpl.
+bbb.
+
+ let theta :=
+   λ (f0 : A → B) (a : A),
+   existT (λ B0 : Type, B0) (fib' f0 (f0 a)) (fib_intro a (eq_refl (f0 a)))
+   :
+   {B0 : Type & B0} in
+ let khi := λ (w : {A0 : Type & A0 → B}) (b : B), fib' (Σ_pr₂ w) b in
+ (∀ x : A, Σ_pr₁ (theta f x) = khi (existT (λ A0 : Type, A0 → B) A f) (f x)) *
+ (∀ X : Type, (X → A) ≃ (X → {A0 : Type & A0}) * (X → B))
+
 bbb.
 
 split; [ intros; apply eq_refl | ].
