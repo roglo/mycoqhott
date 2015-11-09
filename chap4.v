@@ -1864,8 +1864,24 @@ Definition hott_4_8_4 A B (f : A → B) :
   (∀ X, (X → A) ≃ (X → Σ (A : Type), A) * (X → B)).
 Proof.
 pose proof (ΣΣ_fib A B f) as p.
+assert (q : A ≃ B * Σ (C : Type), C).
+ eapply equiv_compose; [ apply p | clear p ].
+ transparent assert
+   (g : {b : B & {Y : {A0 : Type & A0} & fib' f b = Σ_pr₁ Y}}
+    → B * {C : Type & C}).
+  intros (b, ((C, c), p)); simpl in p.
+  split; [ apply b | exists C; apply c ].
+
+  exists g; unfold g; clear g; simpl; apply qinv_isequiv.
+  transparent assert
+    (g : B * {C : Type & C} →
+     {b : B & {Y : {A0 : Type & A0} & fib' f b = Σ_pr₁ Y}}).
+   intros (b, (C, c)).
+   exists b, (existT _ B b); simpl.
+
+bbb.
 assert (q : A ≃ Σ (_ : B), Σ (C : Type), C).
- eapply equiv_compose; [ apply p | ].
+ eapply equiv_compose; [ apply p | clear p ].
  apply Σ_equiv; intros b; apply ua.
  transparent assert
    (g : {Y : {A0 : Type & A0} & fib' f b = Σ_pr₁ Y} → {C : Type & C}).
@@ -1876,8 +1892,7 @@ assert (q : A ≃ Σ (_ : B), Σ (C : Type), C).
 
   transparent assert
     (g : {C : Type & C} → {Y : {A0 : Type & A0} & fib' f b = Σ_pr₁ Y}).
-   intros q; exists q.
-   destruct q as (C, c); simpl.
+   intros (C, c); exists (existT _ C c); simpl.
 bbb.
 
  let theta :=
