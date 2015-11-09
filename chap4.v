@@ -1781,13 +1781,13 @@ bbb.
     defined by
           λa. (fib_f (f(a)), (a, refl_{f(a)}))." *)
 
-Definition equiv_fib A B (f : A → B) : A ≃ Σ (b : B), fib f b.
+Definition equiv_fib A B (f : A → B) : A ≃ Σ (b : B), fib' f b.
 Proof.
-transparent assert (g : A → Σ (b : B), fib f b).
+transparent assert (g : A → Σ (b : B), fib' f b).
  intros a; exists (f a), a; apply eq_refl.
 
  exists g; unfold g; clear g; apply qinv_isequiv.
- transparent assert (g : (Σ (b : B), fib f b) → A).
+ transparent assert (g : (Σ (b : B), fib' f b) → A).
   intros (b, (a, p)); apply a.
 
   exists g; unfold g; clear g.
@@ -1796,15 +1796,44 @@ transparent assert (g : A → Σ (b : B), fib f b).
   intros (b, (a, p)); destruct p; apply eq_refl.
 Defined.
 
+Definition ΣΣΣ_fib A B (f : A → B) :
+  A ≃ Σ (b : B), Σ (X : Type), Σ (p : fib' f b = X), X.
+Proof.
+eapply equiv_compose; [ apply (equiv_fib A B f) | ].
+apply Σ_equiv; intros b; apply ua.
+transparent assert (g : fib' f b → {X : Type & {_ : fib' f b = X & X}}).
+ intros p; exists (fib' f b).
+ exists (eq_refl _); apply p.
+
+ exists g; unfold g; clear g; apply qinv_isequiv.
+ transparent assert (g : {X : Type & {_ : fib' f b = X & X}} → fib' f b).
+  intros (X, (p, x)); destruct p; apply x.
+
+  exists g; unfold g; clear g.
+  unfold "◦", "∼", id.
+  split; [ | intros; apply eq_refl ].
+  intros (X, (p, x)); destruct p; apply eq_refl.
+Defined.
+
 Definition hott_4_8_4 A B (f : A → B) :
   let theta (f : A → B) a :=
-    existT _ (fib f (f a)) (fib_intro a (eq_refl (f a))) : Σ (B : Type), B
+    existT _ (fib' f (f a)) (fib_intro a (eq_refl (f a))) : Σ (B : Type), B
   in
-  let khi (w : Σ (A : Type), A → B) b := fib (Σ_pr₂ w) b in
+  let khi (w : Σ (A : Type), A → B) b := fib' (Σ_pr₂ w) b in
   (∀ x, Σ_pr₁ (theta f x) = khi (existT _ _ f) (f x)) *
   (∀ X, (X → A) ≃ (X → Σ (A : Type), A) * (X → B)).
 Proof.
-pose proof (equiv_fib A B f) as p.
+pose proof (ΣΣΣ_fib A B f) as p.
+bbb.
+
+ let theta :=
+   λ (f0 : A → B) (a : A),
+   existT (λ B0 : Type, B0) (fib' f0 (f0 a)) (fib_intro a (eq_refl (f0 a)))
+   :
+   {B0 : Type & B0} in
+ let khi := λ (w : {A0 : Type & A0 → B}) (b : B), fib' (Σ_pr₂ w) b in
+ (∀ x : A, Σ_pr₁ (theta f x) = khi (existT (λ A0 : Type, A0 → B) A f) (f x)) *
+ (∀ X : Type, (X → A) ≃ (X → {A0 : Type & A0}) * (X → B))
 bbb.
 
 split; [ intros; apply eq_refl | ].
