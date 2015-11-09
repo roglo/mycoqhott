@@ -1815,6 +1815,24 @@ transparent assert (g : fib' f b → {X : Type & {_ : fib' f b = X & X}}).
   intros (X, (p, x)); destruct p; apply eq_refl.
 Defined.
 
+Definition ΣΣΣ_fib2 A B (f : A → B) :
+  A ≃ Σ (b : B), Σ (X : Type), Σ (x : X), fib' f b = X.
+Proof.
+eapply equiv_compose; [ apply (ΣΣΣ_fib A B f) | ].
+apply Σ_equiv; intros b; apply ua.
+apply Σ_equiv; intros X; apply ua.
+transparent assert (g : {_ : fib' f b = X & X} → {_ : X & fib' f b = X}).
+ intros (p, x); exists x; apply p.
+
+ exists g; unfold g; clear g; apply qinv_isequiv.
+ transparent assert (g : {_ : X & fib' f b = X} → {_ : fib' f b = X & X}).
+  intros (x, p); exists p; apply x.
+
+  exists g; unfold g; clear g.
+  unfold "◦", "∼", id; simpl.
+  split; [ intros (x, p); apply eq_refl | intros (p, x); apply eq_refl ].
+Defined.
+
 Definition hott_4_8_4 A B (f : A → B) :
   let theta (f : A → B) a :=
     existT _ (fib' f (f a)) (fib_intro a (eq_refl (f a))) : Σ (B : Type), B
@@ -1823,7 +1841,17 @@ Definition hott_4_8_4 A B (f : A → B) :
   (∀ x, Σ_pr₁ (theta f x) = khi (existT _ _ f) (f x)) *
   (∀ X, (X → A) ≃ (X → Σ (A : Type), A) * (X → B)).
 Proof.
-pose proof (ΣΣΣ_fib A B f) as p.
+pose proof (ΣΣΣ_fib2 A B f) as p.
+
+bbb.
+ let theta :=
+   λ (f0 : A → B) (a : A),
+   existT (λ B0 : Type, B0) (fib' f0 (f0 a)) (fib_intro a (eq_refl (f0 a)))
+   :
+   {B0 : Type & B0} in
+ let khi := λ (w : {A0 : Type & A0 → B}) (b : B), fib' (Σ_pr₂ w) b in
+ (∀ x : A, Σ_pr₁ (theta f x) = khi (existT (λ A0 : Type, A0 → B) A f) (f x)) *
+ (∀ X : Type, (X → A) ≃ (X → {A0 : Type & A0}) * (X → B))
 bbb.
 
  let theta :=
