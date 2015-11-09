@@ -1789,6 +1789,20 @@ Definition hott_4_8_4 A B (f : A → B) :
   (∀ x, Σ_pr₁ (theta f x) = khi (existT _ _ f) (f x)) *
   (∀ X, (X → A) ≃ (X → Σ (A : Type), A) * (X → B)).
 Proof.
+assert (p : A ≃ Σ (b : B), fib f b).
+ transparent assert (g : A → Σ (b : B), fib f b).
+  intros a; exists (f a), a; apply eq_refl.
+
+  exists g; unfold g; clear g; apply qinv_isequiv.
+  transparent assert (g : (Σ (b : B), fib f b) → A).
+   intros (b, (a, p)); apply a.
+
+   exists g; unfold g; clear g.
+   unfold "◦", "∼", id; simpl.
+   split; [ | apply eq_refl ].
+   intros (b, (a, p)).
+bbb.
+
 split; [ intros; apply eq_refl | ].
 intros X.
  transparent assert (g : (X → A) → (X → {A0 : Type & A0}) * (X → B)).
