@@ -1373,6 +1373,17 @@ Record retract A B {X Y} (f : X → Y) :=
     rK : rg ◦ rr ∼ rr' ◦ f;
     rH (a : A) : rK (rs a) • ap rr' (rL a) = ap rg (rR a) • (rR' (rg a))⁻¹ }.
 
+Arguments rg [A] [B] [X] [Y] [f] r a.
+Arguments rs [A] [B] [X] [Y] [f] r a.
+Arguments rr [A] [B] [X] [Y] [f] r a.
+Arguments rs' [A] [B] [X] [Y] [f] r a.
+Arguments rr' [A] [B] [X] [Y] [f] r a.
+Arguments rR [A] [B] [X] [Y] [f] r x.
+Arguments rR' [A] [B] [X] [Y] [f] r x.
+Arguments rL [A] [B] [X] [Y] [f] r x.
+Arguments rK [A] [B] [X] [Y] [f] r x.
+Arguments rH [A] [B] [X] [Y] [f] r a.
+
 Definition type_retract_fun_retract {A} (B : chap3.retract A) :
   retract (Σ_type.pr₁ B) ⊤ (λ _ : A, I).
 Proof.
@@ -1392,17 +1403,6 @@ Defined.
 (* "Lemma 4.7.3. If a function g : A → B is a retract of a function f
     : X → Y, then fib_g(b) is a retract of fib_f(s'(b)) for every b :
     B, where s' : B → Y is as in Definition 4.7.2." *)
-
-Arguments rg [A] [B] [X] [Y] [f] r a.
-Arguments rs [A] [B] [X] [Y] [f] r a.
-Arguments rr [A] [B] [X] [Y] [f] r a.
-Arguments rs' [A] [B] [X] [Y] [f] r a.
-Arguments rr' [A] [B] [X] [Y] [f] r a.
-Arguments rR [A] [B] [X] [Y] [f] r x.
-Arguments rR' [A] [B] [X] [Y] [f] r x.
-Arguments rL [A] [B] [X] [Y] [f] r x.
-Arguments rK [A] [B] [X] [Y] [f] r x.
-Arguments rH [A] [B] [X] [Y] [f] r a.
 
 Definition hott_4_7_3 A B {X Y} (f : X → Y) (rt : retract A B f) (b : B)
     (g := rg rt) (s' := rs' rt) :
@@ -1940,3 +1940,58 @@ Proof.
 apply hott_4_9_2.
 apply pre_hott_4_9_3, p.
 Defined.
+
+(* "Theorem 4.9.4. In a univalent universe U, suppose that P : A → U
+    is a family of contractible types and let α be the function of
+    Corollary 4.9.3. Then Π (x:A) P(x) is a retract of fib_α (id_A).
+    [...]" *)
+
+Definition hott_4_9_4 A (P : A → Type) (p : Π (x : A), isContr (P x))
+   (α : (A → Σ (x : A), P x) ≃ (A → A)) :
+  (Π (x : A), P x) ≃ fib (Σ_pr₁ α) (@id A).
+Proof.
+set
+  (φ f :=
+     (fib_intro (λ x, existT P x (f x)) (eq_refl (@id A)) :
+      fib (Σ_pr₁ α) (@id A))).
+
+The term "fib_intro (λ x0 : A, existT P x0 (x x0)) (eq_refl id)" has type
+ "fib (λ (x : A → {x : A & P x}) (x0 : A), (let (a, _) := α in a) x x0) id"
+while it is expected to have type "fib (Σ_pr₁ α) id" (cannot satisfy
+constraint "(let (a, _) := α in a) (λ x : A, existT P x (f x)) x" ==
+"x").
+
+bbb.
+
+Definition hott_4_9_4 A (P : A → Type) (p : Π (x : A), isContr (P x))
+   (α : (A → Σ (x : A), P x) ≃ (A → A)) :
+  (Π (x : A), P x) = chap3.retract (fib' (Σ_pr₁ α) (@id A)).
+Proof.
+pose proof @ua (Π (x : A), P x) (chap3.retract (fib' (Σ_pr₁ α) id)).
+
+The term "chap3.retract (fib' (Σ_pr₁ α) id)" has type
+"Type@{chap3.477}" while it is expected to have type
+"Type@{chap2.1031}" (universe inconsistency).
+
+bbb.
+
+apply ua.
+pose proof (p a) as q.
+apply isContr_isProp in q.
+unfold isProp in q.
+
+destruct q as (q, r).
+
+unfold chap3.retract.
+unfold retraction.
+
+apply (p a).
+
+Print weak_funext.
+
+bbb.
+
+
+(* "As a consequence, Π (x:A) P(x) is contractible. In other words,
+    the univalence axiom implies the weak function extensionality
+    principle." *)
