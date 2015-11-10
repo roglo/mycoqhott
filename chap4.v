@@ -1893,3 +1893,17 @@ Abort.
 Definition weak_funext A P :=
   (Π (x : A), isContr (P x)) → isContr (Π (x : A), P x).
 
+(* "Lemma 4.9.2. Assuming U is univalent, for any A, B, X : U and any
+    e : A ≃ B, there is an equivalence
+          (X → A) ≃ (X → B)
+    of which the underlying map is given by post-composition with the
+    underlying function of e. *)
+
+Definition hott_4_9_2 A B X (e : A ≃ B) : (X → A) ≃ (X → B).
+Proof.
+assert (p : Σ (p : A = B), e = idtoeqv p).
+ exists (ua e); apply invert, idtoeqv_ua.
+
+ destruct p as (p, ep).
+ destruct p; apply eqv_eq_refl.
+Defined.
