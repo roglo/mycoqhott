@@ -1878,73 +1878,18 @@ assert (q : A ≃ B * Σ (C : Type), C).
      {b : B & {Y : {A0 : Type & A0} & fib' f b = Σ_pr₁ Y}}).
    intros (b, (C, c)).
    exists b, (existT _ B b); simpl.
+(* impossible to conclude... something must be wrong somewhere, either
+   in my understanding of their proof or... in their proof; there is
+   much abuse of language in hott book... *)
+Abort.
 
-bbb.
-assert (q : A ≃ Σ (_ : B), Σ (C : Type), C).
- eapply equiv_compose; [ apply p | clear p ].
- apply Σ_equiv; intros b; apply ua.
- transparent assert
-   (g : {Y : {A0 : Type & A0} & fib' f b = Σ_pr₁ Y} → {C : Type & C}).
-  intros ((C, c), q); simpl in q.
-  exists C; apply c.
+(* "4.9 Univalence implies function extensionality" *)
 
-  exists g; unfold g; clear g; simpl; apply qinv_isequiv.
+(* "Definition 4.9.1. The *weak function extensionality principle*
+    asserts that there is a function
+       (Π (x : A) isContr(P(x))) → isContr (Π (x : A) P x)
+    for any family P : A → U of types over any type A." *)
 
-  transparent assert
-    (g : {C : Type & C} → {Y : {A0 : Type & A0} & fib' f b = Σ_pr₁ Y}).
-   intros (C, c); exists (existT _ C c); simpl.
-bbb.
-
- let theta :=
-   λ (f0 : A → B) (a : A),
-   existT (λ B0 : Type, B0) (fib' f0 (f0 a)) (fib_intro a (eq_refl (f0 a)))
-   :
-   {B0 : Type & B0} in
- let khi := λ (w : {A0 : Type & A0 → B}) (b : B), fib' (Σ_pr₂ w) b in
- (∀ x : A, Σ_pr₁ (theta f x) = khi (existT (λ A0 : Type, A0 → B) A f) (f x)) *
- (∀ X : Type, (X → A) ≃ (X → {A0 : Type & A0}) * (X → B))
-
-bbb.
-
-split; [ intros; apply eq_refl | ].
-intros X.
- transparent assert (g : (X → A) → (X → {A0 : Type & A0}) * (X → B)).
-  intros p.
-  split; [ intros x; exists A; apply p, x | ]. (* ou x *)
-  intros x; apply f, p, x.
-
-  exists g; unfold g; clear g; apply qinv_isequiv.
-  transparent assert (g : (X → {A0 : Type & A0}) * (X → B) → (X → A)).
-   intros (p, q) x.
-bbb.
-
- let theta :=
-   λ (f0 : A → B) (a : A),
-   existT (λ B0 : Type, B0) (fib' f0 (f0 a)) (fib_intro a (eq_refl (f0 a)))
-   :
-   {B0 : Type & B0} in
- let khi := λ (w : {A0 : Type & A0 → B}) (b : B), fib' (Σ_pr₂ w) b in
- (∀ x : A, Σ_pr₁ (theta f x) = khi (existT (λ A0 : Type, A0 → B) A f) (f x)) *
- (∀ X : Type, (X → A) ≃ (X → {A0 : Type & A0}) * (X → B))
-
-bbb.
- let theta :=
-   λ (f0 : A → B) (a : A),
-   existT (λ B0 : Type, B0) (fib' f0 (f0 a)) (fib_intro a (eq_refl (f0 a)))
-   :
-   {B0 : Type & B0} in
- let khi := λ (w : {A0 : Type & A0 → B}) (b : B), fib' (Σ_pr₂ w) b in
- (∀ x : A, Σ_pr₁ (theta f x) = khi (existT (λ A0 : Type, A0 → B) A f) (f x)) *
- (∀ X : Type, (X → A) ≃ (X → {A0 : Type & A0}) * (X → B))
-bbb.
-
- let theta :=
-   λ (f0 : A → B) (a : A),
-   existT (λ B0 : Type, B0) (fib' f0 (f0 a)) (fib_intro a (eq_refl (f0 a)))
-   :
-   {B0 : Type & B0} in
- let khi := λ (w : {A0 : Type & A0 → B}) (b : B), fib' (Σ_pr₂ w) b in
- (∀ x : A, Σ_pr₁ (theta f x) = khi (existT (λ A0 : Type, A0 → B) A f) (f x)) *
- (∀ X : Type, (X → A) ≃ (X → {A0 : Type & A0}) * (X → B))
-bbb.
+Definition weak_funext A P :=
+  (Π (x : A), isContr (P x)) → isContr (Π (x : A), P x).
 
