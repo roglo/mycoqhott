@@ -1907,3 +1907,47 @@ assert (p : Σ (p : A = B), e = idtoeqv p).
  destruct p as (p, ep).
  destruct p; apply eqv_eq_refl.
 Defined.
+
+(* "Corollary 4.9.3. Let P : A → U be a family of contractible types,
+    i.e. Π (x:A) isContr(P(x)). Then the projection pr₁ : (∑ (x:A)
+    P(x)) → A is an equivalence. Assuming U is univalent, it follows
+    immediately that post-composition with pr₁ gives an equivalence
+        α : (A → Σ (x : A) P(x)) ≃ (A → A)." *)
+
+Definition pre_hott_4_9_3 A (P : A → Type) (p : Π (x : A), isContr (P x)) :
+  (Σ (x : A), P x) ≃ A.
+Proof.
+exists (λ w, Σ_pr₁ w); apply qinv_isequiv.
+transparent assert (f : A → (Σ (x : A), P x)).
+ intros a; exists a; apply p.
+
+ exists f; unfold f; clear f.
+ unfold "◦", "∼", id; simpl.
+ split; [ intros; apply eq_refl | ].
+ intros (x, q); simpl.
+ pose proof p x as r.
+ unfold isContr in r.
+ destruct r as (r, s).
+ assert (t : (let (y, _) := p x in y) = q).
+  apply (compose (y := r)); [ apply invert, s | apply s ].
+
+  destruct t; apply eq_refl.
+Defined.
+
+Definition hott_4_9_3 A (P : A → Type) (p : Π (x : A), isContr (P x)) :
+  (A → Σ (x : A), P x) ≃ (A → A).
+Proof.
+pose proof (hott_4_8_1 A P) as q.
+bbb.
+
+transparent assert (f : (A → Σ (x : A), P x) → (A → A)).
+ intros q a; apply q, a.
+
+ exists f; unfold f; clear f; apply qinv_isequiv.
+ transparent assert (f : (A → A) → (A → Σ (x : A), P x)).
+  intros q a; exists (q a); apply p.
+
+  exists f; unfold f; clear f.
+  unfold "◦", "∼", id; simpl.
+  split.
+   intros q.
