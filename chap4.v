@@ -1937,17 +1937,6 @@ Defined.
 Definition hott_4_9_3 A (P : A → Type) (p : Π (x : A), isContr (P x)) :
   (A → Σ (x : A), P x) ≃ (A → A).
 Proof.
-pose proof (hott_4_8_1 A P) as q.
-bbb.
-
-transparent assert (f : (A → Σ (x : A), P x) → (A → A)).
- intros q a; apply q, a.
-
- exists f; unfold f; clear f; apply qinv_isequiv.
- transparent assert (f : (A → A) → (A → Σ (x : A), P x)).
-  intros q a; exists (q a); apply p.
-
-  exists f; unfold f; clear f.
-  unfold "◦", "∼", id; simpl.
-  split.
-   intros q.
+apply hott_4_9_2.
+apply pre_hott_4_9_3, p.
+Defined.
