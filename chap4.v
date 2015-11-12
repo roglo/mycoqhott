@@ -3,6 +3,7 @@
 
 Require Import Utf8 QArith NPeano.
 Require Import chap1 chap2 chap3.
+Set Universe Polymorphism.
 
 (* no default implicit without arguments *)
 Arguments eq_refl [A] x.
@@ -1758,15 +1759,8 @@ simpl in ψ.
 assert (f : ∀ x, χ (ψ x) = x).
  intros P; unfold χ, ψ; simpl.
  apply Π_type.funext; intros b.
-(* why it works with fib' and not for fib although the have the exact
-   same definition? *)
-Definition fib' {A B} (f : A → B) (y : B) := Σ (x : A), (f x = y).
-Check (@ua (@fib' (Σ (y : B), P y) B (@Σ_pr₁ B P) b)).
-(* waiting for coq team to fix the bug... *)
-Abort. (*
 Check (@ua (@fib (Σ (y : B), P y) B (@Σ_pr₁ B P) b)).
 bbb.
-*)
 
 (* "Theorem 4.8.4. Let f : A → B be a function. Then the diagram
                   θ_f
