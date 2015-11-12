@@ -1774,7 +1774,24 @@ assert (f : χ ◦ ψ ∼ id).
    destruct q; apply eq_refl.
 
  assert (g : ψ ◦ χ ∼ id).
-  intros P.   
+  clear f; intros (A, f).
+  pose proof (hott_4_8_2 f)⁻⁻¹ as e.
+Check (Σ_pr₁ e).
+Check (λ b a p, Σ_pr₁ e (existT _ b (existT _ a p))).
+bbb.
+  assert (∀ b a p, Σ_pr₁ e b a p = a).
+
+bbb.
+  intros (A, P); unfold χ, ψ; simpl.
+  unfold "◦", "∼", id; simpl.
+bbb.
+  apply (Σ_type.pair_eq (invert (ua (hott_4_8_2 P)))).
+  apply Π_type.funext; intros a.
+  unfold transport.
+  destruct (ua (hott_4_8_2 P)).
+
+  unfold hott_4_8_2; simpl.
+
 bbb.
 
 (* "Theorem 4.8.4. Let f : A → B be a function. Then the diagram
