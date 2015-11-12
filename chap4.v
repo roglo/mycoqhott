@@ -1756,10 +1756,25 @@ Proof.
 set (χ (w : Σ (A : Type), A → B) b := fib (Σ_pr₂ w) b).
 set (ψ P := existT _ (Σ (b : B), P b) Σ_pr₁ : Σ (A : Type), A → B).
 simpl in ψ.
-assert (f : ∀ x, χ (ψ x) = x).
+assert (f : χ ◦ ψ ∼ id).
  intros P; unfold χ, ψ; simpl.
+ unfold "◦", "∼", id; simpl.
  apply Π_type.funext; intros b; apply ua.
+ transparent assert (f : fib (@Σ_pr₁ _ P) b → P b).
+  intros ((y, p), q); simpl in q; destruct q; apply p.
 
+  exists f; unfold f; clear f; simpl; apply qinv_isequiv.
+  transparent assert (f : P b → fib (@Σ_pr₁ _ P) b).
+   intros p; exists (existT _ b p); apply eq_refl.
+
+   exists f; unfold f; clear f.
+   unfold "◦", "∼", id; simpl.
+   split; [ intros; apply eq_refl | ].
+   intros ((y, p), q); simpl in q; simpl.
+   destruct q; apply eq_refl.
+
+ assert (g : ψ ◦ χ ∼ id).
+  intros P.   
 bbb.
 
 (* "Theorem 4.8.4. Let f : A → B be a function. Then the diagram
