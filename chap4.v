@@ -1758,8 +1758,8 @@ set (ψ P := existT _ (Σ (b : B), P b) Σ_pr₁ : Σ (A : Type), A → B).
 simpl in ψ.
 assert (f : ∀ x, χ (ψ x) = x).
  intros P; unfold χ, ψ; simpl.
- apply Π_type.funext; intros b.
-Check (@ua (@fib (Σ (y : B), P y) B (@Σ_pr₁ B P) b)).
+ apply Π_type.funext; intros b; apply ua.
+
 bbb.
 
 (* "Theorem 4.8.4. Let f : A → B be a function. Then the diagram
