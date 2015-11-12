@@ -1934,8 +1934,17 @@ transparent assert (f : A → (Σ (x : A), P x)).
   destruct t; apply eq_refl.
 Defined.
 
+Definition equiv_4_9_3 A P := (A → Σ (x : A), P x) ≃ (A → A).
+
 Definition hott_4_9_3 A (P : A → Type) (p : Π (x : A), isContr (P x)) :
-  (A → Σ (x : A), P x) ≃ (A → A).
+  equiv_4_9_3 A P.
+Proof.
+apply hott_4_9_2.
+apply pre_hott_4_9_3, p.
+Defined.
+
+Definition hott_4_9_3' A (P : A → Type) (p : Π (x : A), isContr (P x)) :
+  (A → Σ (x : A), P x) → (A → A).
 Proof.
 apply hott_4_9_2.
 apply pre_hott_4_9_3, p.
@@ -1947,11 +1956,30 @@ Defined.
     [...]" *)
 
 Definition hott_4_9_4 A (P : A → Type) (p : Π (x : A), isContr (P x))
-   (α : (A → Σ (x : A), P x) ≃ (A → A)) :
+   (α := hott_4_9_3' A P p) :
+  (Π (x : A), P x) ≃ fib α (@id A).
+Proof.
+transparent assert (φ : (Π (x : A), P x) → fib α (@id A)).
+ intros f; exists (λ x, existT _ x (f x)).
+ unfold α, hott_4_9_3'; simpl.
+bbb.
+
+Definition hott_4_9_4 A (P : A → Type) (p : Π (x : A), isContr (P x))
+   (α := hott_4_9_3 A P p) :
   (Π (x : A), P x) ≃ fib (Σ_pr₁ α) (@id A).
 Proof.
 transparent assert (φ : (Π (x : A), P x) → fib (Σ_pr₁ α) (@id A)).
  intros f; exists (λ x, existT _ x (f x)).
+ unfold α, hott_4_9_3; simpl.
+
+bbb.
+
+ unfold α, hott_4_9_3, hott_4_9_2; simpl.
+ unfold idtoeqv_ua; simpl.
+ destruct (ua (pre_hott_4_9_3 A P p)) at 2.
+
+ unfold α, hott_4_9_3, hott_4_9_2, pre_hott_4_9_3; simpl.
+
  destruct α as (g, r); simpl.
 bbb.
 
