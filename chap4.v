@@ -1775,9 +1775,17 @@ assert (f : χ ◦ ψ ∼ id).
 
  assert (g : ψ ◦ χ ∼ id).
   clear f; intros (A, f).
-  pose proof (hott_4_8_2 f)⁻⁻¹ as e.
-Check (Σ_pr₁ e).
-Check (λ b a p, Σ_pr₁ e (existT _ b (existT _ a p))).
+  set (e := (hott_4_8_2 f)⁻⁻¹).
+  assert (p : ∀ b a p, Σ_pr₁ e (existT _ b (existT _ a p)) = a).
+   intros b a p; apply eq_refl.
+
+   Check (Σ_pr₁ (fst (Σ_pr₂ e))).
+   Check (λ a, existT _ (f a) (eq_refl (f a))).
+   assert
+     (q : ∀ a,
+      Σ_pr₁ (fst (Σ_pr₂ e)) a = existT _ (f a) (existT _ a (eq_refl (f a)))).
+    intros a; apply eq_refl.
+
 bbb.
   assert (∀ b a p, Σ_pr₁ e b a p = a).
 
