@@ -1950,6 +1950,14 @@ Definition hott_4_9_4 A (P : A → Type) (p : Π (x : A), isContr (P x))
    (α : (A → Σ (x : A), P x) ≃ (A → A)) :
   (Π (x : A), P x) ≃ fib (Σ_pr₁ α) (@id A).
 Proof.
+transparent assert (φ : (Π (x : A), P x) → fib (Σ_pr₁ α) (@id A)).
+ intros f; exists (λ x, existT _ x (f x)).
+ destruct α as (g, r); simpl.
+bbb.
+
+ exists (Σ_pr₁ α).
+
+set (φ f := fib_intro (λ x, existT P x (f x)) (eq_refl (@id A))).
 set
   (φ f :=
      (fib_intro (λ x, existT P x (f x)) (eq_refl (@id A)) :
