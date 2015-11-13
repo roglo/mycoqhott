@@ -1993,29 +1993,28 @@ set
      (existT _ (λ x, existT _ x (f x)) (eq_refl (@id A)) :
       fib (λ (_ : A → {x : A & P x}) (x : A), x) (@id A))).
 simpl in φ.
+Check (λ (_ : A → {x : A & P x}) (x : A), x).
 (* λ (_ : A → {x : A & P x}) (x : A), x
      : (A → {x : A & P x}) → A → A *)
+(* fun (_ : forall _ : A, @sigT A (fun x : A => P x)) (x : A) => x
+     : forall (_ : forall _ : A, @sigT A (fun x : A => P x)) (_ : A), A *)
+Check α.
+(* α
+     : forall (_ : forall _ : A, @sigT A (fun x : A => P x)) (_ : A), A *)
 (* α
      : (A → {x : A & P x}) → A → A *)
-
-bbb.
-
 set
-  (φ (f : Π (x : A), P x) :=
-     (existT _ (λ x, existT _ x (f x)) (eq_refl (@id A)) :
-      fib  (λ (_ : A → {x : A & P x}) (x0 : A), x0) (@id A))).
-simpl in φ.
-bbb.
-
+  (φ' (f : Π (x : A), P x) :=
+     (existT _ (λ x, existT _ x (f x)) (eq_refl _) :
+      fib α _)).
+simpl in φ'.
 set
-  (φ (f : Π (x : A), P x) :=
-     (existT _ (λ x, existT _ x (f x)) (eq_refl (@id A)) : fib _ _)).
-simpl in φ.
+  (ψ (w : fib _ _) := λ (g := fib_a w) (p := fib_p w) x,
+  transport _ p (Σ_pr₂ (g x))).
 bbb.
 
-transparent assert (φ : (Π (x : A), P x) → fib α (@id A)).
- intros f; exists (λ x, existT _ x (f x)).
- unfold α, hott_4_9_3'; simpl.
+set (ψ g p := λ x, p⁎ (Σ_pr₂ (g x))).
+
 bbb.
 
 Definition hott_4_9_4 A (P : A → Type) (p : Π (x : A), isContr (P x))
