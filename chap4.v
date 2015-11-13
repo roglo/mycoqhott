@@ -1786,6 +1786,10 @@ assert (f : χ ◦ ψ ∼ id).
 
     apply (Σ_type.pair_eq (ua e)).
     eapply compose; [ apply (@Π_type.hott_2_9_4 _ id _ _ _ (ua e)) | ].
+    unfold id at 1.
+    apply Π_type.funext; intros a.
+    rewrite ua_pcr_inv; simpl.
+    destruct (ua e); apply eq_refl.
 
 bbb.
 Check (ua e)⁎.
