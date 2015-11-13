@@ -2008,6 +2008,15 @@ set
      (existT _ (λ x, existT _ x (f x)) (eq_refl _) :
       fib α _)).
 simpl in φ'.
+transparent assert (ψ : fib α (@id A) → Π (x : A), P x).
+ intros (g, q) x.
+ unfold α in q; simpl in q.
+ unfold hott_4_9_3' in q; simpl in q.
+ unfold hott_4_9_2, pre_hott_4_9_3 in q.
+bbb.
+
+set (ψ (g : A → Σ (x : A), P x) p x := transport _ p (Σ_pr₂ (g x))).
+
 set
   (ψ (w : fib _ _) := λ (g := fib_a w) (p := fib_p w) x,
   transport _ p (Σ_pr₂ (g x))).
