@@ -1993,6 +1993,11 @@ set
      (existT _ (λ x, existT _ x (f x)) (eq_refl (@id A)) :
       fib (λ (_ : A → {x : A & P x}) (x : A), x) (@id A))).
 simpl in φ.
+(* λ (_ : A → {x : A & P x}) (x : A), x
+     : (A → {x : A & P x}) → A → A *)
+(* α
+     : (A → {x : A & P x}) → A → A *)
+
 bbb.
 
 set
