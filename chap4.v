@@ -1906,7 +1906,6 @@ assert (q : A ≃ B * Σ (C : Type), C).
      {b : B & {Y : {A0 : Type & A0} & fib f b = Σ_pr₁ Y}}).
    intros (b, (C, c)).
    exists b, (existT _ B b); simpl.
-bbb.
 
 (* impossible to conclude... something must be wrong somewhere, either
    in my understanding of their proof or... in their proof; there is
@@ -1989,6 +1988,26 @@ Definition hott_4_9_4 A (P : A → Type) (p : Π (x : A), isContr (P x))
    (α := hott_4_9_3' A P p) :
   (Π (x : A), P x) ≃ fib α (@id A).
 Proof.
+set
+  (φ (f : Π (x : A), P x) :=
+     (existT _ (λ x, existT _ x (f x)) (eq_refl (@id A)) :
+      fib (λ (_ : A → {x : A & P x}) (x : A), x) (@id A))).
+simpl in φ.
+bbb.
+
+set
+  (φ (f : Π (x : A), P x) :=
+     (existT _ (λ x, existT _ x (f x)) (eq_refl (@id A)) :
+      fib  (λ (_ : A → {x : A & P x}) (x0 : A), x0) (@id A))).
+simpl in φ.
+bbb.
+
+set
+  (φ (f : Π (x : A), P x) :=
+     (existT _ (λ x, existT _ x (f x)) (eq_refl (@id A)) : fib _ _)).
+simpl in φ.
+bbb.
+
 transparent assert (φ : (Π (x : A), P x) → fib α (@id A)).
  intros f; exists (λ x, existT _ x (f x)).
  unfold α, hott_4_9_3'; simpl.
