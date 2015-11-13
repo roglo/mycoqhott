@@ -1779,12 +1779,30 @@ assert (f : χ ◦ ψ ∼ id).
   assert (p : ∀ b a p, Σ_pr₁ e (existT _ b (existT _ a p)) = a).
    intros b a p; apply eq_refl.
 
-   Check (Σ_pr₁ (fst (Σ_pr₂ e))).
-   Check (λ a, existT _ (f a) (eq_refl (f a))).
    assert
      (q : ∀ a,
       Σ_pr₁ (fst (Σ_pr₂ e)) a = existT _ (f a) (existT _ a (eq_refl (f a)))).
     intros a; apply eq_refl.
+
+Check (ua e)⁎.
+(* transport ?T (ua e)
+     : ?T {b : B & fib f b} → ?T A *)
+Check ((ua e)⁎ Σ_pr₁).
+bbb.
+
+    assert (r : (ua e)⁎ pr₁ = f).
+
+(*
+Σ_type.pair_eq_if
+     : ∀ (A : Type) (P : A → Type) (x x' : A) (p : P x)
+       (p' : P x'),
+       existT P x p = existT P x' p' → {γ : x = x' & transport P γ p = p'}
+@Σ_type.hott_2_7_2_f
+     : ∀ (A : Type) (P : A → Type) (w w' : {x : A & P x}),
+       w = w'
+       → {p : Σ_type.pr₁ w = Σ_type.pr₁ w' &
+         transport P p (Σ_type.pr₂ w) = Σ_type.pr₂ w'}
+*)
 
 bbb.
   assert (∀ b a p, Σ_pr₁ e b a p = a).
