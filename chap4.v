@@ -1784,12 +1784,15 @@ assert (f : χ ◦ ψ ∼ id).
       Σ_pr₁ (fst (Σ_pr₂ e)) a = existT _ (f a) (existT _ a (eq_refl (f a)))).
     intros a; apply eq_refl.
 
+    apply (Σ_type.pair_eq (ua e)).
+    eapply compose; [ apply (@Π_type.hott_2_9_4 _ id _ _ _ (ua e)) | ].
+
+bbb.
 Check (ua e)⁎.
 (* transport ?T (ua e)
      : ?T {b : B & fib f b} → ?T A *)
 Check ((ua e)⁎ Σ_pr₁).
 bbb.
-
     assert (r : (ua e)⁎ pr₁ = f).
 
 (*
