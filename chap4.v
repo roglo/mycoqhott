@@ -1791,41 +1791,10 @@ assert (f : χ ◦ ψ ∼ id).
     rewrite ua_pcr_inv; simpl.
     destruct (ua e); apply eq_refl.
 
-bbb.
-Check (ua e)⁎.
-(* transport ?T (ua e)
-     : ?T {b : B & fib f b} → ?T A *)
-Check ((ua e)⁎ Σ_pr₁).
-bbb.
-    assert (r : (ua e)⁎ pr₁ = f).
-
-(*
-Σ_type.pair_eq_if
-     : ∀ (A : Type) (P : A → Type) (x x' : A) (p : P x)
-       (p' : P x'),
-       existT P x p = existT P x' p' → {γ : x = x' & transport P γ p = p'}
-@Σ_type.hott_2_7_2_f
-     : ∀ (A : Type) (P : A → Type) (w w' : {x : A & P x}),
-       w = w'
-       → {p : Σ_type.pr₁ w = Σ_type.pr₁ w' &
-         transport P p (Σ_type.pr₂ w) = Σ_type.pr₂ w'}
-*)
-
-bbb.
-  assert (∀ b a p, Σ_pr₁ e b a p = a).
-
-bbb.
-  intros (A, P); unfold χ, ψ; simpl.
-  unfold "◦", "∼", id; simpl.
-bbb.
-  apply (Σ_type.pair_eq (invert (ua (hott_4_8_2 P)))).
-  apply Π_type.funext; intros a.
-  unfold transport.
-  destruct (ua (hott_4_8_2 P)).
-
-  unfold hott_4_8_2; simpl.
-
-bbb.
+  simpl.
+  exists χ; apply qinv_isequiv; exists ψ.
+  split; [ apply f | apply g ].
+Defined.
 
 (* "Theorem 4.8.4. Let f : A → B be a function. Then the diagram
                   θ_f
@@ -1840,13 +1809,13 @@ bbb.
     defined by
           λa. (fib_f (f(a)), (a, refl_{f(a)}))." *)
 
-Definition equiv_fib A B (f : A → B) : A ≃ Σ (b : B), fib' f b.
+Definition equiv_fib A B (f : A → B) : A ≃ Σ (b : B), fib f b.
 Proof.
-transparent assert (g : A → Σ (b : B), fib' f b).
+transparent assert (g : A → Σ (b : B), fib f b).
  intros a; exists (f a), a; apply eq_refl.
 
  exists g; unfold g; clear g; apply qinv_isequiv.
- transparent assert (g : (Σ (b : B), fib' f b) → A).
+ transparent assert (g : (Σ (b : B), fib f b) → A).
   intros (b, (a, p)); apply a.
 
   exists g; unfold g; clear g.
@@ -1856,16 +1825,16 @@ transparent assert (g : A → Σ (b : B), fib' f b).
 Defined.
 
 Definition ΣΣΣ_fib A B (f : A → B) :
-  A ≃ Σ (b : B), Σ (X : Type), Σ (p : fib' f b = X), X.
+  A ≃ Σ (b : B), Σ (X : Type), Σ (p : fib f b = X), X.
 Proof.
 eapply equiv_compose; [ apply (equiv_fib A B f) | ].
 apply Σ_equiv; intros b; apply ua.
-transparent assert (g : fib' f b → {X : Type & {_ : fib' f b = X & X}}).
- intros p; exists (fib' f b).
+transparent assert (g : fib f b → {X : Type & {_ : fib f b = X & X}}).
+ intros p; exists (fib f b).
  exists (eq_refl _); apply p.
 
  exists g; unfold g; clear g; apply qinv_isequiv.
- transparent assert (g : {X : Type & {_ : fib' f b = X & X}} → fib' f b).
+ transparent assert (g : {X : Type & {_ : fib f b = X & X}} → fib f b).
   intros (X, (p, x)); destruct p; apply x.
 
   exists g; unfold g; clear g.
@@ -1875,16 +1844,16 @@ transparent assert (g : fib' f b → {X : Type & {_ : fib' f b = X & X}}).
 Defined.
 
 Definition ΣΣΣ_fib2 A B (f : A → B) :
-  A ≃ Σ (b : B), Σ (X : Type), Σ (x : X), fib' f b = X.
+  A ≃ Σ (b : B), Σ (X : Type), Σ (x : X), fib f b = X.
 Proof.
 eapply equiv_compose; [ apply (ΣΣΣ_fib A B f) | ].
 apply Σ_equiv; intros b; apply ua.
 apply Σ_equiv; intros X; apply ua.
-transparent assert (g : {_ : fib' f b = X & X} → {_ : X & fib' f b = X}).
+transparent assert (g : {_ : fib f b = X & X} → {_ : X & fib f b = X}).
  intros (p, x); exists x; apply p.
 
  exists g; unfold g; clear g; apply qinv_isequiv.
- transparent assert (g : {_ : X & fib' f b = X} → {_ : fib' f b = X & X}).
+ transparent assert (g : {_ : X & fib f b = X} → {_ : fib f b = X & X}).
   intros (x, p); exists p; apply x.
 
   exists g; unfold g; clear g.
@@ -1893,19 +1862,19 @@ transparent assert (g : {_ : fib' f b = X & X} → {_ : X & fib' f b = X}).
 Defined.
 
 Definition ΣΣ_fib A B (f : A → B) :
-   A ≃ Σ (b : B), Σ (Y : Σ (A : Type), A), fib' f b = Σ_pr₁ Y.
+   A ≃ Σ (b : B), Σ (Y : Σ (A : Type), A), fib f b = Σ_pr₁ Y.
 Proof.
 eapply equiv_compose; [ apply (ΣΣΣ_fib2 A B f) | ].
 apply Σ_equiv; intros b; apply ua.
 transparent assert
-  (g : {X : Type & {_ : X & fib' f b = X}}
-   → {Y : {A0 : Type & A0} & fib' f b = Σ_pr₁ Y}).
+  (g : {X : Type & {_ : X & fib f b = X}}
+   → {Y : {A0 : Type & A0} & fib f b = Σ_pr₁ Y}).
  intros (X, (x, p)); exists (existT _ X x); apply p.
 
  exists g; unfold g; clear g; apply qinv_isequiv.
  transparent assert
-   (g : {Y : {A0 : Type & A0} & fib' f b = Σ_pr₁ Y}
-    → {X : Type & {_ : X & fib' f b = X}}).
+   (g : {Y : {A0 : Type & A0} & fib f b = Σ_pr₁ Y}
+    → {X : Type & {_ : X & fib f b = X}}).
    intros ((X, x), p); simpl in p; exists X, x; apply p.
 
    exists g; unfold g; clear g; simpl.
@@ -1916,9 +1885,9 @@ Defined.
 
 Definition hott_4_8_4 A B (f : A → B) :
   let theta (f : A → B) a :=
-    existT _ (fib' f (f a)) (fib_intro a (eq_refl (f a))) : Σ (B : Type), B
+    existT _ (fib f (f a)) (fib_intro a (eq_refl (f a))) : Σ (B : Type), B
   in
-  let khi (w : Σ (A : Type), A → B) b := fib' (Σ_pr₂ w) b in
+  let khi (w : Σ (A : Type), A → B) b := fib (Σ_pr₂ w) b in
   (∀ x, Σ_pr₁ (theta f x) = khi (existT _ _ f) (f x)) *
   (∀ X, (X → A) ≃ (X → Σ (A : Type), A) * (X → B)).
 Proof.
@@ -1926,7 +1895,7 @@ pose proof (ΣΣ_fib A B f) as p.
 assert (q : A ≃ B * Σ (C : Type), C).
  eapply equiv_compose; [ apply p | clear p ].
  transparent assert
-   (g : {b : B & {Y : {A0 : Type & A0} & fib' f b = Σ_pr₁ Y}}
+   (g : {b : B & {Y : {A0 : Type & A0} & fib f b = Σ_pr₁ Y}}
     → B * {C : Type & C}).
   intros (b, ((C, c), p)); simpl in p.
   split; [ apply b | exists C; apply c ].
@@ -1934,9 +1903,11 @@ assert (q : A ≃ B * Σ (C : Type), C).
   exists g; unfold g; clear g; simpl; apply qinv_isequiv.
   transparent assert
     (g : B * {C : Type & C} →
-     {b : B & {Y : {A0 : Type & A0} & fib' f b = Σ_pr₁ Y}}).
+     {b : B & {Y : {A0 : Type & A0} & fib f b = Σ_pr₁ Y}}).
    intros (b, (C, c)).
    exists b, (existT _ B b); simpl.
+bbb.
+
 (* impossible to conclude... something must be wrong somewhere, either
    in my understanding of their proof or... in their proof; there is
    much abuse of language in hott book... *)
@@ -2060,11 +2031,11 @@ bbb.
 
 Definition hott_4_9_4 A (P : A → Type) (p : Π (x : A), isContr (P x))
    (α : (A → Σ (x : A), P x) ≃ (A → A)) :
-  (Π (x : A), P x) = chap3.retract (fib' (Σ_pr₁ α) (@id A)).
+  (Π (x : A), P x) = chap3.retract (fib (Σ_pr₁ α) (@id A)).
 Proof.
-pose proof @ua (Π (x : A), P x) (chap3.retract (fib' (Σ_pr₁ α) id)).
+pose proof @ua (Π (x : A), P x) (chap3.retract (fib (Σ_pr₁ α) id)).
 
-The term "chap3.retract (fib' (Σ_pr₁ α) id)" has type
+The term "chap3.retract (fib (Σ_pr₁ α) id)" has type
 "Type@{chap3.477}" while it is expected to have type
 "Type@{chap2.1031}" (universe inconsistency).
 
