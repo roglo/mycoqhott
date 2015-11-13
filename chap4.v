@@ -1955,7 +1955,6 @@ transparent assert (f : A → (Σ (x : A), P x)).
  split; [ intros; apply eq_refl | ].
  intros (x, q); simpl.
  pose proof p x as r.
- unfold isContr in r.
  destruct r as (r, s).
  assert (t : (let (y, _) := p x in y) = q).
   apply (compose (y := r)); [ apply invert, s | apply s ].
@@ -2010,6 +2009,9 @@ set
 simpl in φ'.
 transparent assert (ψ : fib α (@id A) → Π (x : A), P x).
  intros (g, q) x.
+ apply p.
+
+bbb.
  unfold α in q; simpl in q.
  unfold hott_4_9_3' in q; simpl in q.
  unfold hott_4_9_2, pre_hott_4_9_3 in q.
