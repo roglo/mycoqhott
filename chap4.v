@@ -1938,8 +1938,6 @@ Definition hott_4_9_2 A B X (e : A ≃ B) : (X → A) ≃ (X → B) :=
   | eq_refl _ => eqv_eq_refl (X → A)
   end.
 
-bbb.
-
 (* "Corollary 4.9.3. Let P : A → U be a family of contractible types,
     i.e. Π (x:A) isContr(P(x)). Then the projection pr₁ : (∑ (x:A)
     P(x)) → A is an equivalence. Assuming U is univalent, it follows
@@ -2036,6 +2034,7 @@ transparent assert (ψ : fib α (@id A) → Π (x : A), P x).
  pose proof (@hap A A (α g) id q x) as s; unfold id in s.
  unfold α in s; simpl in s.
 bbb.
+
  unfold hott_4_9_3' in s; simpl in s.
  unfold hott_4_9_2, pre_hott_4_9_3 in s.
  simpl in s.
