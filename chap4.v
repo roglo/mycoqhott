@@ -1929,9 +1929,7 @@ Definition weak_funext A P :=
     underlying function of e." *)
 
 Definition hott_4_9_2_tac A B X (e : A ≃ B) : (X → A) ≃ (X → B).
-Proof.
-destruct (ua e); apply eqv_eq_refl.
-Defined.
+Proof. destruct (ua e); apply eqv_eq_refl. Defined.
 
 Definition hott_4_9_2 A B X (e : A ≃ B) : (X → A) ≃ (X → B) :=
   match ua e with
