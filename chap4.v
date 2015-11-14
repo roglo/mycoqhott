@@ -1974,6 +1974,8 @@ Defined.
 Definition hott_4_9_3' A (P : A → Type) (p : Π (x : A), isContr (P x)) :
   (A → Σ (x : A), P x) → (A → A).
 Proof.
+bbb.
+
 apply hott_4_9_2.
 apply pre_hott_4_9_3, p.
 Defined.
@@ -2009,6 +2011,26 @@ set
 simpl in φ'.
 transparent assert (ψ : fib α (@id A) → Π (x : A), P x).
  intros (g, q) x.
+ pose proof (g x) as r.
+ destruct r as (y, r).
+ eapply transport; [ | apply r ].
+ pose proof (@hap A A (α g) id q x) as s; unfold id in s.
+ unfold α in s; simpl in s.
+bbb.
+
+ unfold hott_4_9_3' in s; simpl in s.
+ unfold hott_4_9_2, pre_hott_4_9_3 in s.
+ simpl in s.
+
+bbb.
+
+ unfold α in q; simpl in q.
+ unfold hott_4_9_3' in q; simpl in q.
+ unfold hott_4_9_2, pre_hott_4_9_3 in q.
+ simpl in q.
+Show Proof.
+bbb.
+
  apply p.
 
 bbb.
