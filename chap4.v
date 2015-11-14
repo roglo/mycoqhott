@@ -1946,11 +1946,9 @@ Definition pre_hott_4_9_3_tac A (P : A → Type)
     (p : Π (x : A), isContr (P x)) :
   (Σ (x : A), P x) ≃ A.
 Proof.
+exists Σ_pr₁; apply qinv_isequiv.
+exists (λ a, existT P a (Σ_pr₁ (p a))).
 bbb.
-
-exists (λ w, Σ_pr₁ w); apply qinv_isequiv.
-transparent assert (f : A → (Σ (x : A), P x)).
- intros a; exists a; apply p.
 
  exists f; unfold f; clear f.
  unfold "◦", "∼", id; simpl.
@@ -1967,8 +1965,8 @@ Defined.
 Definition pre_hott_4_9_3 A (P : A → Type) (p : Π (x : A), isContr (P x)) :
   (Σ (x : A), P x) ≃ A
 :=
-  existT isequiv (λ w : {y : A & P y}, Σ_pr₁ w)
-    (qinv_isequiv (λ w : {y : A & P y}, Σ_pr₁ w)
+  existT isequiv Σ_pr₁
+    (qinv_isequiv Σ_pr₁
        (existT _
           (λ a : A,
            existT P a ((λ X : ∀ x : A, P x, X a) (λ x : A, Σ_pr₁ (p x))))
@@ -1981,10 +1979,8 @@ Definition pre_hott_4_9_3 A (P : A → Type) (p : Π (x : A), isContr (P x)) :
           | eq_refl _ => eq_refl (existT P x (Σ_pr₁ (p x)))
           end))).
 
-Definition equiv_4_9_3 A P := (A → Σ (x : A), P x) ≃ (A → A).
-
 Definition hott_4_9_3 A (P : A → Type) (p : Π (x : A), isContr (P x)) :
-  equiv_4_9_3 A P.
+  (A → Σ (x : A), P x) ≃ (A → A).
 Proof.
 apply hott_4_9_2.
 apply pre_hott_4_9_3, p.
