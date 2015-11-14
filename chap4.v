@@ -1928,14 +1928,17 @@ Definition weak_funext A P :=
     of which the underlying map is given by post-composition with the
     underlying function of e." *)
 
-Definition hott_4_9_2 A B X (e : A ≃ B) : (X → A) ≃ (X → B).
+Definition hott_4_9_2_tac A B X (e : A ≃ B) : (X → A) ≃ (X → B).
 Proof.
-assert (p : Σ (p : A = B), e = idtoeqv p).
- exists (ua e); apply invert, idtoeqv_ua.
-
- destruct p as (p, ep).
- destruct p; apply eqv_eq_refl.
+destruct (ua e); apply eqv_eq_refl.
 Defined.
+
+Definition hott_4_9_2 A B X (e : A ≃ B) : (X → A) ≃ (X → B) :=
+  match ua e with
+  | eq_refl _ => eqv_eq_refl (X → A)
+  end.
+
+bbb.
 
 (* "Corollary 4.9.3. Let P : A → U be a family of contractible types,
     i.e. Π (x:A) isContr(P(x)). Then the projection pr₁ : (∑ (x:A)
