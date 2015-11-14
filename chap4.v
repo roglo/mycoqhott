@@ -1948,18 +1948,11 @@ Definition pre_hott_4_9_3_tac A (P : A → Type)
 Proof.
 exists Σ_pr₁; apply qinv_isequiv.
 exists (λ a, existT P a (Σ_pr₁ (p a))).
-bbb.
-
- exists f; unfold f; clear f.
- unfold "◦", "∼", id; simpl.
- split; [ intros; apply eq_refl | ].
- intros (x, q); simpl.
- pose proof p x as r.
- destruct r as (r, s).
- assert (t : (let (y, _) := p x in y) = q).
-  apply (compose (y := r)); [ apply invert, s | apply s ].
-
-  destruct t; apply eq_refl.
+unfold "◦", "∼", id; simpl.
+split; [ intros; apply eq_refl | ].
+intros (x, q); simpl.
+destruct (p x) as (r, s); simpl.
+destruct (s q); apply eq_refl.
 Defined.
 
 Definition pre_hott_4_9_3 A (P : A → Type) (p : Π (x : A), isContr (P x)) :
@@ -1968,16 +1961,18 @@ Definition pre_hott_4_9_3 A (P : A → Type) (p : Π (x : A), isContr (P x)) :
   existT isequiv Σ_pr₁
     (qinv_isequiv Σ_pr₁
        (existT _
-          (λ a : A,
-           existT P a ((λ X : ∀ x : A, P x, X a) (λ x : A, Σ_pr₁ (p x))))
+          (λ a : A, existT P a (Σ_pr₁ (p a)))
           (λ x : A, eq_refl x,
-          λ x0 : {x : A & P x},
-          let (x, q) as s
-          return existT P (Σ_pr₁ s) (let (x, _) := p (Σ_pr₁ s) in x) = s
-          := x0 in
-          match (Σ_pr₂ (p x) (Σ_pr₁ (p x)))⁻¹ • Σ_pr₂ (p x) q with
-          | eq_refl _ => eq_refl (existT P x (Σ_pr₁ (p x)))
-          end))).
+           λ xq : {x : A & P x},
+           match xq with
+           | existT _ x q =>
+               let (r, s) as s return existT P x (Σ_pr₁ s) = existT P x q
+                 := p x
+               in
+               match s q with
+               | eq_refl _ => eq_refl (existT P x r)
+               end
+           end))).
 
 Definition hott_4_9_3 A (P : A → Type) (p : Π (x : A), isContr (P x)) :
   (A → Σ (x : A), P x) ≃ (A → A).
