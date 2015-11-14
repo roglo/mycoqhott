@@ -1946,6 +1946,8 @@ Definition pre_hott_4_9_3_tac A (P : A → Type)
     (p : Π (x : A), isContr (P x)) :
   (Σ (x : A), P x) ≃ A.
 Proof.
+bbb.
+
 exists (λ w, Σ_pr₁ w); apply qinv_isequiv.
 transparent assert (f : A → (Σ (x : A), P x)).
  intros a; exists a; apply p.
