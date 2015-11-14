@@ -685,9 +685,15 @@ Notation "A ≃ B" := (equivalence A B) (at level 70).
 
 (* Lemma 2.4.12 i *)
 
+Definition eqv_eq_refl_tac A : A ≃ A.
+Proof.
+exists id; apply qinv_isequiv; exists  id.
+split; intros a; apply eq_refl.
+Defined.
+
 Definition eqv_eq_refl A : A ≃ A :=
   existT isequiv id
-    (qinv_isequiv id (existT _ id (reflexivity id, reflexivity id))).
+    (qinv_isequiv id (existT _ id ((λ _, eq_refl _), (λ _, eq_refl _)))).
 
 (* quasi-inverse : lemma 2.4.12 ii *)
 

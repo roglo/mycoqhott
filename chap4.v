@@ -1926,7 +1926,7 @@ Definition weak_funext A P :=
     e : A ≃ B, there is an equivalence
           (X → A) ≃ (X → B)
     of which the underlying map is given by post-composition with the
-    underlying function of e. *)
+    underlying function of e." *)
 
 Definition hott_4_9_2 A B X (e : A ≃ B) : (X → A) ≃ (X → B).
 Proof.
