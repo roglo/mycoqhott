@@ -1943,7 +1943,8 @@ Defined.
     immediately that post-composition with pr₁ gives an equivalence
         α : (A → Σ (x : A) P(x)) ≃ (A → A)." *)
 
-Definition pre_hott_4_9_3 A (P : A → Type) (p : Π (x : A), isContr (P x)) :
+Definition pre_hott_4_9_3_tac A (P : A → Type)
+    (p : Π (x : A), isContr (P x)) :
   (Σ (x : A), P x) ≃ A.
 Proof.
 exists (λ w, Σ_pr₁ w); apply qinv_isequiv.
@@ -1962,6 +1963,23 @@ transparent assert (f : A → (Σ (x : A), P x)).
   destruct t; apply eq_refl.
 Defined.
 
+Definition pre_hott_4_9_3 A (P : A → Type) (p : Π (x : A), isContr (P x)) :
+  (Σ (x : A), P x) ≃ A
+:=
+  existT isequiv (λ w : {y : A & P y}, Σ_pr₁ w)
+    (qinv_isequiv (λ w : {y : A & P y}, Σ_pr₁ w)
+       (existT _
+          (λ a : A,
+           existT P a ((λ X : ∀ x : A, P x, X a) (λ x : A, Σ_pr₁ (p x))))
+          (λ x : A, eq_refl x,
+          λ x0 : {x : A & P x},
+          let (x, q) as s
+          return existT P (Σ_pr₁ s) (let (x, _) := p (Σ_pr₁ s) in x) = s
+          := x0 in
+          match (Σ_pr₂ (p x) (Σ_pr₁ (p x)))⁻¹ • Σ_pr₂ (p x) q with
+          | eq_refl _ => eq_refl (existT P x (Σ_pr₁ (p x)))
+          end))).
+
 Definition equiv_4_9_3 A P := (A → Σ (x : A), P x) ≃ (A → A).
 
 Definition hott_4_9_3 A (P : A → Type) (p : Π (x : A), isContr (P x)) :
@@ -1974,8 +1992,6 @@ Defined.
 Definition hott_4_9_3' A (P : A → Type) (p : Π (x : A), isContr (P x)) :
   (A → Σ (x : A), P x) → (A → A).
 Proof.
-bbb.
-
 apply hott_4_9_2.
 apply pre_hott_4_9_3, p.
 Defined.
@@ -2017,7 +2033,6 @@ transparent assert (ψ : fib α (@id A) → Π (x : A), P x).
  pose proof (@hap A A (α g) id q x) as s; unfold id in s.
  unfold α in s; simpl in s.
 bbb.
-
  unfold hott_4_9_3' in s; simpl in s.
  unfold hott_4_9_2, pre_hott_4_9_3 in s.
  simpl in s.
