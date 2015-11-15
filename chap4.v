@@ -2008,7 +2008,29 @@ set
   (φ' (f : Π (x : A), P x) :=
      (existT _ (λ x, existT _ x (f x)) (eq_refl _) : fib α _)).
 simpl in φ'.
-set (ψ (g : A → Σ (x : A), P x) p x := transport _ p (Σ_pr₂ (g x))).
+Check (fib α id).
+Check (λ (g : A → Σ (x : A), P x) (x : A), Σ_pr₂ (g x)).
+bbb.
+
+About transport.
+Check λ (g : A → Σ (x : A), P x) (x y : A) (p : x = y), @transport A P x y p.
+
+Check λ (g : A → Σ (x : A), P x) (x : A), P x → Σ_pr₂ (g x).
+
+The term "Σ_pr₂ (g x)" has type "P (Σ_pr₁ (g x))"
+which should be Set, Prop or Type.
+
+The term "x" has type "A" while it is expected to have type
+ "P (Σ_pr₁ (g x))".
+
+Check λ (g : A → Σ (x : A), P x) (x y : A) (p : x = y),
+  @transport A P x y p (Σ_pr₂ (g x)).
+
+The term "Σ_pr₂ (g x)" has type "P (Σ_pr₁ (g x))"
+while it is expected to have type "P x".
+
+set (ψ (g : A → Σ (x : A), P x) (Q : (A → Σ (x : A), P x) → Type) p x :=
+     transport Q p (Σ_pr₂ (g x))).
 bbb.
 
 transparent assert (ψ : fib α (@id A) → Π (x : A), P x).
