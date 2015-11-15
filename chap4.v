@@ -2004,21 +2004,11 @@ set
      (existT _ (λ x, existT _ x (f x)) (eq_refl (@id A)) :
       fib (λ (_ : A → {x : A & P x}) (x : A), x) (@id A))).
 simpl in φ.
-Check (λ (_ : A → {x : A & P x}) (x : A), x).
-(* λ (_ : A → {x : A & P x}) (x : A), x
-     : (A → {x : A & P x}) → A → A *)
-(* fun (_ : forall _ : A, @sigT A (fun x : A => P x)) (x : A) => x
-     : forall (_ : forall _ : A, @sigT A (fun x : A => P x)) (_ : A), A *)
-Check α.
-(* α
-     : forall (_ : forall _ : A, @sigT A (fun x : A => P x)) (_ : A), A *)
-(* α
-     : (A → {x : A & P x}) → A → A *)
 set
   (φ' (f : Π (x : A), P x) :=
-     (existT _ (λ x, existT _ x (f x)) (eq_refl _) :
-      fib α _)).
+     (existT _ (λ x, existT _ x (f x)) (eq_refl _) : fib α _)).
 simpl in φ'.
+set (ψ (g : A → Σ (x : A), P x) p x := transport _ p (Σ_pr₂ (g x))).
 bbb.
 
 transparent assert (ψ : fib α (@id A) → Π (x : A), P x).
