@@ -2010,6 +2010,10 @@ set
 simpl in φ'.
 Check (fib α id).
 Check (λ g (x : A), Σ_pr₂ (Σ_pr₁ g x)).
+pose proof (λ (g : (A → (Σ (x : A), P x)) ≃ (A → A)) (x : A),
+        (Σ_pr₂ (Σ_pr₁ (fst (Σ_pr₂ g)) id x))).
+bbb.
+
 Check (λ (g : (A → (Σ (x : A), P x)) ≃ (A → A)) (x : A), Σ_pr₁ g).
 
 Check λ (g : A → Σ (x : A), P x) (x y : A) (p : x = y), @transport A P x y p.
