@@ -1981,12 +1981,14 @@ apply hott_4_9_2.
 apply pre_hott_4_9_3, p.
 Defined.
 
-Definition hott_4_9_3' A (P : A → Type) (p : Π (x : A), isContr (P x)) :
+(*
+Definition hott_4_9_3_imp A (P : A → Type) (p : Π (x : A), isContr (P x)) :
   (A → Σ (x : A), P x) → (A → A).
 Proof.
 apply hott_4_9_2.
 apply pre_hott_4_9_3, p.
 Defined.
+*)
 
 (* "Theorem 4.9.4. In a univalent universe U, suppose that P : A → U
     is a family of contractible types and let α be the function of
@@ -1994,7 +1996,7 @@ Defined.
     [...]" *)
 
 Definition hott_4_9_4 A (P : A → Type) (p : Π (x : A), isContr (P x))
-   (α := hott_4_9_3' A P p) :
+   (α := Σ_pr₁ (hott_4_9_3 A P p)) :
   (Π (x : A), P x) ≃ fib α (@id A).
 Proof.
 set
@@ -2017,6 +2019,8 @@ set
      (existT _ (λ x, existT _ x (f x)) (eq_refl _) :
       fib α _)).
 simpl in φ'.
+bbb.
+
 transparent assert (ψ : fib α (@id A) → Π (x : A), P x).
  intros (g, q) x.
  pose proof (g x) as r.
@@ -2024,19 +2028,11 @@ transparent assert (ψ : fib α (@id A) → Π (x : A), P x).
  eapply transport; [ | apply r ].
  pose proof (@hap A A (α g) id q x) as s; unfold id in s.
  unfold α in s; simpl in s.
-bbb.
-
- unfold hott_4_9_3' in s; simpl in s.
- unfold hott_4_9_2, pre_hott_4_9_3 in s.
- simpl in s.
-
-bbb.
-
+ unfold hott_4_9_3 in s; simpl in s.
+ unfold hott_4_9_2 in s. (* bon, chais pas *)
  unfold α in q; simpl in q.
- unfold hott_4_9_3' in q; simpl in q.
- unfold hott_4_9_2, pre_hott_4_9_3 in q.
- simpl in q.
-Show Proof.
+ unfold hott_4_9_3 in q; simpl in q.
+ unfold hott_4_9_2 in q.
 bbb.
 
  apply p.
