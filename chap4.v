@@ -2013,6 +2013,30 @@ set (ψ (w : fib α id) := λ (g := Σ_pr₁ w) (p := Σ_pr₂ w) x, Σ_pr₂ (g
 About transport.
 set (ψ' (w : fib α id) := λ (g := Σ_pr₁ w) (q := Σ_pr₂ w) (x : A),
   @transport A P (Σ_pr₁ (Σ_pr₁ w x))).
+transparent assert
+  (g' : ∀ (w : fib α id) (g := Σ_pr₁ w) (q := Σ_pr₂ w) (x y : A),
+   Σ_pr₁ (Σ_pr₁ w x) = y).
+ simpl; intros.
+ destruct w as (g, q); simpl.
+ destruct (g x) as (z, r); simpl.
+
+bbb.
+
+set (g' := λ x : A, Σ_pr₁ (p x)).
+set (g'' := λ (w : fib α id) (x : A), Σ_pr₁ (p (Σ_pr₁ (Σ_pr₁ w x)))).
+
+set (ψ'' (w : fib α id) := λ (g := Σ_pr₁ w) (q := Σ_pr₂ w) (x : A),
+  @transport A P (Σ_pr₁ (Σ_pr₁ w x))).
+
+bbb.
+ simpl in g.
+transparent assert (g : ∀ (w : fib α id) x y, P (Σ_pr₁ (Σ_pr₁ w x)) → P y).
+ intros w x y q; apply p.
+ simpl in g.
+
+ unfold isContr in p.; apply p.
+
+
 unfold isContr in p.
 set (glop (w : fib α id) := λ (g := Σ_pr₁ w) (q := Σ_pr₂ w) (x : A),
   (p (Σ_pr₁ (Σ_pr₁ w x)))).
