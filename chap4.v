@@ -2012,6 +2012,15 @@ Check (fib α (@id A)).
 Print fib.
 set (ψ (w : fib α (@id A)) := λ (g := Σ_pr₁ w) (p := Σ_pr₂ w) x, Σ_pr₂ (g x)).
 About transport.
+transparent assert
+  (psi :
+     (fib (λ (_ : A → Σ (x : A), P x) (x : A), x) id) → Π (x : A), P x).
+ intros q x.
+ destruct q as (g, q).
+ pose proof g x as r.
+ destruct r as (y, s).
+bbb.
+
 set (ψ' (w : fib α (@id A)) := λ (g := Σ_pr₁ w) (q := Σ_pr₂ w) (x : A),
   @transport A P (Σ_pr₁ (Σ_pr₁ w x))).
 transparent assert
