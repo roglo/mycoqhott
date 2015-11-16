@@ -2008,6 +2008,7 @@ set
   (φ' (f : Π (x : A), P x) :=
      (existT _ (λ x, existT _ x (f x)) (eq_refl _) : fib α _)).
 simpl in φ'.
+(*
 Check (fib α (@id A)).
 Print fib.
 set (ψ (w : fib α (@id A)) := λ (g := Σ_pr₁ w) (p := Σ_pr₂ w) x, Σ_pr₂ (g x)).
@@ -2020,7 +2021,7 @@ transparent assert
  pose proof g x as r.
  destruct r as (y, s).
 bbb.
-
+*)
 set (ψ' (w : fib α (@id A)) := λ (g := Σ_pr₁ w) (q := Σ_pr₂ w) (x : A),
   @transport A P (Σ_pr₁ (Σ_pr₁ w x))).
 transparent assert
@@ -2028,6 +2029,11 @@ transparent assert
    Σ_pr₁ (Σ_pr₁ w x) = x).
  simpl; intros.
  destruct w as (g, q); simpl.
+ pose proof Π_type.happly q x as r; unfold id in r.
+ unfold α in r; simpl in r.
+bbb.
+
+ destruct (hott_4_9_3 A P p); simpl in r.
 bbb.
 
  destruct (g x) as (y, r); simpl.
