@@ -2032,8 +2032,14 @@ transparent assert
  pose proof Π_type.happly q x as r; unfold id in r.
  unfold α in r; simpl in r.
 bbb.
+ unfold hott_4_9_3 in r.
+Print pre_hott_4_9_3.
+ simpl in r.
+ destruct (g x); simpl.
+ unfold Σ_pr₁ in r.
+ destruct (hott_4_9_3 A P p).
 
- destruct (hott_4_9_3 A P p); simpl in r.
+ simpl in r.
 bbb.
 
  destruct (g x) as (y, r); simpl.
