@@ -2031,9 +2031,19 @@ transparent assert
  destruct w as (g, q); simpl.
  pose proof Π_type.happly q x as r; unfold id in r.
  unfold α in r; simpl in r.
- destruct (hott_4_9_3 A P p) as (f, ((h, Hh), (i, Hi))).
+ set (s := hott_4_9_3 A P p) in r.
+ case s; intros f ((h, Hh), (i, Hi)).
  simpl in r, α.
  unfold α in q.
+ unfold s in r.
+ destruct (hott_4_9_3 A P p).
+ simpl in q, s, r.
+bbb.
+
+ unfold hott_4_9_3 in r.
+ unfold hott_4_9_2 in r.
+ simpl in r.
+ destruct (ua (pre_hott_4_9_3 A P p)).
 bbb.
 
  replace g with (h (@id A)).
