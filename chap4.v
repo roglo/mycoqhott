@@ -2014,11 +2014,26 @@ About transport.
 set (ψ' (w : fib α id) := λ (g := Σ_pr₁ w) (q := Σ_pr₂ w) (x : A),
   @transport A P (Σ_pr₁ (Σ_pr₁ w x))).
 transparent assert
+  (g' : ∀ (w : fib α id) (g := Σ_pr₁ w) (q := Σ_pr₂ w) (x : A),
+   Σ_pr₁ (Σ_pr₁ w x) = x).
+ simpl; intros.
+ destruct w as (g, q); simpl.
+bbb.
+
+ destruct (g x) as (y, r); simpl.
+bbb.
+
+transparent assert
   (g' : ∀ (w : fib α id) (g := Σ_pr₁ w) (q := Σ_pr₂ w) (x y : A),
    Σ_pr₁ (Σ_pr₁ w x) = y).
  simpl; intros.
  destruct w as (g, q); simpl.
  destruct (g x) as (z, r); simpl.
+bbb.
+
+ pose proof p x as s.
+ apply isContr_isProp in s.
+unfold isProp in s.
 
 bbb.
 
