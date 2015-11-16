@@ -2008,10 +2008,11 @@ set
   (φ' (f : Π (x : A), P x) :=
      (existT _ (λ x, existT _ x (f x)) (eq_refl _) : fib α _)).
 simpl in φ'.
-Check (fib α id).
-set (ψ (w : fib α id) := λ (g := Σ_pr₁ w) (p := Σ_pr₂ w) x, Σ_pr₂ (g x)).
+Check (fib α (@id A)).
+Print fib.
+set (ψ (w : fib α (@id A)) := λ (g := Σ_pr₁ w) (p := Σ_pr₂ w) x, Σ_pr₂ (g x)).
 About transport.
-set (ψ' (w : fib α id) := λ (g := Σ_pr₁ w) (q := Σ_pr₂ w) (x : A),
+set (ψ' (w : fib α (@id A)) := λ (g := Σ_pr₁ w) (q := Σ_pr₂ w) (x : A),
   @transport A P (Σ_pr₁ (Σ_pr₁ w x))).
 transparent assert
   (g' : ∀ (w : fib α id) (g := Σ_pr₁ w) (q := Σ_pr₂ w) (x : A),
