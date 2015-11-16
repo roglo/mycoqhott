@@ -2012,8 +2012,13 @@ Check (fib α id).
 set (ψ (w : fib α id) := λ (g := Σ_pr₁ w) (p := Σ_pr₂ w) x, Σ_pr₂ (g x)).
 set (ψ' (w : fib α id) := λ (g := Σ_pr₁ w) (p := Σ_pr₂ w), α (Σ_pr₁ w)).
 About transport.
+(*
+transport : ∀ (A : Type) (P : A → Type) (x y : A), x = y → P x → P y
+Arguments A, x, y are implicit and maximally inserted
+*)
 set (ψ'' (w : fib α id) := λ (g := Σ_pr₁ w) (p := Σ_pr₂ w) (x : A),
   @transport (A → A)).
+(* I need a value of type (A → A) → Type *)
 bbb.
 Check ψ.
 simpl in ψ'.
