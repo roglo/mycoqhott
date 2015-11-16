@@ -2009,7 +2009,24 @@ set
      (existT _ (λ x, existT _ x (f x)) (eq_refl _) : fib α _)).
 simpl in φ'.
 Check (fib α id).
+set (ψ (w : fib α id) := λ (g := Σ_pr₁ w) (p := Σ_pr₂ w) x, Σ_pr₂ (g x)).
+set (ψ' (w : fib α id) := λ (g := Σ_pr₁ w) (p := Σ_pr₂ w), α (Σ_pr₁ w)).
+About transport.
+set (ψ'' (w : fib α id) := λ (g := Σ_pr₁ w) (p := Σ_pr₂ w) (x : A),
+  @transport (A → A)).
+bbb.
+Check ψ.
+simpl in ψ'.
+  ψ' := λ (w : fib α id) (_ : A), Σ_pr₂ w
+     : ∀ w : fib α id, A → α (Σ_pr₁ w) = id
+bbb.
+
+set (ψ (g : Σ (x : A), P x) (p : A = A) := λ x, g x).
+bbb.
+
 Check (λ g (x : A), Σ_pr₂ (Σ_pr₁ g x)).
+bbb.
+
 pose proof (λ (g : (A → (Σ (x : A), P x)) ≃ (A → A)) (x : A),
         (Σ_pr₂ (Σ_pr₁ (fst (Σ_pr₂ g)) id x))).
 bbb.
