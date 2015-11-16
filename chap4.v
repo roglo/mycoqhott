@@ -2010,6 +2010,47 @@ set
 simpl in φ'.
 Check (fib α id).
 set (ψ (w : fib α id) := λ (g := Σ_pr₁ w) (p := Σ_pr₂ w) x, Σ_pr₂ (g x)).
+About transport.
+set (ψ' (w : fib α id) := λ (g := Σ_pr₁ w) (q := Σ_pr₂ w) (x : A),
+  @transport A P (Σ_pr₁ (Σ_pr₁ w x))).
+unfold isContr in p.
+set (glop (w : fib α id) := λ (g := Σ_pr₁ w) (q := Σ_pr₂ w) (x : A),
+  (p (Σ_pr₁ (Σ_pr₁ w x)))).
+bbb.
+
+set (ψ'' (w : fib α id) := λ (g := Σ_pr₁ w) (q := Σ_pr₂ w) (x : A),
+  @transport A P (Σ_pr₁ (Σ_pr₁ w x)) (p (Σ_pr₁ (Σ_pr₁ w x)))).
+(* je sens que ça vient... *)
+bbb.
+Check (λ x, p x).
+λ x : A, p x
+     : ∀ x : A, {a : P x & ∀ x0 : P x, a = x0}
+
+  (p x)⁎ (Σ_pr₂ (g x))).
+
+  (Σ_pr₂ (g x) : P (Σ_pr₁ (Σ_pr₁ w x)))).
+
+
+(* j'ai P (Σ_pr₁ (Σ_pr₁ w x)), je veux P x *)
+(* mais en fait ils sont égaux, par hyp p *)
+bbb.
+
+Check (λ (w : fib α id) (x : A), @transport A P (Σ_pr₁ (Σ_pr₁ w x)) x).
+assert (q : ∀ (w : fib α id) x, Σ_pr₁ (Σ_pr₁ w x) = x).
+ intros (g, q) x; simpl.
+ unfold α in q; simpl in q.
+(*
+ pose proof Π_type.happly q x as r; unfold id in r.
+ unfold hott_4_9_3 in r; simpl in r.
+ unfold pre_hott_4_9_3 in r; simpl in r.
+ unfold hott_4_9_2 in r; simpl in r.
+*)
+ destruct (hott_4_9_3 A P p) as (f, r); simpl in q.
+ pose proof Π_type.happly q x as s; unfold id in s.
+ destruct (g x).
+simpl.
+bbb.
+
 set (ψ' (w : fib α id) := λ (g := Σ_pr₁ w) (p := Σ_pr₂ w), α (Σ_pr₁ w)).
 About transport.
 (*
