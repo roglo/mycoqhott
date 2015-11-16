@@ -1550,7 +1550,7 @@ apply
      (B :=
       Σ (w : Σ (x : A), P x),
       existT _ (Σ_pr₁ w) (f (Σ_pr₁ w) (Σ_pr₂ w)) = existT _ x v)).
- apply eqv_eq_refl.
+ apply eqv_refl.
 
  eapply
    (equiv_compose
@@ -1597,7 +1597,7 @@ apply
        split; [ intros (u, q); apply eq_refl |  ].
        intros (a, (q, (u, t))); destruct q; apply eq_refl.
 
-     apply eqv_eq_refl.
+     apply eqv_refl.
 Defined.
 
 (* "We say that a fiberwise transformation f : Π (x:A) P(x) → Q(x) is
@@ -1693,7 +1693,7 @@ Definition hott_4_8_1 A (B : A → Type) (a : A) :
 Proof.
 (* their proof...
 assert (p : fib (Σ_pr₁ (B := B)) a ≃ Σ (x : A), Σ (b : B x), x = a).
- eapply equiv_compose; [ eapply quasi_inv, ex_2_10 | apply eqv_eq_refl ].
+ eapply equiv_compose; [ eapply quasi_inv, ex_2_10 | apply eqv_refl ].
 
  eapply equiv_compose; [ apply p | clear p ].
  assert (p : (Σ (x : A), Σ (b : B x), x = a) ≃ Σ (x : A), Σ (p : x = a), B x).
@@ -1929,11 +1929,11 @@ Definition weak_funext A P :=
     underlying function of e." *)
 
 Definition hott_4_9_2_tac A B X (e : A ≃ B) : (X → A) ≃ (X → B).
-Proof. destruct (ua e); apply eqv_eq_refl. Defined.
+Proof. destruct (ua e); apply eqv_refl. Defined.
 
 Definition hott_4_9_2 A B X (e : A ≃ B) : (X → A) ≃ (X → B) :=
   match ua e with
-  | eq_refl _ => eqv_eq_refl (X → A)
+  | eq_refl _ => eqv_refl (X → A)
   end.
 
 (* "Corollary 4.9.3. Let P : A → U be a family of contractible types,
@@ -2033,6 +2033,8 @@ transparent assert
  unfold α in r; simpl in r.
  destruct (hott_4_9_3 A P p) as (f, ((h, Hh), (i, Hi))).
  simpl in r.
+Print hott_4_9_2.
+replace g with (α⁻⁻¹ (@id A)).
 bbb.
 
  unfold hott_4_9_3 in r.

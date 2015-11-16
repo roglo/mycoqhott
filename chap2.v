@@ -685,13 +685,13 @@ Notation "A ≃ B" := (equivalence A B) (at level 70).
 
 (* Lemma 2.4.12 i *)
 
-Definition eqv_eq_refl_tac A : A ≃ A.
+Definition eqv_refl_tac A : A ≃ A.
 Proof.
 exists id; apply qinv_isequiv; exists  id.
 split; intros a; apply eq_refl.
 Defined.
 
-Definition eqv_eq_refl A : A ≃ A :=
+Definition eqv_refl A : A ≃ A :=
   existT isequiv id
     (qinv_isequiv id (existT _ id ((λ _, eq_refl _), (λ _, eq_refl _)))).
 
@@ -1469,7 +1469,7 @@ Definition eq_univ :
 :=
   λ H A B,
   match H A B  in (_ = C) return ((A ≃ B) ≃ C) with
-  | eq_refl _ => eqv_eq_refl (A ≃ B)
+  | eq_refl _ => eqv_refl (A ≃ B)
   end.
 
 (* introduction rule *)
@@ -1530,24 +1530,24 @@ Definition ua_pup {A B}
      with
      | eq_refl _ =>
          λ q,
-         match q in (_ = r) return (r = ua (eqv_eq_refl A)) with
+         match q in (_ = r) return (r = ua (eqv_refl A)) with
          | eq_refl _ => eq_refl _
          end
      end (ua_idtoeqv p).
 
 (* reflexivity *)
 
-Definition idtoeqv_eq_refl (A : Type) : eqv_eq_refl A = idtoeqv (eq_refl A) :=
+Definition idtoeqv_refl (A : Type) : eqv_refl A = idtoeqv (eq_refl A) :=
   eq_refl (idtoeqv (eq_refl A)).
 
-Definition ua_eq_refl_tac : ∀ A, eq_refl A = ua (eqv_eq_refl A).
+Definition ua_eq_refl_tac : ∀ A, eq_refl A = ua (eqv_refl A).
 Proof.
 intros.
-rewrite idtoeqv_eq_refl, ua_idtoeqv.
+rewrite idtoeqv_refl, ua_idtoeqv.
 reflexivity.
 Defined.
 
-Definition ua_eq_refl : ∀ A, eq_refl A = ua (eqv_eq_refl A) :=
+Definition ua_eq_refl : ∀ A, eq_refl A = ua (eqv_refl A) :=
   λ A,
   (λ p,
    match p with
@@ -1556,7 +1556,7 @@ Definition ua_eq_refl : ∀ A, eq_refl A = ua (eqv_eq_refl A) :=
        | eq_refl _ => id
        end (eq_refl (eq_refl A))
    end)
-  (idtoeqv_eq_refl A).
+  (idtoeqv_refl A).
 
 (* concatenation *)
 
@@ -1874,7 +1874,7 @@ intros.
 destruct p; simpl.
 unfold id; simpl.
 rewrite <- ru.
-apply eqv_eq_refl.
+apply eqv_refl.
 Defined.
 
 (* 2.12 Coproducts *)
@@ -1999,14 +1999,14 @@ Defined.
 Definition inl_eq_equiv_bis {A B} (a₁ a₂ : A) :
   @eq (A + B) (inl a₁) (inl a₂) ≃ (a₁ = a₂).
 Proof.
-eapply equiv_compose; [ apply hott_2_12_5_bis | apply eqv_eq_refl ].
+eapply equiv_compose; [ apply hott_2_12_5_bis | apply eqv_refl ].
 Defined.
 
 (* 2.12.3 again *)
 
 Definition inl_inr_equiv_bis {A B} (a : A) (b : B) : inl a = inr b ≃ ⊥.
 Proof.
-eapply equiv_compose; [ apply hott_2_12_5_bis | apply eqv_eq_refl ].
+eapply equiv_compose; [ apply hott_2_12_5_bis | apply eqv_refl ].
 Defined.
 
 (* and what about 2.12.2 ? *)
@@ -2046,7 +2046,7 @@ Defined.
 Definition inr_eq_equiv_bis {A B} (b₁ b₂ : B) :
   @eq (A + B) (inr b₁) (inr b₂) ≃ (b₁ = b₂).
 Proof.
-eapply equiv_compose; [ apply hott_2_12_5_ter | apply eqv_eq_refl ].
+eapply equiv_compose; [ apply hott_2_12_5_ter | apply eqv_refl ].
 Defined.
 
 (* In particular, theorem 2.12.5 implies *)
@@ -3530,7 +3530,7 @@ intros p q.
 apply ua in p.
 apply ua in q.
 subst A B.
-apply eqv_eq_refl.
+apply eqv_refl.
 Defined.
 
 Definition ex_2_17_ua {A B A' B'} : A ≃ A' → B ≃ B' → A * B ≃ A' * B' :=
@@ -3546,7 +3546,7 @@ Definition ex_2_17_ua {A B A' B'} : A ≃ A' → B ≃ B' → A * B ≃ A' * B' 
         | eq_refl _ => eq_refl B
         end
       with
-      | eq_refl _ => eqv_eq_refl (A' * B')
+      | eq_refl _ => eqv_refl (A' * B')
       end
   end.
 
