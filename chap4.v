@@ -2032,9 +2032,12 @@ transparent assert
  pose proof Π_type.happly q x as r; unfold id in r.
  unfold α in r; simpl in r.
  destruct (hott_4_9_3 A P p) as (f, ((h, Hh), (i, Hi))).
- simpl in r.
-Print hott_4_9_2.
-replace g with (α⁻⁻¹ (@id A)).
+ simpl in r, α.
+ unfold α in q.
+bbb.
+
+ replace g with (h (@id A)).
+
 bbb.
 
  unfold hott_4_9_3 in r.
