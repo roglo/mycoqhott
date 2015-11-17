@@ -2006,9 +2006,12 @@ transparent assert
   (f : (Π (x : A), P x) → chap3.retract (fib (Σ_pr₁ α) (@id A))).
  intros q.
  unfold chap3.retract, retraction.
- exists A.
-assert (fib (Σ_pr₁ α) id → A).
+ exists (A → A).
+assert (fib (Σ_pr₁ α) id → A → A).
  intros (r, s).
+Inspect 5.
+bbb.
+
  subst α.
  destruct (hott_4_9_3 A P p) as (f, ((g, Hg), (h, Hh))).
  simpl in s.
