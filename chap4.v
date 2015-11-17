@@ -1995,6 +1995,28 @@ Defined.
     Corollary 4.9.3. Then Π (x:A) P(x) is a retract of fib_α (id_A).
     [...]" *)
 
+Print chap3.retract.
+
+Definition hott_4_9_4 A (P : A → Type) (p : Π (x : A), isContr (P x))
+   (α := hott_4_9_3 A P p) :
+  (Π (x : A), P x) = chap3.retract (fib (Σ_pr₁ α) (@id A)).
+Proof.
+set
+  (φ (f : Π (x : A), P x) :=
+     (existT _ (λ x, existT _ x (f x)) (eq_refl _) : fib (Σ_pr₁ α) _)).
+simpl in φ.
+set
+  (ψ (w : fib (Σ_pr₁ α) (@id A)) := λ (g := Σ_pr₁ w) (q := Σ_pr₂ w)
+     (x y : A),
+   @transport A P (Σ_pr₁ (Σ_pr₁ w x)) y).
+transparent assert
+  (g' : ∀ (w : fib (Σ_pr₁ α) id) (g := Σ_pr₁ w) (q := Σ_pr₂ w) (x : A),
+   Σ_pr₁ (Σ_pr₁ w x) = x).
+ simpl; intros.
+ destruct w as (g, q); simpl.
+ pose proof Π_type.happly q x as r; unfold id in r.
+bbb.
+
 Definition hott_4_9_4 A (P : A → Type) (p : Π (x : A), isContr (P x))
    (α := hott_4_9_3 A P p) :
   (Π (x : A), P x) ≃ fib (Σ_pr₁ α) (@id A).
