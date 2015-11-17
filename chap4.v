@@ -2008,10 +2008,10 @@ simpl in φ.
 set
   (ψ (w : fib (Σ_pr₁ α) (@id A)) := λ (g := Σ_pr₁ w) (q := Σ_pr₂ w)
      (x y : A),
-   @transport A P (Σ_pr₁ (Σ_pr₁ w x)) y).
+   @transport A P (Σ_pr₁ (g x)) y).
 transparent assert
   (g' : ∀ (w : fib (Σ_pr₁ α) id) (g := Σ_pr₁ w) (q := Σ_pr₂ w) (x : A),
-   Σ_pr₁ (Σ_pr₁ w x) = x).
+   Σ_pr₁ (g x) = x).
  simpl; intros.
  destruct w as (g, q); simpl.
  pose proof Π_type.happly q x as r; unfold id in r.
