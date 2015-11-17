@@ -2001,6 +2001,24 @@ Definition hott_4_9_4 A (P : A → Type) (p : Π (x : A), isContr (P x))
    (α := hott_4_9_3 A P p) :
   (Π (x : A), P x) = chap3.retract (fib (Σ_pr₁ α) (@id A)).
 Proof.
+apply ua.
+transparent assert
+  (f : (Π (x : A), P x) → chap3.retract (fib (Σ_pr₁ α) (@id A))).
+ intros q.
+ unfold chap3.retract, retraction.
+ exists A.
+assert (fib (Σ_pr₁ α) id → A).
+ intros (r, s).
+ subst α.
+ destruct (hott_4_9_3 A P p) as (f, ((g, Hg), (h, Hh))).
+ simpl in s.
+bbb.
+
+simpl.
+
+ unfold chap3.retract, retraction.
+
+bbb.
 set
   (φ (f : Π (x : A), P x) :=
      (existT _ (λ x, existT _ x (f x)) (eq_refl _) : fib (Σ_pr₁ α) _)).
