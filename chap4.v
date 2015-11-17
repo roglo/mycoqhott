@@ -1996,8 +1996,8 @@ Defined.
     [...]" *)
 
 Definition hott_4_9_4 A (P : A → Type) (p : Π (x : A), isContr (P x))
-   (α := Σ_pr₁ (hott_4_9_3 A P p)) :
-  (Π (x : A), P x) ≃ fib α (@id A).
+   (α := hott_4_9_3 A P p) :
+  (Π (x : A), P x) ≃ fib (Σ_pr₁ α) (@id A).
 Proof.
 set
   (φ (f : Π (x : A), P x) :=
@@ -2006,7 +2006,7 @@ set
 simpl in φ.
 set
   (φ' (f : Π (x : A), P x) :=
-     (existT _ (λ x, existT _ x (f x)) (eq_refl _) : fib α _)).
+     (existT _ (λ x, existT _ x (f x)) (eq_refl _) : fib (Σ_pr₁ α) _)).
 simpl in φ'.
 (*
 Check (fib α (@id A)).
@@ -2022,14 +2022,18 @@ transparent assert
  destruct r as (y, s).
 bbb.
 *)
-set (ψ' (w : fib α (@id A)) := λ (g := Σ_pr₁ w) (q := Σ_pr₂ w) (x : A),
-  @transport A P (Σ_pr₁ (Σ_pr₁ w x))).
+set
+  (ψ (w : fib (Σ_pr₁ α) (@id A)) := λ (g := Σ_pr₁ w) (q := Σ_pr₂ w)
+     (x y : A),
+   @transport A P (Σ_pr₁ (Σ_pr₁ w x)) y).
 transparent assert
-  (g' : ∀ (w : fib α id) (g := Σ_pr₁ w) (q := Σ_pr₂ w) (x : A),
+  (g' : ∀ (w : fib (Σ_pr₁ α) id) (g := Σ_pr₁ w) (q := Σ_pr₂ w) (x : A),
    Σ_pr₁ (Σ_pr₁ w x) = x).
  simpl; intros.
  destruct w as (g, q); simpl.
  pose proof Π_type.happly q x as r; unfold id in r.
+bbb.
+
  destruct (hott_4_9_3 A P p) as (f, ((h, Hh), (i, Hi))).
  simpl in α; subst α.
 bbb.
