@@ -1942,10 +1942,22 @@ Definition hott_4_9_2 A B X (e : A ≃ B) : (X → A) ≃ (X → B) :=
     immediately that post-composition with pr₁ gives an equivalence
         α : (A → Σ (x : A) P(x)) ≃ (A → A)." *)
 
-Definition pre_hott_4_9_3_tac A (P : A → Type)
+Definition pre_hott_4_9_3 A (P : A → Type)
     (p : Π (x : A), isContr (P x)) :
   (Σ (x : A), P x) ≃ A.
 Proof.
+exists Σ_pr₁; apply qinv_isequiv.
+transparent assert (f : A → Σ (x : A), P x).
+ intros x; exists x; apply hott_4_8_1.
+ exists (existT _ x (Σ_pr₁ (p x))); apply eq_refl.
+
+ exists f; unfold f; clear f; simpl.
+ unfold "◦", "∼", id; simpl.
+ split; [ intros; apply eq_refl | ].
+ intros (x, q); simpl.
+ destruct (p x) as (r, s); simpl.
+ destruct (s q); apply eq_refl.
+(* my proof...
 exists Σ_pr₁; apply qinv_isequiv.
 exists (λ a, existT P a (Σ_pr₁ (p a))).
 unfold "◦", "∼", id; simpl.
@@ -1953,9 +1965,43 @@ split; [ intros; apply eq_refl | ].
 intros (x, q); simpl.
 destruct (p x) as (r, s); simpl.
 destruct (s q); apply eq_refl.
+*)
 Defined.
 
+(* à décommenter s'il le faut...
 Definition pre_hott_4_9_3 A (P : A → Type) (p : Π (x : A), isContr (P x)) :
+  (Σ (x : A), P x) ≃ A
+:=
+  existT isequiv Σ_pr₁
+    (qinv_isequiv Σ_pr₁
+       (let f :=
+          λ x : A,
+          existT P x
+            (let (f, _) := hott_4_8_1 A P x in
+             f (existT _ (existT P x (Σ_pr₁ (p x))) (eq_refl x)))
+        in
+        existT _ f
+          (λ x : A, eq_refl x,
+          λ x0 : {x : A & P x},
+          let (x, q) as s
+          return (existT (λ x : A, P x) (Σ_pr₁ s) (Σ_pr₁ (p (Σ_pr₁ s))) = s) :=
+          x0 in
+          let i := p x in
+          let (r, s) as s
+          return
+            (existT (λ x1 : A, P x1) x (Σ_pr₁ s) = existT (λ x1 : A, P x1) x q) :=
+          i in
+          let e := s q in
+          match
+            e in (_ = y)
+            return (existT (λ x1 : A, P x1) x r = existT (λ x1 : A, P x1) x y)
+          with
+          | eq_refl _ => eq_refl (existT (λ x1 : A, P x1) x r)
+          end))).
+*)
+
+(*
+Definition old_pre_hott_4_9_3 A (P : A → Type) (p : Π (x : A), isContr (P x)) :
   (Σ (x : A), P x) ≃ A
 :=
   existT isequiv Σ_pr₁
@@ -1973,6 +2019,7 @@ Definition pre_hott_4_9_3 A (P : A → Type) (p : Π (x : A), isContr (P x)) :
                | eq_refl _ => eq_refl (existT P x r)
                end
            end))).
+*)
 
 Definition hott_4_9_3 A (P : A → Type) (p : Π (x : A), isContr (P x)) :
   (A → Σ (x : A), P x) ≃ (A → A).
@@ -2001,6 +2048,7 @@ Definition hott_4_9_4 A (P : A → Type) (p : Π (x : A), isContr (P x))
    (α := hott_4_9_3 A P p) :
   (Π (x : A), P x) = chap3.retract (fib (Σ_pr₁ α) (@id A)).
 Proof.
+(*
 apply ua.
 transparent assert
   (f : (Π (x : A), P x) → chap3.retract (fib (Σ_pr₁ α) (@id A))).
@@ -2022,6 +2070,7 @@ simpl.
  unfold chap3.retract, retraction.
 
 bbb.
+*)
 set
   (φ (f : Π (x : A), P x) :=
      (existT _ (λ x, existT _ x (f x)) (eq_refl _) : fib (Σ_pr₁ α) _)).
@@ -2036,6 +2085,15 @@ transparent assert
  simpl; intros.
  destruct w as (g, q); simpl.
  pose proof Π_type.happly q x as r; unfold id in r.
+unfold α in r.
+destruct (hott_4_9_3 A P p).
+simpl in r.
+bbb.
+
+subst α.
+unfold hott_4_9_3 in r.
+unfold pre_hott_4_9_3 in r; simpl in r.
+unfold hott_4_9_2 in r; simpl in r.
 bbb.
 
 Definition hott_4_9_4 A (P : A → Type) (p : Π (x : A), isContr (P x))
