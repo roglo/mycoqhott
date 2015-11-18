@@ -2076,22 +2076,16 @@ set
      (existT _ (λ x, existT _ x (f x)) (eq_refl _) : fib (Σ_pr₁ α) _)).
 simpl in φ.
 transparent assert
-  (g : ∀ (w : fib (Σ_pr₁ α) id) (g := Σ_pr₁ w) (q := Σ_pr₂ w) (x : A),
+  (h : ∀ (w : fib (Σ_pr₁ α) id) (g := Σ_pr₁ w) (q := Σ_pr₂ w) (x : A),
    Σ_pr₁ α g x = x).
  simpl; intros.
  destruct w as (g, q); simpl.
  apply (Π_type.happly q x).
 
- simpl in g.
+ simpl in h.
  set
    (ψ (w : fib (Σ_pr₁ α) (@id A)) := λ (g := Σ_pr₁ w) (q := Σ_pr₂ w) (x : A),
-    @transport A P (Σ_pr₁ α g x) x).
-Check (λ w x, g w x).
-bbb.
-
-unfold α in r.
-destruct (hott_4_9_3 A P p).
-simpl in r.
+    @transport A P (Σ_pr₁ α g x) x (h w x)).
 bbb.
 
 subst α.
