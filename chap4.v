@@ -2047,6 +2047,12 @@ Defined.
 Definition hott_4_9_4 A (P : A → Type) : weak_funext A P.
 Proof.
 intros p.
+set (α := hott_4_9_3 A P p).
+assert (q : (Π (x : A), P x) = chap3.retract (fib (Σ_pr₁ α) (@id A))).
+Focus 2.
+ assert (r : Π (x : A), P x) by apply p; exists r; intros s.
+ apply (isContr_isProp _ (hott_3_11_6 p)).
+
 bbb.
 
 (p : Π (x : A), isContr (P x))
