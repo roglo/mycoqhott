@@ -2086,6 +2086,16 @@ transparent assert
  set
    (ψ (w : fib (Σ_pr₁ α) (@id A)) := λ (g := Σ_pr₁ w) (q := Σ_pr₂ w) (x : A),
     @transport A P (Σ_pr₁ α g x) x (h w x)).
+Check ψ.
+ assert (∀ (f : Π (x : A), P x), ψ (φ f) = λ x, f x).
+bbb.
+
+ψ
+     : ∀ (w : fib (Σ_pr₁ α) id) (x : A), P (Σ_pr₁ α (Σ_pr₁ w) x) → P x
+φ
+     : ∀ f : ∀ x : A, P x,
+       fib (Σ_pr₁ α) (Σ_pr₁ α (λ x : A, existT (λ x0 : A, P x0) x (f x)))
+
 bbb.
 
 subst α.
