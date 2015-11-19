@@ -2053,6 +2053,15 @@ Focus 2.
  assert (r : Π (x : A), P x) by apply p; exists r; intros s.
  apply (isContr_isProp _ (hott_3_11_6 p)).
 
+ apply ua.
+ transparent assert
+   (f : (Π (x : A), P x) → chap3.retract (fib (Σ_pr₁ α) (@id A))).
+  intros q.
+  unfold chap3.retract, retraction.
+  exists (A → A).
+  assert (fib (Σ_pr₁ α) id → A → A).
+   intros (r, s).
+Inspect 5.
 bbb.
 
 (p : Π (x : A), isContr (P x))
