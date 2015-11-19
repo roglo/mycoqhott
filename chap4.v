@@ -2040,9 +2040,20 @@ Defined.
 (* "Theorem 4.9.4. In a univalent universe U, suppose that P : A → U
     is a family of contractible types and let α be the function of
     Corollary 4.9.3. Then Π (x:A) P(x) is a retract of fib_α (id_A).
-    [...]" *)
+    As a consequence, Π (x:A) P(x) is contractible. In other words,
+    the univalence axiom implies the weak function extensionality
+    principle." *)
 
-Print chap3.retract.
+Definition hott_4_9_4 A (P : A → Type) : weak_funext A P.
+Proof.
+intros p.
+bbb.
+
+(p : Π (x : A), isContr (P x))
+   (α := hott_4_9_3 A P p) :
+  (Π (x : A), P x) = chap3.retract (fib (Σ_pr₁ α) (@id A)).
+Proof.
+bbb.
 
 Definition hott_4_9_4 A (P : A → Type) (p : Π (x : A), isContr (P x))
    (α := hott_4_9_3 A P p) :
@@ -2391,8 +2402,3 @@ apply (p a).
 Print weak_funext.
 
 bbb.
-
-
-(* "As a consequence, Π (x:A) P(x) is contractible. In other words,
-    the univalence axiom implies the weak function extensionality
-    principle." *)
