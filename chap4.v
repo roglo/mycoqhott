@@ -2068,6 +2068,9 @@ Focus 2.
    eapply transport; [ | apply s ].
    pose proof Π_type.happly p as t; unfold id in t.
    apply invert; rewrite <- t.
+   unfold α; simpl.
+   unfold hott_4_9_3; simpl.
+   unfold hott_4_9_2; simpl.
 bbb.
 
    eapply transport; [ | apply s ].
