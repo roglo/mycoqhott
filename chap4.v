@@ -2007,7 +2007,10 @@ Definition post_hott_4_9_3 A (P : A → Type) (p : Π (x : A), isContr (P x)) :
   isContr (fib (Σ_pr₁ (hott_4_9_3 A P p)) id).
 Proof.
 unfold isContr.
-destruct (hott_4_9_3 A P p); simpl.
+destruct (hott_4_9_3 A P p) as (f, q); simpl.
+assert (w : fib f id).
+ unfold fib.
+
 bbb.
 
 (* "Theorem 4.9.4. In a univalent universe U, suppose that P : A → U
