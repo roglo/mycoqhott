@@ -2003,13 +2003,15 @@ Defined.
 (* "In particular, the homotopy fiber of the above equivalence at id_A
     is contractible." *)
 
-Definition post_hott_4_9_3 A (P : A → Type) (p : Π (x : A), isContr (P x)) :
+Definition isContr_fib_4_9_3 A (P : A → Type) (p : Π (x : A), isContr (P x)) :
   isContr (fib (Σ_pr₁ (hott_4_9_3 A P p)) id).
 Proof.
-unfold isContr.
-assert (w : fib (Σ_pr₁ (hott_4_9_3 A P p)) id).
- exists (λ a, existT _ a (Σ_pr₁ (p a))).
-bbb.
+apply hott_4_2_6.
+apply hott_4_2_3.
+set (q := hott_4_9_3 A P p).
+destruct q as (f, q).
+apply isequiv_qinv, q.
+Defined.
 
 (* "Theorem 4.9.4. In a univalent universe U, suppose that P : A → U
     is a family of contractible types and let α be the function of
@@ -2037,6 +2039,8 @@ Focus 2.
    intros r.
    exists (λ x, existT P x (r x)).
    unfold α; simpl.
+bbb.
+
 Inspect 1.
 pose proof post_hott_4_9_3 A P p.
 unfold isContr in X.
