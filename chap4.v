@@ -1946,6 +1946,7 @@ Definition pre_hott_4_9_3 A (P : A → Type)
     (p : Π (x : A), isContr (P x)) :
   (Σ (x : A), P x) ≃ A.
 Proof.
+(* their proof.. *)
 exists Σ_pr₁; apply qinv_isequiv.
 transparent assert (f : A → Σ (x : A), P x).
  intros x; exists x; apply hott_4_8_1.
@@ -1968,57 +1969,28 @@ destruct (s q); apply eq_refl.
 *)
 Defined.
 
-(* à décommenter s'il le faut...
+(*
 Definition pre_hott_4_9_3 A (P : A → Type) (p : Π (x : A), isContr (P x)) :
   (Σ (x : A), P x) ≃ A
 :=
   existT isequiv Σ_pr₁
     (qinv_isequiv Σ_pr₁
-       (let f :=
-          λ x : A,
+       (let f x :=
           existT P x
             (let (f, _) := hott_4_8_1 A P x in
              f (existT _ (existT P x (Σ_pr₁ (p x))) (eq_refl x)))
         in
         existT _ f
-          (λ x : A, eq_refl x,
+          (@eq_refl A,
           λ x0 : {x : A & P x},
           let (x, q) as s
-          return (existT (λ x : A, P x) (Σ_pr₁ s) (Σ_pr₁ (p (Σ_pr₁ s))) = s) :=
-          x0 in
-          let i := p x in
+          return (existT P (Σ_pr₁ s) (Σ_pr₁ (p (Σ_pr₁ s))) = s)
+          := x0 in
           let (r, s) as s
-          return
-            (existT (λ x1 : A, P x1) x (Σ_pr₁ s) = existT (λ x1 : A, P x1) x q) :=
-          i in
-          let e := s q in
-          match
-            e in (_ = y)
-            return (existT (λ x1 : A, P x1) x r = existT (λ x1 : A, P x1) x y)
-          with
-          | eq_refl _ => eq_refl (existT (λ x1 : A, P x1) x r)
+          return (existT P x (Σ_pr₁ s) = existT P x q) := p x in
+          match s q with
+          | eq_refl _ => eq_refl (existT P x r)
           end))).
-*)
-
-(*
-Definition old_pre_hott_4_9_3 A (P : A → Type) (p : Π (x : A), isContr (P x)) :
-  (Σ (x : A), P x) ≃ A
-:=
-  existT isequiv Σ_pr₁
-    (qinv_isequiv Σ_pr₁
-       (existT _
-          (λ a : A, existT P a (Σ_pr₁ (p a)))
-          (λ x : A, eq_refl x,
-           λ xq : {x : A & P x},
-           match xq with
-           | existT _ x q =>
-               let (r, s) as s return existT P x (Σ_pr₁ s) = existT P x q
-                 := p x
-               in
-               match s q with
-               | eq_refl _ => eq_refl (existT P x r)
-               end
-           end))).
 *)
 
 Definition hott_4_9_3 A (P : A → Type) (p : Π (x : A), isContr (P x)) :
@@ -2027,15 +1999,6 @@ Proof.
 apply hott_4_9_2.
 apply pre_hott_4_9_3, p.
 Defined.
-
-(*
-Definition hott_4_9_3_imp A (P : A → Type) (p : Π (x : A), isContr (P x)) :
-  (A → Σ (x : A), P x) → (A → A).
-Proof.
-apply hott_4_9_2.
-apply pre_hott_4_9_3, p.
-Defined.
-*)
 
 (* "Theorem 4.9.4. In a univalent universe U, suppose that P : A → U
     is a family of contractible types and let α be the function of
@@ -2064,7 +2027,6 @@ Focus 2.
    exists (λ x, existT P x (r x)).
    unfold α; simpl.
    destruct (hott_4_9_3 A P p) as (f, s); simpl.
-Print equiv_prop.
 
 bbb.
   transparent assert (ψ : fib (Σ_pr₁ α) id → Π (x : A), P x).
