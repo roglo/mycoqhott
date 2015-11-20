@@ -2000,6 +2000,16 @@ apply hott_4_9_2.
 apply pre_hott_4_9_3, p.
 Defined.
 
+(* "In particular, the homotopy fiber of the above equivalence at id_A
+    is contractible." *)
+
+Definition post_hott_4_9_3 A (P : A → Type) (p : Π (x : A), isContr (P x)) :
+  isContr (fib (Σ_pr₁ (hott_4_9_3 A P p)) id).
+Proof.
+unfold isContr.
+destruct (hott_4_9_3 A P p); simpl.
+bbb.
+
 (* "Theorem 4.9.4. In a univalent universe U, suppose that P : A → U
     is a family of contractible types and let α be the function of
     Corollary 4.9.3. Then Π (x:A) P(x) is a retract of fib_α (id_A).
@@ -2026,6 +2036,12 @@ Focus 2.
    intros r.
    exists (λ x, existT P x (r x)).
    unfold α; simpl.
+Inspect 1.
+pose proof post_hott_4_9_3 A P p.
+unfold isContr in X.
+destruct X as (w, s).
+bbb.
+
    destruct (hott_4_9_3 A P p) as (f, s); simpl.
 
 bbb.
