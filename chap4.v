@@ -2058,16 +2058,26 @@ Focus 2.
    (f : (Π (x : A), P x) → chap3.retract (fib (Σ_pr₁ α) (@id A))).
   intros q.
   unfold chap3.retract, retraction.
+  exists (Π (x : A), P x).
+  transparent assert (ψ : fib (Σ_pr₁ α) id → Π (x : A), P x).
+   rename p into r.
+   intros (g, p) x.
+   pose proof g x as s.
+   destruct s as (y, s).
+   change (P (id x)); rewrite <- (Π_type.happly p).
+   eapply transport; [ | apply s ].
+   pose proof Π_type.happly p as t; unfold id in t.
+   apply invert; rewrite <- t.
+bbb.
+
+   eapply transport; [ | apply s ].
+   unfold α in p; simpl in p.
+bbb.
+
   exists (A → A).
   assert (fib (Σ_pr₁ α) id → A → A).
    intros (r, s).
 Inspect 5.
-bbb.
-
-(p : Π (x : A), isContr (P x))
-   (α := hott_4_9_3 A P p) :
-  (Π (x : A), P x) = chap3.retract (fib (Σ_pr₁ α) (@id A)).
-Proof.
 bbb.
 
 Definition hott_4_9_4 A (P : A → Type) (p : Π (x : A), isContr (P x))
