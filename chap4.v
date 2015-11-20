@@ -2059,15 +2059,26 @@ Focus 2.
   intros q.
   unfold chap3.retract, retraction.
   exists (Π (x : A), P x).
+  transparent assert (φ : (Π (x : A), P x) → fib (Σ_pr₁ α) id).
+   intros r.
+   exists (λ x, existT P x (r x)).
+   unfold α; simpl.
+   destruct (hott_4_9_3 A P p) as (f, s); simpl.
+Print equiv_prop.
+
+bbb.
   transparent assert (ψ : fib (Σ_pr₁ α) id → Π (x : A), P x).
    rename p into r.
    intros (g, p) x.
    pose proof g x as s.
    destruct s as (y, s).
+
    change (P (id x)); rewrite <- (Π_type.happly p).
    eapply transport; [ | apply s ].
    pose proof Π_type.happly p as t; unfold id in t.
    apply invert; rewrite <- t.
+bbb.
+
    unfold α; simpl.
    unfold hott_4_9_3; simpl.
    unfold hott_4_9_2; simpl.
