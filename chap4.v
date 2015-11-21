@@ -2030,8 +2030,6 @@ Focus 2.
  assert (r : Π (x : A), P x) by apply p; exists r; intros t.
  apply (isContr_isProp _ (hott_3_11_6 p)).
 
-bbb.
-
  apply ua.
  transparent assert
    (f : (Π (x : A), P x) → chap3.retract (fib (Σ_pr₁ α) (@id A))).
@@ -2039,13 +2037,29 @@ bbb.
   unfold chap3.retract, retraction.
   exists (Π (x : A), P x).
   transparent assert (φ : (Π (x : A), P x) → fib (Σ_pr₁ α) id).
-   intros r; apply s.
+   intros f.
+   exists (λ x, existT _ x (f x)).
+   destruct s as (w, s).
 
-   simpl in φ.
 bbb.
-   transparent assert (ψ : fib (Σ_pr₁ α) id → Π (x : A), P x).
-    intros r.
+  set (φ := λ (_ : Π (x : A), P x), Σ_pr₁ s).
+  transparent assert (ψ : fib (Σ_pr₁ α) id → Π (x : A), P x).
+   intros r a.
+unfold isContr in s.
+destruct s as (g, s); simpl in φ.
+unfold fib in r.
+destruct r as (f, r).
+pose proof f a as t.
+destruct t as (a', t).
+apply p.
 
+simpl in ψ.
+ exists ψ.
+exists φ.
+intros f.
+unfold φ, ψ.
+destruct s; simpl.
+destruct x; simpl.
 bbb.
 
 Inspect 1.
