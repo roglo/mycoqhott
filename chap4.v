@@ -1946,6 +1946,7 @@ Definition pre_hott_4_9_3 A (P : A → Type)
     (p : Π (x : A), isContr (P x)) :
   (Σ (x : A), P x) ≃ A.
 Proof.
+(* their proof.. *)
 exists Σ_pr₁; apply qinv_isequiv.
 transparent assert (f : A → Σ (x : A), P x).
  intros x; exists x; apply hott_4_8_1.
@@ -1968,57 +1969,28 @@ destruct (s q); apply eq_refl.
 *)
 Defined.
 
-(* à décommenter s'il le faut...
+(*
 Definition pre_hott_4_9_3 A (P : A → Type) (p : Π (x : A), isContr (P x)) :
   (Σ (x : A), P x) ≃ A
 :=
   existT isequiv Σ_pr₁
     (qinv_isequiv Σ_pr₁
-       (let f :=
-          λ x : A,
+       (let f x :=
           existT P x
             (let (f, _) := hott_4_8_1 A P x in
              f (existT _ (existT P x (Σ_pr₁ (p x))) (eq_refl x)))
         in
         existT _ f
-          (λ x : A, eq_refl x,
+          (@eq_refl A,
           λ x0 : {x : A & P x},
           let (x, q) as s
-          return (existT (λ x : A, P x) (Σ_pr₁ s) (Σ_pr₁ (p (Σ_pr₁ s))) = s) :=
-          x0 in
-          let i := p x in
+          return (existT P (Σ_pr₁ s) (Σ_pr₁ (p (Σ_pr₁ s))) = s)
+          := x0 in
           let (r, s) as s
-          return
-            (existT (λ x1 : A, P x1) x (Σ_pr₁ s) = existT (λ x1 : A, P x1) x q) :=
-          i in
-          let e := s q in
-          match
-            e in (_ = y)
-            return (existT (λ x1 : A, P x1) x r = existT (λ x1 : A, P x1) x y)
-          with
-          | eq_refl _ => eq_refl (existT (λ x1 : A, P x1) x r)
+          return (existT P x (Σ_pr₁ s) = existT P x q) := p x in
+          match s q with
+          | eq_refl _ => eq_refl (existT P x r)
           end))).
-*)
-
-(*
-Definition old_pre_hott_4_9_3 A (P : A → Type) (p : Π (x : A), isContr (P x)) :
-  (Σ (x : A), P x) ≃ A
-:=
-  existT isequiv Σ_pr₁
-    (qinv_isequiv Σ_pr₁
-       (existT _
-          (λ a : A, existT P a (Σ_pr₁ (p a)))
-          (λ x : A, eq_refl x,
-           λ xq : {x : A & P x},
-           match xq with
-           | existT _ x q =>
-               let (r, s) as s return existT P x (Σ_pr₁ s) = existT P x q
-                 := p x
-               in
-               match s q with
-               | eq_refl _ => eq_refl (existT P x r)
-               end
-           end))).
 *)
 
 Definition hott_4_9_3 A (P : A → Type) (p : Π (x : A), isContr (P x)) :
@@ -2028,371 +2000,138 @@ apply hott_4_9_2.
 apply pre_hott_4_9_3, p.
 Defined.
 
-(*
-Definition hott_4_9_3_imp A (P : A → Type) (p : Π (x : A), isContr (P x)) :
-  (A → Σ (x : A), P x) → (A → A).
+(* "In particular, the homotopy fiber of the above equivalence at id_A
+    is contractible." *)
+
+Definition isContr_fib_4_9_3 A (P : A → Type) (p : Π (x : A), isContr (P x)) :
+  isContr (fib (Σ_pr₁ (hott_4_9_3 A P p)) id).
 Proof.
-apply hott_4_9_2.
-apply pre_hott_4_9_3, p.
+apply hott_4_2_6.
+apply hott_4_2_3.
+set (q := hott_4_9_3 A P p).
+destruct q as (f, q).
+apply isequiv_qinv, q.
 Defined.
-*)
 
 (* "Theorem 4.9.4. In a univalent universe U, suppose that P : A → U
     is a family of contractible types and let α be the function of
     Corollary 4.9.3. Then Π (x:A) P(x) is a retract of fib_α (id_A).
-    [...]" *)
-
-Print chap3.retract.
-
-Definition hott_4_9_4 A (P : A → Type) (p : Π (x : A), isContr (P x))
-   (α := hott_4_9_3 A P p) :
-  (Π (x : A), P x) = chap3.retract (fib (Σ_pr₁ α) (@id A)).
-Proof.
-(*
-apply ua.
-transparent assert
-  (f : (Π (x : A), P x) → chap3.retract (fib (Σ_pr₁ α) (@id A))).
- intros q.
- unfold chap3.retract, retraction.
- exists (A → A).
-assert (fib (Σ_pr₁ α) id → A → A).
- intros (r, s).
-Inspect 5.
-bbb.
-
- subst α.
- destruct (hott_4_9_3 A P p) as (f, ((g, Hg), (h, Hh))).
- simpl in s.
-bbb.
-
-simpl.
-
- unfold chap3.retract, retraction.
-
-bbb.
-*)
-set
-  (φ (f : Π (x : A), P x) :=
-     (existT _ (λ x, existT _ x (f x)) (eq_refl _) : fib (Σ_pr₁ α) _)).
-simpl in φ.
-transparent assert
-  (h : ∀ (w : fib (Σ_pr₁ α) id) (g := Σ_pr₁ w) (q := Σ_pr₂ w) (x : A),
-   Σ_pr₁ α g x = x).
- simpl; intros.
- destruct w as (g, q); simpl.
- apply (Π_type.happly q x).
-
- simpl in h.
- set
-   (ψ (w : fib (Σ_pr₁ α) (@id A)) := λ (g := Σ_pr₁ w) (q := Σ_pr₂ w) (x : A),
-    @transport A P (Σ_pr₁ α g x) x (h w x)).
-Check ψ.
- assert (∀ (f : Π (x : A), P x), ψ (φ f) = λ x, f x).
-bbb.
-
-ψ
-     : ∀ (w : fib (Σ_pr₁ α) id) (x : A), P (Σ_pr₁ α (Σ_pr₁ w) x) → P x
-φ
-     : ∀ f : ∀ x : A, P x,
-       fib (Σ_pr₁ α) (Σ_pr₁ α (λ x : A, existT (λ x0 : A, P x0) x (f x)))
-
-bbb.
-
-subst α.
-unfold hott_4_9_3 in r.
-unfold pre_hott_4_9_3 in r; simpl in r.
-unfold hott_4_9_2 in r; simpl in r.
-bbb.
-
-Definition hott_4_9_4 A (P : A → Type) (p : Π (x : A), isContr (P x))
-   (α := hott_4_9_3 A P p) :
-  (Π (x : A), P x) ≃ fib (Σ_pr₁ α) (@id A).
-Proof.
-set
-  (φ (f : Π (x : A), P x) :=
-     (existT _ (λ x, existT _ x (f x)) (eq_refl (@id A)) :
-      fib (λ (_ : A → {x : A & P x}) (x : A), x) (@id A))).
-simpl in φ.
-set
-  (φ' (f : Π (x : A), P x) :=
-     (existT _ (λ x, existT _ x (f x)) (eq_refl _) : fib (Σ_pr₁ α) _)).
-simpl in φ'.
-(*
-Check (fib α (@id A)).
-Print fib.
-set (ψ (w : fib α (@id A)) := λ (g := Σ_pr₁ w) (p := Σ_pr₂ w) x, Σ_pr₂ (g x)).
-About transport.
-transparent assert
-  (psi :
-     (fib (λ (_ : A → Σ (x : A), P x) (x : A), x) id) → Π (x : A), P x).
- intros q x.
- destruct q as (g, q).
- pose proof g x as r.
- destruct r as (y, s).
-bbb.
-*)
-set
-  (ψ (w : fib (Σ_pr₁ α) (@id A)) := λ (g := Σ_pr₁ w) (q := Σ_pr₂ w)
-     (x y : A),
-   @transport A P (Σ_pr₁ (Σ_pr₁ w x)) y).
-transparent assert
-  (g' : ∀ (w : fib (Σ_pr₁ α) id) (g := Σ_pr₁ w) (q := Σ_pr₂ w) (x : A),
-   Σ_pr₁ (Σ_pr₁ w x) = x).
- simpl; intros.
- destruct w as (g, q); simpl.
- pose proof Π_type.happly q x as r; unfold id in r.
-bbb.
-
- destruct (hott_4_9_3 A P p) as (f, ((h, Hh), (i, Hi))).
- simpl in α; subst α.
-bbb.
-
- unfold α in r; simpl in r.
- set (s := hott_4_9_3 A P p) in r.
- case s; intros f ((h, Hh), (i, Hi)).
- simpl in r, α.
- unfold α in q.
- unfold s in r.
-bbb.
- destruct (hott_4_9_3 A P p).
- simpl in q, s, r.
-bbb.
-
- unfold hott_4_9_3 in r.
- unfold hott_4_9_2 in r.
- simpl in r.
- destruct (ua (pre_hott_4_9_3 A P p)).
-bbb.
-
- replace g with (h (@id A)).
-
-bbb.
-
- unfold hott_4_9_3 in r.
-Print pre_hott_4_9_3.
- simpl in r.
- destruct (g x); simpl.
- unfold Σ_pr₁ in r.
- destruct (hott_4_9_3 A P p).
-
- simpl in r.
-bbb.
-
- destruct (g x) as (y, r); simpl.
-bbb.
-
-transparent assert
-  (g' : ∀ (w : fib α id) (g := Σ_pr₁ w) (q := Σ_pr₂ w) (x y : A),
-   Σ_pr₁ (Σ_pr₁ w x) = y).
- simpl; intros.
- destruct w as (g, q); simpl.
- destruct (g x) as (z, r); simpl.
-bbb.
-
- pose proof p x as s.
- apply isContr_isProp in s.
-unfold isProp in s.
-
-bbb.
-
-set (g' := λ x : A, Σ_pr₁ (p x)).
-set (g'' := λ (w : fib α id) (x : A), Σ_pr₁ (p (Σ_pr₁ (Σ_pr₁ w x)))).
-
-set (ψ'' (w : fib α id) := λ (g := Σ_pr₁ w) (q := Σ_pr₂ w) (x : A),
-  @transport A P (Σ_pr₁ (Σ_pr₁ w x))).
-
-bbb.
- simpl in g.
-transparent assert (g : ∀ (w : fib α id) x y, P (Σ_pr₁ (Σ_pr₁ w x)) → P y).
- intros w x y q; apply p.
- simpl in g.
-
- unfold isContr in p.; apply p.
-
-
-unfold isContr in p.
-set (glop (w : fib α id) := λ (g := Σ_pr₁ w) (q := Σ_pr₂ w) (x : A),
-  (p (Σ_pr₁ (Σ_pr₁ w x)))).
-bbb.
-
-set (ψ'' (w : fib α id) := λ (g := Σ_pr₁ w) (q := Σ_pr₂ w) (x : A),
-  @transport A P (Σ_pr₁ (Σ_pr₁ w x)) (p (Σ_pr₁ (Σ_pr₁ w x)))).
-(* je sens que ça vient... *)
-bbb.
-Check (λ x, p x).
-λ x : A, p x
-     : ∀ x : A, {a : P x & ∀ x0 : P x, a = x0}
-
-  (p x)⁎ (Σ_pr₂ (g x))).
-
-  (Σ_pr₂ (g x) : P (Σ_pr₁ (Σ_pr₁ w x)))).
-
-
-(* j'ai P (Σ_pr₁ (Σ_pr₁ w x)), je veux P x *)
-(* mais en fait ils sont égaux, par hyp p *)
-bbb.
-
-Check (λ (w : fib α id) (x : A), @transport A P (Σ_pr₁ (Σ_pr₁ w x)) x).
-assert (q : ∀ (w : fib α id) x, Σ_pr₁ (Σ_pr₁ w x) = x).
- intros (g, q) x; simpl.
- unfold α in q; simpl in q.
-(*
- pose proof Π_type.happly q x as r; unfold id in r.
- unfold hott_4_9_3 in r; simpl in r.
- unfold pre_hott_4_9_3 in r; simpl in r.
- unfold hott_4_9_2 in r; simpl in r.
-*)
- destruct (hott_4_9_3 A P p) as (f, r); simpl in q.
- pose proof Π_type.happly q x as s; unfold id in s.
- destruct (g x).
-simpl.
-bbb.
-
-set (ψ' (w : fib α id) := λ (g := Σ_pr₁ w) (p := Σ_pr₂ w), α (Σ_pr₁ w)).
-About transport.
-(*
-transport : ∀ (A : Type) (P : A → Type) (x y : A), x = y → P x → P y
-Arguments A, x, y are implicit and maximally inserted
-*)
-set (ψ'' (w : fib α id) := λ (g := Σ_pr₁ w) (p := Σ_pr₂ w) (x : A),
-  @transport (A → A)).
-(* I need a value of type (A → A) → Type *)
-bbb.
-Check ψ.
-simpl in ψ'.
-  ψ' := λ (w : fib α id) (_ : A), Σ_pr₂ w
-     : ∀ w : fib α id, A → α (Σ_pr₁ w) = id
-bbb.
-
-set (ψ (g : Σ (x : A), P x) (p : A = A) := λ x, g x).
-bbb.
-
-Check (λ g (x : A), Σ_pr₂ (Σ_pr₁ g x)).
-bbb.
-
-pose proof (λ (g : (A → (Σ (x : A), P x)) ≃ (A → A)) (x : A),
-        (Σ_pr₂ (Σ_pr₁ (fst (Σ_pr₂ g)) id x))).
-bbb.
-
-Check (λ (g : (A → (Σ (x : A), P x)) ≃ (A → A)) (x : A), Σ_pr₁ g).
-
-Check λ (g : A → Σ (x : A), P x) (x y : A) (p : x = y), @transport A P x y p.
-
-Check λ (g : A → Σ (x : A), P x) (x : A), P x → Σ_pr₂ (g x).
-
-The term "Σ_pr₂ (g x)" has type "P (Σ_pr₁ (g x))"
-which should be Set, Prop or Type.
-
-The term "x" has type "A" while it is expected to have typtypee
- "P (Σ_pr₁ (g x))".
-
-Check λ (g : A → Σ (x : A), P x) (x y : A) (p : x = y),
-  @transport A P x y p (Σ_pr₂ (g x)).
-
-The term "Σ_pr₂ (g x)" has type "P (Σ_pr₁ (g x))"
-while it is expected to have type "P x".
-
-set (ψ (g : A → Σ (x : A), P x) (Q : (A → Σ (x : A), P x) → Type) p x :=
-     transport Q p (Σ_pr₂ (g x))).
-bbb.
-
-transparent assert (ψ : fib α (@id A) → Π (x : A), P x).
- intros (g, q) x.
- pose proof (g x) as r.
- destruct r as (y, r).
- eapply transport; [ | apply r ].
- pose proof (@hap A A (α g) id q x) as s; unfold id in s.
- unfold α in s; simpl in s.
- unfold hott_4_9_3 in s; simpl in s.
- unfold hott_4_9_2 in s. (* bon, chais pas *)
- unfold α in q; simpl in q.
- unfold hott_4_9_3 in q; simpl in q.
- unfold hott_4_9_2 in q.
-bbb.
-
- apply p.
-
-bbb.
- unfold α in q; simpl in q.
- unfold hott_4_9_3' in q; simpl in q.
- unfold hott_4_9_2, pre_hott_4_9_3 in q.
-bbb.
-
-set (ψ (g : A → Σ (x : A), P x) p x := transport _ p (Σ_pr₂ (g x))).
-
-set
-  (ψ (w : fib _ _) := λ (g := fib_a w) (p := fib_p w) x,
-  transport _ p (Σ_pr₂ (g x))).
-bbb.
-
-set (ψ g p := λ x, p⁎ (Σ_pr₂ (g x))).
-
-bbb.
-
-Definition hott_4_9_4 A (P : A → Type) (p : Π (x : A), isContr (P x))
-   (α := hott_4_9_3 A P p) :
-  (Π (x : A), P x) ≃ fib (Σ_pr₁ α) (@id A).
-Proof.
-transparent assert (φ : (Π (x : A), P x) → fib (Σ_pr₁ α) (@id A)).
- intros f; exists (λ x, existT _ x (f x)).
- unfold α, hott_4_9_3; simpl.
-
-bbb.
-
- unfold α, hott_4_9_3, hott_4_9_2; simpl.
- unfold idtoeqv_ua; simpl.
- destruct (ua (pre_hott_4_9_3 A P p)) at 2.
-
- unfold α, hott_4_9_3, hott_4_9_2, pre_hott_4_9_3; simpl.
-
- destruct α as (g, r); simpl.
-bbb.
-
- exists (Σ_pr₁ α).
-
-set (φ f := fib_intro (λ x, existT P x (f x)) (eq_refl (@id A))).
-set
-  (φ f :=
-     (fib_intro (λ x, existT P x (f x)) (eq_refl (@id A)) :
-      fib (Σ_pr₁ α) (@id A))).
-
-The term "fib_intro (λ x0 : A, existT P x0 (x x0)) (eq_refl id)" has type
- "fib (λ (x : A → {x : A & P x}) (x0 : A), (let (a, _) := α in a) x x0) id"
-while it is expected to have type "fib (Σ_pr₁ α) id" (cannot satisfy
-constraint "(let (a, _) := α in a) (λ x : A, existT P x (f x)) x" ==
-"x").
-
-bbb.
-
-Definition hott_4_9_4 A (P : A → Type) (p : Π (x : A), isContr (P x))
-   (α : (A → Σ (x : A), P x) ≃ (A → A)) :
-  (Π (x : A), P x) = chap3.retract (fib (Σ_pr₁ α) (@id A)).
-Proof.
-pose proof @ua (Π (x : A), P x) (chap3.retract (fib (Σ_pr₁ α) id)).
-
-The term "chap3.retract (fib (Σ_pr₁ α) id)" has type
-"Type@{chap3.477}" while it is expected to have type
-"Type@{chap2.1031}" (universe inconsistency).
-
-bbb.
-
-apply ua.
-pose proof (p a) as q.
-apply isContr_isProp in q.
-unfold isProp in q.
-
-destruct q as (q, r).
-
-unfold chap3.retract.
-unfold retraction.
-
-apply (p a).
-
-Print weak_funext.
-
-bbb.
-
-
-(* "As a consequence, Π (x:A) P(x) is contractible. In other words,
+    As a consequence, Π (x:A) P(x) is contractible. In other words,
     the univalence axiom implies the weak function extensionality
     principle." *)
+
+Definition hott_4_9_4 A (P : A → Type) : weak_funext A P.
+Proof.
+intros p.
+pose proof isContr_fib_4_9_3 A P p as s.
+set (α := hott_4_9_3 A P p) in s.
+assert (q : (Π (x : A), P x) = chap3.retract (fib (Σ_pr₁ α) (@id A))).
+Focus 2.
+ assert (r : Π (x : A), P x) by apply p; exists r; intros t.
+ apply (isContr_isProp _ (hott_3_11_6 p)).
+
+ apply ua.
+ transparent assert
+   (f : (Π (x : A), P x) → chap3.retract (fib (Σ_pr₁ α) (@id A))).
+  intros q.
+  unfold chap3.retract, retraction.
+  exists (Π (x : A), P x).
+Abort. (* suspended because I have difficulties...
+   pose proof g x as u.
+   destruct u as (y, u).
+eapply transport in u.
+Show Proof.
+
+bbb.
+   change (P (id x)); rewrite <- p.
+unfold fib in s.
+unfold isContr in s.
+destruct s as (w, s).
+
+Show Proof.
+bbb.
+
+   unfold isContr in s.
+   destruct s as (w, s).
+
+vvv.
+  transparent assert (φ : (Π (x : A), P x) → fib (Σ_pr₁ α) id).
+   intros f.
+   exists (λ x, existT _ x (f x)).
+unfold α; simpl.
+destruct (hott_4_9_3 A P p) as (g, t); simpl.
+bbb.
+
+set (g := Σ_pr₁ α) in *.
+bbb.
+
+   destruct s as (w, s).
+
+set (b := g (λ x, existT P x (f x))).
+
+bbb.
+
+unfold fib in s.
+set (g := λ a, existT P a (f a)).
+destruct w as (h, r).
+assert (Σ_pr₁ α g = id).
+
+bbb.
+  set (φ := λ (_ : Π (x : A), P x), Σ_pr₁ s).
+  transparent assert (ψ : fib (Σ_pr₁ α) id → Π (x : A), P x).
+   intros r a.
+unfold isContr in s.
+destruct s as (g, s); simpl in φ.
+unfold fib in r.
+destruct r as (f, r).
+pose proof f a as t.
+destruct t as (a', t).
+apply p.
+
+simpl in ψ.
+ exists ψ.
+exists φ.
+intros f.
+unfold φ, ψ.
+destruct s; simpl.
+destruct x; simpl.
+bbb.
+
+Inspect 1.
+pose proof post_hott_4_9_3 A P p.
+unfold isContr in X.
+destruct X as (w, s).
+bbb.
+
+   destruct (hott_4_9_3 A P p) as (f, s); simpl.
+
+bbb.
+  transparent assert (ψ : fib (Σ_pr₁ α) id → Π (x : A), P x).
+   rename p into r.
+   intros (g, p) x.
+   pose proof g x as s.
+   destruct s as (y, s).
+
+   change (P (id x)); rewrite <- (Π_type.happly p).
+   eapply transport; [ | apply s ].
+   pose proof Π_type.happly p as t; unfold id in t.
+   apply invert; rewrite <- t.
+bbb.
+
+   unfold α; simpl.
+   unfold hott_4_9_3; simpl.
+   unfold hott_4_9_2; simpl.
+bbb.
+
+   eapply transport; [ | apply s ].
+   unfold α in p; simpl in p.
+bbb.
+
+  exists (A → A).
+  assert (fib (Σ_pr₁ α) id → A → A).
+   intros (r, s).
+Inspect 5.
+bbb.
+*)
+
+bbb.
