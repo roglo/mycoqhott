@@ -1223,7 +1223,7 @@ Definition hap {A B} {f g : A → B}
 
 Module Π_type.
 
-Definition happly {A B} {f g : Π (x : A), B x}
+Definition happly {A B} (f g : Π (x : A), B x)
   : f = g → Π (x : A), f x = g x
   := λ p,
      match p with
@@ -1247,17 +1247,17 @@ Defined.
 Definition funext {A B} {f g : Π (x : A), B x}
   : (∀ x : A, f x = g x) → f = g
   := λ p,
-     match isequiv_qinv happly (extensionality f g) with
+     match isequiv_qinv (happly f g) (extensionality f g) with
      | existT _ h _ => h p
      end.
 
 Theorem funext_quasi_inverse_of_happly_tac {A B} :
   ∀ (f g : Π (x : A), B x) (h : ∀ x, f x = g x) x,
-  happly (funext h) x = h x.
+  happly f g (funext h) x = h x.
 Proof.
 intros.
 unfold funext; simpl.
-set (p := isequiv_qinv happly (extensionality f g)).
+set (p := isequiv_qinv (happly f g) (extensionality f g)).
 destruct p as (k, (α, β)).
 unfold "◦" in α.
 pose proof α h as H; simpl in H.
@@ -1267,20 +1267,20 @@ Defined.
 
 Definition funext_quasi_inverse_of_happly {A B}
   : ∀ (f g : Π (x : A), B x) (h : ∀ x, f x = g x) (x : A),
-    happly (funext h) x = h x
+    happly f g (funext h) x = h x
   := λ f g h x,
-     match isequiv_qinv happly (extensionality f g) as q
-     return (happly match q with existT _ k _ => k h end x = h x)
+     match isequiv_qinv (happly f g) (extensionality f g) as q
+     return (happly f g (match q with existT _ k _ => k h end) x = h x)
      with
-     | existT _ k (α, _) => happly (α h) x
+     | existT _ k (α, _) => happly (happly f g (k h)) h (α h) x
      end.
 
 Theorem funext_prop_uniq_princ {A B} : ∀ (f g : Π (x : A), B x) (p : f = g),
-  p = funext (happly p).
+  p = funext (happly f g p).
 Proof.
 intros.
 unfold funext; simpl.
-set (q := isequiv_qinv happly (extensionality f g)).
+set (q := isequiv_qinv (happly f g) (extensionality f g)).
 destruct q as (k, (α, β)).
 apply invert, β.
 Defined.
@@ -1290,13 +1290,13 @@ Theorem funext_identity {A B} : ∀ (f : Π (x : A), B x),
 Proof.
 intros.
 unfold funext; simpl.
-set (p := isequiv_qinv happly (extensionality f f)).
+set (p := isequiv_qinv (happly f f) (extensionality f f)).
 destruct p as (k, (α, β)).
 apply invert, (β (eq_refl f)).
 Defined.
 
 Theorem funext_invert {A B} {f g : Π (x : A), B x} : ∀ (α : f = g),
-  α⁻¹ = funext (λ x, (happly α x)⁻¹).
+  α⁻¹ = funext (λ x, (happly f g α x)⁻¹).
 Proof.
 intros.
 destruct α; simpl.
@@ -1305,7 +1305,7 @@ Qed.
 
 Theorem funext_compose {A B} {f g h : Π (x : A), B x} :
     ∀ (α : f = g) (β : g = h),
-  α • β = funext (λ x, happly α x • happly β x).
+  α • β = funext (λ x, happly f g α x • happly g h β x).
 Proof.
 intros.
 destruct α, β; simpl.
@@ -1355,7 +1355,7 @@ intros.
 destruct p; simpl.
 unfold id; simpl.
 unfold equivalence.
-apply existT with (x := happly).
+apply existT with (x := happly f g).
 apply extensionality.
 Qed.
 
@@ -1365,7 +1365,7 @@ Definition hott_2_9_6_ii {X} {A B : X → Type} {x y : X} (p : x = y)
     transport (λ z, A z → B z) p f (transport A p a) =
     g (transport A p a)
   := λ f g a q,
-     happly q (transport A p a).
+     happly _ _ q (transport A p a).
 
 Definition hott_2_9_6_iii {X} {A B : X → Type} {x y : X} (p : x = y)
   : ∀ (f : A x → B x) (g : A y → B y) (a : A x)
@@ -1403,7 +1403,7 @@ intros.
 destruct p; simpl.
 unfold id; simpl.
 unfold equivalence.
-apply existT with (x := happly).
+apply existT with (x := happly _ _).
 apply extensionality.
 Qed.
 
@@ -2563,7 +2563,8 @@ Definition semigroup_path_fun {A B} m a m' a'
       pr₁ (idtoeqv p₁) (m (pr₁ (idtoeqv p₁)⁻⁻¹ x₁) (pr₁ (idtoeqv p₁)⁻⁻¹ x₂)) =
       m₁ x₁ x₂
   with
-  | eq_refl _ => λ m₁ a₁ p x₁ x₂, Π_type.happly (Π_type.happly p x₁) x₂
+  | eq_refl _ =>
+      λ m₁ a₁ p x₁ x₂, Π_type.happly _ _ (Π_type.happly _ _ p x₁) x₂
   end m' a'.
 
 Definition semigroup_path_inv {A B} m a m' a'

@@ -112,7 +112,7 @@ apply (@equiv_compose _ {g : A → A & ((g = id) * (g = id))%type}).
   apply ua.
   exists (λ g, Π_type.funext g).
   apply qinv_isequiv.
-  exists (λ g x, Π_type.happly g x).
+  exists (λ g x, Π_type.happly _ _ g x).
   unfold "◦", "∼"; simpl.
   split; [ intros p; apply invert, Π_type.funext_prop_uniq_princ |  ].
   intros p; apply Π_type.funext; intros x.
@@ -121,7 +121,7 @@ apply (@equiv_compose _ {g : A → A & ((g = id) * (g = id))%type}).
   apply ua.
   exists (λ g, Π_type.funext g).
   apply qinv_isequiv.
-  exists (λ g x, Π_type.happly g x).
+  exists (λ g x, Π_type.happly _ _ g x).
   unfold "◦", "∼"; simpl.
   split; [ intros p; apply invert, Π_type.funext_prop_uniq_princ |  ].
   intros p; apply Π_type.funext; intros x.
@@ -160,7 +160,7 @@ apply (@equiv_compose _ {g : A → A & ((g = id) * (g = id))%type}).
   pose proof (@hott_3_11_9_ii A₀ P₀ c₀) as p.
   subst A₀ P₀ c₀; simpl in p.
   eapply equiv_compose; [ apply p |  ].
-  exists (λ (p : @id A = @id A) (x : A), Π_type.happly p x).
+  exists (λ (p : @id A = @id A) (x : A), Π_type.happly _ _ p x).
   apply qinv_isequiv.
   exists (λ g, Π_type.funext g).
   unfold "◦", "∼", id; simpl.
@@ -737,7 +737,7 @@ unfold linv.
 apply Σ_equiv; intros g; apply ua.
 exists Π_type.funext.
 apply qinv_isequiv.
-exists Π_type.happly.
+exists (Π_type.happly _ _).
 split; [ intros x; apply invert, Π_type.funext_prop_uniq_princ | ].
 intros p; apply Π_type.funext; intros x.
 apply (Π_type.funext_quasi_inverse_of_happly (g ◦ f) id p x).
@@ -749,7 +749,7 @@ unfold rinv.
 apply Σ_equiv; intros g; apply ua.
 exists Π_type.funext.
 apply qinv_isequiv.
-exists Π_type.happly.
+exists (Π_type.happly _ _).
 split; [ intros x; apply invert, Π_type.funext_prop_uniq_princ | ].
 intros p; apply Π_type.funext; intros x.
 apply (Π_type.funext_quasi_inverse_of_happly (f ◦ g) id p x).
@@ -2139,7 +2139,7 @@ bbb.
 
 Definition hott_4_9_5 : (∀ A P, weak_funext A P)
   → Π (A : Type), Π (P : A → Type), Π (f : Π (x : A), P x),
-    Π (g : Π (x : A), P x), isequiv (Π_type.happly (f := f) (g := g)).
+    Π (g : Π (x : A), P x), isequiv (Π_type.happly f g).
 Proof.
 intros W A P f g.
 bbb.
