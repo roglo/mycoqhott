@@ -2039,7 +2039,19 @@ Focus 2.
   transparent assert (φ : (Π (x : A), P x) → fib (Σ_pr₁ α) id).
    intros f.
    exists (λ x, existT _ x (f x)).
+set (g := Σ_pr₁ α) in *.
+bbb.
+
    destruct s as (w, s).
+
+set (b := g (λ x, existT P x (f x))).
+
+bbb.
+
+unfold fib in s.
+set (g := λ a, existT P a (f a)).
+destruct w as (h, r).
+assert (Σ_pr₁ α g = id).
 
 bbb.
   set (φ := λ (_ : Π (x : A), P x), Σ_pr₁ s).
