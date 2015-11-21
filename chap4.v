@@ -2137,17 +2137,19 @@ bbb.
 (* "Theorem 4.9.5. Weak function extensionality implies the function
     extensionality Axiom 2.9.3." *)
 
-Definition hott_4_9_5 : (∀ A P, weak_funext A P) →
+Definition hott_4_9_5 : (∀ A P, weak_funext A P)
+  → Π (A : Type), Π (P : A → Type), Π (f : Π (x : A), P x),
+    Π (g : Π (x : A), P x), isequiv (Π_type.happly (f := f) (g := g)).
+Proof.
+intros W A P f g.
+bbb.
+
+Definition hott_4_9_5' : (∀ A P, weak_funext A P) →
   (∀ A B (f g : Π (x : A), B x), (∀ x, f x = g x) → f = g).
 Proof.
-intros W A' B' f' g' p.
-assert
-  (q : Π (A : Type), Π (P : A → Type), Π (f : Π (x : A), P x),
-   Π (g : Π (x : A), P x), isequiv (Π_type.happly (f := f) (g := g))).
- intros A P f g.
-Focus 2.
-pose proof q A' B' f' g' as r.
-destruct r as ((g, Hg), (h, Hh)).
-apply g, p.
+intros W A B f g p.
+pose proof hott_4_9_5 W A B f g as r.
+destruct r as ((g', Hg), (h', Hh)).
+apply g', p.
+Defined.
 
-bbb.
