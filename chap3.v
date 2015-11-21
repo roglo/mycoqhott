@@ -237,7 +237,7 @@ intros r f g p q.
 unfold isSet in r.
 pose proof funext_prop_uniq_princ f g p as Hp.
 pose proof funext_prop_uniq_princ f g q as Hq.
-assert (∀ x : A, happly p x = happly q x) as Hx by (intros; apply r).
+assert (∀ x : A, happly _ _ p x = happly _ _ q x) as Hx by (intros; apply r).
 apply funext in Hx.
 rewrite Hp, Hq, Hx.
 reflexivity.
@@ -424,9 +424,10 @@ set (u := (λ g, g true) : notT (notT bool)); simpl in u.
 set (nn A := notT (notT A)).
 assert (p : pr₁ bool_eq_bool_negb (f _ u) = f _ u).
  eapply compose; [ eapply invert, ua_pcr | ].
- eapply compose; [ | apply (happly (apd f (ua bool_eq_bool_negb))) ].
+ eapply compose; [ | apply (happly _ _ (apd f (ua bool_eq_bool_negb))) ].
  eapply invert, compose.
-  apply (happly (@hott_2_9_4 _ nn id _ _ (ua bool_eq_bool_negb) (f bool)) u).
+  apply
+    (happly _ _ (@hott_2_9_4 _ nn id _ _ (ua bool_eq_bool_negb) (f bool)) u).
 
   apply ap, ap, funext; intros g; destruct (g true).
 
@@ -441,10 +442,10 @@ Definition hott_3_2_2 : notT (∀ A : Type, notT (notT A) → A)
   let nn A := notT (notT A) in
   no_fixpoint_negb (f bool u)
     ((ua_pcr e (f bool u))⁻¹
-      • (happly (@hott_2_9_4 _ nn id _ _ (ua e) (f bool)) u
+      • (happly _ _ (@hott_2_9_4 _ nn id _ _ (ua e) (f bool)) u
          • ap ((ua e)⁎ ◦ f bool)
              (funext (λ (x : notT bool), match x true with end)))⁻¹
-      • happly (apd f (ua e)) u).
+      • happly _ _ (apd f (ua e)) u).
 
 End hott_3_2_2.
 
