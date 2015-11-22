@@ -2137,11 +2137,40 @@ bbb.
 (* "Theorem 4.9.5. Weak function extensionality implies the function
     extensionality Axiom 2.9.3." *)
 
+Notation "f '∼∼' g" := (∀ x, f x = g x) (at level 70).
+
 Definition hott_4_9_5 : (∀ A P, weak_funext A P)
   → Π (A : Type), Π (P : A → Type), Π (f : Π (x : A), P x),
     Π (g : Π (x : A), P x), isequiv (Π_type.happly f g).
 Proof.
 intros W A P f g.
+assert
+  (p : (Σ (g : Π (x : A), P x), f = g) ≃ (Σ (g : Π (x : A), P x), f ∼∼ g)).
+Focus 2.
+apply qinv_isequiv.
+unfold qinv.
+transparent assert (q : f ∼∼ g → f = g).
+ intros q.
+ pose proof (Σ_pr₁ (fst (Σ_pr₂ p)) (existT _ g q)) as r.
+ destruct r as (g', r).
+bbb.
+
+exists (λ (g : Π (x : A), P x), Π_type.happly f g).
+Check @hott_4_7_7.
+
+bbb.
+
+total@{Top.1394 Top.1395 Top.1396} =
+λ (A : Type) (P Q : A → Type) (f : ∀ x : A, P x → Q x)
+(w : {x : A & P x}), existT (λ x : A, Q x) (Σ_pr₁ w) (f (Σ_pr₁ w) (Σ_pr₂ w))
+     : ∀ (A : Type) (P Q : A → Type),
+       (∀ x : A, P x → Q x) → {x : A & P x} → {x : A & Q x}
+
+isFiberwiseEquivalence@{Top.1445 Top.1448 Top.1451} =
+λ (A : Type) (P Q : A → Type) (f : ∀ x : A, P x → Q x),
+∀ x : A, isequiv (f x)
+     : ∀ (A : Type) (P Q : A → Type), (∀ x : A, P x → Q x) → Type
+
 bbb.
 
 Definition hott_4_9_5' : (∀ A P, weak_funext A P) →
