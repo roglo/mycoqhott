@@ -2075,9 +2075,6 @@ unfold fib in s.
 set (g := λ a, existT P a (f a)).
 destruct w as (h, r).
 assert (Σ_pr₁ α g = id).
-<<<<<<< HEAD
-
-=======
 
 bbb.
   set (φ := λ (_ : Π (x : A), P x), Σ_pr₁ s).
@@ -2091,27 +2088,6 @@ pose proof f a as t.
 destruct t as (a', t).
 apply p.
 
-simpl in ψ.
- exists ψ.
-exists φ.
-intros f.
-unfold φ, ψ.
-destruct s; simpl.
-destruct x; simpl.
->>>>>>> 4eed6a3d5471bc0e99e7139fe7aed821bf6cf601
-bbb.
-  set (φ := λ (_ : Π (x : A), P x), Σ_pr₁ s).
-  transparent assert (ψ : fib (Σ_pr₁ α) id → Π (x : A), P x).
-   intros r a.
-unfold isContr in s.
-destruct s as (g, s); simpl in φ.
-unfold fib in r.
-destruct r as (f, r).
-pose proof f a as t.
-destruct t as (a', t).
-apply p.
-
-<<<<<<< HEAD
 simpl in ψ.
  exists ψ.
 exists φ.
@@ -2156,43 +2132,6 @@ bbb.
    intros (r, s).
 Inspect 5.
 bbb.
-=======
-Inspect 1.
-pose proof post_hott_4_9_3 A P p.
-unfold isContr in X.
-destruct X as (w, s).
-bbb.
-
-   destruct (hott_4_9_3 A P p) as (f, s); simpl.
-
-bbb.
-  transparent assert (ψ : fib (Σ_pr₁ α) id → Π (x : A), P x).
-   rename p into r.
-   intros (g, p) x.
-   pose proof g x as s.
-   destruct s as (y, s).
-
-   change (P (id x)); rewrite <- (Π_type.happly p).
-   eapply transport; [ | apply s ].
-   pose proof Π_type.happly p as t; unfold id in t.
-   apply invert; rewrite <- t.
-bbb.
-
-   unfold α; simpl.
-   unfold hott_4_9_3; simpl.
-   unfold hott_4_9_2; simpl.
-bbb.
-
-   eapply transport; [ | apply s ].
-   unfold α in p; simpl in p.
-bbb.
-
-  exists (A → A).
-  assert (fib (Σ_pr₁ α) id → A → A).
-   intros (r, s).
-Inspect 5.
-bbb.
->>>>>>> 4eed6a3d5471bc0e99e7139fe7aed821bf6cf601
 *)
 
 (* "Theorem 4.9.5. Weak function extensionality implies the function
@@ -2200,7 +2139,6 @@ bbb.
 
 Definition dt_homotopy {A B} (f g : Π (x : A), B x) := Π (x : A), (f x = g x).
 Notation "f '~~' g" := (dt_homotopy f g) (at level 70).
-<<<<<<< HEAD
 
 Definition hott_4_9_5 : (∀ A P, weak_funext A P)
   → Π (A : Type), Π (P : A → Type), Π (f : Π (x : A), P x),
@@ -2263,52 +2201,6 @@ isFiberwiseEquivalence@{Top.1445 Top.1448 Top.1451} =
 
 bbb.
 
-=======
-
-Definition hott_4_9_5 : (∀ A P, weak_funext A P)
-  → Π (A : Type), Π (P : A → Type), Π (f : Π (x : A), P x),
-    Π (g : Π (x : A), P x), isequiv (Π_type.happly f g).
-Proof.
-intros W A P f g.
-assert
-  (p : ∀ f,
-   (Σ (g : Π (x : A), P x), f = g) ≃ (Σ (g : Π (x : A), P x), f ~~ g)).
-Focus 2.
-pose proof isFiberwiseEquivalence (λ f, Π_type.happly f g).
-bbb.
-
-apply qinv_isequiv.
-transparent assert (q : f ~~ g → f = g).
- intros q.
-destruct (p f) as (ff, ((gg, Hg), (hh, Hh))).
-Check total (λ f, Σ_pr₁ (p f)).
-bbb.
- pose proof (Σ_pr₁ (fst (Σ_pr₂ p)) (existT _ g q)) as r.
- destruct r as (g', r).
-bbb.
-
-exists (λ (g : Π (x : A), P x), Π_type.happly f g).
-
-bbb.
-
-@hott_4_7_7
-     : ∀ (A : Type) (P Q : A → Type) (f : ∀ x : A, P x → Q x),
-       isFiberwiseEquivalence f ⇔ isequiv (total f)
-
-total@{Top.1394 Top.1395 Top.1396} =
-λ (A : Type) (P Q : A → Type) (f : ∀ x : A, P x → Q x)
-(w : {x : A & P x}), existT (λ x : A, Q x) (Σ_pr₁ w) (f (Σ_pr₁ w) (Σ_pr₂ w))
-     : ∀ (A : Type) (P Q : A → Type),
-       (∀ x : A, P x → Q x) → {x : A & P x} → {x : A & Q x}
-
-isFiberwiseEquivalence@{Top.1445 Top.1448 Top.1451} =
-λ (A : Type) (P Q : A → Type) (f : ∀ x : A, P x → Q x),
-∀ x : A, isequiv (f x)
-     : ∀ (A : Type) (P Q : A → Type), (∀ x : A, P x → Q x) → Type
-
-bbb.
-
->>>>>>> 4eed6a3d5471bc0e99e7139fe7aed821bf6cf601
 Definition hott_4_9_5' : (∀ A P, weak_funext A P) →
   (∀ A B (f g : Π (x : A), B x), (∀ x, f x = g x) → f = g).
 Proof.
