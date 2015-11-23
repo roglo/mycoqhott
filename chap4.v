@@ -2148,6 +2148,22 @@ intros W A P f g.
 assert
   (p : ∀ f,
    (Σ (g : Π (x : A), P x), g = f) ≃ (Σ (g : Π (x : A), P x), g ~~ f)).
+ intros h.
+About hott_3_11_8.
+pose proof hott_3_11_8 h as p.
+apply isContr_Σ_inv in p.
+apply hott_3_11_3_i_ii, hott_3_11_3_ii_iii in p.
+eapply equiv_compose; [ apply p | ].
+unfold "~~".
+About UnivProp.hott_2_15_7.
+Check @UnivProp.hott_2_15_7 A P.
+Check @UnivProp.hott_2_15_7 A P (λ (x : A) (i : P x), g x = h x).
+bbb.
+
+apply hott_3_11_3_ii_iii, hott_3_11_3_i_ii.
+
+bbb.
+
 Focus 2.
 revert f; apply hott_4_7_7.
 apply qinv_isequiv.
@@ -2157,6 +2173,35 @@ split.
  intros (f, q).
  pose proof hott_4_7_6 _ _ _ (λ f, Π_type.happly f g) f q as r.
  simpl in r.
+set (ff := total (λ x, Π_type.happly x g)) in r |-*.
+simpl in ff.
+set (u := existT _ f q) in r |-*.
+destruct r as (gg, r).
+bbb.
+
+unfold fib  in gg.
+Check u f.
+
+bbb.
+
+Check (Π_type.happly f g).
+
+pose proof p f as s.
+assert (Σ (g : ∀ x, P x), g = f).
+ exists f; apply eq_refl.
+
+unfold fib in r; simpl in r.
+assert (s : Σ (p : f = g), Π_type.happly f g p = q).
+pose proof p f.
+
+
+bbb.
+
+unfold weak_funext in W.
+assert (f = g).
+apply W.
+intros h.
+
 bbb.
 
  unfold total.
