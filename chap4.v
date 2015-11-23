@@ -2150,15 +2150,14 @@ assert
    (Σ (g : Π (x : A), P x), g = f) ≃ (Σ (g : Π (x : A), P x), g ~~ f)).
 Focus 2.
 revert f; apply hott_4_7_7.
-SearchAbout total.
-pose proof hott_4_7_6 (∀ x, P x).
-bbb.
-
+apply qinv_isequiv.
 exists (λ w, Σ_pr₁ (fst (Σ_pr₂ (p g))) w).
 unfold "◦", "∼", id.
 split.
  intros (f, q).
-SearchAbout total.
+ pose proof hott_4_7_6 _ _ _ (λ f, Π_type.happly f g) f q as r.
+ simpl in r.
+bbb.
 
  unfold total.
 bbb.
