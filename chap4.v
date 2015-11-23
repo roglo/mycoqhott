@@ -2149,13 +2149,15 @@ assert
   (p : ∀ f,
    (Σ (g : Π (x : A), P x), f = g) ≃ (Σ (g : Π (x : A), P x), f ~~ g)).
 Focus 2.
+pose proof isFiberwiseEquivalence (λ f, Π_type.happly f g).
+bbb.
+
 apply qinv_isequiv.
 transparent assert (q : f ~~ g → f = g).
  intros q.
 destruct (p f) as (ff, ((gg, Hg), (hh, Hh))).
 Check total (λ f, Σ_pr₁ (p f)).
 bbb.
-
  pose proof (Σ_pr₁ (fst (Σ_pr₂ p)) (existT _ g q)) as r.
  destruct r as (g', r).
 bbb.
