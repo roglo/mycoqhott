@@ -2158,10 +2158,13 @@ split.
  assert (r : Σ_pr₁ (Σ_pr₁ (fst (Σ_pr₂ (p g))) (existT _ f q)) = f).
   apply W.
   intros h.
-  destruct (p g); simpl.
-  destruct (fst i); simpl.
+  destruct (p g) as (f₁, ((g₁, Hg), (h₁, Hh))); simpl.
   unfold isContr.
-bbb.
+  assert (r : Σ_pr₁ (g₁ (existT _ f q)) = h).
+   apply W.
+   intros i.
+
+ bbb.
 
  Focus 2.
  apply (Σ_type.pair_eq r).
