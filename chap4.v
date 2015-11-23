@@ -96,6 +96,7 @@ split; intros p.
  exists y; intros z; apply P.
 Defined.
 
+(*
 Definition isContr_Σ_invext A P f:
   isContr (Σ (g : Π (x : A), P x), f ~~ g)
   ⇔ isContr (Σ (g : Π (x : A), P x), g ~~ f).
@@ -105,7 +106,7 @@ split; intros p.
  apply isContr_isProp in q.
  destruct p as (p, r).
  unfold isContr.
-bbb.
+ bbb.
 
 Check Σ_eq_inv.
 bbb.
@@ -115,7 +116,7 @@ Definition Σ_Π_eq_invext A :
 Proof.
 split; intros (x, p); exists x; intros y; apply invert, p.
 Defined.
-
+*)
 
 Definition hott_4_1_1 A B (f : A → B) (q : qinv f) :
   qinv f ≃ (Π (x : A), x = x).
