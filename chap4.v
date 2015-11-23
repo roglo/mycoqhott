@@ -14,6 +14,8 @@ Notation "'ℬ'" := (bool : Type).
 Notation "A ⇔ B" := ((A → B) * (B → A))%type (at level 100).
 Notation "( x , y ) '_{' P }" := (existT P x y)
   (at level 0, format "'[' ( x ,  y ) _{ P } ']'", only parsing).
+Definition dt_homotopy {A B} (f g : Π (x : A), B x) := Π (x : A), (f x = g x).
+Notation "f '~~' g" := (dt_homotopy f g) (at level 70).
 
 Open Scope nat_scope.
 
@@ -93,6 +95,27 @@ split; intros p.
  apply isProp_Σ_eq_inv in P.
  exists y; intros z; apply P.
 Defined.
+
+Definition isContr_Σ_invext A P f:
+  isContr (Σ (g : Π (x : A), P x), f ~~ g)
+  ⇔ isContr (Σ (g : Π (x : A), P x), g ~~ f).
+Proof.
+split; intros p.
+ generalize p; intros q.
+ apply isContr_isProp in q.
+ destruct p as (p, r).
+ unfold isContr.
+bbb.
+
+Check Σ_eq_inv.
+bbb.
+Definition Σ_Π_eq_invext A :
+  (Σ (x : A), Π (y : A), y = x)
+  ⇔ (Σ (x : A), Π (y : A), x = y).
+Proof.
+split; intros (x, p); exists x; intros y; apply invert, p.
+Defined.
+
 
 Definition hott_4_1_1 A B (f : A → B) (q : qinv f) :
   qinv f ≃ (Π (x : A), x = x).
@@ -2137,9 +2160,6 @@ bbb.
 (* "Theorem 4.9.5. Weak function extensionality implies the function
     extensionality Axiom 2.9.3." *)
 
-Definition dt_homotopy {A B} (f g : Π (x : A), B x) := Π (x : A), (f x = g x).
-Notation "f '~~' g" := (dt_homotopy f g) (at level 70).
-
 Definition hott_4_9_5 : (∀ A P, weak_funext A P)
   → Π (A : Type), Π (P : A → Type), Π (f : Π (x : A), P x),
     Π (g : Π (x : A), P x), isequiv (Π_type.happly f g).
@@ -2153,8 +2173,20 @@ About hott_3_11_8.
 pose proof hott_3_11_8 h as p.
 apply isContr_Σ_inv in p.
 apply hott_3_11_3_i_ii, hott_3_11_3_ii_iii in p.
-eapply equiv_compose; [ apply p | ].
-unfold "~~".
+eapply equiv_compose; [ apply p | apply quasi_inv ].
+apply hott_3_11_3_ii_iii, hott_3_11_3_i_ii.
+Check isContr_Σ_inv.
+bbb.
+
+SearchAbout isContr.
+bbb.
+
+assert
+  (q : (Σ (g : Π (x : A), P x), Π (x : A), h x = g x) ≃
+   (Π (x : A), Σ (u : P x), h x = u)).
+Focus 2.
+
+
 About UnivProp.hott_2_15_7.
 Check @UnivProp.hott_2_15_7 A P.
 Check @UnivProp.hott_2_15_7 A P (λ (x : A) (i : P x), g x = h x).
