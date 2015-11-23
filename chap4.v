@@ -2155,7 +2155,10 @@ unfold "◦", "∼", id.
 split.
  intros (f, q).
  unfold total.
+bbb.
+
  assert (r : Σ_pr₁ (Σ_pr₁ (fst (Σ_pr₂ (p g))) (existT _ f q)) = f).
+
   apply W.
   intros h.
 bbb.
