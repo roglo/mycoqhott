@@ -2147,10 +2147,28 @@ Proof.
 intros W A P f g.
 assert
   (p : ∀ f,
-   (Σ (g : Π (x : A), P x), f = g) ≃ (Σ (g : Π (x : A), P x), f ~~ g)).
+   (Σ (g : Π (x : A), P x), g = f) ≃ (Σ (g : Π (x : A), P x), g ~~ f)).
 Focus 2.
-pose proof isFiberwiseEquivalence (λ f, Π_type.happly f g).
+revert f; apply hott_4_7_7, qinv_isequiv.
+exists (λ w, Σ_pr₁ (fst (Σ_pr₂ (p g))) w).
+unfold "◦", "∼", id.
+split.
+ intros (f, q).
+ unfold total.
+ assert (r : Σ_pr₁ (Σ_pr₁ (fst (Σ_pr₂ (p g))) (existT _ f q)) = f).
+  apply W.
+  intros h.
+  destruct (p g); simpl.
+  destruct (fst i); simpl.
+  unfold isContr.
 bbb.
+
+ Focus 2.
+ apply (Σ_type.pair_eq r).
+
+
+bbb.
+
 
 apply qinv_isequiv.
 transparent assert (q : f ~~ g → f = g).
