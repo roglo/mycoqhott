@@ -14,9 +14,11 @@ Notation "'ℬ'" := (bool : Type).
 Notation "A ⇔ B" := ((A → B) * (B → A))%type (at level 100).
 Notation "( x , y ) '_{' P }" := (existT P x y)
   (at level 0, format "'[' ( x ,  y ) _{ P } ']'", only parsing).
-Definition dt_homotopy {A B} (f g : Π (x : A), B x) := Π (x : A), (f x = g x).
 Notation "f '~~' g" := (dt_homotopy f g) (at level 70).
 
 Open Scope nat_scope.
 
 (* "Chapter 5 - Induction" *)
+
+(* "5.1 Introduction to inductive types" *)
+
