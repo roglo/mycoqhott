@@ -2206,6 +2206,7 @@ apply isContr_Σ_inv in p.
 apply hott_3_11_3_i_ii, hott_3_11_3_ii_iii in p.
 eapply equiv_compose; [ apply p | apply quasi_inv ].
 apply hott_3_11_3_ii_iii, hott_3_11_3_i_ii.
+Abort. (* can't do anything... tired... I give up...
 bbb.
 
 Check isContr_Σ_inv.
@@ -2333,4 +2334,4 @@ pose proof hott_4_9_5 W A B f g as r.
 destruct r as ((g', Hg), (h', Hh)).
 apply g', p.
 Defined.
-
+*)
