@@ -1,4 +1,4 @@
-all: chap1.vo chap2.vo chap3.vo chap4.vo
+all: chap1.vo chap2.vo chap3.vo chap4.vo chap5.vo
 
 clean:
 	rm -f *.vo *.glob
@@ -11,3 +11,4 @@ clean:
 chap2.vo: chap1.vo
 chap3.vo: chap2.vo
 chap4.vo: chap3.vo
+chap5.vo: chap4.vo
