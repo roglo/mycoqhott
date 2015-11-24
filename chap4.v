@@ -66,12 +66,47 @@ Defined.
 Definition isProp_Σ_eq_inv A (x : A) :
   isProp (Σ (y : A), y = x) ⇔ isProp (Σ (y : A), x = y).
 Proof.
-unfold isProp; split; intros P (z, p) (t, q); destruct p, q; reflexivity.
+unfold isProp; split; intros P (z, p) (t, q); destruct p, q; apply eq_refl.
 Defined.
+
+(* seems not true...
+Definition isProp_Σ_Π_eq_invext A P f :
+  isProp (Σ (g : Π (x : A), P x), g ~~ f)
+  ⇔ isProp (Σ (g : Π (x : A), P x), f ~~ g).
+Proof.
+unfold isProp; split.
+  intros Q (z, p) (t, q).
+unfold "~~" in p, q.
+assert (∀ x : A, z x = f x).
+ intros x; apply invert, p.
+bbb.
+
+pose proof Q (existT _ z H).
+assert (
+  ∀ y : {g : ∀ x : A, P x & f ~~ g},
+       existT (λ g : ∀ x : A, P x, f ~~ g) z p = y).
+intros y.
+destruct y as (g, y).
+unfold "~~" in y.
+bbb.
+
+assert (z = t).
+bbb.
+
+; destruct p, q; reflexivity.
+Defined.
+*)
 
 Definition Σ_Π_eq_inv A :
   (Σ (x : A), Π (y : A), y = x)
   ⇔ (Σ (x : A), Π (y : A), x = y).
+Proof.
+split; intros (x, p); exists x; intros y; apply invert, p.
+Defined.
+
+Definition Σ_Π_eq_invext A P f :
+  (Σ (g : Π (x : A), P x), f ~~ g)
+  ⇔ (Σ (g : Π (x : A), P x), g ~~ f).
 Proof.
 split; intros (x, p); exists x; intros y; apply invert, p.
 Defined.
@@ -96,7 +131,7 @@ split; intros p.
  exists y; intros z; apply P.
 Defined.
 
-(*
+(* likely needs function extensionality, but I am not allowed to use it...
 Definition isContr_Σ_invext A P f:
   isContr (Σ (g : Π (x : A), P x), f ~~ g)
   ⇔ isContr (Σ (g : Π (x : A), P x), g ~~ f).
@@ -105,17 +140,13 @@ split; intros p.
  generalize p; intros q.
  apply isContr_isProp in q.
  destruct p as (p, r).
- unfold isContr.
- bbb.
+ exists (fst (Σ_Π_eq_invext A P f) p).
+ intros (h, s); simpl.
+ destruct p as (p, t).
+bbb.
 
 Check Σ_eq_inv.
 bbb.
-Definition Σ_Π_eq_invext A :
-  (Σ (x : A), Π (y : A), y = x)
-  ⇔ (Σ (x : A), Π (y : A), x = y).
-Proof.
-split; intros (x, p); exists x; intros y; apply invert, p.
-Defined.
 *)
 
 Definition hott_4_1_1 A B (f : A → B) (q : qinv f) :
@@ -2170,12 +2201,13 @@ assert
   (p : ∀ f,
    (Σ (g : Π (x : A), P x), g = f) ≃ (Σ (g : Π (x : A), P x), g ~~ f)).
  intros h.
-About hott_3_11_8.
 pose proof hott_3_11_8 h as p.
 apply isContr_Σ_inv in p.
 apply hott_3_11_3_i_ii, hott_3_11_3_ii_iii in p.
 eapply equiv_compose; [ apply p | apply quasi_inv ].
 apply hott_3_11_3_ii_iii, hott_3_11_3_i_ii.
+bbb.
+
 Check isContr_Σ_inv.
 bbb.
 
