@@ -10,6 +10,7 @@ Arguments eq_refl [A] x.
 
 Notation "⊥" := False.
 Notation "⊤" := True.
+Notation "★" := I.
 Notation "'ℬ'" := (bool : Type).
 Notation "A ⇔ B" := ((A → B) * (B → A))%type (at level 100).
 Notation "( x , y ) '_{' P }" := (existT P x y)
@@ -174,6 +175,24 @@ transparent assert (f : ∀ l, E l).
  split; intros; apply eq_refl.
 Defined.
 
+(* "Now suppose we define 0'' :≡ nil : List(1), and succ'' : List(1) →
+    List(1) by succ''(l) :≡ cons(★,l). Then for any E : List(1) → U
+    together with e₀ : E(0'') and e_s : Π (l:List(1)) E(l) →
+    E(succ''(l)), we can define
+         e_nil :≡ e0
+         e_cons(★,l,x) :≡ e_s(l,x)." *)
+
+Definition O'' := nil.
+Definition succ'' l := cons I l.
+
+Definition e_nil {E : List_1 → Type} (e₀ : E O'') := e₀.
+Definition e_cons {E : List_1 → Type}
+  {e_s : Π (l : List_1), E l → E (succ'' l)} (u : ⊤) l x := e_s l x.
+
+Definition toto {E : List_1 → Type} {e₀ : E O''} :
+  Σ (f : Π (l : List_1), E l),
+  f O'' = f nil ∧ f nil = e_nil e₀ ∧ e_nil e₀ = e₀.
+Proof.
 bbb.
 
 End ℕ'.
