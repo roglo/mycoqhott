@@ -137,6 +137,36 @@ Definition double'_prop : Π (n : ℕ'), double' (S' n) = S' (S' (double' n))
          end
      end.
 
+Definition double'_prop2 : Π (n : ℕ'), double' (S' n) = S' (S' (double' n)).
+Proof.
+intros n.
+pose proof ua equiv_ℕ_ℕ' as p.
+(*
+pose proof @transport Type _ _ _ p.
+Check @transport Type.
+set (toto := double' (S' n) = S' (S' (double' n)) : Type).
+simpl in toto.
+*)
+Abort.
+
+Inductive List_1 : Type :=
+  | nil : List_1
+  | cons : True → List_1 → List_1.
+
+Print List_1_rect.
+
+(* "The induction principle of List(1) says that for any E : List(1) →
+    U together with recurrence data e_nil : E(nil) and e_cons : Π(u:1)
+    Π(l:List(1)) E(l) → E(cons(u,l)), there exists f : Π (l:List(1))
+    E(l) such that f(nil) ≡ e_nil and f(cons(u,l)) ≡ econs (u,l,f(l))." *)
+
+Definition List_1_ind_princ :
+  ∀ (E : List_1 → Type) (e_nil : E nil)
+    (e_cons : Π (u : True), Π (l : List_1), E l → E (cons u l)),
+    Σ (f : Π (l : List_1), E l),
+    (f nil = e_nil) ∧ (∀ u l, f (cons u l) = e_cons u l (f l)).
+Proof.
+intros.
 bbb.
 
 End ℕ'.
