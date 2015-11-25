@@ -216,3 +216,10 @@ transparent assert (p : ∀ l, E l).
 Defined.
 
 End ℕ'.
+
+(* "5.3 W-types" *)
+
+Record W_type := { WT_A : Type; WT_B : WT_A → Type }.
+
+Definition nat_W := {| WT_A := bool; WT_B :=
+bbb.
