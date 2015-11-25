@@ -46,3 +46,5 @@ pose proof (fs n) as p.
 pose proof (gs n) as q.
 destruct IHn, p, q; apply eq_refl.
 Defined.
+
+(* "5.2 Uniqueness of inductive types" *)
