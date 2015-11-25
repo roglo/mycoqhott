@@ -79,10 +79,14 @@ split; [ apply ℕ'_fg | apply ℕ_gf ].
 Defined.
 
 Definition double : ℕ → ℕ := nat_rec (λ _, ℕ) O (λ _ n, S (S n)).
+(*
 Eval compute in double 4.
+*)
 
 Definition double' := f ◦ double ◦ g.
+(*
 Eval compute in double' (S' (S' (S' (S' O')))).
+*)
 
 Definition double'₀ : ℕ' → ℕ' := ℕ'_rec (λ _, ℕ') O' (λ _ n, S' (S' n)).
 
@@ -99,11 +103,38 @@ induction n; [ apply eq_refl | simpl ].
 destruct IHn; apply eq_refl.
 Defined.
 
-Definition double'_prop : Π (n : ℕ'), double' (S' n) = S' (S' (double' n)).
+(* "Consider, for instance, a simple lemma such as
+       Π (n : ℕ') double'(succ'(n)) = succ'(succ'(double'(n))).
+    Inserting the correct fs and gs is only a little easier than
+    re-proving it by induction on n : N' directly." *)
+
+Definition gs : ∀ n, S (g n) = g (S' n) := λ n, eq_refl (g (S' n)).
+Definition fs : ∀ n, S' (f n) = f (S n) := λ n, eq_refl (f (S n)).
+
+Definition double'_prop_tac : Π (n : ℕ'), double' (S' n) = S' (S' (double' n)).
 Proof.
 intros n.
+unfold double', "◦".
+destruct (gs n).
+destruct (invert (double_prop (g n))).
+destruct (invert (fs (double (g n)))).
+destruct (invert (fs (S (double (g n))))).
 apply eq_refl.
-bbb.
 Defined.
+
+Definition double'_prop : Π (n : ℕ'), double' (S' n) = S' (S' (double' n))
+  := λ (n : ℕ'),
+     match gs n with
+     | eq_refl _ =>
+         match double_prop (g n) with
+         | eq_refl _ =>
+             match fs (double (g n)) with
+             | eq_refl _ =>
+                 match fs (S (double (g n))) with
+                 | eq_refl _ => eq_refl _
+                 end
+             end
+         end
+     end.
 
 End ℕ'.
