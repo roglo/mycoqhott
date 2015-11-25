@@ -48,3 +48,21 @@ destruct IHn, p, q; apply eq_refl.
 Defined.
 
 (* "5.2 Uniqueness of inductive types" *)
+
+Inductive ℕ' : Set := O' | S' : ℕ' → ℕ'.
+
+Definition f : ℕ → ℕ' := nat_rec (λ n, ℕ') O' (λ n, S').
+Definition g : ℕ' → ℕ := ℕ'_rec (λ n', ℕ) O (λ n', S).
+
+Definition ℕ_gf : Π (n : ℕ), g (f n) = n.
+Proof.
+intros n.
+change ((g ◦ f) n = id n); apply hap.
+eapply hott_5_1_1; intros; try apply eq_refl.
+Defined.
+
+Definition ℕ'_fg : Π (n : ℕ'), f (g n) = n.
+Proof.
+intros n.
+induction n; [ apply eq_refl | simpl; apply ap, IHn ].
+Defined.
