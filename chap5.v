@@ -167,6 +167,13 @@ Definition List_1_ind_princ :
     (f nil = e_nil) ∧ (∀ u l, f (cons u l) = e_cons u l (f l)).
 Proof.
 intros.
+transparent assert (f : ∀ l, E l).
+ induction l; [ apply e_nil | apply e_cons, IHl ].
+
+ exists f; unfold f; clear f; simpl.
+ split; intros; apply eq_refl.
+Defined.
+
 bbb.
 
 End ℕ'.
