@@ -108,8 +108,8 @@ Defined.
     Inserting the correct fs and gs is only a little easier than
     re-proving it by induction on n : N' directly." *)
 
-Definition gs : ∀ n, S (g n) = g (S' n) := λ n, eq_refl (g (S' n)).
 Definition fs : ∀ n, S' (f n) = f (S n) := λ n, eq_refl (f (S n)).
+Definition gs : ∀ n, S (g n) = g (S' n) := λ n, eq_refl (g (S' n)).
 
 Definition double'_prop_tac : Π (n : ℕ'), double' (S' n) = S' (S' (double' n)).
 Proof.
