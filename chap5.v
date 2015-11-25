@@ -187,12 +187,32 @@ Definition succ'' l := cons I l.
 
 Definition e_nil {E : List_1 → Type} (e₀ : E O'') := e₀.
 Definition e_cons {E : List_1 → Type}
-  {e_s : Π (l : List_1), E l → E (succ'' l)} (u : ⊤) l x := e_s l x.
+  (e_s : Π (l : List_1), E l → E (succ'' l)) (u : ⊤) l x := e_s l x.
 
-Definition toto {E : List_1 → Type} {e₀ : E O''} :
+(* "Now we can apply the induction principle of List(1), obtaining f :
+    Π (l:List(1)) E(l) such that
+                        f(0'') ≡ f(nil) ≡ e_nil ≡ e₀
+        f(succ'' l) ≡ f(cons(★,l)) ≡ e_cons(★,l,f(l)) ≡ e_s(l,f(l))." *)
+
+Definition List_1_ind_princ' {E : List_1 → Type} {e₀ : E O''}
+    {e_s : Π (l : List_1), E l → E (succ'' l)} :
   Σ (f : Π (l : List_1), E l),
-  f O'' = f nil ∧ f nil = e_nil e₀ ∧ e_nil e₀ = e₀.
+  f O'' = f nil ∧ f nil = e_nil e₀ ∧ e_nil e₀ = e₀ ∧
+  ∀ l, f (succ'' l) = f (cons ★ l) ∧ f (cons ★ l) = e_cons e_s ★ l (f l) ∧
+       e_cons e_s ★ l (f l) = e_s l (f l).
 Proof.
-bbb.
+transparent assert (p : ∀ l, E l).
+ intros l.
+ induction l; [ apply e₀ | ].
+ destruct t; apply e_s, IHl.
+
+ exists p.
+ split; [ apply eq_refl | ].
+ split; [ apply eq_refl | ].
+ split; [ apply eq_refl | intros l ].
+ split; [ apply eq_refl | ].
+ split; [ apply eq_refl | ].
+ apply eq_refl.
+Defined.
 
 End ℕ'.
