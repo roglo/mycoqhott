@@ -219,7 +219,14 @@ End ℕ'.
 
 (* "5.3 W-types" *)
 
-Record W_type := { WT_A : Type; WT_B : WT_A → Type }.
+Inductive W_type (WT_A : Type) (WT_B : WT_A → Type) :=
+  WT_f : Π (a : WT_A), WT_B a → W_type WT_A WT_B.
 
-Definition nat_W := {| WT_A := bool; WT_B :=
+Check WT_f.
+
+Definition nat_W :=
+  WT_f bool (λ b, if negb b then False else True).
+    (λ b t, ...
+
+   {| WT_A := bool; WT_B :=
 bbb.
