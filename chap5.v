@@ -49,6 +49,8 @@ Defined.
 
 (* "5.2 Uniqueness of inductive types" *)
 
+Module ℕ'.
+
 Inductive ℕ' : Set := O' | S' : ℕ' → ℕ'.
 
 Definition f : ℕ → ℕ' := nat_rec (λ n, ℕ') O' (λ n, S').
@@ -61,8 +63,47 @@ change ((g ◦ f) n = id n); apply hap.
 eapply hott_5_1_1; intros; try apply eq_refl.
 Defined.
 
+(* should use the  "primed" version of 5.1.1 as they say, but it can be
+   proved (and ℕ_gf above also) directly *)
 Definition ℕ'_fg : Π (n : ℕ'), f (g n) = n.
 Proof.
 intros n.
 induction n; [ apply eq_refl | simpl; apply ap, IHn ].
 Defined.
+
+Definition equiv_ℕ_ℕ' : ℕ ≃ ℕ'.
+Proof.
+exists f; apply qinv_isequiv; exists g.
+unfold "∼".
+split; [ apply ℕ'_fg | apply ℕ_gf ].
+Defined.
+
+Definition double : ℕ → ℕ := nat_rec (λ _, ℕ) O (λ _ n, S (S n)).
+Eval compute in double 4.
+
+Definition double' := f ◦ double ◦ g.
+Eval compute in double' (S' (S' (S' (S' O')))).
+
+Definition double'₀ : ℕ' → ℕ' := ℕ'_rec (λ _, ℕ') O' (λ _ n, S' (S' n)).
+
+Definition double'₀_double' : double' = double'₀.
+Proof.
+apply Π_type.funext; intros n.
+induction n; [ apply eq_refl | simpl ].
+destruct IHn; apply eq_refl.
+Defined.
+
+Definition double_prop : Π (n : nat), double (S n) = S (S (double n)).
+Proof.
+induction n; [ apply eq_refl | simpl ].
+destruct IHn; apply eq_refl.
+Defined.
+
+Definition double'_prop : Π (n : ℕ'), double' (S' n) = S' (S' (double' n)).
+Proof.
+intros n.
+apply eq_refl.
+bbb.
+Defined.
+
+End ℕ'.
