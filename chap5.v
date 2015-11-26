@@ -232,6 +232,28 @@ Inductive W_type (WT_A : Type) (WT_B : WT_A → Type) :=
   | WT_nil : W_type WT_A WT_B.
 *)
 
+Inductive W_type A B :=
+  WT : ∀ a, (B a → Σ (a : A), B a) → W_type A B.
+
+Definition rec₂ b := if negb b then False else True.
+Definition ℕ_W := W_type bool rec₂.
+Check WT.
+Check WT bool rec₂ false.
+Set Printing All.
+(*
+Check WT bool rec₂ false (λ (_ : False), existT _ false (rec₂ false)).
+
+Toplevel input, characters 44-73:
+Error:
+In environment
+f : False
+The term "@existT bool (fun a : bool => rec₂ a) false (rec₂ false)" has type
+ "@sigT bool (fun a : bool => rec₂ a)" while it is expected to have type
+ "@sigT bool (fun a : bool => rec₂ a)" (cannot satisfy constraint
+"Prop" == "(fun a : bool => rec₂ a) false").
+
+Print W_type.
+
 Inductive W_type :=
   | WT : ∀ (A : Type) (B : A → Type) (a : A), (B a → W_type) → W_type
   | WT_nil.
@@ -246,6 +268,7 @@ Print ℕ_W.
 
 Check ℕ_W false (λ _, WT_nil).
 Check ℕ_W true (λ _, WT_nil).
+*)
 
 (* oui, bon, je ne sais pas... *)
 
