@@ -236,11 +236,11 @@ Inductive W_type A B :=
   WT : ∀ a, (B a → Σ (a : A), B a) → W_type A B.
 
 Definition rec₂ b := if negb b then False else True.
+(*
 Definition ℕ_W := W_type bool rec₂.
 Check WT.
 Check WT bool rec₂ false.
 Set Printing All.
-(*
 Check WT bool rec₂ false (λ (_ : False), existT _ false (rec₂ false)).
 
 Toplevel input, characters 44-73:
@@ -271,5 +271,9 @@ Check ℕ_W true (λ _, WT_nil).
 *)
 
 (* oui, bon, je ne sais pas... *)
+
+Definition ℕ_W := bool_rect (λ _, Type) False True.
+
+Print ℕ_W.
 
 bbb.
