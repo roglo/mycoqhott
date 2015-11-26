@@ -232,9 +232,6 @@ Inductive W_type (WT_A : Type) (WT_B : WT_A → Type) :=
   | WT_nil : W_type WT_A WT_B.
 *)
 
-Inductive W_type A B :=
-  WT : ∀ a, (B a → Σ (a : A), B a) → W_type A B.
-
 Definition rec₂ b := if negb b then False else True.
 (*
 Definition ℕ_W := W_type bool rec₂.
@@ -272,8 +269,16 @@ Check ℕ_W true (λ _, WT_nil).
 
 (* oui, bon, je ne sais pas... *)
 
-Definition ℕ_W := bool_rect (λ _, Type) False True.
+bbb.
+Inductive W_type A B :=
+  WT : ∀ a, (B a → Σ (a : A), B a) → W_type A B.
 
+Definition ℕ_W := bool_rect (λ _, Type) False True.
 Print ℕ_W.
+
+Definition List_W A (x : ⊤ + A) := sum_rect (λ _, Type) (λ _, ⊥) (λ _, ⊤) x.
+Print List_W.
+
+Definition sup {A B} := (Π (a : A), B a → W (x : A), B x) → W (x : A), B x.
 
 bbb.
