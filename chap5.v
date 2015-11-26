@@ -219,14 +219,34 @@ End ℕ'.
 
 (* "5.3 W-types" *)
 
+(**)
+Inductive W_type :=
+  | WT_f : ∀ (WT_A : Type) (WT_B : WT_A → Type) (a : WT_A),
+      (WT_B a → W_type) → W_type
+  | WT_nil : W_type.
+(**)
+
+(*
 Inductive W_type (WT_A : Type) (WT_B : WT_A → Type) :=
-  WT_f : Π (a : WT_A), WT_B a → W_type WT_A WT_B.
+  | WT_f : Π (a : WT_A), (WT_B a → W_type WT_A WT_B) → W_type WT_A WT_B
+  | WT_nil : W_type WT_A WT_B.
+*)
 
 Check WT_f.
 
-Definition nat_W :=
-  WT_f bool (λ b, if negb b then False else True).
-    (λ b t, ...
+Definition rec₂ b := if negb b then False else True.
+Definition nat_W := WT_f bool rec₂.
 
-   {| WT_A := bool; WT_B :=
+Notation "'W' ( x : A ) , B" :=
+  (WT_f A (λ x, B)) (at level 0, x at level 0, B at level 100).
+
+Check nat_W.
+(* nat_W
+     : ∀ a : bool, (rec₂ a → W (x : bool), rec₂ x) → W (x : bool), rec₂ x *)
+
+Check nat_W false (λ (b : False), WT_nil).
+Check nat_W true (λ (b : True), WT_nil).
+
+(* ouais, non, ça doit pas être ça... *)
+
 bbb.
