@@ -269,24 +269,21 @@ Check ℕ_W true (λ _, WT_nil).
 Inductive W_type A B :=
   | WT : ∀ a : A, (B a → W_type A B) → W_type A B.
 
-(* mais alors, il ne faut pas que les A B du "B a → W_type A B" soient
-   d'autres A et B ? ∀ A' B', B a → W_type A' B', par exemple ? *)
-
-bbb.
-
 (*
 Notation "'W' ( a : A ) , B a" :=
-  (W_type A B) (at level 0, x at level 0, B at level 100).
+  (W_type A (λ a, B a)) (at level 0, x at level 0, B at level 100).
 *)
 
 Definition rec₂ b := if negb b then False else True.
 Definition ℕ_W := W_type bool rec₂.
 Print ℕ_W.
 
-Definition WT_nil A B := WT A B
+(*
+Definition WT_nil A B := WT A B.
+*)
 
 Check WT bool rec₂.
-Check WT bool rec₂ false (λ _ : ⊥, WT_nil).
+Check WT bool rec₂ false (λ _ : ⊥, ℕ_W).
 
 bbb.
 Definition ℕ_W := bool_rect (λ _, Type) False True.
