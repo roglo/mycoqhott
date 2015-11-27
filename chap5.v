@@ -266,21 +266,47 @@ Check ℕ_W false (λ _, WT_nil).
 Check ℕ_W true (λ _, WT_nil).
 *)
 
+(*
 Inductive W_type A B :=
   | WT : ∀ a : A, (B a → W_type A B) → W_type A B.
 
-(*
 Notation "'W' ( a : A ) , B a" :=
   (W_type A (λ a, B a)) (at level 0, x at level 0, B at level 100).
 *)
 
-Definition rec₂ b := if negb b then False else True.
-Definition ℕ_W := W_type bool rec₂.
-Print ℕ_W.
+Inductive W_type := W : Type → W_type.
+Definition ℕ_W b := W (bool_rect (λ _, Type) False True b).
 
-(*
+Print ℕ_W.
+Check ℕ_W true.
+
+About sum_rect.
+Check
+  (λ A,
+   sum_rect (λ x : ⊤ + A, match x with inl _ => False | inr _ => True end)).
+bbb.
+
+Check (λ A, W (sum_rect (λ x : ⊤ + A, match x with inl _ => False | inr _ => True end))).
+
+sum_rect :
+∀ (A B : Type) (P : A + B → Type),
+(∀ a : A, P (inl a)) → (∀ b : B, P (inr b)) → ∀ s : A + B, P s
+
+sum_rect is not universe polymorphic
+Arguments A, B are implicit
+Argument scopes are [type_scope type_scope _ _ _ _]
+sum_rect is transparent
+Expands to: Constant Coq.Init.Datatypes.sum_rect
+
+Definition List_W A := W (sum_rect ⊤ A).
+
+bbb.
+
+(*Check ℕ_W false.
 Definition WT_nil A B := WT A B.
 *)
+
+Fixpoint B a := if negb a then (False : Type) else W_type bool B.
 
 Check WT bool rec₂.
 Check WT bool rec₂ false (λ _ : ⊥, ℕ_W).
