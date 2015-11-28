@@ -219,6 +219,18 @@ End ℕ'.
 
 (* "5.3 W-types" *)
 
+Inductive nat' := O' | S' : nat' → nat'.
+
+bbb.
+
+Definition nat'' :=
+  Σ (b : bool), if negb b then [] else .
+
+Check (existT _ false _ : nat'').
+
+B false = False
+B true = type de départ
+
 (*
 Inductive W_type :=
   | WT_f : ∀ (WT_A : Type) (WT_B : WT_A → Type) (a : WT_A),
