@@ -266,13 +266,12 @@ Check ℕ_W false (λ _, WT_nil).
 Check ℕ_W true (λ _, WT_nil).
 *)
 
-(*
 Inductive W_type A B :=
-  | WT : ∀ a : A, (B a → W_type A B) → W_type A B.
+  | sup : ∀ a : A, (B a → W_type A B) → W_type A B.
 
+(*
 Notation "'W' ( a : A ) , B a" :=
   (W_type A (λ a, B a)) (at level 0, x at level 0, B at level 100).
-*)
 
 Inductive W_type := W : Type → W_type.
 Definition ℕ_W b := W (bool_rect (λ _, Type) False True b).
@@ -284,6 +283,28 @@ About sum_rect.
 Check
   (λ A,
    sum_rect (λ x : ⊤ + A, match x with inl _ => False | inr _ => True end)).
+*)
+
+Definition rec₂ b := if negb b then False else True.
+Definition ℕ_W := sup bool rec₂.
+
+Check False_rect.
+(* False_rect
+     : ∀ P : Type, ⊥ → P *)
+Check ℕ_W.
+(* ℕ_W
+     : ∀ a : bool, (rec₂ a → W_type bool rec₂) → W_type bool rec₂ *)
+Check sup bool.
+(* sup bool
+     : ∀ (B : bool → Type) (a : bool), (B a → W_type bool B) → W_type bool B *)
+
+Check sup bool _ false.
+(* sup bool ?T false
+     : (?T false → W_type bool ?T) → W_type bool ?T *)
+bbb.
+
+Check sup bool _ false (λ x, False_rect
+
 bbb.
 
 Check (λ A, W (sum_rect (λ x : ⊤ + A, match x with inl _ => False | inr _ => True end))).
