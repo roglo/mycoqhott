@@ -225,21 +225,37 @@ Inductive W_type A B :=
 Definition ℕ_arg := bool_rect (λ _, Type) True False.
 Definition ℕ_W := W_type bool ℕ_arg.
 
+Definition O_W := sup bool ℕ_arg false (False_rect ℕ_W).
+Definition one_W := sup bool ℕ_arg true (λ x : True, O_W).
+Definition succ_W n := sup bool ℕ_arg true (λ _ : True, n).
+
 Definition List_arg A :=
   sum_rect (λ _, Type) (λ _ : True, False) (λ _ : A, True).
 Definition List_W A := W_type (sum True A) (List_arg A).
 
-Definition O_W := sup bool ℕ_arg false (False_rect ℕ_W).
-Definition one_W := sup bool ℕ_arg true (λ x : True, O_W).
-Definition succ_W n := sup bool ℕ_arg true (λ x : True, n).
-
 Definition nil_W A :=
   sup (sum True A) (List_arg A) (inl I) (False_rect (List_W A)).
-bbb.
 
-Definition cons_W A x :=
-  sup (sum True A) (List_arg A) (inr x).
+Print List_arg.
+(* List_arg@{Top.627 Top.628} =
+λ A : Type, sum_rect (λ _ : ⊤ + A, Type) (λ _ : ⊤, ⊥) (λ _ : A, ⊤)
+     : ∀ (A : Type) (s : ⊤ + A), (λ _ : ⊤ + A, Type) s *)
 
-Print cons_W.
+vvv.
+
+Definition cons_W A (x : A) :=
+  sup (sum True A) (List_arg A) (inr x)
+    (λ (u : List_arg A (inr x)) → ...
+
+(*
+cons_W@{Top.609 Top.610 Top.612} =
+λ (A : Type) (x : A), sup (⊤ + A) (List_arg A) (inr x)
+     : ∀ (A : Type) (x : A),
+       (List_arg A (inr x) → W_type (⊤ + A) (List_arg A))
+       → W_type (⊤ + A) (List_arg A)
+*)
+
+Definition cons_W A (x : A) :=
+  sup (sum True A) (List_arg A) (inr x) (λ _ : _, x).
 
 bbb.
