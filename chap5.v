@@ -240,28 +240,9 @@ Definition List_W A := W_type (sum True A) (List_arg A).
 Definition nil_W A :=
   sup (sum True A) (List_arg A) (inl I) (False_rect (List_W A)).
 
-Check λ A (a : ⊤ + A), sup (sum True A) (List_arg A) a.
+Definition cons_W A (x : A) l :=
+  sup (sum True A) (List_arg A) (inr x) (λ _ : True, l).
 
-Print List_arg.
-(* List_arg@{Top.627 Top.628} =
-λ A : Type, sum_rect (λ _ : ⊤ + A, Type) (λ _ : ⊤, ⊥) (λ _ : A, ⊤)
-     : ∀ (A : Type) (s : ⊤ + A), (λ _ : ⊤ + A, Type) s *)
-
-vvv.
-
-Definition cons_W A (x : A) :=
-  sup (sum True A) (List_arg A) (inr x)
-    (λ (u : List_arg A (inr x)) → ...
-
-(*
-cons_W@{Top.609 Top.610 Top.612} =
-λ (A : Type) (x : A), sup (⊤ + A) (List_arg A) (inr x)
-     : ∀ (A : Type) (x : A),
-       (List_arg A (inr x) → W_type (⊤ + A) (List_arg A))
-       → W_type (⊤ + A) (List_arg A)
-*)
-
-Definition cons_W A (x : A) :=
-  sup (sum True A) (List_arg A) (inr x) (λ _ : _, x).
+Print cons_W.
 
 bbb.
