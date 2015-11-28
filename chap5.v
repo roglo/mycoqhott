@@ -222,6 +222,8 @@ End ℕ'.
 Inductive W_type A B :=
   | sup : ∀ a : A, (B a → W_type A B) → W_type A B.
 
+(* ℕ as W_type *)
+
 Definition ℕ_arg := bool_rect (λ _, Type) True False.
 Definition ℕ_W := W_type bool ℕ_arg.
 
@@ -229,12 +231,16 @@ Definition O_W := sup bool ℕ_arg false (False_rect ℕ_W).
 Definition one_W := sup bool ℕ_arg true (λ x : True, O_W).
 Definition succ_W n := sup bool ℕ_arg true (λ _ : True, n).
 
+(* List A as W_type *)
+
 Definition List_arg A :=
   sum_rect (λ _, Type) (λ _ : True, False) (λ _ : A, True).
 Definition List_W A := W_type (sum True A) (List_arg A).
 
 Definition nil_W A :=
   sup (sum True A) (List_arg A) (inl I) (False_rect (List_W A)).
+
+Check λ A (a : ⊤ + A), sup (sum True A) (List_arg A) a.
 
 Print List_arg.
 (* List_arg@{Top.627 Top.628} =
