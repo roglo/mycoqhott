@@ -243,6 +243,19 @@ Definition nil_W A :=
 Definition cons_W A (x : A) l :=
   sup (sum True A) (List_arg A) (inr x) (λ _ : True, l).
 
-Print cons_W.
+(* "When proving a statement E : (W (x:A) B(x)) → U about all elements
+    of the W-type W (x:A) B(x), it suffices to prove it for sup(a, f),
+    assuming it holds for all f(b) with b : B(a). In other words, it
+    suffices to give a proof
+     e : Π (a : A) Π (f : B(a)→W(x:A)B(x))
+           Π (g:Π(b:B(a))E(f(b))) E(sup(a,f))" *)
+
+Definition W_type_ind_princ A B (E : W_type A B → Type) :
+  (Π (a : A), Π (f : B a → W_type A B),
+   Π (g : Π (b : B a), E (f b)), E (sup A B a f))
+  → ∀ x : W_type A B, E x.
+Proof.
+apply W_type_rect.
+Defined.
 
 bbb.
