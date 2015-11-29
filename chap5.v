@@ -265,4 +265,11 @@ Proof.
 apply W_type_rect.
 Defined.
 
+Definition double' :
+  Π (a : bool), Π (f : ℕ_arg a → ℕ_W), Π (g : ℕ_arg a → ℕ_W), ℕ_W.
+Proof.
+intros a f g.
+destruct a; [ apply g; constructor | ].
+apply O_W.
+(* and f? what do I do with f? *)
 bbb.
