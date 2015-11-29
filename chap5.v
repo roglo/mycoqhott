@@ -281,6 +281,6 @@ Definition double' : ℕ_W → ℕ_W :=
       (if a return ((ℕ_arg a → W_type bool ℕ_arg) → ℕ_W)
        then λ g : ℕ_arg true → W_type bool ℕ_arg, succ_W (succ_W (g ★))
        else λ _ : ℕ_arg false → W_type bool ℕ_arg, O_W) f
-end.
+  end.
 
 bbb.
