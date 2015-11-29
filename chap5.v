@@ -228,9 +228,9 @@ Arguments sup {A} {B} a f.
 Definition ℕ_arg := bool_rect (λ _, Type) True False.
 Definition ℕ_W := W_type bool ℕ_arg.
 
-Definition O_W := @sup bool ℕ_arg false (False_rect ℕ_W).
-Definition one_W := @sup bool ℕ_arg true (λ x : True, O_W).
-Definition succ_W n := @sup bool ℕ_arg true (λ _ : True, n).
+Definition O_W : ℕ_W := @sup bool ℕ_arg false (False_rect ℕ_W).
+Definition one_W : ℕ_W := @sup bool ℕ_arg true (λ x : True, O_W).
+Definition succ_W (n : ℕ_W) : ℕ_W := @sup bool ℕ_arg true (λ _ : True, n).
 
 (* List X as W_type *)
 (* List(X) :≡ W_(z:1+X) rec_(1+X) (U, 0, λx.1, z) *)
@@ -282,5 +282,13 @@ Definition double' : ℕ_W → ℕ_W :=
        then λ g : ℕ_arg true → W_type bool ℕ_arg, succ_W (succ_W (g ★))
        else λ _ : ℕ_arg false → W_type bool ℕ_arg, O_W) f
   end.
+
+About bool_rect.
+
+Definition e B a :=
+  let C _ := Π (f : B a → ℕ_W), Π (g : B a → ℕ_W), ℕ_W in
+  let e₀ f g := O_W in
+  let e₁ f g := succ_W (succ_W (g ★)) in
+  bool_rect C e₁ e₀ a.
 
 bbb.
