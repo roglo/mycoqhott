@@ -221,15 +221,16 @@ End ℕ'.
 
 Inductive W_type A B :=
   | sup : ∀ a : A, (B a → W_type A B) → W_type A B.
+Arguments sup {A} {B} a f.
 
 (* ℕ as W_type *)
 
 Definition ℕ_arg := bool_rect (λ _, Type) True False.
 Definition ℕ_W := W_type bool ℕ_arg.
 
-Definition O_W := sup bool ℕ_arg false (False_rect ℕ_W).
-Definition one_W := sup bool ℕ_arg true (λ x : True, O_W).
-Definition succ_W n := sup bool ℕ_arg true (λ _ : True, n).
+Definition O_W := @sup bool ℕ_arg false (False_rect ℕ_W).
+Definition one_W := @sup bool ℕ_arg true (λ x : True, O_W).
+Definition succ_W n := @sup bool ℕ_arg true (λ _ : True, n).
 
 (* List X as W_type *)
 (* List(X) :≡ W_(z:1+X) rec_(1+X) (U, 0, λx.1, z) *)
@@ -239,15 +240,15 @@ Definition List_arg X :=
 Definition List_W X := W_type (sum True X) (List_arg X).
 
 Definition nil_W X :=
-  sup (sum True X) (List_arg X) (inl I) (False_rect (List_W X)).
+  @sup (sum True X) (List_arg X) (inl I) (False_rect (List_W X)).
 Definition cons_W X (x : X) l :=
-  sup (sum True X) (List_arg X) (inr x) (λ _ : True, l).
+  @sup (sum True X) (List_arg X) (inr x) (λ _ : True, l).
 
 (* why not doing this: *)
 Definition List_arg2 := bool_rect (λ _, Type) True False.
 Definition List_W2 := W_type bool List_arg2.
-Definition nil_W2 := sup bool List_arg2 false (False_rect List_W2).
-Definition cons_W2 X (x : X) l := sup bool List_arg2 true (λ _ : True, l).
+Definition nil_W2 := @sup bool List_arg2 false (False_rect List_W2).
+Definition cons_W2 X (x : X) l := @sup bool List_arg2 true (λ _ : True, l).
 (* ? *)
 
 (* "When proving a statement E : (W (x:A) B(x)) → U about all elements
@@ -259,17 +260,27 @@ Definition cons_W2 X (x : X) l := sup bool List_arg2 true (λ _ : True, l).
 
 Definition W_type_ind_princ A B (E : W_type A B → Type) :
   (Π (a : A), Π (f : B a → W_type A B),
-   Π (g : Π (b : B a), E (f b)), E (sup A B a f))
+   Π (g : Π (b : B a), E (f b)), E (sup a f))
   → ∀ x : W_type A B, E x.
 Proof.
 apply W_type_rect.
 Defined.
 
-Definition double' :
-  Π (a : bool), Π (f : ℕ_arg a → ℕ_W), Π (g : ℕ_arg a → ℕ_W), ℕ_W.
+Definition double'_tac : ℕ_W → ℕ_W.
 Proof.
-intros a f g.
-destruct a; [ apply g; constructor | ].
-apply O_W.
-(* and f? what do I do with f? *)
+intros (a, f).
+destruct a; simpl in f; [ | apply O_W ].
+do 2 apply succ_W.
+apply f; constructor.
+Defined.
+
+Definition double' : ℕ_W → ℕ_W :=
+  λ n : ℕ_W,
+  match n with
+  | sup a f =>
+      (if a return ((ℕ_arg a → W_type bool ℕ_arg) → ℕ_W)
+       then λ g : ℕ_arg true → W_type bool ℕ_arg, succ_W (succ_W (g ★))
+       else λ _ : ℕ_arg false → W_type bool ℕ_arg, O_W) f
+end.
+
 bbb.
