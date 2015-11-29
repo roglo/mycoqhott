@@ -240,9 +240,15 @@ Definition List_W X := W_type (sum True X) (List_arg X).
 
 Definition nil_W X :=
   sup (sum True X) (List_arg X) (inl I) (False_rect (List_W X)).
-
 Definition cons_W X (x : X) l :=
   sup (sum True X) (List_arg X) (inr x) (λ _ : True, l).
+
+(* why not doing this: *)
+Definition List_arg2 := bool_rect (λ _, Type) True False.
+Definition List_W2 := W_type bool List_arg2.
+Definition nil_W2 := sup bool List_arg2 false (False_rect List_W2).
+Definition cons_W2 X (x : X) l := sup bool List_arg2 true (λ _ : True, l).
+(* ? *)
 
 (* "When proving a statement E : (W (x:A) B(x)) → U about all elements
     of the W-type W (x:A) B(x), it suffices to prove it for sup(a, f),
