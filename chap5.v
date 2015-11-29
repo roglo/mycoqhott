@@ -231,17 +231,18 @@ Definition O_W := sup bool ℕ_arg false (False_rect ℕ_W).
 Definition one_W := sup bool ℕ_arg true (λ x : True, O_W).
 Definition succ_W n := sup bool ℕ_arg true (λ _ : True, n).
 
-(* List A as W_type *)
+(* List X as W_type *)
+(* List(X) :≡ W_(z:1+X) rec_(1+X) (U, 0, λx.1, z) *)
 
-Definition List_arg A :=
-  sum_rect (λ _, Type) (λ _ : True, False) (λ _ : A, True).
-Definition List_W A := W_type (sum True A) (List_arg A).
+Definition List_arg X :=
+  sum_rect (λ _, Type) (λ _ : True, False) (λ _ : X, True).
+Definition List_W X := W_type (sum True X) (List_arg X).
 
-Definition nil_W A :=
-  sup (sum True A) (List_arg A) (inl I) (False_rect (List_W A)).
+Definition nil_W X :=
+  sup (sum True X) (List_arg X) (inl I) (False_rect (List_W X)).
 
-Definition cons_W A (x : A) l :=
-  sup (sum True A) (List_arg A) (inr x) (λ _ : True, l).
+Definition cons_W X (x : X) l :=
+  sup (sum True X) (List_arg X) (inr x) (λ _ : True, l).
 
 (* "When proving a statement E : (W (x:A) B(x)) → U about all elements
     of the W-type W (x:A) B(x), it suffices to prove it for sup(a, f),
