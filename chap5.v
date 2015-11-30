@@ -267,16 +267,24 @@ apply W_type_rect.
 Defined.
 
 Definition double a :=
-  let B := bool_rect (λ _, Type) True False in
+  let B := ℕ_arg in
   let C _ := Π (f : B _ → ℕ_W), Π (g : B _ → ℕ_W), ℕ_W in
   let e₀ (f g : B false → ℕ_W) := O_W in
   let e₁ (f g : B true → ℕ_W) := succ_W (succ_W (g ★)) in
   bool_rect C e₁ e₀ a.
 
+Check double.
+(* double
+     : ∀ a : bool, (ℕ_arg a → ℕ_W) → (ℕ_arg a → ℕ_W) → ℕ_W *)
+
+Check W_type_rect bool ℕ_arg.
+
 Goal False.
 set (x := double false).
 set (y := double true).
 simpl in x, y.
+set (u := bool_rect (λ _, Type) True False false).
+simpl in u.
 
 bbb.
 
