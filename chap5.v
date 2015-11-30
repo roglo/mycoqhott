@@ -266,6 +266,20 @@ Proof.
 apply W_type_rect.
 Defined.
 
+Definition double a :=
+  let B := bool_rect (λ _, Type) True False in
+  let C _ := Π (f : B _ → ℕ_W), Π (g : B _ → ℕ_W), ℕ_W in
+  let e₀ (f g : B false → ℕ_W) := O_W in
+  let e₁ (f g : B true → ℕ_W) := succ_W (succ_W (g ★)) in
+  bool_rect C e₁ e₀ a.
+
+Goal False.
+set (x := double false).
+set (y := double true).
+simpl in x, y.
+
+bbb.
+
 Definition double'_tac : ℕ_W → ℕ_W.
 Proof.
 intros (a, f).
@@ -282,13 +296,5 @@ Definition double' : ℕ_W → ℕ_W :=
        then λ g : ℕ_arg true → W_type bool ℕ_arg, succ_W (succ_W (g ★))
        else λ _ : ℕ_arg false → W_type bool ℕ_arg, O_W) f
   end.
-
-About bool_rect.
-
-Definition e B a :=
-  let C _ := Π (f : B a → ℕ_W), Π (g : B a → ℕ_W), ℕ_W in
-  let e₀ f g := O_W in
-  let e₁ f g := succ_W (succ_W (g ★)) in
-  bool_rect C e₁ e₀ a.
 
 bbb.
