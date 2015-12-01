@@ -238,6 +238,7 @@ Fixpoint ℕ2ℕW n :=
   | S n' => succ_W (ℕ2ℕW n')
   end.
 
+(*
 Definition ℕW2ℕ : ℕW → ℕ.
 Proof.
 fix 1.
@@ -311,6 +312,7 @@ destruct a; [ simpl in f | apply 2 ].
 pose proof f ★ as p; clear f; destruct p as (a, f).
 destruct a; [ simpl in f | apply 3 ].
 bbb.
+*)
 
 (* List X as W_type *)
 (* List(X) :≡ W_(z:1+X) rec_(1+X) (U, 0, λx.1, z) *)
@@ -345,6 +347,22 @@ Definition W_type_ind_princ A B (E : W_type A B → Type) :
 Proof.
 apply W_type_rect.
 Defined.
+
+(* "For any a : A and f : B(a) → W (x:A) B(x) we have
+      rec_{W:(x:A),B(x)}(E,e,sup(a,f))
+      ≡ e(a,f,(λb.rec_{W(x:A),B(x)}(E,e,f(b))." *)
+
+Print sup.
+(* Inductive W_type@{Top.1463 Top.1466} (A : Type) (B : A → Type) : Type :=
+    sup : ∀ a : A, (B a → W_type A B) → W_type A B
+*)
+
+Fixpoint toto A B (e : Π (a : A), (B a → W_type A B) → _ → _) w :=
+  match w with
+  | sup a f => e a f (λ b, toto A B e (f b))
+  end.
+
+bbb.
 
 Definition double a :=
   let B := ℕarg in
