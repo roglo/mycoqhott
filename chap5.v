@@ -225,12 +225,37 @@ Arguments sup {A} {B} a f.
 
 (* ℕ as W_type *)
 
-Definition ℕ_arg := bool_rect (λ _, Type) True False.
-Definition ℕ_W := W_type bool ℕ_arg.
+Definition ℕarg := bool_rect (λ _, Type) True False.
+Definition ℕW := W_type bool ℕarg.
 
-Definition O_W : ℕ_W := @sup bool ℕ_arg false (False_rect ℕ_W).
-Definition one_W : ℕ_W := @sup bool ℕ_arg true (λ x : True, O_W).
-Definition succ_W (n : ℕ_W) : ℕ_W := @sup bool ℕ_arg true (λ _ : True, n).
+Definition O_W : ℕW := @sup bool ℕarg false (False_rect ℕW).
+Definition one_W : ℕW := @sup bool ℕarg true (λ x : True, O_W).
+Definition succ_W (n : ℕW) : ℕW := @sup bool ℕarg true (λ _ : True, n).
+
+Fixpoint ℕ2ℕW n :=
+  match n with
+  | O => O_W
+  | S n' => succ_W (ℕ2ℕW n')
+  end.
+
+Definition ℕW2ℕ : ℕW → ℕ.
+Proof.
+intros (a, f).
+destruct a; [ simpl in f | apply O ].
+pose proof f ★ as w; clear f.
+induction w as (a, (f, IHw)).
+
+bbb.
+
+intros (a, f).
+destruct a; [ simpl in f | apply O ].
+destruct a; [ simpl in f | apply 1 ].
+pose proof f ★ as p; clear f; destruct p as (a, f).
+destruct a; [ simpl in f | apply 2 ].
+Show Proof.
+bbb.
+
+bbb.
 
 (* List X as W_type *)
 (* List(X) :≡ W_(z:1+X) rec_(1+X) (U, 0, λx.1, z) *)
@@ -267,17 +292,17 @@ apply W_type_rect.
 Defined.
 
 Definition double a :=
-  let B := ℕ_arg in
-  let C _ := Π (f : B _ → ℕ_W), Π (g : B _ → ℕ_W), ℕ_W in
-  let e₀ (f g : B false → ℕ_W) := O_W in
-  let e₁ (f g : B true → ℕ_W) := succ_W (succ_W (g ★)) in
+  let B := ℕarg in
+  let C _ := Π (f : B _ → ℕW), Π (g : B _ → ℕW), ℕW in
+  let e₀ (f g : B false → ℕW) := O_W in
+  let e₁ (f g : B true → ℕW) := succ_W (succ_W (g ★)) in
   bool_rect C e₁ e₀ a.
 
 Check double.
 (* double
-     : ∀ a : bool, (ℕ_arg a → ℕ_W) → (ℕ_arg a → ℕ_W) → ℕ_W *)
+     : ∀ a : bool, (ℕarg a → ℕW) → (ℕarg a → ℕW) → ℕW *)
 
-Check W_type_rect bool ℕ_arg.
+Check W_type_rect bool ℕarg.
 
 Goal False.
 set (x := double false).
@@ -288,7 +313,7 @@ simpl in u.
 
 bbb.
 
-Definition double'_tac : ℕ_W → ℕ_W.
+Definition double'_tac : ℕW → ℕW.
 Proof.
 intros (a, f).
 destruct a; simpl in f; [ | apply O_W ].
@@ -296,13 +321,13 @@ do 2 apply succ_W.
 apply f; constructor.
 Defined.
 
-Definition double' : ℕ_W → ℕ_W :=
-  λ n : ℕ_W,
+Definition double' : ℕW → ℕW :=
+  λ n : ℕW,
   match n with
   | sup a f =>
-      (if a return ((ℕ_arg a → W_type bool ℕ_arg) → ℕ_W)
-       then λ g : ℕ_arg true → W_type bool ℕ_arg, succ_W (succ_W (g ★))
-       else λ _ : ℕ_arg false → W_type bool ℕ_arg, O_W) f
+      (if a return ((ℕarg a → W_type bool ℕarg) → ℕW)
+       then λ g : ℕarg true → W_type bool ℕarg, succ_W (succ_W (g ★))
+       else λ _ : ℕarg false → W_type bool ℕarg, O_W) f
   end.
 
 bbb.
