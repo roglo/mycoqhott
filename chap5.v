@@ -225,12 +225,94 @@ Arguments sup {A} {B} a f.
 
 (* ℕ as W_type *)
 
-Definition ℕ_arg := bool_rect (λ _, Type) True False.
-Definition ℕ_W := W_type bool ℕ_arg.
+Definition ℕarg := bool_rect (λ _, Type) True False.
+Definition ℕW := W_type bool ℕarg.
 
-Definition O_W : ℕ_W := @sup bool ℕ_arg false (False_rect ℕ_W).
-Definition one_W : ℕ_W := @sup bool ℕ_arg true (λ x : True, O_W).
-Definition succ_W (n : ℕ_W) : ℕ_W := @sup bool ℕ_arg true (λ _ : True, n).
+Definition O_W : ℕW := @sup bool ℕarg false (False_rect ℕW).
+Definition one_W : ℕW := @sup bool ℕarg true (λ x : True, O_W).
+Definition succ_W (n : ℕW) : ℕW := @sup bool ℕarg true (λ _ : True, n).
+
+Fixpoint ℕ2ℕW n :=
+  match n with
+  | O => O_W
+  | S n' => succ_W (ℕ2ℕW n')
+  end.
+
+(*
+Definition ℕW2ℕ : ℕW → ℕ.
+Proof.
+fix 1.
+intros (a, f).
+destruct a; [ simpl in f | apply O ].
+pose proof f ★ as p.
+constructor 2.
+apply ℕW2ℕ.
+apply f.
+constructor.
+Show Proof.
+Abort.
+
+Definition ℕarg_true_True : ℕarg true = True.
+Proof.
+apply eq_refl.
+Defined.
+
+Check (λ P, transport P ℕarg_true_True).
+
+Definition toto : ℕW → ℕ.
+Proof.
+intros (a, f).
+destruct a; [ | apply O ].
+About transport.
+bbb.
+
+Check (transport f).
+
+Fixpoint ℕW2ℕ (w : ℕW) : ℕ :=
+  match w with
+  | sup a f =>
+      match a with
+      | false => O
+      | true => S (ℕW2ℕ (transport f ℕarg_true_True ★))
+      end
+  end.
+
+Fixpoint ℕW2ℕ (w : ℕW) : ℕ :=
+  match w with
+  | sup a f =>
+      match a with
+      | false => O
+      | true => S (ℕW2ℕ (f ★))
+      end
+  end.
+
+Fixpoint ℕW2ℕ (w : ℕW) : ℕ :=
+  match w with
+  | sup a f =>
+      (if a as b return ((ℕarg b → W_type bool ℕarg) → ℕ)
+       then λ (f0 : ℕarg true → W_type bool ℕarg) (p:=f0 ★), S (ℕW2ℕ (f0 ★))
+       else λ _ : ℕarg false → W_type bool ℕarg, 0) f
+  end.
+
+bbb.
+
+pose proof ℕW2ℕ p as n.
+
+Guarded.
+destruct n.
+Guarded.
+bbb.
+
+intros (a, f).
+destruct a; [ simpl in f | apply O ].
+pose proof f ★ as p; clear f; destruct p as (a, f).
+destruct a; [ simpl in f | apply 1 ].
+pose proof f ★ as p; clear f; destruct p as (a, f).
+destruct a; [ simpl in f | apply 2 ].
+pose proof f ★ as p; clear f; destruct p as (a, f).
+destruct a; [ simpl in f | apply 3 ].
+bbb.
+*)
 
 (* List X as W_type *)
 (* List(X) :≡ W_(z:1+X) rec_(1+X) (U, 0, λx.1, z) *)
@@ -266,21 +348,45 @@ Proof.
 apply W_type_rect.
 Defined.
 
+(* "For any a : A and f : B(a) → W (x:A) B(x) we have
+      rec_{W:(x:A),B(x)}(E,e,sup(a,f))
+      ≡ e(a,f,(λb.rec_{W(x:A),B(x)}(E,e,f(b))." *)
+
+Print sup.
+(* Inductive W_type@{Top.1463 Top.1466} (A : Type) (B : A → Type) : Type :=
+    sup : ∀ a : A, (B a → W_type A B) → W_type A B
+*)
+
+Fixpoint toto A B (e : Π (a : A), (B a → W_type A B) → _ → _) w :=
+  match w with
+  | sup a f => e a f (λ b, toto A B e (f b))
+  end.
+
+bbb.
+
 Definition double a :=
-  let B := bool_rect (λ _, Type) True False in
-  let C _ := Π (f : B _ → ℕ_W), Π (g : B _ → ℕ_W), ℕ_W in
-  let e₀ (f g : B false → ℕ_W) := O_W in
-  let e₁ (f g : B true → ℕ_W) := succ_W (succ_W (g ★)) in
+  let B := ℕarg in
+  let C _ := Π (f : B _ → ℕW), Π (g : B _ → ℕW), ℕW in
+  let e₀ (f g : B false → ℕW) := O_W in
+  let e₁ (f g : B true → ℕW) := succ_W (succ_W (g ★)) in
   bool_rect C e₁ e₀ a.
+
+Check double.
+(* double
+     : ∀ a : bool, (ℕarg a → ℕW) → (ℕarg a → ℕW) → ℕW *)
+
+Check W_type_rect bool ℕarg.
 
 Goal False.
 set (x := double false).
 set (y := double true).
 simpl in x, y.
+set (u := bool_rect (λ _, Type) True False false).
+simpl in u.
 
 bbb.
 
-Definition double'_tac : ℕ_W → ℕ_W.
+Definition double'_tac : ℕW → ℕW.
 Proof.
 intros (a, f).
 destruct a; simpl in f; [ | apply O_W ].
@@ -288,13 +394,13 @@ do 2 apply succ_W.
 apply f; constructor.
 Defined.
 
-Definition double' : ℕ_W → ℕ_W :=
-  λ n : ℕ_W,
+Definition double' : ℕW → ℕW :=
+  λ n : ℕW,
   match n with
   | sup a f =>
-      (if a return ((ℕ_arg a → W_type bool ℕ_arg) → ℕ_W)
-       then λ g : ℕ_arg true → W_type bool ℕ_arg, succ_W (succ_W (g ★))
-       else λ _ : ℕ_arg false → W_type bool ℕ_arg, O_W) f
+      (if a return ((ℕarg a → W_type bool ℕarg) → ℕW)
+       then λ g : ℕarg true → W_type bool ℕarg, succ_W (succ_W (g ★))
+       else λ _ : ℕarg false → W_type bool ℕarg, O_W) f
   end.
 
 bbb.
