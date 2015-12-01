@@ -240,21 +240,24 @@ Fixpoint ℕ2ℕW n :=
 
 Definition ℕW2ℕ : ℕW → ℕ.
 Proof.
+fix 1.
 intros (a, f).
 destruct a; [ simpl in f | apply O ].
-pose proof f ★ as w; clear f.
-induction w as (a, (f, IHw)).
-
+pose proof f ★ as p.
+pose proof ℕW2ℕ p as n.
+Guarded.
+destruct n.
+Guarded.
 bbb.
 
 intros (a, f).
 destruct a; [ simpl in f | apply O ].
+pose proof f ★ as p; clear f; destruct p as (a, f).
 destruct a; [ simpl in f | apply 1 ].
 pose proof f ★ as p; clear f; destruct p as (a, f).
 destruct a; [ simpl in f | apply 2 ].
-Show Proof.
-bbb.
-
+pose proof f ★ as p; clear f; destruct p as (a, f).
+destruct a; [ simpl in f | apply 3 ].
 bbb.
 
 (* List X as W_type *)
