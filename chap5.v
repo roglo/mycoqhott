@@ -247,10 +247,13 @@ destruct a; [ simpl in f | apply O ].
 pose proof f ★ as p.
 constructor 2.
 apply ℕW2ℕ.
+Guarded.
 apply f.
+Guarded.
 constructor.
 Show Proof.
 Abort.
+*)
 
 Definition ℕarg_true_True : ℕarg true = True.
 Proof.
@@ -258,22 +261,29 @@ apply eq_refl.
 Defined.
 
 Check (λ P, transport P ℕarg_true_True).
+(* λ P : Type → Type, transport P ℕarg_true_True
+     : ∀ P : Type → Type, P (ℕarg true) → P ⊤ *)
 
+(**)
 Definition toto : ℕW → ℕ.
 Proof.
 intros (a, f).
-destruct a; [ | apply O ].
-About transport.
+refine (match a with false => O | true => _ end).
+Show Proof.
 bbb.
 
-Check (transport f).
+destruct a; [ | apply O ].
+Check (λ P, transport P ℕarg_true_True).
+About transport.
+bbb.
+*)
 
 Fixpoint ℕW2ℕ (w : ℕW) : ℕ :=
   match w with
   | sup a f =>
       match a with
       | false => O
-      | true => S (ℕW2ℕ (transport f ℕarg_true_True ★))
+      | true => S (ℕW2ℕ (transport (f : ℕarg a → ℕW) ℕarg_true_True ★))
       end
   end.
 
