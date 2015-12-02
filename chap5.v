@@ -329,16 +329,14 @@ Proof. apply eq_refl. Defined.
           Π (a,f) h(sup(a,f)) = e(a,f,λb.h(f(b))).
     Then g and h are equal." *)
 
-Definition hott_5_3_1 A B E (g h : Π (w : W_type A B), E w) :
-  (Π (a : A), Π (f : B a → W_type A B), (Π (b : B a), E (f b)) → E (sup a f))
+Definition hott_5_3_1 A B E (g h : Π (w : W_type A B), E w)
+  (e :
+   Π (a : A), Π (f : B a → W_type A B), (Π (b : B a), E (f b)) → E (sup a f)) :
+  (Π (a : A), Π (f : B a → W_type A B), g (sup a f) = e a f (λ b, g (f b)))
+  → (Π (a : A), Π (f : B a → W_type A B), h (sup a f) = e a f (λ b, h (f b)))
   → g = h.
 Proof.
-intros e.
-assert
-  (Π (a : A), Π (f : B a → W_type A B), g (sup a f) = e a f (λ b, g (f b))).
- intros a f.
- Check W_type_rect.
- pose proof e a f as p.
+intros p q.
 
 bbb.
 
