@@ -342,7 +342,7 @@ pose proof q a f as q₁.
 apply invert in p₁.
 apply invert in q₁.
 destruct p₁, q₁.
-set (r := e a f).
+set (f₁ := e a f).
 
 bbb.
 
