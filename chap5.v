@@ -334,9 +334,15 @@ Definition hott_5_3_1 A B E (g h : Π (w : W_type A B), E w)
    Π (a : A), Π (f : B a → W_type A B), (Π (b : B a), E (f b)) → E (sup a f)) :
   (Π (a : A), Π (f : B a → W_type A B), g (sup a f) = e a f (λ b, g (f b)))
   → (Π (a : A), Π (f : B a → W_type A B), h (sup a f) = e a f (λ b, h (f b)))
-  → g = h.
+  → g ~~ h.
 Proof.
-intros p q.
+intros p q (a, f).
+pose proof p a f as p₁.
+pose proof q a f as q₁.
+apply invert in p₁.
+apply invert in q₁.
+destruct p₁, q₁.
+set (r := e a f).
 
 bbb.
 
