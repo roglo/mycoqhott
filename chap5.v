@@ -339,7 +339,6 @@ assert
  intros a f.
  Check W_type_rect.
  pose proof e a f as p.
- Check (p g).
 
 bbb.
 
