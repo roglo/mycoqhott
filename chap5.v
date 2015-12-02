@@ -310,6 +310,37 @@ Definition double : ℕW → ℕW :=
         rec_{W:(x:A),B(x)}(E,e,sup(a,f))
         ≡ e(a,f,(λb.rec_{W(x:A),B(x)}(E,e,f(b))." *)
 
+Definition W_type_comp_rule A B (a : A) (f : B a → W_type A B) E e :
+  W_type_rect A B E e (sup a f)
+  = e a f (λ b, W_type_rect A B E e (f b)).
+Proof. apply eq_refl. Defined.
+
+Definition double_ℕW_O : double O_W = O_W.
+Proof. apply eq_refl. Defined.
+
+Definition double_ℕW_1 : double one_W = succ_W (succ_W O_W).
+Proof. apply eq_refl. Defined.
+
+(* "Theorem 5.3.1. Let g, h : Π (w:W(x:A) B(x)) E(w) be two functions
+    which satisfy the recurrence
+          e : Π (a,f) (Π (b:B(a)) E(f(b))) → E(sup(a,f)),
+    i.e., such that
+          Π (a,f) g(sup(a,f)) = e(a,f,λb.g(f(b))),
+          Π (a,f) h(sup(a,f)) = e(a,f,λb.h(f(b))).
+    Then g and h are equal." *)
+
+Definition hott_5_3_1 A B E (g h : Π (w : W_type A B), E w) :
+  (Π (a : A), Π (f : B a → W_type A B), (Π (b : B a), E (f b)) → E (sup a f))
+  → g = h.
+Proof.
+intros e.
+assert
+  (Π (a : A), Π (f : B a → W_type A B), g (sup a f) = e a f (λ b, g (f b))).
+ intros a f.
+ Check W_type_rect.
+ pose proof e a f as p.
+ Check (p g).
+
 bbb.
 
 Print sup.
