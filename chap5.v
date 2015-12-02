@@ -303,9 +303,12 @@ Definition ℕW_double_rec :
 Definition double : ℕW → ℕW :=
   W_type_ind_princ ℬ ℕarg (λ _, ℕW) ℕW_double_rec.
 
-(* "For any a:A and f:B(a)→W(x:A) B(x) we have
-      rec_{W:(x:A),B(x)}(E,e,sup(a,f))
-      ≡ e(a,f,(λb.rec_{W(x:A),B(x)}(E,e,f(b))." *)
+(* "The associated computation rule for the function
+    rec_{W(x:A)B(x)}(E,e) : Π(w:W(x:A) B(x)) E(w) is as follows.
+
+    * For any a:A and f:B(a)→W(x:A) B(x) we have
+        rec_{W:(x:A),B(x)}(E,e,sup(a,f))
+        ≡ e(a,f,(λb.rec_{W(x:A),B(x)}(E,e,f(b))." *)
 
 bbb.
 
