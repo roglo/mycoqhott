@@ -337,9 +337,19 @@ Definition hott_5_3_1 A B E (g h : Π (w : W_type A B), E w)
   → g ~~ h.
 Proof.
 intros p q (a, f).
-pose proof p a f as p₁.
-pose proof q a f as q₁.
-eapply compose; [ apply p₁ | ].
-eapply compose; [ | eapply invert, q₁ ].
+eapply compose; [ apply p | ].
+eapply compose; [ | eapply invert, q ].
+Check e a f (λ b, g (f b)).
+pose proof W_type_comp_rule A B a f E e.
+Check W_type_rect.
+
+bbb.
+
+set (s := W_type_rect A B E e (sup a f)) in r.
+unfold W_type_rect in r.
+simpl in r.
+
+(* e a f (λ b : B a, g (f b))
+     : E (sup a f) *)
 
 bbb.
