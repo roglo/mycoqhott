@@ -339,5 +339,8 @@ Proof.
 intros p q (a, f).
 pose proof p a f as p₁.
 pose proof q a f as q₁.
+apply invert in p₁.
+apply invert in q₁.
+destruct p₁, q₁.
 
 bbb.
