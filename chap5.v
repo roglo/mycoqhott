@@ -238,92 +238,6 @@ Fixpoint ℕ2ℕW n :=
   | S n' => succ_W (ℕ2ℕW n')
   end.
 
-(*
-Definition ℕW2ℕ : ℕW → ℕ.
-Proof.
-fix 1.
-intros (a, f).
-destruct a; [ simpl in f | apply O ].
-pose proof f ★ as p.
-constructor 2.
-apply ℕW2ℕ.
-Guarded.
-apply f.
-Guarded.
-constructor.
-Show Proof.
-Abort.
-*)
-
-Definition ℕarg_true_True : ℕarg true = True.
-Proof.
-apply eq_refl.
-Defined.
-
-Check (λ P, transport P ℕarg_true_True).
-(* λ P : Type → Type, transport P ℕarg_true_True
-     : ∀ P : Type → Type, P (ℕarg true) → P ⊤ *)
-
-(**)
-Definition toto : ℕW → ℕ.
-Proof.
-intros (a, f).
-refine (match a with false => O | true => _ end).
-Show Proof.
-bbb.
-
-destruct a; [ | apply O ].
-Check (λ P, transport P ℕarg_true_True).
-About transport.
-bbb.
-*)
-
-Fixpoint ℕW2ℕ (w : ℕW) : ℕ :=
-  match w with
-  | sup a f =>
-      match a with
-      | false => O
-      | true => S (ℕW2ℕ (transport (f : ℕarg a → ℕW) ℕarg_true_True ★))
-      end
-  end.
-
-Fixpoint ℕW2ℕ (w : ℕW) : ℕ :=
-  match w with
-  | sup a f =>
-      match a with
-      | false => O
-      | true => S (ℕW2ℕ (f ★))
-      end
-  end.
-
-Fixpoint ℕW2ℕ (w : ℕW) : ℕ :=
-  match w with
-  | sup a f =>
-      (if a as b return ((ℕarg b → W_type bool ℕarg) → ℕ)
-       then λ (f0 : ℕarg true → W_type bool ℕarg) (p:=f0 ★), S (ℕW2ℕ (f0 ★))
-       else λ _ : ℕarg false → W_type bool ℕarg, 0) f
-  end.
-
-bbb.
-
-pose proof ℕW2ℕ p as n.
-
-Guarded.
-destruct n.
-Guarded.
-bbb.
-
-intros (a, f).
-destruct a; [ simpl in f | apply O ].
-pose proof f ★ as p; clear f; destruct p as (a, f).
-destruct a; [ simpl in f | apply 1 ].
-pose proof f ★ as p; clear f; destruct p as (a, f).
-destruct a; [ simpl in f | apply 2 ].
-pose proof f ★ as p; clear f; destruct p as (a, f).
-destruct a; [ simpl in f | apply 3 ].
-bbb.
-*)
-
 (* List X as W_type *)
 (* List(X) :≡ W_(z:1+X) rec_(1+X) (U, 0, λx.1, z) *)
 
@@ -358,19 +272,61 @@ Proof.
 apply W_type_rect.
 Defined.
 
-(* "For any a : A and f : B(a) → W (x:A) B(x) we have
+(* "How would we define the function double on natural numbers encoded
+    as a W-type? We would like to use the recursion principle of ℕ^W
+    with a codomain of ℕ^W itself. We thus need to construct a
+    suitable function
+           e : Π (a:2) Π (f:B(a)→ℕ^W) Π (g:B(a)→ℕ^W) ℕ^W
+    which will represent the recurrence for the double function; for
+    simplicity we denote the type family rec₂(U,0,1) by B." *)
+
+(* e is ℕW_double_rec *)
+Definition ℕW_double_rec_tac :
+  let B := bool_rect (λ _, Type) ⊤ ⊥ in
+  Π (a : ℬ), Π (f : B a → ℕW), Π (g : B a → ℕW), ℕW.
+Proof.
+intros; simpl in B.
+destruct a; simpl in f, g; [ | apply O_W ].
+apply succ_W, succ_W, g, ★.
+Defined.
+
+Definition ℕW_double_rec :
+  let B := bool_rect (λ _, Type) ⊤ ⊥ in
+  Π (a : ℬ), Π (f : B a → ℕW), Π (g : B a → ℕW), ℕW
+:=
+  let B := bool_rect (λ _ : bool, Type) ⊤ ⊥ in
+  λ (a : ℬ) (f g : B a → ℕW),
+  (if a return ((B a → ℕW) → (B a → ℕW) → ℕW)
+   then λ _ h : B true → ℕW, succ_W (succ_W (h ★))
+   else λ _ _ : B false → ℕW, O_W) f g.
+
+Definition double : ℕW → ℕW :=
+  W_type_ind_princ ℬ ℕarg (λ _, ℕW) ℕW_double_rec.
+
+(* "For any a:A and f:B(a)→W(x:A) B(x) we have
       rec_{W:(x:A),B(x)}(E,e,sup(a,f))
       ≡ e(a,f,(λb.rec_{W(x:A),B(x)}(E,e,f(b))." *)
+
+bbb.
 
 Print sup.
 (* Inductive W_type@{Top.1463 Top.1466} (A : Type) (B : A → Type) : Type :=
     sup : ∀ a : A, (B a → W_type A B) → W_type A B
 *)
 
+(*
 Fixpoint toto A B (e : Π (a : A), (B a → W_type A B) → _ → _) w :=
   match w with
   | sup a f => e a f (λ b, toto A B e (f b))
   end.
+
+bbb.
+*)
+
+bbb.
+
+Definition double := W_type_ind_princ.
+Print double.
 
 bbb.
 
