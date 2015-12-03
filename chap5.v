@@ -351,3 +351,10 @@ Abort. (* I don't know how to finish this proof; I see later, perhaps *)
         ℕAlg :≡ Σ (C : U) C × (C → C)." *)
 
 Definition ℕAlg := Σ (C : Type), (C * (C → C))%type.
+
+(* "Definition 5.4.2. A N-homomorphism between N-algebras ( C, c 0 , c
+    s ) and ( D, d 0 , d s ) is a func- tion h : C → D such that h ( c
+    0 ) = d 0 and h ( c s ( c )) = d s ( h ( c )) for all c : C. The
+    type of such homomorphisms is NHom (( C, c 0 , c s ) , ( D, d 0 ,
+    d s )) : ≡ ∑ ( h ( c 0 ) = d 0 ) × ∏ ( c:C ) ( h ( c s ( c )) = d
+    s ( h ( c ))) ." *)
