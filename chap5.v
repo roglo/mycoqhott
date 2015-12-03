@@ -353,4 +353,10 @@ Definition ℕAlg := Σ (C : Type), (C * (C → C))%type.
     h(cs(c)) = ds(h(c)) for all c : C. The type of such homomorphisms
     is
         ℕHom((C,c₀,cs),(D,d₀,ds)) :≡
-          Σ (h:C→D) (h(c₀) = d₎) × Π(c:C) (h(cs(c)) = ds(h(c)))." *)
+          Σ (h:C→D) (h(c₀) = d₀) × Π(c:C) (h(cs(c)) = ds(h(c)))." *)
+
+Definition ℕHom (Ca Da : ℕAlg) :=
+  match (Ca, Da) with
+  | (existT _ C (c₀, cs), existT _ D (d₀, ds)) =>
+       Σ (h: C → D), ((h c₀ = d₀) * Π (c : C), (h (cs c) = ds (h c)))%type
+  end.
