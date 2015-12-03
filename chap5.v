@@ -3,6 +3,7 @@
 
 Require Import Utf8 QArith NPeano.
 Require Import chap1 chap2 chap3 chap4.
+Remove Printing Let sigT.
 Set Universe Polymorphism.
 
 (* no default implicit without arguments *)
@@ -387,6 +388,7 @@ assert (cd : C = D).
  exists f; apply qinv_isequiv; exists g.
  split; unfold "◦", "∼", id.
   intros d.
+Print ℕHom.
 bbb.
 
 assert (hi : ℕHom I I).
