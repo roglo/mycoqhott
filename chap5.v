@@ -388,7 +388,6 @@ assert (cd : C = D).
  exists f; apply qinv_isequiv; exists g.
  split; unfold "◦", "∼", id.
   intros d.
-Print ℕHom.
 bbb.
 
 assert (hi : ℕHom I I).
