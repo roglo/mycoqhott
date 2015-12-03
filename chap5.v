@@ -154,8 +154,6 @@ Inductive List_1 : Type :=
   | nil : List_1
   | cons : True → List_1 → List_1.
 
-Print List_1_rect.
-
 (* "The induction principle of List(1) says that for any E : List(1) →
     U together with recurrence data e_nil : E(nil) and e_cons : Π(u:1)
     Π(l:List(1)) E(l) → E(cons(u,l)), there exists f : Π (l:List(1))
@@ -339,9 +337,7 @@ Proof.
 intros p q (a, f).
 eapply compose; [ apply p | ].
 eapply compose; [ | eapply invert, q ].
-Check e a f (λ b, g (f b)).
 pose proof W_type_comp_rule A B a f E e.
-Check W_type_rect.
 Abort. (* I don't know how to finish this proof; I see later, perhaps *)
 
 (* "5.4 Inductive types are initial algebras" *)
@@ -352,9 +348,9 @@ Abort. (* I don't know how to finish this proof; I see later, perhaps *)
 
 Definition ℕAlg := Σ (C : Type), (C * (C → C))%type.
 
-(* "Definition 5.4.2. A N-homomorphism between N-algebras ( C, c 0 , c
-    s ) and ( D, d 0 , d s ) is a func- tion h : C → D such that h ( c
-    0 ) = d 0 and h ( c s ( c )) = d s ( h ( c )) for all c : C. The
-    type of such homomorphisms is NHom (( C, c 0 , c s ) , ( D, d 0 ,
-    d s )) : ≡ ∑ ( h ( c 0 ) = d 0 ) × ∏ ( c:C ) ( h ( c s ( c )) = d
-    s ( h ( c ))) ." *)
+(* "Definition 5.4.2. A ℕ-homomorphism between ℕ-algebras (C,c₀,cs)
+    and (D,d₀,ds) is a function h : C → D such that h(c₀) = d₀ and
+    h(cs(c)) = ds(h(c)) for all c : C. The type of such homomorphisms
+    is
+        ℕHom((C,c₀,cs),(D,d₀,ds)) :≡
+          Σ (h:C→D) (h(c₀) = d₎) × Π(c:C) (h(cs(c)) = ds(h(c)))." *)
