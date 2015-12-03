@@ -392,6 +392,8 @@ transparent assert (gf: ℕHom I I).
  destruct J as (D, (d₀, ds)); simpl in gf.
  destruct f as (f, (f₀, fs)); simpl in gf.
  destruct g as (g, (g₀, gs)); simpl in gf.
+ unfold ℕHom in gf; simpl in gf.
+ destruct gf as (h, (h₀, hs)).
 bbb.
 (*
 assert (cd : Σ_pr₁ I = Σ_pr₁ J).
