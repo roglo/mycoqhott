@@ -367,3 +367,56 @@ Definition ℕHom (Ca Da : ℕAlg) :=
             isHinit_ℕ(I) :≡ Π (C : ℕAlg), isContr(ℕHom(I,C))." *)
 
 Definition isHinit_ℕ I := Π (C : ℕAlg), isContr (ℕHom I C).
+
+(* "Theorem 5.4.4. Any two h-initial ℕ-algebras are equal. [...]" *)
+
+Definition hott_5_4_4_i I J : isHinit_ℕ I → isHinit_ℕ J → I = J.
+Proof.
+intros p q.
+assert (r : isContr (ℕHom I J)) by apply p.
+destruct r as (f, r).
+assert (s : isContr (ℕHom J I)) by apply q.
+destruct s as (g, s).
+assert (ℕHom I I).
+ unfold ℕHom; simpl.
+ unfold ℕHom in f, g.
+ destruct I, J.
+ destruct p0; simpl.
+ destruct p1.
+ destruct f, g.
+ exists (x6 ◦ x5).
+ destruct p0, p1.
+ destruct e.
+ split; [ apply e1 | ].
+ intros c.
+
+bbb.
+
+
+unfold isHinit_ℕ in p, q.
+unfold ℕHom in p, q; simpl in p, q.
+pose proof p I as pi; simpl in pi.
+pose proof p J as pj; simpl in pj.
+pose proof q I as qi; simpl in qi.
+pose proof q J as qj; simpl in qj.
+destruct I as (C, (c₀, cs)).
+destruct J as (D, (d₀, ds)).
+assert (cd : C = D).
+ apply ua.
+ transparent assert (f : C → D); [ apply pj | ].
+ exists f; unfold f; clear f.
+ apply qinv_isequiv.
+ transparent assert (f : D → C); [ apply qi | ].
+ exists f; unfold f; clear f.
+ unfold "◦", "∼", id; split.
+  intros d.
+  destruct pj, qi; simpl.
+  destruct x, x0; simpl.
+
+Focus 2.
+apply (Σ_type.pair_eq cd).
+
+bbb.
+
+(* "[...] Thus, the type of h-initial ℕ-algebras is a mere
+    proposition." *)
