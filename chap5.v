@@ -375,41 +375,41 @@ Definition hott_5_4_4_i I J : isHinit_ℕ I → isHinit_ℕ J → I = J.
 Proof.
 intros p q.
 assert (r : isContr (ℕHom I J)) by apply p.
-destruct r as (f, r).
 assert (s : isContr (ℕHom J I)) by apply q.
+destruct r as (f, r).
 destruct s as (g, s).
-(**)
-destruct I as (C, (c₀, cs)).
-destruct J as (D, (d₀, ds)).
-destruct f as (f, (f₀, fs)).
-destruct g as (g, (g₀, gs)).
-assert (cd : C = D).
- apply ua.
- exists f; apply qinv_isequiv; exists g.
+transparent assert (gf: ℕHom I I).
+ unfold ℕHom in f, g; unfold ℕHom.
+ destruct I as (C, (c₀, cs)).
+ destruct J as (D, (d₀, ds)).
+ destruct f as (f, (f₀, fs)).
+ destruct g as (g, (g₀, gs)).
+ exists (g ◦ f); unfold "◦".
+ split; [ eapply compose; [ apply (ap g f₀) | apply g₀ ] | intros c ].
+ eapply compose; [ apply (ap g (fs c)) | apply gs ].
+
+ destruct I as (C, (c₀, cs)); simpl in gf.
+ destruct J as (D, (d₀, ds)); simpl in gf.
+ destruct f as (f, (f₀, fs)); simpl in gf.
+ destruct g as (g, (g₀, gs)); simpl in gf.
+bbb.
+(*
+assert (cd : Σ_pr₁ I = Σ_pr₁ J).
+ pose proof p J as pj; simpl in pj.
+ pose proof q I as qi; simpl in qi.
+ destruct I as (C, (c₀, cs)).
+ destruct J as (D, (d₀, ds)).
+ destruct pj as ((fj, (hj₀, hjc)), pj).
+ destruct qi as ((gi, (hi₀, hic)), qi).
+ simpl; apply ua.
+ exists fj; apply qinv_isequiv; exists gi.
  split; unfold "◦", "∼", id.
   intros d.
+unfold ℕHom in pj; simpl in pj.
+simpl in pj.
+SearchAbout fj.
 bbb.
-
-assert (hi : ℕHom I I).
- unfold ℕHom; simpl.
- unfold ℕHom in f, g.
- destruct I, J.
- destruct p0; simpl.
- destruct p1.
- destruct f, g.
- exists (x6 ◦ x5).
- destruct p0, p1.
- destruct e.
- split; [ apply e1 | ].
- intros c.
- unfold "◦".
- rewrite <- e2.
- apply ap, e0.
-
- assert (isContr ().
-bbb.
-
-
+*)
 unfold isHinit_ℕ in p, q.
 unfold ℕHom in p, q; simpl in p, q.
 pose proof p I as pi; simpl in pi.
@@ -429,6 +429,7 @@ assert (cd : C = D).
   intros d.
   destruct pj, qi; simpl.
   destruct x, x0; simpl.
+bbb.
 
 Focus 2.
 apply (Σ_type.pair_eq cd).
