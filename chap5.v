@@ -377,6 +377,18 @@ assert (r : isContr (ℕHom I J)) by apply p.
 destruct r as (f, r).
 assert (s : isContr (ℕHom J I)) by apply q.
 destruct s as (g, s).
+(**)
+destruct I as (C, (c₀, cs)).
+destruct J as (D, (d₀, ds)).
+destruct f as (f, (f₀, fs)).
+destruct g as (g, (g₀, gs)).
+assert (cd : C = D).
+ apply ua.
+ exists f; apply qinv_isequiv; exists g.
+ split; unfold "◦", "∼", id.
+  intros d.
+bbb.
+
 assert (hi : ℕHom I I).
  unfold ℕHom; simpl.
  unfold ℕHom in f, g.
@@ -393,6 +405,7 @@ assert (hi : ℕHom I I).
  rewrite <- e2.
  apply ap, e0.
 
+ assert (isContr ().
 bbb.
 
 
