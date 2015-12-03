@@ -342,13 +342,13 @@ Abort. (* I don't know how to finish this proof; I see later, perhaps *)
 
 (* "5.4 Inductive types are initial algebras" *)
 
-(* "Definition 5.4.1. A ℕ-algebra is a type C with two elements c₀ : C,
-    c_s : C → C. The type of such algebras is
+(* "Definition 5.4.1. A *ℕ-algebra* is a type C with two elements c₀ :
+    C, c_s : C → C. The type of such algebras is
         ℕAlg :≡ Σ (C : U) C × (C → C)." *)
 
 Definition ℕAlg := Σ (C : Type), (C * (C → C))%type.
 
-(* "Definition 5.4.2. A ℕ-homomorphism between ℕ-algebras (C,c₀,cs)
+(* "Definition 5.4.2. A *ℕ-homomorphism* between ℕ-algebras (C,c₀,cs)
     and (D,d₀,ds) is a function h : C → D such that h(c₀) = d₀ and
     h(cs(c)) = ds(h(c)) for all c : C. The type of such homomorphisms
     is
@@ -360,3 +360,10 @@ Definition ℕHom (Ca Da : ℕAlg) :=
   | (existT _ C (c₀, cs), existT _ D (d₀, ds)) =>
        Σ (h: C → D), ((h c₀ = d₀) * Π (c : C), (h (cs c) = ds (h c)))%type
   end.
+
+(* "Definition 5.4.3. A ℕ-algebra I is called *homotopy-initial*, or
+    *h-initial* for short, if for any other ℕ-algebra C, the type of
+    ℕ-homomorphisms from I to C is contractible. Thus,
+            isHinit_ℕ(I) :≡ Π (C : ℕAlg), isContr(ℕHom(I,C))." *)
+
+Definition isHinit_ℕ I := Π (C : ℕAlg), isContr (ℕHom I C).
