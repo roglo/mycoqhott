@@ -346,3 +346,8 @@ Abort. (* I don't know how to finish this proof; I see later, perhaps *)
 
 (* "5.4 Inductive types are initial algebras" *)
 
+(* "Definition 5.4.1. A ℕ-algebra is a type C with two elements c₀ : C,
+    c_s : C → C. The type of such algebras is
+        ℕAlg :≡ Σ (C : U) C × (C → C)." *)
+
+Definition ℕAlg := Σ (C : Type), (C * (C → C))%type.
