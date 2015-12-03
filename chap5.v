@@ -378,22 +378,29 @@ assert (r : isContr (ℕHom I J)) by apply p.
 assert (s : isContr (ℕHom J I)) by apply q.
 destruct r as (f, r).
 destruct s as (g, s).
-transparent assert (gf: ℕHom I I).
+transparent assert (gffg: (ℕHom I I * ℕHom J J)%type).
  unfold ℕHom in f, g; unfold ℕHom.
  destruct I as (C, (c₀, cs)).
  destruct J as (D, (d₀, ds)).
  destruct f as (f, (f₀, fs)).
  destruct g as (g, (g₀, gs)).
- exists (g ◦ f); unfold "◦".
- split; [ eapply compose; [ apply (ap g f₀) | apply g₀ ] | intros c ].
- eapply compose; [ apply (ap g (fs c)) | apply gs ].
+ split.
+  exists (g ◦ f); unfold "◦".
+  split; [ eapply compose; [ apply (ap g f₀) | apply g₀ ] | intros c ].
+  eapply compose; [ apply (ap g (fs c)) | apply gs ].
 
- destruct I as (C, (c₀, cs)); simpl in gf.
- destruct J as (D, (d₀, ds)); simpl in gf.
- destruct f as (f, (f₀, fs)); simpl in gf.
- destruct g as (g, (g₀, gs)); simpl in gf.
- unfold ℕHom in gf; simpl in gf.
- destruct gf as (h, (h₀, hs)).
+  exists (f ◦ g); unfold "◦".
+  split; [ eapply compose; [ apply (ap f g₀) | apply f₀ ] | intros d ].
+  eapply compose; [ apply (ap f (gs d)) | apply fs ].
+
+ destruct I as (C, (c₀, cs)); simpl in gffg.
+ destruct J as (D, (d₀, ds)); simpl in gffg.
+ destruct f as (f, (f₀, fs)); simpl in gffg.
+ destruct g as (g, (g₀, gs)); simpl in gffg.
+ unfold ℕHom in gffg; simpl in gffg.
+ destruct gffg as ((h, (h₀, hs)), (i, (i₀, hi))).
+ assert (C = D).
+
 bbb.
 (*
 assert (cd : Σ_pr₁ I = Σ_pr₁ J).
