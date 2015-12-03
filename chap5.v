@@ -342,14 +342,7 @@ eapply compose; [ | eapply invert, q ].
 Check e a f (λ b, g (f b)).
 pose proof W_type_comp_rule A B a f E e.
 Check W_type_rect.
+Abort. (* I don't know how to finish this proof; I see later, perhaps *)
 
-bbb.
+(* "5.4 Inductive types are initial algebras" *)
 
-set (s := W_type_rect A B E e (sup a f)) in r.
-unfold W_type_rect in r.
-simpl in r.
-
-(* e a f (λ b : B a, g (f b))
-     : E (sup a f) *)
-
-bbb.
