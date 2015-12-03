@@ -377,7 +377,7 @@ assert (r : isContr (ℕHom I J)) by apply p.
 destruct r as (f, r).
 assert (s : isContr (ℕHom J I)) by apply q.
 destruct s as (g, s).
-assert (ℕHom I I).
+assert (hi : ℕHom I I).
  unfold ℕHom; simpl.
  unfold ℕHom in f, g.
  destruct I, J.
@@ -389,6 +389,9 @@ assert (ℕHom I I).
  destruct e.
  split; [ apply e1 | ].
  intros c.
+ unfold "◦".
+ rewrite <- e2.
+ apply ap, e0.
 
 bbb.
 
