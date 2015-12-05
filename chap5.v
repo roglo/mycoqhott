@@ -371,7 +371,7 @@ Definition isHinit_ℕ I := Π (C : ℕAlg), isContr (ℕHom I C).
 
 (* "Theorem 5.4.4. Any two h-initial ℕ-algebras are equal. [...]" *)
 
-Definition isContr_sigma_if A P :
+Definition isContr_sigma A P :
   isContr (Σ (x : A), P x) → (Π (x : A), isContr (P x)) → isContr A.
 Proof.
 intros p q.
@@ -422,8 +422,8 @@ transparent assert (gffg: (ℕHom I I * ℕHom J J)%type).
   set (V := ℕHom (existT _ D (d₀, ds)) (existT _ D (d₀, ds))) in cj, fg.
   unfold ℕHom in U, V.
   split.
-
-pose proof isContr_sigma_if _ _ cj as H1.
+bbb.
+pose proof isContr_sigma _ _ cj as H1.
 simpl in H1.
 assert (∀ x : D → D, isContr ((x d₀ = d₀) * (∀ c : D, x (ds c) = ds (x c)))).
  intros fd.

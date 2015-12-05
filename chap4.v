@@ -993,7 +993,7 @@ exists
 split; intros (y, (x, p)); apply eq_refl.
 Defined.
 
-Definition isContr_sigma A P :
+Definition isContr_sigma_if A P :
   isContr A → (∀ x, isContr (P x)) → isContr (Σ (x : A), P x).
 Proof.
 intros p q.
@@ -1016,7 +1016,7 @@ assert (q : ishae f ≃ Σ (u : rinv f), rcoh f (Σ_pr₁ u) (Σ_pr₂ u)).
  pose proof (hott_4_2_9 A B f (ishae_qinv A B f p)) as r.
  destruct r as (r, s).
  eapply equiv_contr; [ eapply quasi_inv, q |  ].
- apply isContr_sigma; [ apply r | intros t ].
+ apply isContr_sigma_if; [ apply r | intros t ].
  unfold isContr in r.
  destruct r as (a, r).
  apply hott_4_2_12, p.
@@ -1238,7 +1238,7 @@ unfold isContr.
 SearchAbout (isProp (fib _ _)).
 
 SearchAbout (isContr (Σ (_ : _), _)).
-apply isContr_sigma.
+apply isContr_sigma_if.
 eapply hott_3_11_8.
 *)
   assert (g : B → A).
