@@ -371,6 +371,18 @@ Definition isHinit_ℕ I := Π (C : ℕAlg), isContr (ℕHom I C).
 
 (* "Theorem 5.4.4. Any two h-initial ℕ-algebras are equal. [...]" *)
 
+Definition isContr_sigma_if A P :
+  isContr (Σ (x : A), P x) → (Π (x : A), isContr (P x)) → isContr A.
+Proof.
+intros p q.
+unfold isContr in p; unfold isContr.
+destruct p as ((a, p), r).
+exists a; intros a'.
+assert (P a') as p' by apply q.
+pose proof r (existT _ a' p') as s.
+injection s; intros u v; apply v.
+Defined.
+
 Definition hott_5_4_4_i I J : isHinit_ℕ I → isHinit_ℕ J → I = J.
 Proof.
 intros p q.
@@ -402,10 +414,29 @@ transparent assert (gffg: (ℕHom I I * ℕHom J J)%type).
   apply ua.
   destruct f as (f, (f₀, fs)).
   destruct g as (g, (g₀, gs)).
+  set (gf := fst gffg).
+  set (fg := snd gffg).
+  unfold gffg in gf, fg; clear gffg; simpl in gf, fg.
   exists f; apply qinv_isequiv; exists g.
+  set (U := ℕHom (existT _ C (c₀, cs)) (existT _ C (c₀, cs))) in ci, gf.
+  set (V := ℕHom (existT _ D (d₀, ds)) (existT _ D (d₀, ds))) in cj, fg.
+  unfold ℕHom in U, V.
   split.
-simpl in ci.
-Check ci.
+
+pose proof isContr_sigma_if _ _ cj as H1.
+simpl in H1.
+assert (∀ x : D → D, isContr ((x d₀ = d₀) * (∀ c : D, x (ds c) = ds (x c)))).
+ intros fd.
+ apply isContr_prod; split.
+SearchAbout (isContr (_ = _)).
+bbb.
+
+unfold isContr in H1.
+destruct H1 as (fd, Hd).
+assert (fd = f ◦ g) by apply Hd.
+assert (fd = id) by apply Hd.
+rewrite <- H, H0.
+intros d; apply eq_refl.
 bbb.
 
   exists f; apply qinv_isequiv; exists g.
