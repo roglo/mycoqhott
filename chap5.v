@@ -394,12 +394,18 @@ transparent assert (gffg: (ℕHom I I * ℕHom J J)%type).
   split; [ eapply compose; [ apply (ap f g₀) | apply f₀ ] | intros d ].
   eapply compose; [ apply (ap f (gs d)) | apply fs ].
 
+ assert (ci : isContr (ℕHom I I)) by apply p.
+ assert (cj : isContr (ℕHom J J)) by apply q.
  destruct I as (C, (c₀, cs)).
  destruct J as (D, (d₀, ds)).
  assert (C = D).
   apply ua.
   destruct f as (f, (f₀, fs)).
   destruct g as (g, (g₀, gs)).
+  exists f; apply qinv_isequiv; exists g.
+  split.
+simpl in ci.
+Check ci.
 bbb.
 
   exists f; apply qinv_isequiv; exists g.
