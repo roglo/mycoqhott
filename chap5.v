@@ -422,12 +422,13 @@ transparent assert (gffg: (ℕHom I I * ℕHom J J)%type).
   set (V := ℕHom (existT _ D (d₀, ds)) (existT _ D (d₀, ds))) in cj, fg.
   unfold ℕHom in U, V.
   split.
-bbb.
+unfold isHinit_ℕ in q.
 pose proof isContr_sigma _ _ cj as H1.
 simpl in H1.
 assert (∀ x : D → D, isContr ((x d₀ = d₀) * (∀ c : D, x (ds c) = ds (x c)))).
  intros fd.
  apply isContr_prod; split.
+
 SearchAbout (isContr (_ = _)).
 bbb.
 
