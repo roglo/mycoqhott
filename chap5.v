@@ -35,10 +35,10 @@ Open Scope nat_scope.
     Then f and g are equal." *)
 
 Definition hott_5_1_1 E (f g : Π (x : ℕ), E x)
-  (e_z : E 0) (e_s : Π (n : ℕ), E n → E (S n)) :
-  f 0 = e_z → g 0 = e_z
-  → (Π (n : ℕ), f (S n) = e_s n (f n))
-  → (Π (n : ℕ), g (S n) = e_s n (g n))
+  (ez : E 0) (es : Π (n : ℕ), E n → E (S n)) :
+  f 0 = ez → g 0 = ez
+  → (Π (n : ℕ), f (S n) = es n (f n))
+  → (Π (n : ℕ), g (S n) = es n (g n))
   → f = g.
 Proof.
 intros fz gz fs gs.
@@ -474,7 +474,6 @@ Definition hott_5_4_5 : isHinit_ℕ (existT _ ℕ (0, S)).
 Proof.
 unfold isHinit_ℕ.
 intros A.
-unfold isContr.
 transparent assert (φ : ℕHom (existT _ ℕ (0, S)) A).
  destruct A as (C, (c₀, cs)).
  exists (morph_of_ℕ C c₀ cs).
@@ -484,6 +483,7 @@ transparent assert (φ : ℕHom (existT _ ℕ (0, S)) A).
  intros φ.
  destruct A as (C, (c₀, cs)).
  destruct φ as (f, (p, q)).
+(*
  assert (H : f = morph_of_ℕ C c₀ cs).
   apply Π_type.funext; intros n.
   induction n; [ apply p | simpl ].
@@ -493,5 +493,13 @@ transparent assert (φ : ℕHom (existT _ ℕ (0, S)) A).
   simpl in p, q.
   apply (Σ_type.pair_eq (eq_refl _)); simpl; unfold id.
   apply cartesian.pair_eq; simpl; split.
+*)
+ set
+   (r :=
+    hott_5_1_1 _ (morph_of_ℕ C c₀ cs) f c₀ (λ _, cs) (eq_refl _) p
+      (λ _, eq_refl _) q).
+ apply (Σ_type.pair_eq r).
+ unfold transport; simpl.
+ unfold r; simpl.
 
 bbb.
