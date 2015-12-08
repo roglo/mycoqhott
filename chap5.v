@@ -42,15 +42,24 @@ Definition hott_5_1_1 E (f g : Π (x : ℕ), E x)
   → f = g.
 Proof.
 intros fz gz fs gs.
-bbb. (* proof to be reviewed because its proof term has to be correct
-to be able to prove 5.4.5 *)
+transparent assert (D : ∀ x, f x = g x).
+ fix H 1; intros x.
+  destruct x; [ eapply compose; [ apply fz | apply invert, gz ] | simpl ].
+  eapply compose; [ apply fs | ].
+  eapply compose; [ | eapply invert, gs ].
+  destruct (H x); apply eq_refl.
 
+ apply Π_type.funext, D.
+Defined.
+
+(* old version of the proof
 apply Π_type.funext; intros n.
 induction n; [ destruct fz, gz; apply eq_refl | ].
 pose proof (fs n) as p.
 pose proof (gs n) as q.
 destruct IHn, p, q; apply eq_refl.
 Defined.
+*)
 
 (* "5.2 Uniqueness of inductive types" *)
 
@@ -504,6 +513,15 @@ transparent assert (φ : ℕHom (existT _ ℕ (0, S)) A).
  apply (Σ_type.pair_eq r).
  unfold transport; simpl.
  unfold r; simpl.
- unfold hott_5_1_1; simpl.
+unfold hott_5_1_1.
+bbb.
+
+destruct (hott_5_1_1 (λ _ : ℕ, C) (morph_of_ℕ C c₀ cs) f c₀
+       (λ _ : ℕ, cs) (eq_refl c₀) p
+       (λ n : ℕ, eq_refl (cs (morph_of_ℕ C c₀ cs n))) q).
+simpl in p, q.
+unfold id; simpl.
+apply cartesian.pair_eq; simpl; split.
+
 
 bbb.
