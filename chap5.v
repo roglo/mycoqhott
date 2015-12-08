@@ -459,3 +459,28 @@ bbb.
 Definition hott_5_4_4_ii I : isHinit_ℕ I → isProp (Σ_pr₁ I).
 Proof.
 Abort. (* need hott_5_4_4_i *)
+
+(* "Theorem 5.4.5. The ℕ-algebra (ℕ,0,succ) is homotopy initial." *)
+
+Fixpoint morph_of_ℕ C (c₀ : C) cs n :=
+  match n with 0 => c₀ | S n => cs (morph_of_ℕ C c₀ cs n) end.
+
+Definition ℕAlg_morph_of_ℕ (A : ℕAlg) n : Σ_pr₁ A :=
+  match A with
+  | existT _ C (c₀, cs) => morph_of_ℕ C c₀ cs n
+  end.
+
+Definition hott_5_4_5 : isHinit_ℕ (existT _ ℕ (0, S)).
+Proof.
+unfold isHinit_ℕ.
+intros A.
+unfold isContr.
+transparent assert (φ : ℕHom (existT _ ℕ (0, S)) A).
+ destruct A as (C, (c₀, cs)).
+ exists (morph_of_ℕ C c₀ cs).
+ split; [ apply eq_refl | intros n; apply eq_refl ].
+
+ exists φ; unfold φ; clear φ.
+ intros φ.
+ destruct A as (C, (c₀, cs)).
+bbb.
