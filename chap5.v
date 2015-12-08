@@ -483,4 +483,16 @@ transparent assert (φ : ℕHom (existT _ ℕ (0, S)) A).
  exists φ; unfold φ; clear φ.
  intros φ.
  destruct A as (C, (c₀, cs)).
+ destruct φ as (f, (p, q)).
+ assert (f = morph_of_ℕ C c₀ cs).
+  apply Π_type.funext; intros n.
+  induction n; [ apply p | simpl ].
+  eapply compose; [ apply q | apply ap, IHn ].
+
+  apply invert in H; destruct H.
+  apply (Σ_type.pair_eq (eq_refl _)).
+  unfold transport, id.
+  simpl in p, q.
+  apply cartesian.pair_eq; simpl; split.
+
 bbb.
