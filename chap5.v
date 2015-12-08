@@ -429,6 +429,10 @@ assert (∀ x : D → D, isContr ((x d₀ = d₀) * (∀ c : D, x (ds c) = ds (x
  intros fd.
  apply isContr_prod; split.
 
+Abort.
+(* too complicated, I have to think of it but I am depressed therefore
+   not motivated to continue; I see that later, when I feel better
+
 SearchAbout (isContr (_ = _)).
 bbb.
 
@@ -447,72 +451,11 @@ Print isHinit_ℕ.
    destruct gffg as ((h, (h₀, hs)), (i, (i₀, hi))).
 
 bbb.
-
-transparent assert (gffg: (ℕHom I I * ℕHom J J)%type).
- unfold ℕHom in f, g; unfold ℕHom.
- destruct I as (C, (c₀, cs)).
- destruct J as (D, (d₀, ds)).
- destruct f as (f, (f₀, fs)).
- destruct g as (g, (g₀, gs)).
- split.
-  exists (g ◦ f); unfold "◦".
-  split; [ eapply compose; [ apply (ap g f₀) | apply g₀ ] | intros c ].
-  eapply compose; [ apply (ap g (fs c)) | apply gs ].
-
-  exists (f ◦ g); unfold "◦".
-  split; [ eapply compose; [ apply (ap f g₀) | apply f₀ ] | intros d ].
-  eapply compose; [ apply (ap f (gs d)) | apply fs ].
-
- destruct I as (C, (c₀, cs)); simpl in gffg.
- destruct J as (D, (d₀, ds)); simpl in gffg.
- destruct f as (f, (f₀, fs)); simpl in gffg.
- destruct g as (g, (g₀, gs)); simpl in gffg.
- unfold ℕHom in gffg; simpl in gffg.
- destruct gffg as ((h, (h₀, hs)), (i, (i₀, hi))).
-
-bbb.
-(*
-assert (cd : Σ_pr₁ I = Σ_pr₁ J).
- pose proof p J as pj; simpl in pj.
- pose proof q I as qi; simpl in qi.
- destruct I as (C, (c₀, cs)).
- destruct J as (D, (d₀, ds)).
- destruct pj as ((fj, (hj₀, hjc)), pj).
- destruct qi as ((gi, (hi₀, hic)), qi).
- simpl; apply ua.
- exists fj; apply qinv_isequiv; exists gi.
- split; unfold "◦", "∼", id.
-  intros d.
-unfold ℕHom in pj; simpl in pj.
-simpl in pj.
-SearchAbout fj.
-bbb.
 *)
-unfold isHinit_ℕ in p, q.
-unfold ℕHom in p, q; simpl in p, q.
-pose proof p I as pi; simpl in pi.
-pose proof p J as pj; simpl in pj.
-pose proof q I as qi; simpl in qi.
-pose proof q J as qj; simpl in qj.
-destruct I as (C, (c₀, cs)).
-destruct J as (D, (d₀, ds)).
-assert (cd : C = D).
- apply ua.
- transparent assert (f : C → D); [ apply pj | ].
- exists f; unfold f; clear f.
- apply qinv_isequiv.
- transparent assert (f : D → C); [ apply qi | ].
- exists f; unfold f; clear f.
- unfold "◦", "∼", id; split.
-  intros d.
-  destruct pj, qi; simpl.
-  destruct x, x0; simpl.
-bbb.
-
-Focus 2.
-apply (Σ_type.pair_eq cd).
-
-bbb.
 
 (* "[...] Thus, the type of h-initial ℕ-algebras is a mere
     proposition." *)
+
+Definition hott_5_4_4_ii I : isHinit_ℕ I → isProp (Σ_pr₁ I).
+Proof.
+Abort. (* need hott_5_4_4_i *)
