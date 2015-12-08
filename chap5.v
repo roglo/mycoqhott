@@ -42,6 +42,9 @@ Definition hott_5_1_1 E (f g : Π (x : ℕ), E x)
   → f = g.
 Proof.
 intros fz gz fs gs.
+bbb. (* proof to be reviewed because its proof term has to be correct
+to be able to prove 5.4.5 *)
+
 apply Π_type.funext; intros n.
 induction n; [ destruct fz, gz; apply eq_refl | ].
 pose proof (fs n) as p.
