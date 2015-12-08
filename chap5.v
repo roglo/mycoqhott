@@ -501,5 +501,6 @@ transparent assert (φ : ℕHom (existT _ ℕ (0, S)) A).
  apply (Σ_type.pair_eq r).
  unfold transport; simpl.
  unfold r; simpl.
+ unfold hott_5_1_1; simpl.
 
 bbb.
