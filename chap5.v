@@ -502,9 +502,15 @@ transparent assert (f : ℕHom ℕa A).
  destruct A as (C, (c₀, cs)).
  exists (morph_of_ℕ C c₀ cs).
  split; [ apply eq_refl | intros n; apply eq_refl ].
-
  unfold ℕHom, ℕa.
  destruct A as (C, (c₀, cs)).
+(**)
+exists f; unfold f; intros (g, (p, q)).
+transparent assert (r : g = morph_of_ℕ C c₀ cs).
+ eapply hott_5_1_1 with (es := λ _, cs); eauto.
+
+(* je peux pas prouver que p, c'est eq_refl, moi *)
+bbb.
  apply isContr_Σ_prod.
  exists f; unfold f.
  intros (g, (p, q)).
