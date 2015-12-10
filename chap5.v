@@ -486,6 +486,30 @@ Definition hott_5_4_5 : isHinit_ℕ (existT _ ℕ (0, S)).
 Proof.
 unfold isHinit_ℕ.
 intros A.
+(**)
+set (ℕa := existT _ ℕ (0, S) : ℕAlg); simpl in ℕa.
+transparent assert (f : ℕHom ℕa A).
+ destruct A as (C, (c₀, cs)).
+ exists (morph_of_ℕ C c₀ cs).
+ split; [ apply eq_refl | intros n; apply eq_refl ].
+
+unfold ℕHom, ℕa.
+exists f; intros g.
+destruct A as (C, (c₀, cs)).
+Print ℕHom.
+Check (g
+    : ℕHom ℕa (existT (λ C : Type, (C * (C → C))%type) C (c₀, cs))).
+bbb.
+
+apply isContr_sigma_if.
+Check hott_5_1_1.
+exists f.
+SearchAbout (isContr (Σ (_ : _), _)).
+(* I don't know how to prove that (h(0)=c₀ * (∀n, H(S(n))=cs(h(n)))) is
+   contractible; perhaps it must not be in the definition of h-initial?
+   that the contractibility applies only on the function? not the proof
+   of its properties? *)
+bbb.
 transparent assert (φ : ℕHom (existT _ ℕ (0, S)) A).
  destruct A as (C, (c₀, cs)).
  exists (morph_of_ℕ C c₀ cs).
