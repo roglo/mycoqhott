@@ -499,16 +499,20 @@ destruct A as (C, (c₀, cs)).
 Print ℕHom.
 Check (g
     : ℕHom ℕa (existT (λ C : Type, (C * (C → C))%type) C (c₀, cs))).
-bbb.
-
-apply isContr_sigma_if.
 Check hott_5_1_1.
-exists f.
-SearchAbout (isContr (Σ (_ : _), _)).
-(* I don't know how to prove that (h(0)=c₀ * (∀n, H(S(n))=cs(h(n)))) is
-   contractible; perhaps it must not be in the definition of h-initial?
-   that the contractibility applies only on the function? not the proof
-   of its properties? *)
+unfold f.
+destruct g as (g, (p, q)).
+assert (r : morph_of_ℕ C c₀ cs = g).
+ eapply hott_5_1_1 with (es := λ _, cs); try eassumption; try apply eq_refl.
+ intros; apply eq_refl.
+
+ apply (Σ_type.pair_eq r).
+ unfold transport; simpl.
+ destruct r; unfold id.
+ apply cartesian.pair_eq; simpl; split.
+(* blocked: there is no way to prove that p = eq_refl c₀. perhaps the
+   definition of h-initial should not include that the proof that
+   f(0)=c₀ be unique? *)
 bbb.
 transparent assert (φ : ℕHom (existT _ ℕ (0, S)) A).
  destruct A as (C, (c₀, cs)).
