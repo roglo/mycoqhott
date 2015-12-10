@@ -494,8 +494,49 @@ transparent assert (f : ℕHom ℕa A).
  split; [ apply eq_refl | intros n; apply eq_refl ].
 
 unfold ℕHom, ℕa.
-exists f; intros g.
 destruct A as (C, (c₀, cs)).
+About hott_3_11_8.
+SearchAbout (isContr (Σ (_ : _), _)).
+Definition isContr_Σ_prod A P Q :
+  isContr (Σ (x : A), P x)
+  → isContr (Σ (x : A), Q x)
+  → isContr (Σ (x : A), (P x * Q x)%type).
+Admitted.
+Show.
+apply isContr_Σ_prod.
+About hott_3_11_8.
+Definition glop A B a b :
+  isContr (Σ (b' : B), b = b')
+  → isContr (Σ (f : A → B), f a = b).
+Proof.
+intros p.
+unfold isContr in p.
+destruct p as ((b', p), q).
+unfold isContr.
+bbb.
+
+transparent assert (f : A → B).
+ intros x.
+
+Show.
+
+apply glop.
+apply hott_3_11_8.
+bbb.
+
+unfold isContr.
+exists (existT _ (Σ_pr₁ f) (eq_refl c₀)).
+intros (g, p).
+
+exists (Σ_pr₁ f).
+intros g; unfold f; simpl.
+ eapply hott_5_1_1 with (es := λ _, cs); try eassumption; try apply eq_refl.
+ simpl.
+simpl.
+
+bbb.
+
+exists f; intros g.
 Print ℕHom.
 Check (g
     : ℕHom ℕa (existT (λ C : Type, (C * (C → C))%type) C (c₀, cs))).
