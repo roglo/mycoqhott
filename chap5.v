@@ -501,7 +501,17 @@ Definition isContr_Σ_prod A P Q :
   isContr (Σ (x : A), P x)
   → isContr (Σ (x : A), Q x)
   → isContr (Σ (x : A), (P x * Q x)%type).
-Admitted.
+Proof.
+intros p q.
+destruct p as ((ap, p1), p2).
+destruct q as ((aq, q1), q2).
+unfold isContr.
+transparent assert (r : Σ (x : A), (P x * Q x)%type).
+ exists ap.
+ split; [ apply p1 | ].
+(* oui, non, ça a l'air faux *)
+bbb.
+
 Show.
 apply isContr_Σ_prod.
 About hott_3_11_8.
