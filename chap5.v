@@ -477,6 +477,16 @@ Abort. (* need hott_5_4_4_i *)
 Fixpoint morph_of_ℕ C (c₀ : C) cs n :=
   match n with 0 => c₀ | S n => cs (morph_of_ℕ C c₀ cs n) end.
 
+Definition isContr_Σ_prod A P Q :
+  (Σ (a : Σ (x : A), (P x * Q x)%type), Π (x : Σ (x : A), (P x * Q x)%type),
+   a = x)
+  → isContr (Σ (x : A), (P x * Q x)%type).
+Proof.
+intros (p, q).
+exists p; intros r.
+apply q.
+Defined.
+
 Definition ℕAlg_morph_of_ℕ (A : ℕAlg) n : Σ_pr₁ A :=
   match A with
   | existT _ C (c₀, cs) => morph_of_ℕ C c₀ cs n
@@ -493,23 +503,18 @@ transparent assert (f : ℕHom ℕa A).
  exists (morph_of_ℕ C c₀ cs).
  split; [ apply eq_refl | intros n; apply eq_refl ].
 
-unfold ℕHom, ℕa.
-destruct A as (C, (c₀, cs)).
-About hott_3_11_8.
-SearchAbout (isContr (Σ (_ : _), _)).
-Definition isContr_Σ_prod A P Q :
-  isContr (Σ (x : A), P x)
-  → isContr (Σ (x : A), Q x)
-  → isContr (Σ (x : A), (P x * Q x)%type).
-Proof.
-intros p q.
-destruct p as ((ap, p1), p2).
-destruct q as ((aq, q1), q2).
-unfold isContr.
-transparent assert (r : Σ (x : A), (P x * Q x)%type).
- exists ap.
- split; [ apply p1 | ].
-(* oui, non, ça a l'air faux *)
+ unfold ℕHom, ℕa.
+ destruct A as (C, (c₀, cs)).
+ apply isContr_Σ_prod.
+ exists f; unfold f.
+ intros (g, (p, q)).
+ transparent assert (r : g = morph_of_ℕ C c₀ cs).
+  eapply hott_5_1_1 with (es := λ _, cs); try eassumption; try apply eq_refl.
+  intros n; apply eq_refl.
+
+  apply invert, (Σ_type.pair_eq r).
+  unfold transport, r.
+  unfold hott_5_1_1; simpl.
 bbb.
 
 Show.
