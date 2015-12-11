@@ -416,6 +416,21 @@ Check (ℕHom_fun g ◦ ℕHom_fun f).
 (* Σ_pr₁ g ◦ Σ_pr₁ f
      : Σ_pr₁ I → Σ_pr₁ I *)
 (* faire l'homomorphisme identité de I dans I *)
+(* ℕH
+     : ∀ Ca Da : ℕAlg, ℕHom_def Ca Da → ℕHom Ca Da *)
+Print ℕHom_def.
+(* ℕHom_def@{Top.290 Top.291} = 
+λ (Ca Da : ℕAlg) (C:=Σ_pr₁ Ca) (D:=Σ_pr₁ Da) (c₀:=fst (Σ_pr₂ Ca))
+(d₀:=fst (Σ_pr₂ Da)) (cs:=snd (Σ_pr₂ Ca)) (ds:=snd (Σ_pr₂ Da)),
+{h : C → D & ((h c₀ = d₀) * (∀ c : C, h (cs c) = ds (h c)))%type}
+     : ℕAlg → ℕAlg → Type *)
+(* ℕAlg@{Top.249} = {C : Type & (C * (C → C))%type}
+     : Type *)
+
+Check (eq_refl (fst (Σ_pr₂ I))).
+Check (eq_refl (snd (Σ_pr₂ I))).
+Check ((λ (_ _ : ℕAlg), existT _ id (eq_refl _)) : ℕHom_def).
+
 bbb.
 
 Print ℕHom.
@@ -425,7 +440,6 @@ Print ℕHom.
 {h : C → D & ((h c₀ = d₀) * (∀ c : C, h (cs c) = ds (h c)))%type}
      : ℕAlg → ℕAlg → Type *)
 
-Check (eq_refl (fst (Σ_pr₂ I))).
 bbb.
 
 (* faire une ℕ-algèbre id *)
