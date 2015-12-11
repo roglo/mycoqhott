@@ -412,11 +412,33 @@ destruct cji as (g, cji).
 assert (cii : isContr (ℕHom I I)) by apply p.
 destruct cii as (h, cii).
 assert (ℕHom_fun g ◦ ℕHom_fun f = id).
+bbb.
+ set
+   (I₀ :=
+    ℕH I I (existT _ id (eq_refl _, λ c, eq_refl (snd (Σ_pr₂ I) (id c))))).
+ pose proof cii I₀ as hii.
+ unfold I₀ in hii; clear I₀.
+ destruct h as [d].
+bbb.
+
+(* ℕH
+     : ∀ Ca Da : ℕAlg, ℕHom_def Ca Da → ℕHom Ca Da *)
+Check (ℕH I I).
+transparent assert (t : ∀ c, id (snd (Σ_pr₂ I) c) = snd (Σ_pr₂ I) (id c)).
+ intros c.
+ apply eq_refl.
+
+
  unfold ℕHom_fun; simpl.
  destruct g as [g].
  destruct f as [f].
  destruct h as [h].
 apply Π_type.funext; intros w.
+unfold "◦", id; simpl.
+
+bbb.
+
+destruct I as (C, (c₀, cs)).
 bbb.
 
  unfold ℕHom_def in f, g, h.
@@ -424,8 +446,6 @@ bbb.
  destruct g as (g, (g₀, gc)); simpl.
  destruct h as (h, (h₀, hc)); simpl.
 Check ℕH.
-(* ℕH
-     : ∀ Ca Da : ℕAlg, ℕHom_def Ca Da → ℕHom Ca Da *)
 bbb.
 
 Check (ℕHom_fun g ◦ ℕHom_fun f).
