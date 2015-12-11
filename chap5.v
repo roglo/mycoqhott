@@ -409,9 +409,41 @@ assert (cij : isContr (ℕHom I J)) by apply p.
 assert (cji : isContr (ℕHom J I)) by apply q.
 destruct cij as (f, cij).
 destruct cji as (g, cji).
-assert (cii : isContr (ℕHom I I)) by apply p.
-destruct cii as (h, cii).
-assert (ℕHom_fun g ◦ ℕHom_fun f = id).
+assert (ff : ℕHom_fun f ◦ ℕHom_fun g = id).
+ assert (cjj : isContr (ℕHom J J)) by apply q.
+ destruct cjj as (h, cjj).
+ set
+  (J₀ :=
+   ℕH J J (existT _ id (eq_refl _, λ c, eq_refl (snd (Σ_pr₂ J) (id c))))).
+ unfold id in J₀; simpl in J₀.
+ assert
+  (c :
+   (λ h : Σ_pr₁ J → Σ_pr₁ J,
+    ((h (fst (Σ_pr₂ J)) = fst (Σ_pr₂ J)) *
+     (∀ c : Σ_pr₁ J, h (snd (Σ_pr₂ J) c) = snd (Σ_pr₂ J) (h c)))%type)
+     (ℕHom_fun f ◦ ℕHom_fun g)).
+  split.
+   unfold "◦".
+   destruct f as ((f, (f₀, fs))).
+   destruct g as ((g, (g₀, gs))); simpl.
+   eapply compose; [ | apply f₀ ]; apply ap, g₀.
+
+   intros w.
+   unfold "◦".
+   destruct f as ((f, (f₀, fs))).
+   destruct g as ((g, (g₀, gs))); simpl.
+   eapply compose; [ | apply fs ]; apply ap, gs.
+
+  set (u := ℕH _ _ (existT _ (ℕHom_fun f ◦ ℕHom_fun g) c) : ℕHom J J).
+  pose proof cjj u as H1; unfold u in H1.
+  pose proof cjj J₀ as H2.
+  apply invert in H2; destruct H2.
+  unfold J₀ in H1; injection H1; intros H3.
+  destruct H3; apply eq_refl.
+
+assert (gg : ℕHom_fun g ◦ ℕHom_fun f = id).
+ assert (cii : isContr (ℕHom I I)) by apply p.
+ destruct cii as (h, cii).
  set
   (I₀ :=
    ℕH I I (existT _ id (eq_refl _, λ c, eq_refl (snd (Σ_pr₂ I) (id c))))).
@@ -441,8 +473,26 @@ assert (ℕHom_fun g ◦ ℕHom_fun f = id).
   unfold I₀ in H1; injection H1; intros H3.
   destruct H3; apply eq_refl.
 
- assert (Σ_pr₁ I = Σ_pr₁ J).
+ simpl in ff, gg.
+ assert (IJ : Σ_pr₁ I = Σ_pr₁ J).
   apply ua.
+  exists (ℕHom_fun f); apply qinv_isequiv; exists (ℕHom_fun g).
+  split; [ destruct ff; apply homotopy_eq_refl2 | ].
+  destruct gg; apply homotopy_eq_refl2.
+
+  destruct I as (C, (c₀, cs)).
+  destruct J as (D, (d₀, ds)); simpl in IJ.
+  apply (Σ_type.pair_eq IJ).
+  unfold transport, id.
+  destruct IJ.
+  apply cartesian.pair_eq; split; simpl.
+destruct f as ((f, (f₀, fs))).
+destruct g as ((g, (g₀, gs))).
+simpl in *.
+destruct f₀, g₀.
+unfold "◦", id in ff, gg.
+eapply compose; [ eapply Π_type.happly in gg; apply gg | ].
+eapply invert, compose; [ eapply Π_type.happly in ff; apply ff | ].
 bbb.
 
 (* ℕH
