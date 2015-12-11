@@ -413,20 +413,29 @@ assert (cii : isContr (ℕHom I I)) by apply p.
 destruct cii as (h, cii).
 assert (ℕHom_fun g ◦ ℕHom_fun f = id).
  set
-   (I₀ :=
-    ℕH I I (existT _ id (eq_refl _, λ c, eq_refl (snd (Σ_pr₂ I) (id c))))).
-unfold id in I₀; simpl in I₀.
-Check (λ c, (existT _ (ℕHom_fun g ◦ ℕHom_fun f) c : ℕHom_def I I)).
-assert
-(c : (λ h : Σ_pr₁ I → Σ_pr₁ I,
-     ((h (fst (Σ_pr₂ I)) = fst (Σ_pr₂ I)) *
-      (∀ c : Σ_pr₁ I, h (snd (Σ_pr₂ I) c) = snd (Σ_pr₂ I) (h c)))%type)
-      (ℕHom_fun g ◦ ℕHom_fun f)).
-split.
-Check (ℕHom_fun g ◦ ℕHom_fun f).
-set (c₀ := fst (Σ_pr₂ I)).
-unfold "◦".
-set (d₀ := ℕHom_fun f c₀).
+  (I₀ :=
+   ℕH I I (existT _ id (eq_refl _, λ c, eq_refl (snd (Σ_pr₂ I) (id c))))).
+ unfold id in I₀; simpl in I₀.
+ assert
+  (c :
+   (λ h : Σ_pr₁ I → Σ_pr₁ I,
+    ((h (fst (Σ_pr₂ I)) = fst (Σ_pr₂ I)) *
+     (∀ c : Σ_pr₁ I, h (snd (Σ_pr₂ I) c) = snd (Σ_pr₂ I) (h c)))%type)
+     (ℕHom_fun g ◦ ℕHom_fun f)).
+  split.
+   set (c₀ := fst (Σ_pr₂ I)).
+   unfold "◦".
+   set (d₀ := ℕHom_fun f c₀).
+   destruct g as (g); simpl.
+   destruct g as (g, (g₀, gs)).
+   simpl.
+   unfold c₀.
+   eapply compose; [  | apply g₀ ].
+   apply ap.
+   destruct f as (f).
+   unfold d₀; simpl.
+   destruct f as (f, (f₀, fs)).
+   apply f₀.
 bbb.
 
 unfold "◦"; simpl.
