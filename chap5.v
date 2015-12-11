@@ -423,40 +423,23 @@ assert (ℕHom_fun g ◦ ℕHom_fun f = id).
      (∀ c : Σ_pr₁ I, h (snd (Σ_pr₂ I) c) = snd (Σ_pr₂ I) (h c)))%type)
      (ℕHom_fun g ◦ ℕHom_fun f)).
   split.
-   set (c₀ := fst (Σ_pr₂ I)).
    unfold "◦".
-   set (d₀ := ℕHom_fun f c₀).
-   destruct g as (g); simpl.
-   destruct g as (g, (g₀, gs)).
-   simpl.
-   unfold c₀.
-   eapply compose; [  | apply g₀ ].
-   apply ap.
-   destruct f as (f).
-   unfold d₀; simpl.
-   destruct f as (f, (f₀, fs)).
-   apply f₀.
-bbb.
+   destruct f as ((f, (f₀, fs))).
+   destruct g as ((g, (g₀, gs))); simpl.
+   eapply compose; [ | apply g₀ ]; apply ap, f₀.
 
-unfold "◦"; simpl.
-unfold ℕHom_fun; simpl.
-destruct g as [g].
-destruct f as [f].
-Check (fst (Σ_pr₂ I)).
-Check (Σ_pr₁ f (fst (Σ_pr₂ I))).
-Check (Σ_pr₁ g).
-bbb.
+   intros w.
+   unfold "◦".
+   destruct f as ((f, (f₀, fs))).
+   destruct g as ((g, (g₀, gs))); simpl.
+   eapply compose; [ | apply gs ]; apply ap, fs.
 
-set (u := ℕH _ _ (existT _ (ℕHom_fun g ◦ ℕHom_fun f) c) : ℕHom I I).
-pose proof cii u.
-unfold u in H.
-pose proof cii I₀.
-apply invert in H0; destruct H0.
-unfold I₀ in H.
-injection H.
-intros H1.
-destruct H1.
-apply eq_refl.
+  set (u := ℕH _ _ (existT _ (ℕHom_fun g ◦ ℕHom_fun f) c) : ℕHom I I).
+  pose proof cii u as H1; unfold u in H1.
+  pose proof cii I₀ as H2.
+  apply invert in H2; destruct H2.
+  unfold I₀ in H1; injection H1; intros H3.
+  destruct H3; apply eq_refl.
 bbb.
 
 (* ℕH
