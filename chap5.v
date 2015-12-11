@@ -440,6 +440,9 @@ assert (ℕHom_fun g ◦ ℕHom_fun f = id).
   apply invert in H2; destruct H2.
   unfold I₀ in H1; injection H1; intros H3.
   destruct H3; apply eq_refl.
+
+ assert (Σ_pr₁ I = Σ_pr₁ J).
+  apply ua.
 bbb.
 
 (* ℕH
