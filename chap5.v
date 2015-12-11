@@ -151,18 +151,6 @@ Definition double'_prop : Π (n : ℕ'), double' (S' n) = S' (S' (double' n))
          end
      end.
 
-Definition double'_prop2 : Π (n : ℕ'), double' (S' n) = S' (S' (double' n)).
-Proof.
-intros n.
-pose proof ua equiv_ℕ_ℕ' as p.
-(*
-pose proof @transport Type _ _ _ p.
-Check @transport Type.
-set (toto := double' (S' n) = S' (S' (double' n)) : Type).
-simpl in toto.
-*)
-Abort.
-
 Inductive List_1 : Type :=
   | nil : List_1
   | cons : True → List_1 → List_1.
