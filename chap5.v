@@ -331,15 +331,18 @@ Proof. apply eq_refl. Defined.
 Definition hott_5_3_1 A B E (g h : Π (w : W_type A B), E w)
   (e :
    Π (a : A), Π (f : B a → W_type A B), (Π (b : B a), E (f b)) → E (sup a f)) :
-  (Π (a : A), Π (f : B a → W_type A B), g (sup a f) = e a f (λ b, g (f b)))
+    (Π (a : A), Π (f : B a → W_type A B), g (sup a f) = e a f (λ b, g (f b)))
   → (Π (a : A), Π (f : B a → W_type A B), h (sup a f) = e a f (λ b, h (f b)))
-  → g ~~ h.
+  → g = h.
 Proof.
-intros p q (a, f).
+intros p q.
+apply Π_type.funext; intros (a, f).
+induction (sup a f) as [a' k Hk].
 eapply compose; [ apply p | ].
 eapply compose; [ | eapply invert, q ].
-pose proof W_type_comp_rule A B a f E e.
-Abort. (* I don't know how to finish this proof; I see later, perhaps *)
+apply ap, Π_type.funext; intros w.
+apply Hk.
+Defined.
 
 (* "5.4 Inductive types are initial algebras" *)
 
@@ -356,11 +359,22 @@ Definition ℕAlg := Σ (C : Type), (C * (C → C))%type.
         ℕHom((C,c₀,cs),(D,d₀,ds)) :≡
           Σ (h:C→D) (h(c₀) = d₀) × Π(c:C) (h(cs(c)) = ds(h(c)))." *)
 
-Definition ℕHom (Ca Da : ℕAlg) :=
+(*
+Definition old_ℕHom (Ca Da : ℕAlg) :=
   match (Ca, Da) with
   | (existT _ C (c₀, cs), existT _ D (d₀, ds)) =>
        Σ (h: C → D), ((h c₀ = d₀) * Π (c : C), (h (cs c) = ds (h c)))%type
-  end.
+end.
+*)
+
+Definition ℕHom (Ca Da : ℕAlg) :=
+  let C := Σ_pr₁ Ca in
+  let D := Σ_pr₁ Da in
+  let c₀ := fst (Σ_pr₂ Ca) in
+  let d₀ := fst (Σ_pr₂ Da) in
+  let cs := snd (Σ_pr₂ Ca) in
+  let ds := snd (Σ_pr₂ Da) in
+  Σ (h: C → D), ((h c₀ = d₀) * Π (c : C), (h (cs c) = ds (h c)))%type.
 
 (* "Definition 5.4.3. A ℕ-algebra I is called *homotopy-initial*, or
     *h-initial* for short, if for any other ℕ-algebra C, the type of
@@ -386,10 +400,58 @@ Defined.
 Definition hott_5_4_4_i I J : isHinit_ℕ I → isHinit_ℕ J → I = J.
 Proof.
 intros p q.
-assert (r : isContr (ℕHom I J)) by apply p.
-assert (s : isContr (ℕHom J I)) by apply q.
-destruct r as (f, r).
-destruct s as (g, s).
+assert (cij : isContr (ℕHom I J)) by apply p.
+assert (cji : isContr (ℕHom J I)) by apply q.
+destruct cij as (f, cij).
+destruct cji as (g, cji).
+assert (cii : isContr (ℕHom I I)) by apply p.
+destruct cii as (h, cii).
+assert (Σ_pr₁ g ◦ Σ_pr₁ f = id).
+Check (Σ_pr₁ g ◦ Σ_pr₁ f).
+(* Σ_pr₁ g ◦ Σ_pr₁ f
+     : Σ_pr₁ I → Σ_pr₁ I *)
+(* faire l'homomorphisme identité de I dans I *)
+(* ne faudrait-il pas définir ℕHom comme un type inductif, plutôt
+   qu'avoir le type général ℕAlg → ℕAlg → Type comme définition de
+   ℕHom ? *)
+bbb.
+
+Print ℕHom.
+(* ℕHom@{Top.1933 Top.1934} = 
+λ (Ca Da : ℕAlg) (C:=Σ_pr₁ Ca) (D:=Σ_pr₁ Da) (c₀:=fst (Σ_pr₂ Ca))
+(d₀:=fst (Σ_pr₂ Da)) (cs:=snd (Σ_pr₂ Ca)) (ds:=snd (Σ_pr₂ Da)),
+{h : C → D & ((h c₀ = d₀) * (∀ c : C, h (cs c) = ds (h c)))%type}
+     : ℕAlg → ℕAlg → Type *)
+
+Check (eq_refl (fst (Σ_pr₂ I))).
+bbb.
+
+(* faire une ℕ-algèbre id *)
+Print ℕAlg.
+(* ℕAlg@{Top.1762} = {C : Type & (C * (C → C))%type}
+     : Type *)
+Check (Σ_pr₁ I).
+Check (existT _ (Σ_pr₁ I) (Σ_pr₂ I) : ℕAlg).
+
+bbb.
+Check (existT _ id (eq_refl (fst (Σ_pr₂ I)),
+bbb.
+
+ unfold isContr in cii.
+ destruct cii as (h, cii).
+ eapply compose.
+eapply invert.
+bbb.
+
+Print ℕAlg.
+
+destruct h as (h, (h₀, hc)).
+bbb.
+
+ eapply cii.
+
+bbb.
+
 (**)
 transparent assert (gffg: (ℕHom I I * ℕHom J J)%type).
  unfold ℕHom in f, g; unfold ℕHom.
