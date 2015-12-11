@@ -412,10 +412,33 @@ destruct cji as (g, cji).
 assert (cii : isContr (ℕHom I I)) by apply p.
 destruct cii as (h, cii).
 assert (ℕHom_fun g ◦ ℕHom_fun f = id).
-bbb.
  set
    (I₀ :=
     ℕH I I (existT _ id (eq_refl _, λ c, eq_refl (snd (Σ_pr₂ I) (id c))))).
+unfold id in I₀; simpl in I₀.
+Check (λ c, (existT _ id c : ℕHom_def I I)).
+assert
+  (c : (λ h : Σ_pr₁ I → Σ_pr₁ I,
+     ((h (fst (Σ_pr₂ I)) = fst (Σ_pr₂ I)) *
+      (∀ c : Σ_pr₁ I, h (snd (Σ_pr₂ I) c) = snd (Σ_pr₂ I) (h c)))%type) id).
+ unfold id; simpl.
+ split.
+bbb.
+
+Focus 2.
+Check (ℕH _ _ (existT _ id c) : ℕHom I I).
+
+
+existT
+  (λ h : Σ_pr₁ I → Σ_pr₁ I,
+   ((h (fst (Σ_pr₂ I)) = fst (Σ_pr₂ I)) *
+    (∀ c0 : Σ_pr₁ I, h (snd (Σ_pr₂ I) c0) = snd (Σ_pr₂ I) (h c0)))%type) id c
+:
+ℕHom_def I I
+     : (id (fst (Σ_pr₂ I)) = fst (Σ_pr₂ I)) *
+       (∀ c : Σ_pr₁ I, id (snd (Σ_pr₂ I) c) = snd (Σ_pr₂ I) (id c))
+       → ℕHom_def I I
+
  pose proof cii I₀ as hii.
  unfold I₀ in hii; clear I₀.
  destruct h as [d].
