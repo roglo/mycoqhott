@@ -412,6 +412,22 @@ destruct cji as (g, cji).
 assert (cii : isContr (ℕHom I I)) by apply p.
 destruct cii as (h, cii).
 assert (ℕHom_fun g ◦ ℕHom_fun f = id).
+ unfold ℕHom_fun; simpl.
+ destruct g as [g].
+ destruct f as [f].
+ destruct h as [h].
+apply Π_type.funext; intros w.
+bbb.
+
+ unfold ℕHom_def in f, g, h.
+ destruct f as (f, (f₀, fc)); simpl.
+ destruct g as (g, (g₀, gc)); simpl.
+ destruct h as (h, (h₀, hc)); simpl.
+Check ℕH.
+(* ℕH
+     : ∀ Ca Da : ℕAlg, ℕHom_def Ca Da → ℕHom Ca Da *)
+bbb.
+
 Check (ℕHom_fun g ◦ ℕHom_fun f).
 (* Σ_pr₁ g ◦ Σ_pr₁ f
      : Σ_pr₁ I → Σ_pr₁ I *)
