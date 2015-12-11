@@ -367,7 +367,7 @@ Definition old_ℕHom (Ca Da : ℕAlg) :=
 end.
 *)
 
-Definition ℕHom (Ca Da : ℕAlg) :=
+Definition ℕHom_def (Ca Da : ℕAlg) :=
   let C := Σ_pr₁ Ca in
   let D := Σ_pr₁ Da in
   let c₀ := fst (Σ_pr₂ Ca) in
@@ -375,6 +375,11 @@ Definition ℕHom (Ca Da : ℕAlg) :=
   let cs := snd (Σ_pr₂ Ca) in
   let ds := snd (Σ_pr₂ Da) in
   Σ (h: C → D), ((h c₀ = d₀) * Π (c : C), (h (cs c) = ds (h c)))%type.
+
+Inductive ℕHom (Ca Da : ℕAlg) := ℕH : ℕHom_def Ca Da → ℕHom Ca Da.
+
+Definition ℕHom_fun {Ca Da} (f : ℕHom Ca Da) :=
+  match f with ℕH _ _ h => Σ_pr₁ h end.
 
 (* "Definition 5.4.3. A ℕ-algebra I is called *homotopy-initial*, or
     *h-initial* for short, if for any other ℕ-algebra C, the type of
@@ -406,14 +411,11 @@ destruct cij as (f, cij).
 destruct cji as (g, cji).
 assert (cii : isContr (ℕHom I I)) by apply p.
 destruct cii as (h, cii).
-assert (Σ_pr₁ g ◦ Σ_pr₁ f = id).
-Check (Σ_pr₁ g ◦ Σ_pr₁ f).
+assert (ℕHom_fun g ◦ ℕHom_fun f = id).
+Check (ℕHom_fun g ◦ ℕHom_fun f).
 (* Σ_pr₁ g ◦ Σ_pr₁ f
      : Σ_pr₁ I → Σ_pr₁ I *)
 (* faire l'homomorphisme identité de I dans I *)
-(* ne faudrait-il pas définir ℕHom comme un type inductif, plutôt
-   qu'avoir le type général ℕAlg → ℕAlg → Type comme définition de
-   ℕHom ? *)
 bbb.
 
 Print ℕHom.
