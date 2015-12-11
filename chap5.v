@@ -423,11 +423,16 @@ assert
       (∀ c : Σ_pr₁ I, h (snd (Σ_pr₂ I) c) = snd (Σ_pr₂ I) (h c)))%type)
       (ℕHom_fun g ◦ ℕHom_fun f)).
 split.
+Check (ℕHom_fun g ◦ ℕHom_fun f).
+bbb.
+
 unfold "◦"; simpl.
 unfold ℕHom_fun; simpl.
 destruct g as [g].
 destruct f as [f].
 Check (fst (Σ_pr₂ I)).
+Check (Σ_pr₁ f (fst (Σ_pr₂ I))).
+Check (Σ_pr₁ g).
 bbb.
 
 set (u := ℕH _ _ (existT _ (ℕHom_fun g ◦ ℕHom_fun f) c) : ℕHom I I).
