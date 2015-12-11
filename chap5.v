@@ -424,6 +424,8 @@ assert
       (ℕHom_fun g ◦ ℕHom_fun f)).
 split.
 Check (ℕHom_fun g ◦ ℕHom_fun f).
+set (fst (Σ_pr₂ I)) as c₀.
+unfold "◦".
 bbb.
 
 unfold "◦"; simpl.
