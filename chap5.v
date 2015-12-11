@@ -416,32 +416,30 @@ assert (ℕHom_fun g ◦ ℕHom_fun f = id).
    (I₀ :=
     ℕH I I (existT _ id (eq_refl _, λ c, eq_refl (snd (Σ_pr₂ I) (id c))))).
 unfold id in I₀; simpl in I₀.
-Check (λ c, (existT _ id c : ℕHom_def I I)).
+Check (λ c, (existT _ (ℕHom_fun g ◦ ℕHom_fun f) c : ℕHom_def I I)).
 assert
-  (c : (λ h : Σ_pr₁ I → Σ_pr₁ I,
+(c : (λ h : Σ_pr₁ I → Σ_pr₁ I,
      ((h (fst (Σ_pr₂ I)) = fst (Σ_pr₂ I)) *
-      (∀ c : Σ_pr₁ I, h (snd (Σ_pr₂ I) c) = snd (Σ_pr₂ I) (h c)))%type) id).
- unfold id; simpl.
- split.
+      (∀ c : Σ_pr₁ I, h (snd (Σ_pr₂ I) c) = snd (Σ_pr₂ I) (h c)))%type)
+      (ℕHom_fun g ◦ ℕHom_fun f)).
+split.
+unfold "◦"; simpl.
+unfold ℕHom_fun; simpl.
+destruct g as [g].
+destruct f as [f].
+Check (fst (Σ_pr₂ I)).
 bbb.
 
-Focus 2.
-Check (ℕH _ _ (existT _ id c) : ℕHom I I).
-
-
-existT
-  (λ h : Σ_pr₁ I → Σ_pr₁ I,
-   ((h (fst (Σ_pr₂ I)) = fst (Σ_pr₂ I)) *
-    (∀ c0 : Σ_pr₁ I, h (snd (Σ_pr₂ I) c0) = snd (Σ_pr₂ I) (h c0)))%type) id c
-:
-ℕHom_def I I
-     : (id (fst (Σ_pr₂ I)) = fst (Σ_pr₂ I)) *
-       (∀ c : Σ_pr₁ I, id (snd (Σ_pr₂ I) c) = snd (Σ_pr₂ I) (id c))
-       → ℕHom_def I I
-
- pose proof cii I₀ as hii.
- unfold I₀ in hii; clear I₀.
- destruct h as [d].
+set (u := ℕH _ _ (existT _ (ℕHom_fun g ◦ ℕHom_fun f) c) : ℕHom I I).
+pose proof cii u.
+unfold u in H.
+pose proof cii I₀.
+apply invert in H0; destruct H0.
+unfold I₀ in H.
+injection H.
+intros H1.
+destruct H1.
+apply eq_refl.
 bbb.
 
 (* ℕH
