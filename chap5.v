@@ -482,6 +482,14 @@ assert (gg : ℕHom_fun g ◦ ℕHom_fun f = id).
 
   destruct I as (C, (c₀, cs)).
   destruct J as (D, (d₀, ds)); simpl in IJ.
+(**)
+subst D.
+pose proof p (existT _ C (d₀, ds)) as H.
+set (A₁ := existT (λ C : Type, (C * (C → C))%type) C (c₀, cs) : ℕAlg) in *.
+set (A₂ := existT (λ C : Type, (C * (C → C))%type) C (d₀, ds) : ℕAlg) in *.
+simpl in A₁, A₂.
+
+bbb.
   apply (Σ_type.pair_eq IJ).
   unfold transport, id.
   destruct IJ.
@@ -493,6 +501,12 @@ destruct f₀, g₀.
 unfold "◦", id in ff, gg.
 eapply compose; [ eapply Π_type.happly in gg; apply gg | ].
 eapply invert, compose; [ eapply Π_type.happly in ff; apply ff | ].
+unfold isHinit_ℕ in p, q.
+Print ℕAlg.
+Check (existT _ C (c₀, cs) : ℕAlg).
+pose proof q (existT _ C (c₀, cs)) as H.
+unfold isContr in H.
+destruct H as (h, H).
 bbb.
 
 (* ℕH
