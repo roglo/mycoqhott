@@ -488,6 +488,8 @@ pose proof p (existT _ C (d₀, ds)) as H.
 set (A₁ := existT (λ C : Type, (C * (C → C))%type) C (c₀, cs) : ℕAlg) in *.
 set (A₂ := existT (λ C : Type, (C * (C → C))%type) C (d₀, ds) : ℕAlg) in *.
 simpl in A₁, A₂.
+unfold isContr in H.
+destruct H as (h, H).
 
 bbb.
   apply (Σ_type.pair_eq IJ).
