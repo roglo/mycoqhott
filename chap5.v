@@ -480,15 +480,25 @@ assert (gg : ℕHom_fun g ◦ ℕHom_fun f = id).
   split; [ destruct ff; apply homotopy_eq_refl2 | ].
   destruct gg; apply homotopy_eq_refl2.
 
+assert (IP : isProp (isHinit_ℕ I)).
+ apply ex_3_6_2; intros K; apply hott_3_11_4.
+
+ assert (JP : isProp (isHinit_ℕ J)).
+  apply ex_3_6_2; intros K; apply hott_3_11_4.
+
+bbb.
+
   destruct I as (C, (c₀, cs)).
   destruct J as (D, (d₀, ds)); simpl in IJ.
-(**)
+(*
 subst D.
 pose proof p (existT _ C (d₀, ds)) as H.
 set (A₁ := existT (λ C : Type, (C * (C → C))%type) C (c₀, cs) : ℕAlg) in *.
 set (A₂ := existT (λ C : Type, (C * (C → C))%type) C (d₀, ds) : ℕAlg) in *.
 
+Print isHinit_ℕ.
 bbb.
+*)
   apply (Σ_type.pair_eq IJ).
   unfold transport, id.
   destruct IJ.
@@ -501,6 +511,11 @@ unfold "◦", id in ff, gg.
 eapply compose; [ eapply Π_type.happly in gg; apply gg | ].
 eapply invert, compose; [ eapply Π_type.happly in ff; apply ff | ].
 unfold isHinit_ℕ in p, q.
+Check hott_5_1_1.
+assert (f = id).
+eapply hott_5_1_1.
+bbb.
+
 Print ℕAlg.
 Check (existT _ C (c₀, cs) : ℕAlg).
 pose proof q (existT _ C (c₀, cs)) as H.
