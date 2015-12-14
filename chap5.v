@@ -495,6 +495,9 @@ set (A₂ := ℕA (existT (λ C : Type, (C * (C → C))%type) D (d₀, ds))) in 
 subst D.
 destruct f as ((f, (f₀, fs))); simpl in *.
 destruct g as ((g, (g₀, gs))); simpl in *.
+supp c₀ = cs c₁
+f c₀=f(cs c₁)=ds(f c₁)=d₀
+
 (* counterexample:
      (ℕ,0,SS) and (ℕ,1,SS) are h-initial ℕ-Algebras but are not equal *)
 Print isHinit_ℕ.
