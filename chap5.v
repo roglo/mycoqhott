@@ -493,6 +493,8 @@ destruct J as ((D, (d₀, ds))); simpl in IJ.
 set (A₁ := ℕA (existT (λ C : Type, (C * (C → C))%type) C (c₀, cs))) in *.
 set (A₂ := ℕA (existT (λ C : Type, (C * (C → C))%type) D (d₀, ds))) in *.
 subst D.
+destruct f as ((f, (f₀, fs))); simpl in *.
+destruct g as ((g, (g₀, gs))); simpl in *.
 (* counterexample:
      (ℕ,0,SS) and (ℕ,1,SS) are h-initial ℕ-Algebras but are not equal *)
 Print isHinit_ℕ.
