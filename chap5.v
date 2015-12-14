@@ -383,24 +383,6 @@ Definition ℕHom_eq₀ {Ca Da} (f : ℕHom Ca Da)
   match f with ℕH _ _ h => fst (Σ_pr₂ h) end.
 Definition ℕHom_eqs {Ca Da} (f : ℕHom Ca Da)
   : Π (c : ℕAlg_C Ca), ℕHom_fun f (ℕAlg_cs Ca c) = ℕAlg_cs Da (ℕHom_fun f c) :=
-  match f with ℕH _ _ h => fst (Σ_pr₂ h) end.
-bbb.
-
-  : ℕHom_fun f (ℕAlg_c₀ Ca) = ℕAlg_c₀ Da
-
-Toplevel input, characters 169-185:
-Error:
-In environment
-Ca : ℕAlg
-Da : ℕAlg
-f : ℕHom Ca Da
-h : ℕHom_def Ca Da
-The term "fst (Σ_pr₂ h)" has type "
-while it is expected to have type
- "∀ c : ℕAlg_C Ca,
-  ℕHom_fun ?ℕ@{f1:=ℕH Ca Da h} (ℕAlg_cs Ca c) =
-  ℕAlg_cs Da (ℕHom_fun ?ℕ0@{f1:=ℕH Ca Da h} c)".
-Definition ℕHom_eqs {Ca Da} (f : ℕHom Ca Da) : Σ_pr₁ Ca → Σ_pr₁ Da :=
   match f with ℕH _ _ h => snd (Σ_pr₂ h) end.
 
 (* "Definition 5.4.3. A ℕ-algebra I is called *homotopy-initial*, or
@@ -435,83 +417,87 @@ assert (ff : ℕHom_fun f ◦ ℕHom_fun g = id).
  assert (cjj : isContr (ℕHom J J)) by apply q.
  destruct cjj as (h, cjj).
  set
-  (J₀ :=
-   ℕH J J (existT _ id (eq_refl _, λ c, eq_refl (snd (Σ_pr₂ J) (id c))))).
+  (J₀ := ℕH J J (existT _ id (eq_refl _, λ c, eq_refl (ℕAlg_cs J (id c))))).
  unfold id in J₀; simpl in J₀.
  assert
   (c :
-   (λ h : Σ_pr₁ J → Σ_pr₁ J,
-    ((h (fst (Σ_pr₂ J)) = fst (Σ_pr₂ J)) *
-     (∀ c : Σ_pr₁ J, h (snd (Σ_pr₂ J) c) = snd (Σ_pr₂ J) (h c)))%type)
+   (λ h : ℕAlg_C J → ℕAlg_C J,
+    ((h (ℕAlg_c₀ J) = ℕAlg_c₀ J) *
+     (∀ c : ℕAlg_C J, h (ℕAlg_cs J c) = ℕAlg_cs J (h c)))%type)
      (ℕHom_fun f ◦ ℕHom_fun g)).
   split.
    unfold "◦".
    destruct f as ((f, (f₀, fs))).
    destruct g as ((g, (g₀, gs))); simpl.
-   eapply compose; [ | apply f₀ ]; apply ap, g₀.
+   eapply compose; [  | apply f₀ ]; apply ap, g₀.
 
    intros w.
    unfold "◦".
    destruct f as ((f, (f₀, fs))).
    destruct g as ((g, (g₀, gs))); simpl.
-   eapply compose; [ | apply fs ]; apply ap, gs.
+   eapply compose; [  | apply fs ]; apply ap, gs.
 
   set (u := ℕH _ _ (existT _ (ℕHom_fun f ◦ ℕHom_fun g) c) : ℕHom J J).
-  pose proof cjj u as H1; unfold u in H1.
-  pose proof cjj J₀ as H2.
+  pose proof (cjj u) as H1; unfold u in H1.
+  pose proof (cjj J₀) as H2.
   apply invert in H2; destruct H2.
   unfold J₀ in H1; injection H1; intros H3.
   destruct H3; apply eq_refl.
 
-assert (gg : ℕHom_fun g ◦ ℕHom_fun f = id).
- assert (cii : isContr (ℕHom I I)) by apply p.
- destruct cii as (h, cii).
- set
-  (I₀ :=
-   ℕH I I (existT _ id (eq_refl _, λ c, eq_refl (snd (Σ_pr₂ I) (id c))))).
- unfold id in I₀; simpl in I₀.
- assert
-  (c :
-   (λ h : Σ_pr₁ I → Σ_pr₁ I,
-    ((h (fst (Σ_pr₂ I)) = fst (Σ_pr₂ I)) *
-     (∀ c : Σ_pr₁ I, h (snd (Σ_pr₂ I) c) = snd (Σ_pr₂ I) (h c)))%type)
-     (ℕHom_fun g ◦ ℕHom_fun f)).
-  split.
-   unfold "◦".
-   destruct f as ((f, (f₀, fs))).
-   destruct g as ((g, (g₀, gs))); simpl.
-   eapply compose; [ | apply g₀ ]; apply ap, f₀.
+ assert (gg : ℕHom_fun g ◦ ℕHom_fun f = id).
+  assert (cii : isContr (ℕHom I I)) by apply p.
+  destruct cii as (h, cii).
+  set
+   (I₀ := ℕH I I (existT _ id (eq_refl _, λ c, eq_refl (ℕAlg_cs I (id c))))).
+  unfold id in I₀; simpl in I₀.
+  assert
+   (c :
+    (λ h : ℕAlg_C I → ℕAlg_C I,
+     ((h (ℕAlg_c₀ I) = ℕAlg_c₀ I) *
+      (∀ c : ℕAlg_C I, h (ℕAlg_cs I c) = ℕAlg_cs I (h c)))%type)
+      (ℕHom_fun g ◦ ℕHom_fun f)).
+   split.
+    unfold "◦".
+    destruct f as ((f, (f₀, fs))).
+    destruct g as ((g, (g₀, gs))); simpl.
+    eapply compose; [  | apply g₀ ]; apply ap, f₀.
 
-   intros w.
-   unfold "◦".
-   destruct f as ((f, (f₀, fs))).
-   destruct g as ((g, (g₀, gs))); simpl.
-   eapply compose; [ | apply gs ]; apply ap, fs.
+    intros w.
+    unfold "◦".
+    destruct f as ((f, (f₀, fs))).
+    destruct g as ((g, (g₀, gs))); simpl.
+    eapply compose; [  | apply gs ]; apply ap, fs.
 
-  set (u := ℕH _ _ (existT _ (ℕHom_fun g ◦ ℕHom_fun f) c) : ℕHom I I).
-  pose proof cii u as H1; unfold u in H1.
-  pose proof cii I₀ as H2.
-  apply invert in H2; destruct H2.
-  unfold I₀ in H1; injection H1; intros H3.
-  destruct H3; apply eq_refl.
+   set (u := ℕH _ _ (existT _ (ℕHom_fun g ◦ ℕHom_fun f) c) : ℕHom I I).
+   pose proof (cii u) as H1; unfold u in H1.
+   pose proof (cii I₀) as H2.
+   apply invert in H2; destruct H2.
+   unfold I₀ in H1; injection H1; intros H3.
+   destruct H3; apply eq_refl.
 
- simpl in ff, gg.
- assert (IJ : Σ_pr₁ I = Σ_pr₁ J).
-  apply ua.
-  exists (ℕHom_fun f); apply qinv_isequiv; exists (ℕHom_fun g).
-  split; [ destruct ff; apply homotopy_eq_refl2 | ].
-  destruct gg; apply homotopy_eq_refl2.
+  simpl in ff, gg.
+  assert (IJ : ℕAlg_C I = ℕAlg_C J).
+   apply ua.
+   exists (ℕHom_fun f); apply qinv_isequiv; exists (ℕHom_fun g).
+   split; [ destruct ff; apply homotopy_eq_refl2 |  ].
+   destruct gg; apply homotopy_eq_refl2.
 
-assert (IP : isProp (isHinit_ℕ I)).
- apply ex_3_6_2; intros K; apply hott_3_11_4.
+   assert (IP : isProp (isHinit_ℕ I)).
+    apply ex_3_6_2; intros K; apply hott_3_11_4.
 
- assert (JP : isProp (isHinit_ℕ J)).
-  apply ex_3_6_2; intros K; apply hott_3_11_4.
+    assert (JP : isProp (isHinit_ℕ J)).
+     apply ex_3_6_2; intros K; apply hott_3_11_4.
 
+destruct I as ((C, (c₀, cs))).
+destruct J as ((D, (d₀, ds))); simpl in IJ.
+set (A₁ := ℕA (existT (λ C : Type, (C * (C → C))%type) C (c₀, cs))) in *.
+set (A₂ := ℕA (existT (λ C : Type, (C * (C → C))%type) D (d₀, ds))) in *.
+subst D.
+(* counterexample:
+     (ℕ,0,SS) and (ℕ,1,SS) are h-initial ℕ-Algebras but are not equal *)
+Print isHinit_ℕ.
 bbb.
 
-  destruct I as (C, (c₀, cs)).
-  destruct J as (D, (d₀, ds)); simpl in IJ.
 (*
 subst D.
 pose proof p (existT _ C (d₀, ds)) as H.
