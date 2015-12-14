@@ -359,14 +359,6 @@ Definition ℕAlg := Σ (C : Type), (C * (C → C))%type.
         ℕHom((C,c₀,cs),(D,d₀,ds)) :≡
           Σ (h:C→D) (h(c₀) = d₀) × Π(c:C) (h(cs(c)) = ds(h(c)))." *)
 
-(*
-Definition old_ℕHom (Ca Da : ℕAlg) :=
-  match (Ca, Da) with
-  | (existT _ C (c₀, cs), existT _ D (d₀, ds)) =>
-       Σ (h: C → D), ((h c₀ = d₀) * Π (c : C), (h (cs c) = ds (h c)))%type
-end.
-*)
-
 Definition ℕHom_def (Ca Da : ℕAlg) :=
   let C := Σ_pr₁ Ca in
   let D := Σ_pr₁ Da in
@@ -378,7 +370,7 @@ Definition ℕHom_def (Ca Da : ℕAlg) :=
 
 Inductive ℕHom (Ca Da : ℕAlg) := ℕH : ℕHom_def Ca Da → ℕHom Ca Da.
 
-Definition ℕHom_fun {Ca Da} (f : ℕHom Ca Da) :=
+Definition ℕHom_fun {Ca Da} (f : ℕHom Ca Da) : Σ_pr₁ Ca → Σ_pr₁ Da :=
   match f with ℕH _ _ h => Σ_pr₁ h end.
 
 (* "Definition 5.4.3. A ℕ-algebra I is called *homotopy-initial*, or
