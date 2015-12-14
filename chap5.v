@@ -350,7 +350,13 @@ Defined.
     C, c_s : C → C. The type of such algebras is
         ℕAlg :≡ Σ (C : U) C × (C → C)." *)
 
-Definition ℕAlg := Σ (C : Type), (C * (C → C))%type.
+Inductive ℕAlg := ℕA : (Σ (C : Type), (C * (C → C))%type) → ℕAlg.
+
+Definition ℕAlg_C (na : ℕAlg) : Type := match na with ℕA a => Σ_pr₁ a end.
+Definition ℕAlg_c₀ (na : ℕAlg) : ℕAlg_C na :=
+  match na with ℕA a => fst (Σ_pr₂ a) end.
+Definition ℕAlg_cs (na : ℕAlg) : ℕAlg_C na → ℕAlg_C na :=
+  match na with ℕA a => snd (Σ_pr₂ a) end.
 
 (* "Definition 5.4.2. A *ℕ-homomorphism* between ℕ-algebras (C,c₀,cs)
     and (D,d₀,ds) is a function h : C → D such that h(c₀) = d₀ and
@@ -360,18 +366,42 @@ Definition ℕAlg := Σ (C : Type), (C * (C → C))%type.
           Σ (h:C→D) (h(c₀) = d₀) × Π(c:C) (h(cs(c)) = ds(h(c)))." *)
 
 Definition ℕHom_def (Ca Da : ℕAlg) :=
-  let C := Σ_pr₁ Ca in
-  let D := Σ_pr₁ Da in
-  let c₀ := fst (Σ_pr₂ Ca) in
-  let d₀ := fst (Σ_pr₂ Da) in
-  let cs := snd (Σ_pr₂ Ca) in
-  let ds := snd (Σ_pr₂ Da) in
+  let C := ℕAlg_C Ca in
+  let D := ℕAlg_C Da in
+  let c₀ := ℕAlg_c₀ Ca in
+  let d₀ := ℕAlg_c₀ Da in
+  let cs := ℕAlg_cs Ca in
+  let ds := ℕAlg_cs Da in
   Σ (h: C → D), ((h c₀ = d₀) * Π (c : C), (h (cs c) = ds (h c)))%type.
 
 Inductive ℕHom (Ca Da : ℕAlg) := ℕH : ℕHom_def Ca Da → ℕHom Ca Da.
 
-Definition ℕHom_fun {Ca Da} (f : ℕHom Ca Da) : Σ_pr₁ Ca → Σ_pr₁ Da :=
+Definition ℕHom_fun {Ca Da} (f : ℕHom Ca Da) : ℕAlg_C Ca → ℕAlg_C Da :=
   match f with ℕH _ _ h => Σ_pr₁ h end.
+Definition ℕHom_eq₀ {Ca Da} (f : ℕHom Ca Da)
+  : ℕHom_fun f (ℕAlg_c₀ Ca) = ℕAlg_c₀ Da :=
+  match f with ℕH _ _ h => fst (Σ_pr₂ h) end.
+Definition ℕHom_eqs {Ca Da} (f : ℕHom Ca Da)
+  : Π (c : ℕAlg_C Ca), ℕHom_fun f (ℕAlg_cs Ca c) = ℕAlg_cs Da (ℕHom_fun f c) :=
+  match f with ℕH _ _ h => fst (Σ_pr₂ h) end.
+bbb.
+
+  : ℕHom_fun f (ℕAlg_c₀ Ca) = ℕAlg_c₀ Da
+
+Toplevel input, characters 169-185:
+Error:
+In environment
+Ca : ℕAlg
+Da : ℕAlg
+f : ℕHom Ca Da
+h : ℕHom_def Ca Da
+The term "fst (Σ_pr₂ h)" has type "
+while it is expected to have type
+ "∀ c : ℕAlg_C Ca,
+  ℕHom_fun ?ℕ@{f1:=ℕH Ca Da h} (ℕAlg_cs Ca c) =
+  ℕAlg_cs Da (ℕHom_fun ?ℕ0@{f1:=ℕH Ca Da h} c)".
+Definition ℕHom_eqs {Ca Da} (f : ℕHom Ca Da) : Σ_pr₁ Ca → Σ_pr₁ Da :=
+  match f with ℕH _ _ h => snd (Σ_pr₂ h) end.
 
 (* "Definition 5.4.3. A ℕ-algebra I is called *homotopy-initial*, or
     *h-initial* for short, if for any other ℕ-algebra C, the type of
