@@ -413,7 +413,7 @@ assert (cij : isContr (ℕHom I J)) by apply p.
 assert (cji : isContr (ℕHom J I)) by apply q.
 destruct cij as (f, cij).
 destruct cji as (g, cji).
-assert (ff : ℕHom_fun f ◦ ℕHom_fun g = id).
+assert (fg : ℕHom_fun f ◦ ℕHom_fun g = id).
  assert (cjj : isContr (ℕHom J J)) by apply q.
  destruct cjj as (h, cjj).
  set
@@ -444,7 +444,7 @@ assert (ff : ℕHom_fun f ◦ ℕHom_fun g = id).
   unfold J₀ in H1; injection H1; intros H3.
   destruct H3; apply eq_refl.
 
- assert (gg : ℕHom_fun g ◦ ℕHom_fun f = id).
+ assert (gf : ℕHom_fun g ◦ ℕHom_fun f = id).
   assert (cii : isContr (ℕHom I I)) by apply p.
   destruct cii as (h, cii).
   set
@@ -475,12 +475,12 @@ assert (ff : ℕHom_fun f ◦ ℕHom_fun g = id).
    unfold I₀ in H1; injection H1; intros H3.
    destruct H3; apply eq_refl.
 
-  simpl in ff, gg.
+  simpl in fg, gf.
   assert (IJ : ℕAlg_C I = ℕAlg_C J).
    apply ua.
    exists (ℕHom_fun f); apply qinv_isequiv; exists (ℕHom_fun g).
-   split; [ destruct ff; apply homotopy_eq_refl2 |  ].
-   destruct gg; apply homotopy_eq_refl2.
+   split; [ destruct fg; apply homotopy_eq_refl2 |  ].
+   destruct gf; apply homotopy_eq_refl2.
 
    assert (IP : isProp (isHinit_ℕ I)).
     apply ex_3_6_2; intros K; apply hott_3_11_4.
@@ -495,6 +495,12 @@ set (A₂ := ℕA (existT (λ C : Type, (C * (C → C))%type) D (d₀, ds))) in 
 subst D.
 destruct f as ((f, (f₀, fs))); simpl in *.
 destruct g as ((g, (g₀, gs))); simpl in *.
+move d₀ after A₁; move ds after A₁.
+move A₂ before A₁.
+move q before p.
+move cij before cji.
+move JP before IP.
+bbb.
 Abort. (*
 supp c₀ = cs c₁
 f c₀=f(cs c₁)=ds(f c₁)=d₀
