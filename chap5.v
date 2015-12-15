@@ -500,7 +500,6 @@ move A₂ before A₁.
 move q before p.
 move cij before cji.
 move JP before IP.
-bbb.
 Abort. (*
 supp c₀ = cs c₁
 f c₀=f(cs c₁)=ds(f c₁)=d₀
@@ -723,133 +722,24 @@ unfold isHinit_ℕ.
 intros A.
 set (na := ℕA (existT _ ℕ (0, S))); simpl in na.
 set (f := ℕAlg_morph_of_ℕ A).
-transparent assert (fh : ℕHom na A).
+(*transparent*) assert (fh : ℕHom na A).
  constructor.
  destruct A as ((C, (c₀, cs))).
  exists f; unfold f; simpl.
  split; [ apply eq_refl | intros n; apply eq_refl ].
 
- simpl in fh.
- exists fh; unfold fh; clear fh.
- intros gh.
- destruct A as ((C, (c₀, cs))).
- destruct gh as (gh); apply ap.
- destruct gh as (g, (g₀, gs)); simpl; simpl in g, g₀, gs.
-bbb.
-
- eapply Σ_type.pair_eq.
-
-
-
- unfold ℕHom, ℕa.
-(**)
-exists f; unfold f; intros (g, (p, q)).
-transparent assert (r : g = morph_of_ℕ C c₀ cs).
- eapply hott_5_1_1 with (es := λ _, cs); eauto.
-
-(* je peux pas prouver que p, c'est eq_refl, moi *)
-bbb.
- apply isContr_Σ_prod.
- exists f; unfold f.
- intros (g, (p, q)).
- transparent assert (r : g = morph_of_ℕ C c₀ cs).
-  eapply hott_5_1_1 with (es := λ _, cs); try eassumption; try apply eq_refl.
-  intros n; apply eq_refl.
-
-  apply invert, (Σ_type.pair_eq r).
-  unfold transport, r.
-  unfold hott_5_1_1; simpl.
-bbb.
-
-Show.
-apply isContr_Σ_prod.
-About hott_3_11_8.
-Definition glop A B a b :
-  isContr (Σ (b' : B), b = b')
-  → isContr (Σ (f : A → B), f a = b).
-Proof.
-intros p.
-unfold isContr in p.
-destruct p as ((b', p), q).
 unfold isContr.
-bbb.
+exists fh; intros gh.
+destruct fh as ((fh, (f₀, fs))).
+destruct gh as ((gh, (g₀, gs))); simpl.
+assert (fg : fh = gh).
+ destruct A as ((C, (c₀, cs))); simpl in *.
+ eapply hott_5_1_1; try eassumption.
+  intros n; eapply compose; [ apply fs | apply eq_refl ].
+  intros n; eapply compose; [ apply gs | apply eq_refl ].
 
-transparent assert (f : A → B).
- intros x.
-
-Show.
-
-apply glop.
-apply hott_3_11_8.
-bbb.
-
-unfold isContr.
-exists (existT _ (Σ_pr₁ f) (eq_refl c₀)).
-intros (g, p).
-
-exists (Σ_pr₁ f).
-intros g; unfold f; simpl.
- eapply hott_5_1_1 with (es := λ _, cs); try eassumption; try apply eq_refl.
- simpl.
-simpl.
-
-bbb.
-
-exists f; intros g.
-Print ℕHom.
-Check (g
-    : ℕHom ℕa (existT (λ C : Type, (C * (C → C))%type) C (c₀, cs))).
-Check hott_5_1_1.
-unfold f.
-destruct g as (g, (p, q)).
-assert (r : morph_of_ℕ C c₀ cs = g).
- eapply hott_5_1_1 with (es := λ _, cs); try eassumption; try apply eq_refl.
- intros; apply eq_refl.
-
- apply (Σ_type.pair_eq r).
- unfold transport; simpl.
- destruct r; unfold id.
- apply cartesian.pair_eq; simpl; split.
-(* blocked: there is no way to prove that p = eq_refl c₀. perhaps the
-   definition of h-initial should not include that the proof that
-   f(0)=c₀ be unique? *)
-bbb.
-transparent assert (φ : ℕHom (existT _ ℕ (0, S)) A).
- destruct A as (C, (c₀, cs)).
- exists (morph_of_ℕ C c₀ cs).
- split; [ apply eq_refl | intros n; apply eq_refl ].
-
- exists φ; unfold φ; clear φ.
- intros φ.
- destruct A as (C, (c₀, cs)).
- destruct φ as (f, (p, q)).
-(*
- assert (H : f = morph_of_ℕ C c₀ cs).
-  apply Π_type.funext; intros n.
-  induction n; [ apply p | simpl ].
-  eapply compose; [ apply q | apply ap, IHn ].
-
-  apply invert in H; destruct H.
-  simpl in p, q.
-  apply (Σ_type.pair_eq (eq_refl _)); simpl; unfold id.
-  apply cartesian.pair_eq; simpl; split.
-*)
- set
-   (r :=
-    hott_5_1_1 _ (morph_of_ℕ C c₀ cs) f c₀ (λ _, cs) (eq_refl _) p
-      (λ _, eq_refl _) q).
- apply (Σ_type.pair_eq r).
- unfold transport; simpl.
- unfold r; simpl.
-unfold hott_5_1_1.
-bbb.
-
-destruct (hott_5_1_1 (λ _ : ℕ, C) (morph_of_ℕ C c₀ cs) f c₀
-       (λ _ : ℕ, cs) (eq_refl c₀) p
-       (λ n : ℕ, eq_refl (cs (morph_of_ℕ C c₀ cs n))) q).
-simpl in p, q.
-unfold id; simpl.
-apply cartesian.pair_eq; simpl; split.
-
+(* ok fh = gh, but it does not prove that f₀ = g₀ and fs = gs *)
+subst gh.
+assert (f₀ = g₀).
 
 bbb.
