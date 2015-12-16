@@ -493,6 +493,23 @@ destruct J as ((D, (d₀, ds))); simpl in IJ.
 set (A₁ := ℕA (existT (λ C : Type, (C * (C → C))%type) C (c₀, cs))) in *.
 set (A₂ := ℕA (existT (λ C : Type, (C * (C → C))%type) D (d₀, ds))) in *.
 subst D.
+(**)
+
+Definition ℕHom_sym : ∀ A B, ℕHom A B → ℕHom B A.
+Proof.
+intros A B p.
+destruct p as ((f, (f₀, fs))); constructor.
+assert (g : ℕAlg_C B → ℕAlg_C A).
+ unfold ℕAlg_C; intros d.
+ destruct A as ((C, (c₀, cs))).
+ destruct B as ((D, (d₀, ds))); simpl in *.
+(* no way to know of d is d₀ of ds(something): not decidable *)
+bbb.
+
+set (t := cji (ℕHom_sym A₁ A₂ f)).
+bbb.
+
+bbb.
 destruct f as ((f, (f₀, fs))); simpl in *.
 destruct g as ((g, (g₀, gs))); simpl in *.
 move d₀ after A₁; move ds after A₁.
