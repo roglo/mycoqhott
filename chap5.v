@@ -406,6 +406,17 @@ pose proof r (existT _ a' p') as s.
 injection s; intros u v; apply v.
 Defined.
 
+Definition ℕHom_sym : ∀ A B, ℕHom A B → ℕHom B A.
+Proof.
+intros A B p.
+destruct p as ((f, (f₀, fs))); constructor.
+assert (g : ℕAlg_C B → ℕAlg_C A).
+ unfold ℕAlg_C; intros d.
+ destruct A as ((C, (c₀, cs))).
+ destruct B as ((D, (d₀, ds))); simpl in *.
+(* no way to know if d is d₀ of ds(something): not decidable *)
+Abort.
+
 Definition hott_5_4_4_i I J : isHinit_ℕ I → isHinit_ℕ J → I = J.
 Proof.
 intros p q.
@@ -492,24 +503,6 @@ destruct I as ((C, (c₀, cs))).
 destruct J as ((D, (d₀, ds))); simpl in IJ.
 set (A₁ := ℕA (existT (λ C : Type, (C * (C → C))%type) C (c₀, cs))) in *.
 set (A₂ := ℕA (existT (λ C : Type, (C * (C → C))%type) D (d₀, ds))) in *.
-subst D.
-(**)
-
-Definition ℕHom_sym : ∀ A B, ℕHom A B → ℕHom B A.
-Proof.
-intros A B p.
-destruct p as ((f, (f₀, fs))); constructor.
-assert (g : ℕAlg_C B → ℕAlg_C A).
- unfold ℕAlg_C; intros d.
- destruct A as ((C, (c₀, cs))).
- destruct B as ((D, (d₀, ds))); simpl in *.
-(* no way to know of d is d₀ of ds(something): not decidable *)
-bbb.
-
-set (t := cji (ℕHom_sym A₁ A₂ f)).
-bbb.
-
-bbb.
 destruct f as ((f, (f₀, fs))); simpl in *.
 destruct g as ((g, (g₀, gs))); simpl in *.
 move d₀ after A₁; move ds after A₁.
@@ -518,7 +511,9 @@ move q before p.
 move cij before cji.
 move JP before IP.
 unfold A₁, A₂.
-apply ap; apply (Σ_type.pair_eq (eq_refl _)); simpl; unfold id.
+apply ap; apply (Σ_type.pair_eq IJ); simpl.
+unfold transport.
+destruct IJ; unfold id.
 
 bbb.
 Abort. (*
