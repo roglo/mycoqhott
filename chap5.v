@@ -390,7 +390,13 @@ Definition ℕHom_eqs {Ca Da} (f : ℕHom Ca Da)
     ℕ-homomorphisms from I to C is contractible. Thus,
             isHinit_ℕ(I) :≡ Π (C : ℕAlg), isContr(ℕHom(I,C))." *)
 
+Definition isHinit_ℕ I :=
+  Π (C : ℕAlg), Σ (f : ℕHom I C), Π (g : ℕHom I C), ℕHom_fun f = ℕHom_fun g.
+(*
 Definition isHinit_ℕ I := Π (C : ℕAlg), isContr (ℕHom I C).
+*)
+
+bbb.
 
 (* "Theorem 5.4.4. Any two h-initial ℕ-algebras are equal. [...]" *)
 
