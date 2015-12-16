@@ -740,6 +740,6 @@ assert (fg : fh = gh).
 
 (* ok fh = gh, but it does not prove that f₀ = g₀ and fs = gs *)
 subst gh.
-assert (f₀ = g₀).
+apply ap, (Σ_type.pair_eq (eq_refl _)); simpl; unfold id.
 
 bbb.
