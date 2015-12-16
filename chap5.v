@@ -500,9 +500,11 @@ move A₂ before A₁.
 move q before p.
 move cij before cji.
 move JP before IP.
+unfold A₁, A₂.
+apply ap; apply (Σ_type.pair_eq (eq_refl _)); simpl; unfold id.
+
+bbb.
 Abort. (*
-supp c₀ = cs c₁
-f c₀=f(cs c₁)=ds(f c₁)=d₀
 
 (* counterexample:
      (ℕ,0,SS) and (ℕ,1,SS) are h-initial ℕ-Algebras but are not equal *)
