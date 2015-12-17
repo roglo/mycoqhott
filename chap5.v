@@ -501,22 +501,16 @@ assert (fg : ℕHom_fun f ◦ ℕHom_fun g = id).
    assert (IP : isProp (isHinit_ℕ I)).
     apply ex_3_6_2; intros K.
 Definition isProp_isContr_isContrHom A B :
-  isProp (isContr (ℕHom A B)) → isProp (isContrHom A B).
+  isProp (ℕHom A B) → isProp (isContrHom A B).
 Proof.
 intros p.
-(* bon, c'est lassant, j'en ai marre de ces trucs-là *)
-bbb.
 unfold isProp in p.
 intros (f, q) (g, r).
-assert (f = g).
- destruct f as ((f, (f₀, fs))).
- destruct g as ((g, (g₀, gs))).
- apply ap.
-bbb.
-
+pose proof p f g as s.
 apply (Σ_type.pair_eq (p f g)).
+unfold transport.
+destruct (p f g); unfold id.
 bbb.
-
 
 (*
 Definition isProp_isContrHom A B : isProp (isContrHom A B).
