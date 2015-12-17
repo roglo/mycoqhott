@@ -390,12 +390,7 @@ Definition ℕHom_eqs {Ca Da} (f : ℕHom Ca Da)
     ℕ-homomorphisms from I to C is contractible. Thus,
             isHinit_ℕ(I) :≡ Π (C : ℕAlg), isContr(ℕHom(I,C))." *)
 
-(*
 Definition isHinit_ℕ I := Π (C : ℕAlg), isContr (ℕHom I C).
-*)
-Definition isContrHom A B :=
-  Σ (f : ℕHom A B), Π (g : ℕHom A B), ℕHom_fun f = ℕHom_fun g.
-Definition isHinit_ℕ I := Π (C : ℕAlg), isContrHom I C.
 
 (* "Theorem 5.4.4. Any two h-initial ℕ-algebras are equal. [...]" *)
 
@@ -411,26 +406,15 @@ pose proof r (existT _ a' p') as s.
 injection s; intros u v; apply v.
 Defined.
 
-Definition isContr_isContrHom A B : isContr (ℕHom A B) → isContrHom A B.
-Proof.
-intros (f, p).
-exists f; intros g.
-pose proof p g as q.
-destruct f as (f, (f₀, fs)).
-destruct g as (g, (g₀, gs)); simpl.
-injection q; clear q; intros q.
-destruct q; apply eq_refl.
-Defined.
-
 Definition hott_5_4_4_i I J : isHinit_ℕ I → isHinit_ℕ J → I = J.
 Proof.
 intros p q.
-assert (cij : isContrHom I J) by apply p.
-assert (cji : isContrHom J I) by apply q.
+assert (cij : isContr (ℕHom I J)) by apply p.
+assert (cji : isContr (ℕHom J I)) by apply q.
 destruct cij as (f, cij).
 destruct cji as (g, cji).
 assert (fg : ℕHom_fun f ◦ ℕHom_fun g = id).
- assert (cjj : isContrHom J J) by apply q.
+ assert (cjj : isContr (ℕHom J J)) by apply q.
  destruct cjj as (h, cjj).
  set
   (J₀ := ℕH J J (existT _ id (eq_refl _, λ c, eq_refl (ℕAlg_cs J (id c))))).
@@ -457,11 +441,11 @@ assert (fg : ℕHom_fun f ◦ ℕHom_fun g = id).
   pose proof (cjj u) as H1; unfold u in H1.
   pose proof (cjj J₀) as H2.
   apply invert in H2; destruct H2.
-  unfold J₀ in H1; simpl in H1.
-  destruct H1; apply eq_refl.
+  unfold J₀ in H1; injection H1; intros H2.
+  destruct H2; apply eq_refl.
 
  assert (gf : ℕHom_fun g ◦ ℕHom_fun f = id).
-  assert (cii : isContrHom I I) by apply p.
+  assert (cii : isContr (ℕHom I I)) by apply p.
   destruct cii as (h, cii).
   set
    (I₀ := ℕH I I (existT _ id (eq_refl _, λ c, eq_refl (ℕAlg_cs I (id c))))).
@@ -488,8 +472,8 @@ assert (fg : ℕHom_fun f ◦ ℕHom_fun g = id).
    pose proof (cii u) as H1; unfold u in H1.
    pose proof (cii I₀) as H2.
    apply invert in H2; destruct H2.
-   unfold I₀ in H1; simpl in H1.
-   destruct H1; apply eq_refl.
+   unfold I₀ in H1; injection H1; intros H2.
+   destruct H2; apply eq_refl.
 
   simpl in fg, gf.
   assert (IJ : ℕAlg_C I = ℕAlg_C J).
@@ -499,28 +483,7 @@ assert (fg : ℕHom_fun f ◦ ℕHom_fun g = id).
    destruct gf; apply homotopy_eq_refl2.
 
    assert (IP : isProp (isHinit_ℕ I)).
-    apply ex_3_6_2; intros K.
-Definition isProp_isContr_isContrHom A B :
-  isProp (ℕHom A B) → isProp (isContrHom A B).
-Proof.
-intros p.
-unfold isProp in p.
-intros (f, q) (g, r).
-pose proof p f g as s.
-apply (Σ_type.pair_eq (p f g)).
-unfold transport.
-destruct (p f g); unfold id.
-bbb.
-
-(*
-Definition isProp_isContrHom A B : isProp (isContrHom A B).
-Proof.
-unfold isContrHom.
-intros (f, p) (g, q).
-bbb.
-intros (((f, (f₀, fs))), p).
-intros (((g, (g₀, gs))), q).
-*)
+    apply ex_3_6_2; intros K; apply hott_3_11_4.
 
     assert (JP : isProp (isHinit_ℕ J)).
      apply ex_3_6_2; intros K; apply hott_3_11_4.
