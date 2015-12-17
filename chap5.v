@@ -411,16 +411,16 @@ pose proof r (existT _ a' p') as s.
 injection s; intros u v; apply v.
 Defined.
 
-Definition ℕHom_sym : ∀ A B, ℕHom A B → ℕHom B A.
+Definition isContr_isContrHom A B : isContr (ℕHom A B) → isContrHom A B.
 Proof.
-intros A B p.
-destruct p as ((f, (f₀, fs))); constructor.
-assert (g : ℕAlg_C B → ℕAlg_C A).
- unfold ℕAlg_C; intros d.
- destruct A as ((C, (c₀, cs))).
- destruct B as ((D, (d₀, ds))); simpl in *.
-(* no way to know if d is d₀ of ds(something): not decidable *)
-Abort.
+intros (f, p).
+exists f; intros g.
+pose proof p g as q.
+destruct f as (f, (f₀, fs)).
+destruct g as (g, (g₀, gs)); simpl.
+injection q; clear q; intros q.
+destruct q; apply eq_refl.
+Defined.
 
 Definition hott_5_4_4_i I J : isHinit_ℕ I → isHinit_ℕ J → I = J.
 Proof.
@@ -498,9 +498,35 @@ assert (fg : ℕHom_fun f ◦ ℕHom_fun g = id).
    split; [ destruct fg; apply homotopy_eq_refl2 |  ].
    destruct gf; apply homotopy_eq_refl2.
 
-bbb.
    assert (IP : isProp (isHinit_ℕ I)).
-    apply ex_3_6_2; intros K; apply hott_3_11_4.
+    apply ex_3_6_2; intros K.
+Definition isProp_isContr_isContrHom A B :
+  isProp (isContr (ℕHom A B)) → isProp (isContrHom A B).
+Proof.
+intros p.
+(* bon, c'est lassant, j'en ai marre de ces trucs-là *)
+bbb.
+unfold isProp in p.
+intros (f, q) (g, r).
+assert (f = g).
+ destruct f as ((f, (f₀, fs))).
+ destruct g as ((g, (g₀, gs))).
+ apply ap.
+bbb.
+
+apply (Σ_type.pair_eq (p f g)).
+bbb.
+
+
+(*
+Definition isProp_isContrHom A B : isProp (isContrHom A B).
+Proof.
+unfold isContrHom.
+intros (f, p) (g, q).
+bbb.
+intros (((f, (f₀, fs))), p).
+intros (((g, (g₀, gs))), q).
+*)
 
     assert (JP : isProp (isHinit_ℕ J)).
      apply ex_3_6_2; intros K; apply hott_3_11_4.
