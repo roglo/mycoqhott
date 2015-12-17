@@ -503,6 +503,15 @@ unfold A₁, A₂.
 apply ap; apply (Σ_type.pair_eq IJ); simpl.
 unfold transport.
 destruct IJ; unfold id.
+(* "the type of h-initial ℕ-algebras is a mere proposition" *)
+assert (isProp (Σ (A : ℕAlg), isHinit_ℕ A)).
+ intros (A, AP) (B, BP).
+ assert (APH : isProp (isHinit_ℕ A)).
+  apply ex_3_6_2; intros K; apply hott_3_11_4.
+ assert (BPH : isProp (isHinit_ℕ B)).
+  apply ex_3_6_2; intros K; apply hott_3_11_4.
+unfold isHinit_ℕ in AP, BP.
+pose proof AP B as H1.
 
 bbb.
 Abort. (*
