@@ -490,6 +490,8 @@ assert (fg : ℕHom_fun f ◦ ℕHom_fun g = id).
 
 destruct I as ((C, (c₀, cs))).
 destruct J as ((D, (d₀, ds))); simpl in IJ.
+bbb.
+
 set (A₁ := ℕA (existT (λ C : Type, (C * (C → C))%type) C (c₀, cs))) in *.
 set (A₂ := ℕA (existT (λ C : Type, (C * (C → C))%type) D (d₀, ds))) in *.
 destruct f as ((f, (f₀, fs))); simpl in *.
@@ -512,7 +514,9 @@ assert (isProp (Σ (A : ℕAlg), isHinit_ℕ A)).
   apply ex_3_6_2; intros K; apply hott_3_11_4.
 unfold isHinit_ℕ in AP, BP.
 pose proof AP B as H1.
-
+destruct A as ((AC, (ac₀, acs))).
+destruct B as ((BC, (bc₀, bcs))); simpl.
+simpl in *.
 bbb.
 Abort. (*
 
