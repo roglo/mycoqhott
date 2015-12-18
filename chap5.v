@@ -487,16 +487,29 @@ Definition hott_5_4_4_i I J : isHinit_ℕ I → isHinit_ℕ J → I = J.
 Proof.
 intros p q.
 pose proof pre_hott_5_4_4_i I J p q as r.
-bbb.
+Abort. (* bbb. *)
 
-(* strange that we must define the type of h-initial ℕ-algebras with
-   Π instead of Σ *)
-Definition hott_5_4_4_ii : isProp (Π (A : ℕAlg), isHinit_ℕ A).
+Definition isProp_Σ_prop A (B : A → Type) :
+  (∀ a : A, B a → isProp A)
+  → (∀ a : A, isProp (B a))
+  → isProp (Σ (a : A), B a).
 Proof.
-apply ex_3_6_2; intros A.
-apply ex_3_6_2; intros K; apply hott_3_11_4.
+intros p q.
+intros (a, r) (a', r').
+assert (H1 : isProp A) by apply (p a), r.
+assert (H2 : a = a') by apply H1.
+apply (Σ_type.pair_eq H2).
+unfold transport; destruct H2; unfold id.
+apply q.
 Defined.
 
+Definition hott_5_4_4_ii : isProp (Σ (A : ℕAlg), isHinit_ℕ A).
+Proof.
+apply isProp_Σ_prop.
+ intros A p.
+Focus 2.
+ intros A.
+ apply ex_3_6_2; intros K; apply hott_3_11_4.
 bbb.
 
 assert (IP : ∀ A, isProp (isHinit_ℕ A)).
