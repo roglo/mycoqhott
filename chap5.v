@@ -406,7 +406,8 @@ pose proof r (existT _ a' p') as s.
 injection s; intros u v; apply v.
 Defined.
 
-Definition hott_5_4_4_i I J : isHinit_ℕ I → isHinit_ℕ J → I = J.
+Definition pre_hott_5_4_4_i I J :
+  isHinit_ℕ I → isHinit_ℕ J → ℕAlg_C I = ℕAlg_C J.
 Proof.
 intros p q.
 assert (cij : isContr (ℕHom I J)) by apply p.
@@ -476,17 +477,39 @@ assert (fg : ℕHom_fun f ◦ ℕHom_fun g = id).
    destruct H2; apply eq_refl.
 
   simpl in fg, gf.
-  assert (IJ : ℕAlg_C I = ℕAlg_C J).
-   apply ua.
-   exists (ℕHom_fun f); apply qinv_isequiv; exists (ℕHom_fun g).
-   split; [ destruct fg; apply homotopy_eq_refl2 |  ].
-   destruct gf; apply homotopy_eq_refl2.
+  apply ua.
+  exists (ℕHom_fun f); apply qinv_isequiv; exists (ℕHom_fun g).
+  split; [ destruct fg; apply homotopy_eq_refl2 |  ].
+  destruct gf; apply homotopy_eq_refl2.
+Defined.
 
-   assert (IP : isProp (isHinit_ℕ I)).
+Definition hott_5_4_4_i I J : isHinit_ℕ I → isHinit_ℕ J → I = J.
+Proof.
+intros p q.
+pose proof pre_hott_5_4_4_i I J p q as r.
+bbb.
+
+(* strange that we must define the type of h-initial ℕ-algebras with
+   Π instead of Σ *)
+Definition hott_5_4_4_ii : isProp (Π (A : ℕAlg), isHinit_ℕ A).
+Proof.
+apply ex_3_6_2; intros A.
+apply ex_3_6_2; intros K; apply hott_3_11_4.
+Defined.
+
+bbb.
+
+assert (IP : ∀ A, isProp (isHinit_ℕ A)).
+ intros A; apply ex_3_6_2; intros K; apply hott_3_11_4.
+
+unfold isHinit_ℕ in p, q.
+
+bbb.
+  assert (IP : isProp (isHinit_ℕ I)).
+   apply ex_3_6_2; intros K; apply hott_3_11_4.
+
+   assert (JP : isProp (isHinit_ℕ J)).
     apply ex_3_6_2; intros K; apply hott_3_11_4.
-
-    assert (JP : isProp (isHinit_ℕ J)).
-     apply ex_3_6_2; intros K; apply hott_3_11_4.
 
 destruct I as ((C, (c₀, cs))).
 destruct J as ((D, (d₀, ds))); simpl in IJ.
