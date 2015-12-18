@@ -505,8 +505,23 @@ Defined.
 
 Definition hott_5_4_4_ii : isProp (Σ (A : ℕAlg), isHinit_ℕ A).
 Proof.
+intros (I, p) (J, q).
+pose proof pre_hott_5_4_4_i I J p q as r.
+assert (I = J). Focus 2.
+apply (Σ_type.pair_eq H).
+unfold transport.
+destruct H; unfold id.
+assert (isProp (isHinit_ℕ I)); [ | apply H ].
+apply ex_3_6_2; intros K; apply hott_3_11_4.
+
+bbb.
+
 apply isProp_Σ_prop.
  intros A p.
+Print ℕAlg.
+ intros ((C, (c₀, cs))) ((D, (d₀, ds))).
+bbb.
+
 Focus 2.
  intros A.
  apply ex_3_6_2; intros K; apply hott_3_11_4.
