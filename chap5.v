@@ -513,7 +513,11 @@ unfold transport.
 destruct H; unfold id.
 assert (isProp (isHinit_ℕ I)); [ | apply H ].
 apply ex_3_6_2; intros K; apply hott_3_11_4.
-
+destruct I as ((C, (c₀, cs))).
+destruct J as ((D, (d₀, ds))); simpl in r.
+apply ap, (Σ_type.pair_eq r).
+unfold transport, id; destruct r.
+unfold isHinit_ℕ in p, q.
 bbb.
 
 apply isProp_Σ_prop.
