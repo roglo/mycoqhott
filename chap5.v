@@ -476,7 +476,6 @@ assert (fg : ℕHom_fun f ◦ ℕHom_fun g = id).
    unfold I₀ in H1; injection H1; intros H2.
    destruct H2; apply eq_refl.
 
-  simpl in fg, gf.
   apply ua.
   exists (ℕHom_fun f); apply qinv_isequiv; exists (ℕHom_fun g).
   split; [ destruct fg; apply homotopy_eq_refl2 |  ].
