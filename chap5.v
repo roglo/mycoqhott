@@ -476,6 +476,25 @@ assert (fg : ℕHom_fun f ◦ ℕHom_fun g = id).
    unfold I₀ in H1; injection H1; intros H2.
    destruct H2; apply eq_refl.
 
+(* essai en ajoutant un éliminateur pour les ℕAlg...
+assert (H1 : I = J).
+assert (H1 : ℕAlg_C I = ℕAlg_C J).
+  apply ua.
+  exists (ℕHom_fun f); apply qinv_isequiv; exists (ℕHom_fun g).
+  split; [ destruct fg; apply homotopy_eq_refl2 |  ].
+  destruct gf; apply homotopy_eq_refl2.
+destruct I as ((C, (c₀, cs))).
+destruct J as ((D, (d₀, ds))); simpl in *.
+destruct H1.
+apply ap, (Σ_type.pair_eq (eq_refl _)); simpl; unfold id.
+apply cartesian.pair_eq; simpl; split.
+assert (Dec : ∀ c, (c = c₀) + (Σ (c₁ : C), c = cs c₁)). Focus 2.
+destruct (Dec d₀) as [H1| H1]; [ apply invert, H1 | ].
+destruct H1 as (c₁, H1).
+apply invert in H1; destruct H1.
+(* bin non, il faut que la décidabilité soit un "ou" exclusif *)
+bbb.
+*)
   apply ua.
   exists (ℕHom_fun f); apply qinv_isequiv; exists (ℕHom_fun g).
   split; [ destruct fg; apply homotopy_eq_refl2 |  ].
