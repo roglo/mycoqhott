@@ -476,15 +476,24 @@ assert (fg : ℕHom_fun f ◦ ℕHom_fun g = id).
    unfold I₀ in H1; injection H1; intros H2.
    destruct H2; apply eq_refl.
 
-(* essai en ajoutant un éliminateur pour les ℕAlg...
+(* essai en ajoutant un éliminateur pour les ℕAlg... *)
 assert (H1 : I = J).
-assert (H1 : ℕAlg_C I = ℕAlg_C J).
+transparent assert (H1 : ℕAlg_C I = ℕAlg_C J).
   apply ua.
   exists (ℕHom_fun f); apply qinv_isequiv; exists (ℕHom_fun g).
   split; [ destruct fg; apply homotopy_eq_refl2 |  ].
   destruct gf; apply homotopy_eq_refl2.
+simpl in H1.
 destruct I as ((C, (c₀, cs))).
 destruct J as ((D, (d₀, ds))); simpl in *.
+apply ap, (Σ_type.pair_eq H1).
+unfold transport, H1; clear H1.
+simpl.
+destruct f, g; simpl.
+destruct ℕ0; simpl.
+simpl in *.
+bbb.
+
 destruct H1.
 apply ap, (Σ_type.pair_eq (eq_refl _)); simpl; unfold id.
 apply cartesian.pair_eq; simpl; split.
