@@ -489,9 +489,8 @@ destruct J as ((D, (d₀, ds))); simpl in *.
 apply ap, (Σ_type.pair_eq H1).
 unfold transport, H1; clear H1.
 simpl.
-destruct f, g; simpl.
-destruct ℕ0; simpl.
-simpl in *.
+destruct f as ((f, (f₀, fs))); simpl in *.
+destruct g as ((g, (g₀, gs))); simpl in *; simpl.
 bbb.
 
 destruct H1.
