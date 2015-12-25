@@ -478,19 +478,19 @@ assert (fg : ℕHom_fun f ◦ ℕHom_fun g = id).
 
 (* essai en ajoutant un éliminateur pour les ℕAlg... *)
 assert (H1 : I = J).
-transparent assert (H1 : ℕAlg_C I = ℕAlg_C J).
-  apply ua.
+transparent assert (H1 : ℕAlg_C I ≃ ℕAlg_C J).
   exists (ℕHom_fun f); apply qinv_isequiv; exists (ℕHom_fun g).
   split; [ destruct fg; apply homotopy_eq_refl2 |  ].
   destruct gf; apply homotopy_eq_refl2.
 simpl in H1.
 destruct I as ((C, (c₀, cs))).
 destruct J as ((D, (d₀, ds))); simpl in *.
-apply ap, (Σ_type.pair_eq H1).
-unfold transport, H1; clear H1.
-simpl.
+apply ap.
 destruct f as ((f, (f₀, fs))); simpl in *.
 destruct g as ((g, (g₀, gs))); simpl in *; simpl.
+apply (Σ_type.pair_eq (ua H1)).
+unfold transport, H1; clear H1.
+simpl.
 bbb.
 
 destruct H1.
