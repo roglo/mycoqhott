@@ -491,6 +491,7 @@ destruct g as ((g, (g₀, gs))); simpl in *; simpl.
 apply (Σ_type.pair_eq (ua H1)).
 unfold transport, H1; clear H1.
 simpl.
+set (U := (λ C : Type, (C * (C → C))%type)) in *.
 bbb.
 
 destruct H1.
