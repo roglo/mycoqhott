@@ -445,7 +445,7 @@ assert (fg : ℕHom_fun f ◦ ℕHom_fun g = id).
   unfold J₀ in H1; injection H1; intros H2.
   destruct H2; apply eq_refl.
 
- assert (gf : ℕHom_fun g ◦ ℕHom_fun f = id).
+ transparent assert (gf : ℕHom_fun g ◦ ℕHom_fun f = id).
   assert (cii : isContr (ℕHom I I)) by apply p.
   destruct cii as (h, cii).
   set
@@ -476,7 +476,6 @@ assert (fg : ℕHom_fun f ◦ ℕHom_fun g = id).
    unfold I₀ in H1; injection H1; intros H2.
    destruct H2; apply eq_refl.
 
-(* essai en ajoutant un éliminateur pour les ℕAlg... *)
 assert (H1 : I = J).
 transparent assert (H1 : ℕAlg_C I ≃ ℕAlg_C J).
   exists (ℕHom_fun f); apply qinv_isequiv; exists (ℕHom_fun g).
@@ -492,6 +491,9 @@ apply (Σ_type.pair_eq (ua H1)).
 unfold transport, H1; clear H1.
 simpl.
 set (U := (λ C : Type, (C * (C → C))%type)) in *.
+simpl in gf.
+destruct p.
+simpl in gf.
 bbb.
 
 destruct H1.
