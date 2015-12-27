@@ -458,6 +458,12 @@ apply ap.
 destruct f as ((f, (f₀, fs))); simpl in *.
 destruct g as ((g, (g₀, gs))); simpl in *; simpl.
 apply (Σ_type.pair_eq (ua H1)).
+(**)
+unfold transport.
+destruct (ua H1).
+set (U := (λ C : Type, (C * (C → C))%type)) in *.
+
+bbb.
 unfold transport, H1; clear H1; simpl.
 set (U := (λ C : Type, (C * (C → C))%type)) in *.
 bbb.
