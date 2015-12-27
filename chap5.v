@@ -430,37 +430,21 @@ assert (fg : ℕHom_fun f ◦ ℕHom_fun g = id).
  unfold J₀ in H1; injection H1; intros H2.
  apply invert, H2.
 
-bbb.
  assert (gf : ℕHom_fun g ◦ ℕHom_fun f = id).
   assert (cii : isContr (ℕHom I I)) by apply p.
   destruct cii as (h, cii).
   set
    (I₀ := ℕH I I (existT _ id (eq_refl _, λ c, eq_refl (ℕAlg_cs I (id c))))).
   unfold id in I₀; simpl in I₀.
-  assert
-   (c :
-    (λ h : ℕAlg_C I → ℕAlg_C I,
-     ((h (ℕAlg_c₀ I) = ℕAlg_c₀ I) *
-      (∀ c : ℕAlg_C I, h (ℕAlg_cs I c) = ℕAlg_cs I (h c)))%type)
-      (ℕHom_fun g ◦ ℕHom_fun f)).
-   split.
-    unfold "◦".
-    destruct f as ((f, (f₀, fs))).
-    destruct g as ((g, (g₀, gs))); simpl.
-    eapply compose; [  | apply g₀ ]; apply ap, f₀.
-
-    intros w.
-    unfold "◦".
-    destruct f as ((f, (f₀, fs))).
-    destruct g as ((g, (g₀, gs))); simpl.
-    eapply compose; [  | apply gs ]; apply ap, fs.
-
-   set (u := ℕH _ _ (existT _ (ℕHom_fun g ◦ ℕHom_fun f) c) : ℕHom I I).
-   pose proof (cii u) as H1; unfold u in H1.
-   pose proof (cii I₀) as H2.
-   apply invert in H2; destruct H2.
-   unfold I₀ in H1; injection H1; intros H2.
-   destruct H2; apply eq_refl.
+  destruct f as ((f, (f₀, fs))).
+  destruct g as ((g, (g₀, gs))); simpl.
+  set (c := (ap g f₀ • g₀, λ w, ap g (fs w) • gs (f w))).
+  set (u := ℕH _ _ (existT _ (g ◦ f) c) : ℕHom I I).
+  pose proof (cii u) as H1; unfold u in H1.
+  pose proof (cii I₀) as H2.
+  apply invert in H2; destruct H2.
+  unfold I₀ in H1; injection H1; intros H2.
+  apply invert, H2.
 
 assert (H1 : I = J).
 transparent assert (H1 : ℕAlg_C I ≃ ℕAlg_C J).
@@ -474,8 +458,7 @@ apply ap.
 destruct f as ((f, (f₀, fs))); simpl in *.
 destruct g as ((g, (g₀, gs))); simpl in *; simpl.
 apply (Σ_type.pair_eq (ua H1)).
-unfold transport, H1; clear H1.
-simpl.
+unfold transport, H1; clear H1; simpl.
 set (U := (λ C : Type, (C * (C → C))%type)) in *.
 bbb.
 
