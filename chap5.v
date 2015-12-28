@@ -414,7 +414,7 @@ assert (cij : isContr (ℕHom I J)); [ apply p | ].
 assert (cji : isContr (ℕHom J I)); [ apply q | ].
 destruct cij as (f, cij).
 destruct cji as (g, cji).
-assert (fg : ℕHom_fun f ◦ ℕHom_fun g = id).
+(*transparent*) assert (fg : ℕHom_fun f ◦ ℕHom_fun g = id).
  assert (cjj : isContr (ℕHom J J)); [ apply q | ].
  destruct cjj as (h, cjj).
  set
@@ -430,6 +430,13 @@ assert (fg : ℕHom_fun f ◦ ℕHom_fun g = id).
  unfold J₀ in H1; injection H1; intros H2.
  apply invert, H2.
 
+(*
+simpl in fg.
+destruct (q J) as (h, cjj).
+destruct f as ((f, (f₀, fs))).
+destruct g as ((g, (g₀, gs))).
+simpl in fg.
+*)
  assert (gf : ℕHom_fun g ◦ ℕHom_fun f = id).
   assert (cii : isContr (ℕHom I I)) by apply p.
   destruct cii as (h, cii).
