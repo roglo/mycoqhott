@@ -446,37 +446,29 @@ assert (fg : ℕHom_fun f ◦ ℕHom_fun g = id).
   unfold I₀ in H1; injection H1; intros H2.
   apply invert, H2.
 
-assert (H1 : I = J).
-(*
-transparent assert (H1 : ℕAlg_C I ≃ ℕAlg_C J).
-  exists (ℕHom_fun f); apply qinv_isequiv; exists (ℕHom_fun g).
-  split; [ destruct fg; apply homotopy_eq_refl2 |  ].
-  destruct gf; apply homotopy_eq_refl2.
-simpl in H1.
-*)
-set (H1 :=
-     existT isequiv
-          (ℕHom_fun f)
-          (existT _
-             (ℕHom_fun g)
-             match fg in (_ = y) return (ℕHom_fun f ◦ ℕHom_fun g ∼ y) with
-             | eq_refl _ => homotopy_eq_refl (ℕHom_fun f ◦ ℕHom_fun g)
-             end,
-          existT _
-            (ℕHom_fun g)
-            match gf in (_ = y) return (ℕHom_fun g ◦ ℕHom_fun f ∼ y) with
-            | eq_refl _ => homotopy_eq_refl (ℕHom_fun g ◦ ℕHom_fun f)
-            end) : ℕAlg_C I ≃ ℕAlg_C J).
-destruct I as ((C, (c₀, cs))).
-destruct J as ((D, (d₀, ds))); simpl in *.
-destruct f as ((f, (f₀, fs))); simpl in *.
-destruct g as ((g, (g₀, gs))); simpl in *; simpl.
-apply ap.
-apply (Σ_type.pair_eq (ua H1)).
-(**)
-unfold transport.
-destruct (ua H1).
-set (U := (λ C : Type, (C * (C → C))%type)) in *.
+  assert (H1 : I = J).
+   set
+    (H1 :=
+     existT isequiv (ℕHom_fun f)
+       (existT _ (ℕHom_fun g)
+          match fg in (_ = y) return (ℕHom_fun f ◦ ℕHom_fun g ∼ y) with
+          | eq_refl _ => homotopy_eq_refl (ℕHom_fun f ◦ ℕHom_fun g)
+          end,
+       existT _ (ℕHom_fun g)
+         match gf in (_ = y) return (ℕHom_fun g ◦ ℕHom_fun f ∼ y) with
+         | eq_refl _ => homotopy_eq_refl (ℕHom_fun g ◦ ℕHom_fun f)
+         end)
+     :
+     ℕAlg_C I ≃ ℕAlg_C J).
+   destruct I as ((C, (c₀, cs))).
+   destruct J as ((D, (d₀, ds))); simpl in *.
+   destruct f as ((f, (f₀, fs))); simpl in *.
+   destruct g as ((g, (g₀, gs))); simpl in *; simpl.
+   apply ap.
+   apply (Σ_type.pair_eq (ua H1)).
+   unfold transport.
+   destruct (ua H1).
+   set (U := λ C : Type, (C * (C → C))%type) in *.
 
 bbb.
 unfold transport, H1; clear H1; simpl.
