@@ -410,12 +410,12 @@ Definition pre_hott_5_4_4_i I J :
   isHinit_ℕ I → isHinit_ℕ J → ℕAlg_C I = ℕAlg_C J.
 Proof.
 intros p q.
-assert (cij : isContr (ℕHom I J)) by apply p.
-assert (cji : isContr (ℕHom J I)) by apply q.
+assert (cij : isContr (ℕHom I J)); [ apply p | ].
+assert (cji : isContr (ℕHom J I)); [ apply q | ].
 destruct cij as (f, cij).
 destruct cji as (g, cji).
 assert (fg : ℕHom_fun f ◦ ℕHom_fun g = id).
- assert (cjj : isContr (ℕHom J J)) by apply q.
+ assert (cjj : isContr (ℕHom J J)); [ apply q | ].
  destruct cjj as (h, cjj).
  set
   (J₀ := ℕH J J (existT _ id (eq_refl _, λ c, eq_refl (ℕAlg_cs J (id c))))).
