@@ -427,28 +427,28 @@ Notation "f '∼' g" := (homotopy f g) (at level 70).
 (* "Lemma 2.4.2. Homotopy is an equivalence relation on each function
     type A → B." *)
 
-Definition homotopy_eq_refl {A B} : reflexive _ (@homotopy A B) :=
+Definition homotopy_eq_refl2 {A B} : reflexive _ (@homotopy A B) :=
   λ _ _, eq_refl _.
 
-Definition homotopy_eq_refl2 {A B} : Π (f : A → B), (f ∼ f) :=
+Definition homotopy_eq_refl {A B} : Π (f : A → B), (f ∼ f) :=
   λ _ _, eq_refl _.
 
-Definition homotopy_sym {A B} : symmetric _ (@homotopy A B) :=
+Definition homotopy_sym2 {A B} : symmetric _ (@homotopy A B) :=
   λ f g (p : f ∼ g) x,
   match p x with eq_refl _ => eq_refl (f x) end.
 
-Definition homotopy_sym2 {A B} : Π (f : A → B), Π (g : A → B),
+Definition homotopy_sym {A B} : Π (f : A → B), Π (g : A → B),
     (f ∼ g) → (g ∼ f) :=
   λ f g (p : f ∼ g) x,
   match p x with eq_refl _ => eq_refl (f x) end.
 
-Definition homotopy_trans {A B} : transitive _ (@homotopy A B) :=
+Definition homotopy_trans2 {A B} : transitive _ (@homotopy A B) :=
   λ f g h (p : f ∼ g) (q : g ∼ h) x,
   match q x with
   | eq_refl _ => p x
   end.
 
-Definition homotopy_trans2 {A B}
+Definition homotopy_trans {A B}
   : Π (f : A → B), Π (g : A → B), Π (h : A → B),
     (f ∼ g) → (g ∼ h) → (f ∼ h)
   := λ f g h (p : f ∼ g) (q : g ∼ h) x,

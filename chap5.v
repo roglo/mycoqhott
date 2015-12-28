@@ -460,18 +460,18 @@ set (H1 :=
           (existT _
              (ℕHom_fun g)
              match fg in (_ = y) return (ℕHom_fun f ◦ ℕHom_fun g ∼ y) with
-             | eq_refl _ => homotopy_eq_refl2 (ℕHom_fun f ◦ ℕHom_fun g)
+             | eq_refl _ => homotopy_eq_refl (ℕHom_fun f ◦ ℕHom_fun g)
              end,
           existT _
             (ℕHom_fun g)
             match gf in (_ = y) return (ℕHom_fun g ◦ ℕHom_fun f ∼ y) with
-            | eq_refl _ => homotopy_eq_refl2 (ℕHom_fun g ◦ ℕHom_fun f)
+            | eq_refl _ => homotopy_eq_refl (ℕHom_fun g ◦ ℕHom_fun f)
             end) : ℕAlg_C I ≃ ℕAlg_C J).
 destruct I as ((C, (c₀, cs))).
 destruct J as ((D, (d₀, ds))); simpl in *.
-apply ap.
 destruct f as ((f, (f₀, fs))); simpl in *.
 destruct g as ((g, (g₀, gs))); simpl in *; simpl.
+apply ap.
 apply (Σ_type.pair_eq (ua H1)).
 (**)
 unfold transport.
