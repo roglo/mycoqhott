@@ -412,11 +412,11 @@ Proof.
 intros p q.
 assert (cij : isContr (ℕHom I J)); [ apply p | ].
 assert (cji : isContr (ℕHom J I)); [ apply q | ].
+assert (cjj : isContr (ℕHom J J)); [ apply q | ].
 destruct cij as (f, cij).
 destruct cji as (g, cji).
+destruct cjj as (h, cjj).
 (*transparent*) assert (fg : ℕHom_fun f ◦ ℕHom_fun g = id).
- assert (cjj : isContr (ℕHom J J)); [ apply q | ].
- destruct cjj as (h, cjj).
  set
   (J₀ := ℕH J J (existT _ id (eq_refl _, λ c, eq_refl (ℕAlg_cs J (id c))))).
  unfold id in J₀; simpl in J₀.
@@ -432,7 +432,6 @@ destruct cji as (g, cji).
 
 (*
 simpl in fg.
-destruct (q J) as (h, cjj).
 destruct f as ((f, (f₀, fs))).
 destruct g as ((g, (g₀, gs))).
 simpl in fg.
