@@ -435,10 +435,43 @@ simpl in fg.
 destruct f as ((f, (f₀, fs))).
 destruct g as ((g, (g₀, gs))).
 simpl in fg.
+set (U :=
+      (λ h : ℕAlg_C J → ℕAlg_C J,
+      ((h (ℕAlg_c₀ J) = ℕAlg_c₀ J) *
+       (∀ c : ℕAlg_C J, h (ℕAlg_cs J c) = ℕAlg_cs J (h c)))%type))
+in *.
+ set
+  (fg' :=
+   match
+     (cjj
+        (ℕH J J
+           (existT U id (eq_refl (ℕAlg_c₀ J), λ c, eq_refl (ℕAlg_cs J c)))))⁻¹
+     in (_ = y)
+     return
+       (y =
+        ℕH J J
+          (existT U (f ◦ g)
+             (ap f g₀ • f₀, λ w : ℕAlg_C J, ap f (gs w) • fs (g w)))
+        → f ◦ g = id)
+   with
+   | eq_refl _ =>
+       λ H1,
+       (f_equal
+          (λ e : ℕHom J J, match e with
+                           | ℕH _ _ (existT _ x _) => x
+                           end) H1)⁻¹
+   end
+     (cjj
+        (ℕH J J
+           (existT U (f ◦ g)
+              (ap f g₀ • f₀, λ w : ℕAlg_C J, ap f (gs w) • fs (g w)))))
+   :
+   f ◦ g = id).
 *)
+
  assert (gf : ℕHom_fun g ◦ ℕHom_fun f = id).
   assert (cii : isContr (ℕHom I I)) by apply p.
-  destruct cii as (h, cii).
+  destruct cii as (i, cii).
   set
    (I₀ := ℕH I I (existT _ id (eq_refl _, λ c, eq_refl (ℕAlg_cs I (id c))))).
   unfold id in I₀; simpl in I₀.
