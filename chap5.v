@@ -539,6 +539,7 @@ apply ap.
 apply (Σ_type.pair_eq toto).
 unfold transport.
 unfold toto.
+simpl.
 bbb.
 
 bbb.
