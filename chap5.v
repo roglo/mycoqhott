@@ -533,6 +533,13 @@ split; unfold "◦", "∼", id.
  intros n; induction n; [ apply eq_refl | simpl ].
  apply ap, IHn.
 Defined.
+Theorem titi : ℕA (existT _ (nat : Type) (O, S)) = ℕA (existT _ (nat' : Type) (O', S')).
+Proof.
+apply ap.
+apply (Σ_type.pair_eq toto).
+unfold transport.
+unfold toto.
+bbb.
 
 bbb.
 unfold transport, H1; clear H1; simpl.
