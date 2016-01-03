@@ -509,6 +509,31 @@ in *.
    destruct (ua H1).
    set (U := λ C : Type, (C * (C → C))%type) in *.
 
+Print nat.
+Inductive nat' : Set := O' : nat' | S' : nat' → nat'.
+Fixpoint nat2nat' n :=
+  match n with
+  | O => O'
+  | S n => S' (nat2nat' n)
+  end.
+Fixpoint nat'2nat n :=
+  match n with
+  | O' => O
+  | S' n => S (nat'2nat n)
+  end.
+Theorem toto : (nat : Type) = nat'.
+Proof.
+apply ua.
+exists nat2nat'.
+apply qinv_isequiv.
+exists nat'2nat.
+split; unfold "◦", "∼", id.
+ intros n; induction n; [ apply eq_refl | simpl ].
+ apply ap, IHn.
+ intros n; induction n; [ apply eq_refl | simpl ].
+ apply ap, IHn.
+Defined.
+
 bbb.
 unfold transport, H1; clear H1; simpl.
 set (U := (λ C : Type, (C * (C → C))%type)) in *.
