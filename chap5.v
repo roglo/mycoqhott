@@ -557,11 +557,10 @@ existT isequiv nat2nat'
         nat_ind (λ n0 : ℕ, nat'2nat (nat2nat' n0) = n0) 
           (eq_refl 0)
           (λ (n0 : ℕ) (IHn : nat'2nat (nat2nat' n0) = n0), ap S IHn) n))).
-bbb.
-
 Theorem titi : ℕA (existT _ (nat : Type) (O, S)) = ℕA (existT _ (nat' : Type) (O', S')).
 Proof.
 apply ap.
+Print toto'.
 (*
 Check
   (@transport Type (λ C, (C * (C → C))%type) nat nat' (ua toto') (0, S) =
@@ -569,6 +568,8 @@ Check
 *)
 apply (Σ_type.pair_eq (ua toto')).
 unfold transport.
+unfold toto'; simpl.
+bbb.
 
 Abort. Show.
 unfold id; apply cartesian.pair_eq; simpl; split.
