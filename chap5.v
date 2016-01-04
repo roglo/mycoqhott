@@ -508,7 +508,17 @@ in *.
    unfold transport.
    destruct (ua H1).
    set (U := λ C : Type, (C * (C → C))%type) in *.
-
+(*
+  H1 := existT isequiv f
+          (existT (λ g : C → C, f ◦ g ∼ id) g
+             match fg in (_ = y) return (f ◦ g ∼ y) with
+             | eq_refl _ => homotopy_eq_refl (f ◦ g)
+             end,
+          existT (λ h : C → C, h ◦ f ∼ id) g
+            match gf in (_ = y) return (g ◦ f ∼ y) with
+            | eq_refl _ => homotopy_eq_refl (g ◦ f)
+            end) : C ≃ C
+*)
 Print nat.
 Inductive nat' : Set := O' : nat' | S' : nat' → nat'.
 Fixpoint nat2nat' n :=
@@ -551,15 +561,13 @@ existT isequiv nat2nat'
 Theorem titi : ℕA (existT _ (nat : Type) (O, S)) = ℕA (existT _ (nat' : Type) (O', S')).
 Proof.
 apply ap.
+(*
+Check
+  (@transport Type (λ C, (C * (C → C))%type) nat nat' (ua toto') (0, S) =
+   (O', S')).
+*)
 apply (Σ_type.pair_eq (ua toto')).
 unfold transport.
-unfold toto'; simpl.
-bbb.
-
-About eq_rect.
-eq_rect : ∀ (A : Type) (x : A) (P : A → Type), P x → ∀ y : A, x = y → P y
-transport : ∀ (A : Type) (P : A → Type) (x y : A), x = y → P x → P y
-bbb.
 
 Abort. Show.
 unfold id; apply cartesian.pair_eq; simpl; split.
