@@ -553,11 +553,11 @@ split; unfold "◦", "∼", id.
  apply ap, toto.
 Guarded.
 Defined.
-Theorem titi : ℕA (existT _ (nat : Type) (O, S)) = ℕA (existT _ (nat' : Type) (O', S')).
+Theorem titi : existT id (nat : Type) O = existT id (nat' : Type) O'.
 Proof.
-apply ap.
 assert (@eq_rect Type nat id O nat' (ua toto) = O').
 unfold eq_rect, id.
+destruct (ua toto).
 
 bbb.
 
