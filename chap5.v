@@ -532,12 +532,35 @@ split; unfold "◦", "∼", id.
  intros n; induction n; [ apply eq_refl | simpl ].
  apply ap, IHn.
 Defined.
+Print toto.
+Definition toto' : nat ≃ nat' :=
+existT isequiv nat2nat'
+  (qinv_isequiv nat2nat'
+     (existT
+        (λ g : nat' → ℕ, ((nat2nat' ◦ g ∼ id) * (g ◦ nat2nat' ∼ id))%type)
+        nat'2nat
+        (λ n : nat',
+         nat'_ind (λ n0 : nat', nat2nat' (nat'2nat n0) = n0) 
+           (eq_refl O')
+           (λ (n0 : nat') (IHn : nat2nat' (nat'2nat n0) = n0), ap S' IHn) n,
+        λ n : ℕ,
+        nat_ind (λ n0 : ℕ, nat'2nat (nat2nat' n0) = n0) 
+          (eq_refl 0)
+          (λ (n0 : ℕ) (IHn : nat'2nat (nat2nat' n0) = n0), ap S IHn) n))).
+
 Theorem titi : ℕA (existT _ (nat : Type) (O, S)) = ℕA (existT _ (nat' : Type) (O', S')).
 Proof.
 apply ap.
-apply (Σ_type.pair_eq (ua toto)).
+apply (Σ_type.pair_eq (ua toto')).
 unfold transport.
-unfold toto; simpl.
+unfold toto'; simpl.
+bbb.
+
+About eq_rect.
+eq_rect : ∀ (A : Type) (x : A) (P : A → Type), P x → ∀ y : A, x = y → P y
+transport : ∀ (A : Type) (P : A → Type) (x y : A), x = y → P x → P y
+bbb.
+
 Abort. Show.
 unfold id; apply cartesian.pair_eq; simpl; split.
 About eq_rect.
