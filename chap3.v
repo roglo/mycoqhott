@@ -3,6 +3,7 @@
 
 Require Import Utf8 QArith NPeano.
 Require Import chap1 chap2.
+Set Universe Polymorphism.
 
 (* no default implicit without arguments *)
 Arguments eq_refl [A] x.

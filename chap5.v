@@ -533,40 +533,54 @@ Fixpoint nat'2nat n :=
   end.
 Theorem toto : (nat : Type) ≃ nat'.
 Proof.
-exists nat2nat'.
-apply qinv_isequiv.
-exists nat'2nat.
+transparent assert (f : nat → nat').
+ fix 1; intros n.
+ destruct n; [ apply O' | ].
+ apply S', toto, n.
+ exists f; unfold f; clear f.
+ apply qinv_isequiv.
+transparent assert (f : nat' → nat).
+ fix 1; intros n.
+ destruct n; [ apply O | ].
+ apply S, toto, n.
+ exists f; unfold f; clear f.
 split; unfold "◦", "∼", id.
- intros n; induction n; [ apply eq_refl | simpl ].
- apply ap, IHn.
- intros n; induction n; [ apply eq_refl | simpl ].
- apply ap, IHn.
+ fix 1; intros n.
+ destruct n; [ apply eq_refl | simpl ].
+ apply ap, toto.
+ fix 1; intros n.
+ destruct n; [ apply eq_refl | simpl ].
+ apply ap, toto.
+Guarded.
 Defined.
-Print toto.
-Definition toto' : nat ≃ nat' :=
-existT isequiv nat2nat'
-  (qinv_isequiv nat2nat'
-     (existT
-        (λ g : nat' → ℕ, ((nat2nat' ◦ g ∼ id) * (g ◦ nat2nat' ∼ id))%type)
-        nat'2nat
-        (λ n : nat',
-         nat'_ind (λ n0 : nat', nat2nat' (nat'2nat n0) = n0) 
-           (eq_refl O')
-           (λ (n0 : nat') (IHn : nat2nat' (nat'2nat n0) = n0), ap S' IHn) n,
-        λ n : ℕ,
-        nat_ind (λ n0 : ℕ, nat'2nat (nat2nat' n0) = n0) 
-          (eq_refl 0)
-          (λ (n0 : ℕ) (IHn : nat'2nat (nat2nat' n0) = n0), ap S IHn) n))).
 Theorem titi : ℕA (existT _ (nat : Type) (O, S)) = ℕA (existT _ (nat' : Type) (O', S')).
 Proof.
 apply ap.
-Print toto'.
-(*
-Check
-  (@transport Type (λ C, (C * (C → C))%type) nat nat' (ua toto') (0, S) =
-   (O', S')).
-*)
+assert (@eq_rect Type nat id O nat' (ua toto) = O').
+unfold eq_rect, id.
+
+bbb.
+
 apply (Σ_type.pair_eq (ua toto')).
+Print eq_rect.
+Monomorphic eq_rect = 
+λ (A : Type) (x : A) (P : A → Type) (f : P x) (y : A) 
+(e : x = y), match e in (_ = y0) return (P y0) with
+             | eq_refl _ => f
+             end
+     : ∀ (A : Type) (x : A) (P : A → Type), P x → ∀ y : A, x = y → P y
+Monomorphic transport = 
+λ (A : Type) (P : A → Type) (x y : A) (p : x = y),
+match p in (_ = a) return (P x → P a) with
+| eq_refl _ => id
+end
+     : ∀ (A : Type) (P : A → Type) (x y : A), x = y → P x → P y
+
+transport is not universe polymorphic
+Arguments A, x, y are implicit and maximally inserted
+Argument scopes are [type_scope _ _ _ _ _]
+
+
 unfold transport.
 unfold toto'; simpl.
 bbb.
