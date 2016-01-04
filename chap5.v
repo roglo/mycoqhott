@@ -521,9 +521,8 @@ Fixpoint nat'2nat n :=
   | O' => O
   | S' n => S (nat'2nat n)
   end.
-Theorem toto : (nat : Type) = nat'.
+Theorem toto : (nat : Type) ≃ nat'.
 Proof.
-apply ua.
 exists nat2nat'.
 apply qinv_isequiv.
 exists nat'2nat.
@@ -536,11 +535,15 @@ Defined.
 Theorem titi : ℕA (existT _ (nat : Type) (O, S)) = ℕA (existT _ (nat' : Type) (O', S')).
 Proof.
 apply ap.
-apply (Σ_type.pair_eq toto).
+apply (Σ_type.pair_eq (ua toto)).
 unfold transport.
-unfold toto.
-simpl.
-bbb.
+unfold toto; simpl.
+Abort. Show.
+unfold id; apply cartesian.pair_eq; simpl; split.
+About eq_rect.
+Check (@eq_rect Type C).
+Check (@eq_rect C c₀ (λ c, c₀ = c)).
+Check (ua H1).
 
 bbb.
 unfold transport, H1; clear H1; simpl.
