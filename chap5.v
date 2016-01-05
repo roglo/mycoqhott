@@ -503,17 +503,9 @@ in *.
    destruct J as ((D, (d₀, ds))); simpl in *.
    destruct f as ((f, (f₀, fs))); simpl in *.
    destruct g as ((g, (g₀, gs))); simpl in *; simpl.
-   apply ap.
-   apply (Σ_type.pair_eq (ua H1)).
+   apply invert, ap.
+   apply (Σ_type.pair_eq (ua H1⁻⁻¹)).
 
-Definition tutu : ∀ A B (p : A = B) t, transport _ p t = Σ_pr₁ (idtoeqv p) t.
-Proof.
-intros t.
-destruct p.
-apply eq_refl.
-Defined.
-
-Show.
 replace (c₀, cs) with (g d₀, λ c, g (ds (f c))).
 Focus 2.
 apply cartesian.pair_eq; simpl; split; [ apply g₀ | ].
@@ -523,6 +515,21 @@ change (g (f c) = id c).
 rewrite <- gf.
 apply eq_refl.
 
+Definition tutu : ∀ A B (p : A = B) t, transport _ p t = Σ_pr₁ (idtoeqv p) t.
+Proof.
+intros t.
+destruct p.
+apply eq_refl.
+Defined.
+
+Show.
+change
+  (transport (λ C0, (C0 * (C0 → C0))%type) (ua H1⁻⁻¹) (d₀, ds) =
+   (λ dd, (g (fst dd), λ c, g (snd dd (f c)))) (d₀, ds)).
+set (t := (d₀, ds)).
+set (p' := ua H1⁻⁻¹).
+Check (Σ_pr₁ (idtoeqv p')).
+Check (λ dd : D * (D → D), (g (fst dd), λ c : C, g (snd dd (f c)))).
 bbb.
    unfold transport.
    destruct (ua H1).
