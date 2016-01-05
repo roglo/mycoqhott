@@ -406,6 +406,54 @@ pose proof r (existT _ a' p') as s.
 injection s; intros u v; apply v.
 Defined.
 
+(* just to see how to prove (nat,0)=(nat',0') *)
+Inductive nat' : Set := O' : nat' | S' : nat' → nat'.
+Fixpoint nat2nat' n :=
+  match n with
+  | O => O'
+  | S n => S' (nat2nat' n)
+  end.
+Fixpoint nat'2nat n :=
+  match n with
+  | O' => O
+  | S' n => S (nat'2nat n)
+  end.
+
+Definition nateqvnat' : nat ≃ nat'.
+Proof.
+exists nat2nat'; apply qinv_isequiv; exists nat'2nat; simpl.
+split; unfold "◦", "∼", id; intros n.
+ induction n; [ apply eq_refl | simpl; apply ap, IHn ].
+ induction n; [ apply eq_refl | simpl; apply ap, IHn ].
+Defined.
+
+Definition hugo : ∀ A B (f : A → B) (H : isequiv f) t,
+ transport _ (ua (existT _ f H)) t = f t.
+Proof.
+intros.
+replace (f t) with (Σ_pr₁ (idtoeqv (ua (existT _ f H))) t) by
+ (rewrite idtoeqv_ua; apply eq_refl).
+destruct (ua (existT isequiv f H)).
+apply eq_refl.
+Defined.
+
+Definition trans : ∀ A B (p : A = B) t, transport _ p t = Σ_pr₁ (idtoeqv p) t.
+Proof.
+intros t.
+destruct p.
+apply eq_refl.
+Defined.
+
+Definition eqnat0nat'0' : existT id nat O = existT id nat' O'.
+Proof.
+replace O' with (Σ_pr₁ nateqvnat' O) by apply eq_refl.
+replace nateqvnat' with (idtoeqv (ua nateqvnat')) by apply idtoeqv_ua.
+apply (Σ_type.pair_eq (ua nateqvnat')).
+apply trans.
+Defined.
+
+bbb.
+
 Definition pre_hott_5_4_4_i I J :
   isHinit_ℕ I → isHinit_ℕ J → ℕAlg_C I = ℕAlg_C J.
 Proof.
@@ -429,45 +477,6 @@ destruct cjj as (h, cjj).
  apply invert in H2; destruct H2.
  unfold J₀ in H1; injection H1; intros H2.
  apply invert, H2.
-
-(*
-simpl in fg.
-destruct f as ((f, (f₀, fs))).
-destruct g as ((g, (g₀, gs))).
-simpl in fg.
-set (U :=
-      (λ h : ℕAlg_C J → ℕAlg_C J,
-      ((h (ℕAlg_c₀ J) = ℕAlg_c₀ J) *
-       (∀ c : ℕAlg_C J, h (ℕAlg_cs J c) = ℕAlg_cs J (h c)))%type))
-in *.
- set
-  (fg' :=
-   match
-     (cjj
-        (ℕH J J
-           (existT U id (eq_refl (ℕAlg_c₀ J), λ c, eq_refl (ℕAlg_cs J c)))))⁻¹
-     in (_ = y)
-     return
-       (y =
-        ℕH J J
-          (existT U (f ◦ g)
-             (ap f g₀ • f₀, λ w : ℕAlg_C J, ap f (gs w) • fs (g w)))
-        → f ◦ g = id)
-   with
-   | eq_refl _ =>
-       λ H1,
-       (f_equal
-          (λ e : ℕHom J J, match e with
-                           | ℕH _ _ (existT _ x _) => x
-                           end) H1)⁻¹
-   end
-     (cjj
-        (ℕH J J
-           (existT U (f ◦ g)
-              (ap f g₀ • f₀, λ w : ℕAlg_C J, ap f (gs w) • fs (g w)))))
-   :
-   f ◦ g = id).
-*)
 
  assert (gf : ℕHom_fun g ◦ ℕHom_fun f = id).
   assert (cii : isContr (ℕHom I I)) by apply p.
