@@ -506,6 +506,7 @@ in *.
    apply invert, ap.
    apply (Σ_type.pair_eq (ua H1⁻⁻¹)).
 
+bbb.
 replace (c₀, cs) with (g d₀, λ c, g (ds (f c))).
 Focus 2.
 apply cartesian.pair_eq; simpl; split; [ apply g₀ | ].
@@ -530,6 +531,8 @@ set (t := (d₀, ds)).
 set (p' := ua H1⁻⁻¹).
 Check (Σ_pr₁ (idtoeqv p')).
 Check (λ dd : D * (D → D), (g (fst dd), λ c : C, g (snd dd (f c)))).
+destruct p'.
+simpl.
 bbb.
    unfold transport.
    destruct (ua H1).
