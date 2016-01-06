@@ -444,7 +444,7 @@ destruct p.
 apply eq_refl.
 Defined.
 
-Definition eqc₀d₀ C D (c₀ : C) (d₀ : D) (f : C → D) (H : isequiv f)
+Definition equiv_pair_eq C D (c₀ : C) (d₀ : D) (f : C → D) (H : isequiv f)
     (dc : d₀ = f c₀) :
   existT id C c₀ = existT id D d₀.
 Proof.
@@ -456,7 +456,7 @@ Defined.
 
 Definition eqnat0nat'0' : existT id nat O = existT id nat' O'.
 Proof.
-apply eqc₀d₀ with (f := nat2nat'); [ | apply eq_refl ].
+apply equiv_pair_eq with (f := nat2nat'); [ | apply eq_refl ].
 apply qinv_isequiv.
 exists nat'2nat; split; unfold "◦", id.
  intros n; induction n; [ apply eq_refl | simpl; apply ap, IHn ].
