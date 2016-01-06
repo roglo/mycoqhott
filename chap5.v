@@ -444,14 +444,6 @@ destruct p.
 apply eq_refl.
 Defined.
 
-Definition eqnat0nat'0' : existT id nat O = existT id nat' O'.
-Proof.
-replace O' with (Σ_pr₁ nateqvnat' O) by apply eq_refl.
-replace nateqvnat' with (idtoeqv (ua nateqvnat')) by apply idtoeqv_ua.
-apply (Σ_type.pair_eq (ua nateqvnat')).
-apply trans.
-Defined.
-
 Definition eqc₀d₀ C D (c₀ : C) (d₀ : D) (f : C → D) (H : isequiv f)
     (dc : d₀ = f c₀) :
   existT id C c₀ = existT id D d₀.
@@ -460,6 +452,15 @@ replace d₀ with (Σ_pr₁ (existT _ f H) c₀) by apply dc.
 replace (existT _ f H) with (idtoeqv (ua (existT _ f H))) by apply idtoeqv_ua.
 apply (Σ_type.pair_eq (ua (existT _ f H))).
 apply trans.
+Defined.
+
+Definition eqnat0nat'0' : existT id nat O = existT id nat' O'.
+Proof.
+apply eqc₀d₀ with (f := nat2nat'); [ | apply eq_refl ].
+apply qinv_isequiv.
+exists nat'2nat; split; unfold "◦", id.
+ intros n; induction n; [ apply eq_refl | simpl; apply ap, IHn ].
+ intros n; induction n; [ apply eq_refl | simpl; apply ap, IHn ].
 Defined.
 
 bbb.
