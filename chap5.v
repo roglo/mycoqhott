@@ -481,10 +481,21 @@ destruct (ua nateqvnat').
 apply eq_refl.
 Defined.
 
+Definition titi A B (f g : Type → Type) af ag bf bg :
+  existT f A af = existT f B bf
+  → existT g A ag = existT g B bg
+  → existT (λ C, (f C * g C)%type) A (af, ag) =
+    existT (λ C, (f C * g C)%type) B (bf, bg).
+Proof.
+bbb.
+
 Definition toto C D (f : C → D) (g : D → C) : ∀ c₀ cs,
   existT (λ C, (C * (C → C))%type) C (c₀, cs) =
   existT (λ C, (C * (C → C))%type) D (f c₀, λ d, f (cs (g d))).
 Proof.
+intros.
+apply (titi C D id (λ A, A → A) c₀ cs (f c₀) (λ d, f (cs (g d)))).
+
 bbb.
 
 Definition pre_hott_5_4_4_i I J :
