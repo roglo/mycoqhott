@@ -487,6 +487,21 @@ unfold "◦"; simpl; apply ap.
 induction c; [ apply eq_refl | simpl; apply ap, IHc ].
 Defined.
 
+Definition glop C D (p : C ≃ D) f cs ds :
+  existT f C cs = existT f D ds.
+Proof.
+apply (Σ_type.pair_eq (ua p)).
+bbb.
+
+replace ds with (Σ_pr₁ p ◦ cs ◦ Σ_pr₁ (fst (Σ_pr₂ p))).
+set (t := ua p).
+replace p with (idtoeqv (ua p)) by apply idtoeqv_ua.
+unfold t; clear t.
+destruct (ua p).
+apply eq_refl.
+Defined.
+
+
 bbb.
 
 Definition titi A B (f g : Type → Type) af ag bf bg :
