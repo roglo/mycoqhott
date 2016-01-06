@@ -444,11 +444,11 @@ destruct p.
 apply eq_refl.
 Defined.
 
-Definition equiv_pair_eq C D (c₀ : C) (d₀ : D) (f : C → D) (H : isequiv f)
-    (dc : d₀ = f c₀) :
-  existT id C c₀ = existT id D d₀.
+Definition equiv_pair_eq C D (f : C → D) (H : isequiv f) :
+  ∀ c₀, existT id C c₀ = existT id D (f c₀).
 Proof.
-replace d₀ with (Σ_pr₁ (existT _ f H) c₀) by apply dc.
+intros.
+replace f with (Σ_pr₁ (existT _ f H)) by apply eq_refl.
 replace (existT _ f H) with (idtoeqv (ua (existT _ f H))) by apply idtoeqv_ua.
 apply (Σ_type.pair_eq (ua (existT _ f H))).
 apply trans.
@@ -456,14 +456,12 @@ Defined.
 
 Definition eqnat0nat'0' : existT id nat O = existT id nat' O'.
 Proof.
-apply equiv_pair_eq with (f := nat2nat'); [ | apply eq_refl ].
-apply qinv_isequiv.
+replace O' with (nat2nat' O) by apply eq_refl.
+apply equiv_pair_eq, qinv_isequiv.
 exists nat'2nat; split; unfold "◦", id.
  intros n; induction n; [ apply eq_refl | simpl; apply ap, IHn ].
  intros n; induction n; [ apply eq_refl | simpl; apply ap, IHn ].
 Defined.
-
-bbb.
 
 Definition eqnatSnat'S' :
   existT (λ C, C → C) nat S = existT (λ C, C → C) nat' S'.
@@ -482,6 +480,12 @@ unfold t; clear t.
 destruct (ua nateqvnat').
 apply eq_refl.
 Defined.
+
+Definition toto C D (f : C → D) (g : D → C) : ∀ c₀ cs,
+  existT (λ C, (C * (C → C))%type) C (c₀, cs) =
+  existT (λ C, (C * (C → C))%type) D (f c₀, λ d, f (cs (g d))).
+Proof.
+bbb.
 
 Definition pre_hott_5_4_4_i I J :
   isHinit_ℕ I → isHinit_ℕ J → ℕAlg_C I = ℕAlg_C J.
@@ -542,6 +546,15 @@ destruct cjj as (h, cjj).
    destruct f as ((f, (f₀, fs))); simpl in *.
    destruct g as ((g, (g₀, gs))); simpl in *; simpl.
    apply ap.
+replace c₀ with (g d₀).
+replace cs with (λ c, g (ds (f c))).
+Focus 2.
+apply Π_type.funext; intros c.
+eapply compose; [ apply gs | apply ap ].
+change ((g ◦ f) c = id c); apply hap, gf.
+bbb.
+apply invert, toto.
+
 bbb.
    apply invert, (Σ_type.pair_eq (ua H1⁻⁻¹)).
 
