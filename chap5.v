@@ -464,30 +464,20 @@ exists nat'2nat; split; unfold "◦", id.
  intros n; induction n; [ apply eq_refl | simpl; apply ap, IHn ].
 Defined.
 
-Definition tato A B (p : A ≃ B) f (a : f A) (b : f B) :
- transport f (ua p) a = b.
+Definition eqCSDS C D (p : C ≃ D) cs ds :
+  Σ_pr₁ p ◦ cs ◦ Σ_pr₁ (fst (Σ_pr₂ p)) = ds
+  → existT (λ C, C → C) C cs = existT (λ C, C → C) D ds.
 Proof.
-Check (Σ_pr₁ p).
-
-(*
-Definition tota A B (p : A ≃ B) (sa : A → A) (sb : B → B) :
-  (∀ a : A, g (sa a) = sb (g a))
-  → transport (λ C, C → C) (ua p) sa = sb.
-Proof.
-apply Π_type.funext; intros b.
-replace sb with (λ b, Σ_pr₁ p (sa (Σ_pr₁ (fst (Σ_pr₂ p)) b))).
-Focus 2.
-apply Π_type.funext; intros d; simpl.
-Check (Σ_pr₁ (fst (Σ_pr₂ p))).
-  gs : ∀ c : D, g (sb c) = sb (g c)
-  gs : ∀ c : D, g (ds c) = cs (g c)
-destruct p; simpl.
-destruct i; simpl.
-destruct s; simpl.
-destruct s0; simpl.
-(* ouais, bof *)
-Abort.
-*)
+intros q.
+apply (Σ_type.pair_eq (ua p)).
+apply Π_type.funext; intros d.
+replace ds with (λ d, Σ_pr₁ p (cs (Σ_pr₁ (fst (Σ_pr₂ p)) d))).
+set (t := ua p).
+replace p with (idtoeqv (ua p)) by apply idtoeqv_ua.
+unfold t; clear t.
+destruct (ua p).
+apply eq_refl.
+Defined.
 
 bbb.
 
@@ -495,38 +485,20 @@ Definition eqnatSnat'S' :
   existT (λ C, C → C) nat S = existT (λ C, C → C) nat' S'.
 Proof.
 apply (Σ_type.pair_eq (ua nateqvnat')).
-(*
-apply (tato nat nat' nateqvnat' (λ C, C → C) S S').
-*)
 apply Π_type.funext; intros c'.
-replace S' with (λ c', Σ_pr₁ nateqvnat' (S (nat'2nat c'))).
+(**)
+replace S' with
+  (λ c', Σ_pr₁ nateqvnat' (S (Σ_pr₁ (fst (Σ_pr₂ nateqvnat')) c'))).
 Focus 2.
 apply Π_type.funext; intros d; simpl; apply ap.
-(*
-assert (∀ n : nat, nat2nat' (S n) = S' (nat2nat' n)).
-Focus 2.
-simpl in H.
-*)
-(*
-   nat2nat' (nat'2nat d) = d
-*)
 induction d; [ apply eq_refl | simpl; apply ap, IHd ].
 
-replace nat'2nat with (Σ_pr₁ (fst (Σ_pr₂ nateqvnat'))) by apply eq_refl.
 set (t := ua nateqvnat').
 replace nateqvnat' with (idtoeqv (ua nateqvnat')) by apply idtoeqv_ua.
 unfold t; clear t.
 destruct (ua nateqvnat').
 apply eq_refl.
 Defined.
-
-Definition titi A B (f g : Type → Type) (p : A = B) af ag bf bg :
-  existT (λ C, (f C * g C)%type) A (af, ag) =
-  existT (λ C, (f C * g C)%type) B (bf, bg).
-Proof.
-apply (Σ_type.pair_eq p).
-About trans.
-Abort.
 
 Definition titi A B (f g : Type → Type) af ag bf bg :
   existT f A af = existT f B bf
@@ -545,16 +517,22 @@ simpl in p.
 simpl.
 destruct q.
 apply cartesian.pair_eq; simpl; split; [ apply p | apply invert ].
-About trans.
-Abort.
+bbb.
+
+injection p.
+intros _ s.
+apply (Σ_type.pair_eq s).
+About Σ_type.pair_eq.
+bbb.
 
 Definition toto C D (f : C → D) (g : D → C) : ∀ c₀ cs,
   existT (λ C, (C * (C → C))%type) C (c₀, cs) =
   existT (λ C, (C * (C → C))%type) D (f c₀, λ d, f (cs (g d))).
 Proof.
 intros.
-Abort.
-(* apply (titi C D id (λ A, A → A) c₀ cs (f c₀) (λ d, f (cs (g d)))). *)
+apply (titi C D id (λ A, A → A) c₀ cs (f c₀) (λ d, f (cs (g d)))).
+
+bbb.
 
 Definition pre_hott_5_4_4_i I J :
   isHinit_ℕ I → isHinit_ℕ J → ℕAlg_C I = ℕAlg_C J.
@@ -615,7 +593,6 @@ destruct cjj as (h, cjj).
    destruct f as ((f, (f₀, fs))); simpl in *.
    destruct g as ((g, (g₀, gs))); simpl in *; simpl.
    apply ap.
-(*
 replace c₀ with (g d₀).
 replace cs with (λ c, g (ds (f c))).
 Focus 2.
@@ -629,7 +606,6 @@ bbb.
    apply invert, (Σ_type.pair_eq (ua H1⁻⁻¹)).
 
 bbb.
-*)
 replace (c₀, cs) with (g d₀, λ c, g (ds (f c))).
 Focus 2.
 apply cartesian.pair_eq; simpl; split; [ apply g₀ | ].
@@ -638,7 +614,6 @@ eapply compose; [ apply gs | apply ap ].
 change (g (f c) = id c).
 rewrite <- gf.
 apply eq_refl.
-bbb.
 
 Definition tutu : ∀ A B (p : A = B) t, transport _ p t = Σ_pr₁ (idtoeqv p) t.
 Proof.
