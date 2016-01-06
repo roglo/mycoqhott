@@ -452,6 +452,24 @@ apply (Σ_type.pair_eq (ua nateqvnat')).
 apply trans.
 Defined.
 
+Definition eqnatSnat'S' :
+  existT (λ C, C → C) nat S = existT (λ C, C → C) nat' S'.
+Proof.
+apply (Σ_type.pair_eq (ua nateqvnat')).
+apply Π_type.funext; intros c'.
+replace S' with (λ c', Σ_pr₁ nateqvnat' (S (nat'2nat c'))).
+Focus 2.
+apply Π_type.funext; intros d; simpl; apply ap.
+induction d; [ apply eq_refl | simpl; apply ap, IHd ].
+
+replace nat'2nat with (Σ_pr₁ (fst (Σ_pr₂ nateqvnat'))) by apply eq_refl.
+set (t := ua nateqvnat').
+replace nateqvnat' with (idtoeqv (ua nateqvnat')) by apply idtoeqv_ua.
+unfold t; clear t.
+destruct (ua nateqvnat').
+apply eq_refl.
+Defined.
+
 bbb.
 
 Definition pre_hott_5_4_4_i I J :
