@@ -452,6 +452,18 @@ apply (Σ_type.pair_eq (ua nateqvnat')).
 apply trans.
 Defined.
 
+Definition eqc₀d₀ C D (c₀ : C) (d₀ : D) (f : C → D) (H : isequiv f)
+    (dc : d₀ = f c₀) :
+  existT id C c₀ = existT id D d₀.
+Proof.
+replace d₀ with (Σ_pr₁ (existT _ f H) c₀) by apply dc.
+replace (existT _ f H) with (idtoeqv (ua (existT _ f H))) by apply idtoeqv_ua.
+apply (Σ_type.pair_eq (ua (existT _ f H))).
+apply trans.
+Defined.
+
+bbb.
+
 Definition eqnatSnat'S' :
   existT (λ C, C → C) nat S = existT (λ C, C → C) nat' S'.
 Proof.
@@ -469,8 +481,6 @@ unfold t; clear t.
 destruct (ua nateqvnat').
 apply eq_refl.
 Defined.
-
-bbb.
 
 Definition pre_hott_5_4_4_i I J :
   isHinit_ℕ I → isHinit_ℕ J → ℕAlg_C I = ℕAlg_C J.
@@ -530,8 +540,9 @@ destruct cjj as (h, cjj).
    destruct J as ((D, (d₀, ds))); simpl in *.
    destruct f as ((f, (f₀, fs))); simpl in *.
    destruct g as ((g, (g₀, gs))); simpl in *; simpl.
-   apply invert, ap.
-   apply (Σ_type.pair_eq (ua H1⁻⁻¹)).
+   apply ap.
+bbb.
+   apply invert, (Σ_type.pair_eq (ua H1⁻⁻¹)).
 
 bbb.
 replace (c₀, cs) with (g d₀, λ c, g (ds (f c))).
