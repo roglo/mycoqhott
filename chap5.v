@@ -437,7 +437,8 @@ destruct (ua (existT isequiv f H)).
 apply eq_refl.
 Defined.
 
-Definition trans : ∀ A B (p : A = B) t, transport _ p t = Σ_pr₁ (idtoeqv p) t.
+Definition trans : ∀ A B (p : A = B) t,
+  transport id p t = Σ_pr₁ (idtoeqv p) t.
 Proof.
 intros t.
 destruct p.
@@ -488,9 +489,22 @@ Definition titi A B (f g : Type → Type) af ag bf bg :
     existT (λ C, (f C * g C)%type) B (bf, bg).
 Proof.
 intros p q.
+apply Σ_type.pair_eq_if in p.
+apply Σ_type.pair_eq_if in q.
+destruct p as (abp, p).
+destruct q as (abq, q).
+apply (Σ_type.pair_eq abp).
+destruct abp.
+simpl in p.
+simpl.
+destruct q.
+apply cartesian.pair_eq; simpl; split; [ apply p | apply invert ].
+bbb.
+
 injection p.
-intros r s.
+intros _ s.
 apply (Σ_type.pair_eq s).
+About Σ_type.pair_eq.
 bbb.
 
 Definition toto C D (f : C → D) (g : D → C) : ∀ c₀ cs,
