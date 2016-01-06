@@ -440,7 +440,7 @@ Defined.
 Definition trans : ∀ A B (p : A = B) t,
   transport id p t = Σ_pr₁ (idtoeqv p) t.
 Proof.
-intros t.
+intros.
 destruct p.
 apply eq_refl.
 Defined.
@@ -499,6 +499,7 @@ simpl in p.
 simpl.
 destruct q.
 apply cartesian.pair_eq; simpl; split; [ apply p | apply invert ].
+About trans.
 bbb.
 
 injection p.
