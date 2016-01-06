@@ -465,13 +465,13 @@ exists nat'2nat; split; unfold "◦", id.
 Defined.
 
 Definition eqCSDS C D (p : C ≃ D) cs ds :
-  Σ_pr₁ p ◦ cs ◦ Σ_pr₁ (fst (Σ_pr₂ p)) = ds
+  Σ_pr₁ p ◦ cs ◦ Σ_pr₁ (fst (Σ_pr₂ p)) ∼ ds
   → existT (λ C, C → C) C cs = existT (λ C, C → C) D ds.
 Proof.
 intros q.
 apply (Σ_type.pair_eq (ua p)).
 apply Π_type.funext; intros d.
-replace ds with (λ d, Σ_pr₁ p (cs (Σ_pr₁ (fst (Σ_pr₂ p)) d))).
+replace (ds d) with (Σ_pr₁ p (cs (Σ_pr₁ (fst (Σ_pr₂ p)) d))) by apply q.
 set (t := ua p).
 replace p with (idtoeqv (ua p)) by apply idtoeqv_ua.
 unfold t; clear t.
@@ -479,26 +479,15 @@ destruct (ua p).
 apply eq_refl.
 Defined.
 
-bbb.
-
 Definition eqnatSnat'S' :
   existT (λ C, C → C) nat S = existT (λ C, C → C) nat' S'.
 Proof.
-apply (Σ_type.pair_eq (ua nateqvnat')).
-apply Π_type.funext; intros c'.
-(**)
-replace S' with
-  (λ c', Σ_pr₁ nateqvnat' (S (Σ_pr₁ (fst (Σ_pr₂ nateqvnat')) c'))).
-Focus 2.
-apply Π_type.funext; intros d; simpl; apply ap.
-induction d; [ apply eq_refl | simpl; apply ap, IHd ].
-
-set (t := ua nateqvnat').
-replace nateqvnat' with (idtoeqv (ua nateqvnat')) by apply idtoeqv_ua.
-unfold t; clear t.
-destruct (ua nateqvnat').
-apply eq_refl.
+apply eqCSDS with (p := nateqvnat'); intros c.
+unfold "◦"; simpl; apply ap.
+induction c; [ apply eq_refl | simpl; apply ap, IHc ].
 Defined.
+
+bbb.
 
 Definition titi A B (f g : Type → Type) af ag bf bg :
   existT f A af = existT f B bf
