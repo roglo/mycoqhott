@@ -437,7 +437,7 @@ destruct (ua (existT isequiv f H)).
 apply eq_refl.
 Defined.
 
-Definition trans : ∀ A B (p : A = B) t,
+Definition trans : ∀ A B (p : A = B) (t : A),
   transport id p t = Σ_pr₁ (idtoeqv p) t.
 Proof.
 intros.
@@ -464,10 +464,33 @@ exists nat'2nat; split; unfold "◦", id.
  intros n; induction n; [ apply eq_refl | simpl; apply ap, IHn ].
 Defined.
 
+Definition tato A B (p : A ≃ B) f (a : f A) (b : f B) :
+ transport f (ua p) a = b.
+Proof.
+Check (Σ_pr₁ p).
+
+Definition tota A B (p : A ≃ B) (sa : A → A) (sb : B → B) :
+  transport (λ C, C → C) (ua p) sa = sb.
+Proof.
+apply Π_type.funext; intros b.
+replace sb with (λ b, Σ_pr₁ p (sa (Σ_pr₁ (fst (Σ_pr₂ p)) b))).
+Focus 2.
+apply Π_type.funext; intros d; simpl.
+destruct p; simpl.
+destruct i; simpl.
+destruct s; simpl.
+destruct s0; simpl.
+(* ouais, bof *)
+bbb.
+
 Definition eqnatSnat'S' :
   existT (λ C, C → C) nat S = existT (λ C, C → C) nat' S'.
 Proof.
 apply (Σ_type.pair_eq (ua nateqvnat')).
+(*
+apply (tato nat nat' nateqvnat' (λ C, C → C) S S').
+*)
+bbb.
 apply Π_type.funext; intros c'.
 replace S' with (λ c', Σ_pr₁ nateqvnat' (S (nat'2nat c'))).
 Focus 2.
@@ -482,6 +505,15 @@ destruct (ua nateqvnat').
 apply eq_refl.
 Defined.
 
+Definition titi A B (f g : Type → Type) (p : A = B) af ag bf bg :
+  existT (λ C, (f C * g C)%type) A (af, ag) =
+  existT (λ C, (f C * g C)%type) B (bf, bg).
+Proof.
+apply (Σ_type.pair_eq p).
+About trans.
+bbb.
+
+bbb.
 Definition titi A B (f g : Type → Type) af ag bf bg :
   existT f A af = existT f B bf
   → existT g A ag = existT g B bg
