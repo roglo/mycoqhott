@@ -487,6 +487,10 @@ Definition titi A B (f g : Type → Type) af ag bf bg :
   → existT (λ C, (f C * g C)%type) A (af, ag) =
     existT (λ C, (f C * g C)%type) B (bf, bg).
 Proof.
+intros p q.
+injection p.
+intros r s.
+apply (Σ_type.pair_eq s).
 bbb.
 
 Definition toto C D (f : C → D) (g : D → C) : ∀ c₀ cs,
