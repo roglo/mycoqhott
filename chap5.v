@@ -629,6 +629,21 @@ assert (fg : fh = gh).
   intros n; eapply compose; [ apply fs | apply eq_refl ].
   intros n; eapply compose; [ apply gs | apply eq_refl ].
 
+apply ap.
+bbb.
+
+  replace c₀ with (g d₀).
+  replace cs with (λ c, g (ds (f c))).
+   replace f with (Σ_pr₁ H1) by (unfold H1; apply eq_refl).
+   replace g with (Σ_pr₁ (fst (Σ_pr₂ H1))) by (unfold H1; apply eq_refl).
+   replace H1 with (idtoeqv (ua H1)) by apply idtoeqv_ua.
+   destruct (ua H1); apply eq_refl.
+
+   apply Π_type.funext; intros c.
+   eapply compose; [ apply gs | apply ap ].
+   change ((g ◦ f) c = id c); apply hap, gf.
+bbb.
+
 (* ok fh = gh, but it does not prove that f₀ = g₀ and fs = gs *)
 subst gh.
 apply ap, (Σ_type.pair_eq (eq_refl _)); simpl; unfold id.
