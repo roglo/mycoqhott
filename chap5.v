@@ -503,6 +503,10 @@ Definition ℕAlg_morph_of_ℕ (A : ℕAlg) n : ℕAlg_C A :=
 Definition hott_5_4_5 : isHinit_ℕ (ℕA (existT _ ℕ (0, S))).
 Proof.
 unfold isHinit_ℕ.
+intros ((C, (c₀, cs))).
+
+bbb.
+unfold isHinit_ℕ.
 intros A.
 set (na := ℕA (existT _ ℕ (0, S))); simpl in na.
 set (f := ℕAlg_morph_of_ℕ A).
