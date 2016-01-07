@@ -520,11 +520,10 @@ destruct C as ((C, (c₀, cs))); simpl in *.
 destruct h as ((h, (h₀, hs))); simpl in *; simpl.
 unfold fh; simpl.
 apply ap.
-transparent assert (fg : f = h).
- apply (hott_5_1_1 (λ _, C) f h c₀ (λ _, cs)); assumption.
-
- apply (Σ_type.pair_eq fg). 
- unfold fg; simpl.
+set (fg := hott_5_1_1 (λ _ : ℕ, C) f h c₀ (λ _ : ℕ, cs) f₀ h₀ fs hs).
+apply (Σ_type.pair_eq fg). 
+unfold transport; simpl.
+destruct fg; simpl.
 
 bbb.
 unfold isHinit_ℕ.
