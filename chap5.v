@@ -520,103 +520,11 @@ destruct C as ((C, (c₀, cs))); simpl in *.
 destruct h as ((h, (h₀, hs))); simpl in *; simpl.
 unfold fh; simpl.
 apply ap.
-set (fg := hott_5_1_1 (λ _ : ℕ, C) f h c₀ (λ _ : ℕ, cs) f₀ h₀ fs hs).
+set (fg := hott_5_1_1 (λ _, C) (ℕHom_fun fh) h c₀ (λ _ : ℕ, cs) f₀ h₀ fs hs).
 apply (Σ_type.pair_eq fg). 
-unfold transport; simpl.
-destruct fg; simpl.
-
-bbb.
-unfold isHinit_ℕ.
-intros A.
-set (na := ℕA (existT _ ℕ (0, S))); simpl in na.
-set (f := ℕAlg_morph_of_ℕ A).
-transparent assert (fh : ℕHom na A).
- constructor.
- destruct A as ((C, (c₀, cs))).
- exists f; unfold f; simpl.
- split; [ apply eq_refl | intros n; apply eq_refl ].
-
-simpl in fh.
-unfold isContr.
-exists fh; intros gh.
-destruct A as ((C, (c₀, cs))); simpl in *.
-unfold fh; clear fh; simpl.
-destruct gh as ((gh, (g₀, gs))); simpl in *; simpl.
-apply ap; fold f.
-transparent assert (fg : f = gh).
- apply (hott_5_1_1 (λ _, C) f gh c₀ (λ _, cs)); try assumption.
-  unfold f; apply eq_refl.
-  intros n; apply eq_refl.
-
- apply (Σ_type.pair_eq fg).
-unfold hott_5_1_1 in fg.
-set (
-  fg' := Π_type.funext
-          (fix H (x : ℕ) : f x = gh x :=
-             match x as n return (f n = gh n) with
-             | 0 => g₀⁻¹
-             | S x0 =>
-                  match H x0 in (_ = y) return (cs (f x0) = cs y) with
-                  | eq_refl _ => eq_refl (cs (f x0))
-                  end • (gs x0)⁻¹
-             end)).
-subst f; simpl in *.
-
-bbb.
-Check (hott_5_1_1 (λ _, C) f gh c₀ (λ _, cs)).
-
-set (es := λ n, 
- eapply hott_5_1_1 with (ez := c₀); try assumption; try apply eq_refl.
+replace (f₀, fs) with (ℕHom_eq₀ fh, ℕHom_eqs fh) by apply eq_refl.
 bbb.
 
-About hott_5_1_1.
-
-Focus 2.
-apply (Σ_type.pair_eq H).
-simpl.
-destruct H.
-simpl.
-unfold id; simpl.
-
-Check (ℕHom_eqs fh).
-set (fs := ℕHom_eqs fh).
-simpl in fs.
-
-unfold fh; clear fh; simpl.
-set (fg := hott_5_1_1 (λ _ : ℕ, C) fh gh c₀ (λ _ : ℕ, cs) f₀ g₀ fs gs).
-
-
-destruct fh as ((fh, (f₀, fs))).
-set (fg := hott_5_1_1 (λ _ : ℕ, C) fh gh c₀ (λ _ : ℕ, cs) f₀ g₀ fs gs).
-apply ap, (Σ_type.pair_eq fg).
-simpl in *; simpl.
-
-
-destruct gh as ((gh, (g₀, gs))); simpl in *; simpl.
-unfold fh; clear fh; simpl.
-apply ap.
-bbb.
-
-destruct fh as ((fh, (f₀, fs))).
-destruct gh as ((gh, (g₀, gs))); simpl.
-set (fg := hott_5_1_1 (λ _ : ℕ, C) fh gh c₀ (λ _ : ℕ, cs) f₀ g₀ fs gs).
-apply ap, (Σ_type.pair_eq fg).
-bbb.
-
-  replace c₀ with (g d₀).
-  replace cs with (λ c, g (ds (f c))).
-   replace f with (Σ_pr₁ H1) by (unfold H1; apply eq_refl).
-   replace g with (Σ_pr₁ (fst (Σ_pr₂ H1))) by (unfold H1; apply eq_refl).
-   replace H1 with (idtoeqv (ua H1)) by apply idtoeqv_ua.
-   destruct (ua H1); apply eq_refl.
-
-   apply Π_type.funext; intros c.
-   eapply compose; [ apply gs | apply ap ].
-   change ((g ◦ f) c = id c); apply hap, gf.
-bbb.
-
-(* ok fh = gh, but it does not prove that f₀ = g₀ and fs = gs *)
-subst gh.
-apply ap, (Σ_type.pair_eq (eq_refl _)); simpl; unfold id.
-
+unfold transport.
+destruct fg.
 bbb.
