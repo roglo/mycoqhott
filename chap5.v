@@ -544,6 +544,9 @@ assert (fg : ℕHom_fun f ◦ ℕHom_fun g = id).
   destruct f as ((f, (f₀, fs))); simpl in *.
   destruct g as ((g, (g₀, gs))); simpl in *; simpl.
   apply ap.
+  clear cji f₀ cij fs.
+  revert f g fg gf g₀ gs H1; clear; intros.
+  (* perhaps a lemma from here... *)
   replace c₀ with (g d₀).
   replace cs with (λ c, g (ds (f c))).
    replace f with (Σ_pr₁ H1) by (unfold H1; apply eq_refl).
