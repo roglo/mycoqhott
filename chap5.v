@@ -524,6 +524,13 @@ transparent assert (fg : f = gh).
   unfold f; apply eq_refl.
   intros n; apply eq_refl.
 
+ apply (Σ_type.pair_eq fg).
+bbb.
+
+unfold hott_5_1_1 in fg.
+simpl in fg.
+unfold id in fg.
+
 bbb.
 Check (hott_5_1_1 (λ _, C) f gh c₀ (λ _, cs)).
 
