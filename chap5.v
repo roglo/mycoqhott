@@ -506,23 +506,63 @@ unfold isHinit_ℕ.
 intros A.
 set (na := ℕA (existT _ ℕ (0, S))); simpl in na.
 set (f := ℕAlg_morph_of_ℕ A).
-assert (fh : ℕHom na A).
+transparent assert (fh : ℕHom na A).
  constructor.
  destruct A as ((C, (c₀, cs))).
  exists f; unfold f; simpl.
  split; [ apply eq_refl | intros n; apply eq_refl ].
 
+simpl in fh.
 unfold isContr.
 exists fh; intros gh.
+destruct A as ((C, (c₀, cs))); simpl in *.
+unfold fh; clear fh; simpl.
+destruct gh as ((gh, (g₀, gs))); simpl in *; simpl.
+apply ap; fold f.
+transparent assert (fg : f = gh).
+ apply (hott_5_1_1 (λ _, C) f gh c₀ (λ _, cs)); try assumption.
+  unfold f; apply eq_refl.
+  intros n; apply eq_refl.
+
+bbb.
+Check (hott_5_1_1 (λ _, C) f gh c₀ (λ _, cs)).
+
+set (es := λ n, 
+ eapply hott_5_1_1 with (ez := c₀); try assumption; try apply eq_refl.
+bbb.
+
+About hott_5_1_1.
+
+Focus 2.
+apply (Σ_type.pair_eq H).
+simpl.
+destruct H.
+simpl.
+unfold id; simpl.
+
+Check (ℕHom_eqs fh).
+set (fs := ℕHom_eqs fh).
+simpl in fs.
+
+unfold fh; clear fh; simpl.
+set (fg := hott_5_1_1 (λ _ : ℕ, C) fh gh c₀ (λ _ : ℕ, cs) f₀ g₀ fs gs).
+
+
+destruct fh as ((fh, (f₀, fs))).
+set (fg := hott_5_1_1 (λ _ : ℕ, C) fh gh c₀ (λ _ : ℕ, cs) f₀ g₀ fs gs).
+apply ap, (Σ_type.pair_eq fg).
+simpl in *; simpl.
+
+
+destruct gh as ((gh, (g₀, gs))); simpl in *; simpl.
+unfold fh; clear fh; simpl.
+apply ap.
+bbb.
+
 destruct fh as ((fh, (f₀, fs))).
 destruct gh as ((gh, (g₀, gs))); simpl.
-assert (fg : fh = gh).
- destruct A as ((C, (c₀, cs))); simpl in *.
- eapply hott_5_1_1; try eassumption.
-  intros n; eapply compose; [ apply fs | apply eq_refl ].
-  intros n; eapply compose; [ apply gs | apply eq_refl ].
-
-apply ap.
+set (fg := hott_5_1_1 (λ _ : ℕ, C) fh gh c₀ (λ _ : ℕ, cs) f₀ g₀ fs gs).
+apply ap, (Σ_type.pair_eq fg).
 bbb.
 
   replace c₀ with (g d₀).
