@@ -487,6 +487,9 @@ unfold "◦"; simpl; apply ap.
 induction c; [ apply eq_refl | simpl; apply ap, IHc ].
 Defined.
 
+(* works; but since it also proves I = J, to be cleaned with this goal! *)
+bbb.
+
 Definition pre_hott_5_4_4_i I J :
   isHinit_ℕ I → isHinit_ℕ J → ℕAlg_C I = ℕAlg_C J.
 Proof.
@@ -552,29 +555,15 @@ Focus 2.
 apply Π_type.funext; intros c.
 eapply compose; [ apply gs | apply ap ].
 change ((g ◦ f) c = id c); apply hap, gf.
-bbb.
-
 replace f with (Σ_pr₁ H1) by (unfold H1; apply eq_refl).
 replace g with (Σ_pr₁ (fst (Σ_pr₂ H1))) by (unfold H1; apply eq_refl).
-bbb.
-
-Definition toto C D (p : C ≃ D) (f : C → D) (g : D → C) d₀ ds :
-  existT (λ A, (A * (A → A))%type) C (g d₀, λ c, g (ds (f c))) =
-  existT _ D (d₀, ds).
-
-bbb.
-
-   apply invert, (Σ_type.pair_eq (ua H1⁻⁻¹)).
-
-bbb.
-replace (c₀, cs) with (g d₀, λ c, g (ds (f c))).
-Focus 2.
-apply cartesian.pair_eq; simpl; split; [ apply g₀ | ].
-apply Π_type.funext; intros c.
-eapply compose; [ apply gs | apply ap ].
-change (g (f c) = id c).
-rewrite <- gf.
+replace H1 with (idtoeqv (ua H1)) by apply idtoeqv_ua.
+destruct (ua H1); apply eq_refl.
+destruct H1.
 apply eq_refl.
+Defined.
+
+bbb.
 
 Definition tutu : ∀ A B (p : A = B) t, transport _ p t = Σ_pr₁ (idtoeqv p) t.
 Proof.
