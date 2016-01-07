@@ -506,12 +506,13 @@ unfold isHinit_ℕ.
 intros C.
 set (na := ℕA (existT _ ℕ (0, S))); simpl in na.
 set (f := ℕAlg_morph_of_ℕ C).
-assert (f₀ : f 0 = ℕAlg_c₀ C).
+transparent assert (f₀ : f 0 = ℕAlg_c₀ C).
  destruct C as ((C, (c₀, cs))); apply eq_refl.
 
-  assert (fs : ∀ n, f (S n) = ℕAlg_cs C (f n)).
+  transparent assert (fs : ∀ n, f (S n) = ℕAlg_cs C (f n)).
    destruct C as ((C, (c₀, cs))); intros; apply eq_refl.
 
+simpl in *.
 set (fh := ℕH na C (existT _ (ℕAlg_morph_of_ℕ C) (f₀, fs))).
 simpl in fh.
 exists fh.
@@ -523,8 +524,8 @@ apply ap.
 set (fg := hott_5_1_1 (λ _, C) (ℕHom_fun fh) h c₀ (λ _ : ℕ, cs) f₀ h₀ fs hs).
 apply (Σ_type.pair_eq fg). 
 replace (f₀, fs) with (ℕHom_eq₀ fh, ℕHom_eqs fh) by apply eq_refl.
-bbb.
-
+unfold f₀, fs in fg.
+simpl in fg.
+unfold fg; simpl.
 unfold transport.
-destruct fg.
 bbb.
