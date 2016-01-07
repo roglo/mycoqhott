@@ -394,99 +394,6 @@ Definition isHinit_ℕ I := Π (C : ℕAlg), isContr (ℕHom I C).
 
 (* "Theorem 5.4.4. Any two h-initial ℕ-algebras are equal. [...]" *)
 
-Definition isContr_sigma A P :
-  isContr (Σ (x : A), P x) → (Π (x : A), isContr (P x)) → isContr A.
-Proof.
-intros p q.
-unfold isContr in p; unfold isContr.
-destruct p as ((a, p), r).
-exists a; intros a'.
-assert (P a') as p' by apply q.
-pose proof r (existT _ a' p') as s.
-injection s; intros u v; apply v.
-Defined.
-
-(* just to see how to prove (nat,0)=(nat',0') *)
-Inductive nat' : Set := O' : nat' | S' : nat' → nat'.
-Fixpoint nat2nat' n :=
-  match n with
-  | O => O'
-  | S n => S' (nat2nat' n)
-  end.
-Fixpoint nat'2nat n :=
-  match n with
-  | O' => O
-  | S' n => S (nat'2nat n)
-  end.
-
-Definition nateqvnat' : nat ≃ nat'.
-Proof.
-exists nat2nat'; apply qinv_isequiv; exists nat'2nat; simpl.
-split; unfold "◦", "∼", id; intros n.
- induction n; [ apply eq_refl | simpl; apply ap, IHn ].
- induction n; [ apply eq_refl | simpl; apply ap, IHn ].
-Defined.
-
-Definition hugo : ∀ A B (f : A → B) (H : isequiv f) t,
- transport _ (ua (existT _ f H)) t = f t.
-Proof.
-intros.
-replace (f t) with (Σ_pr₁ (idtoeqv (ua (existT _ f H))) t) by
- (rewrite idtoeqv_ua; apply eq_refl).
-destruct (ua (existT isequiv f H)).
-apply eq_refl.
-Defined.
-
-Definition trans : ∀ A B (p : A = B) (t : A),
-  transport id p t = Σ_pr₁ (idtoeqv p) t.
-Proof.
-intros.
-destruct p.
-apply eq_refl.
-Defined.
-
-Definition equiv_pair_eq C D (f : C → D) (H : isequiv f) :
-  ∀ c₀, existT id C c₀ = existT id D (f c₀).
-Proof.
-intros.
-replace f with (Σ_pr₁ (existT _ f H)) by apply eq_refl.
-replace (existT _ f H) with (idtoeqv (ua (existT _ f H))) by apply idtoeqv_ua.
-apply (Σ_type.pair_eq (ua (existT _ f H))).
-apply trans.
-Defined.
-
-Definition eqnat0nat'0' : existT id nat O = existT id nat' O'.
-Proof.
-replace O' with (nat2nat' O) by apply eq_refl.
-apply equiv_pair_eq, qinv_isequiv.
-exists nat'2nat; split; unfold "◦", id.
- intros n; induction n; [ apply eq_refl | simpl; apply ap, IHn ].
- intros n; induction n; [ apply eq_refl | simpl; apply ap, IHn ].
-Defined.
-
-Definition eqCSDS C D (p : C ≃ D) cs ds :
-  Σ_pr₁ p ◦ cs ◦ Σ_pr₁ (fst (Σ_pr₂ p)) ∼ ds
-  → existT (λ C, C → C) C cs = existT (λ C, C → C) D ds.
-Proof.
-intros q.
-apply (Σ_type.pair_eq (ua p)).
-apply Π_type.funext; intros d.
-replace (ds d) with (Σ_pr₁ p (cs (Σ_pr₁ (fst (Σ_pr₂ p)) d))) by apply q.
-set (t := ua p).
-replace p with (idtoeqv (ua p)) by apply idtoeqv_ua.
-unfold t; clear t.
-destruct (ua p).
-apply eq_refl.
-Defined.
-
-Definition eqnatSnat'S' :
-  existT (λ C, C → C) nat S = existT (λ C, C → C) nat' S'.
-Proof.
-apply eqCSDS with (p := nateqvnat'); intros c.
-unfold "◦"; simpl; apply ap.
-induction c; [ apply eq_refl | simpl; apply ap, IHc ].
-Defined.
-
 Definition hott_5_4_4_i I J : isHinit_ℕ I → isHinit_ℕ J → I = J.
 Proof.
 intros p q.
@@ -559,20 +466,6 @@ assert (fg : ℕHom_fun f ◦ ℕHom_fun g = id).
    change ((g ◦ f) c = id c); apply hap, gf.
 Defined.
 
-Definition isProp_Σ_prop A (B : A → Type) :
-  (∀ a : A, B a → isProp A)
-  → (∀ a : A, isProp (B a))
-  → isProp (Σ (a : A), B a).
-Proof.
-intros p q.
-intros (a, r) (a', r').
-assert (H1 : isProp A) by apply (p a), r.
-assert (H2 : a = a') by apply H1.
-apply (Σ_type.pair_eq H2).
-unfold transport; destruct H2; unfold id.
-apply q.
-Defined.
-
 (* "[...] Thus, the type of h-initial ℕ-algebras is a mere
     proposition." *)
 
@@ -613,7 +506,7 @@ unfold isHinit_ℕ.
 intros A.
 set (na := ℕA (existT _ ℕ (0, S))); simpl in na.
 set (f := ℕAlg_morph_of_ℕ A).
-(*transparent*) assert (fh : ℕHom na A).
+assert (fh : ℕHom na A).
  constructor.
  destruct A as ((C, (c₀, cs))).
  exists f; unfold f; simpl.
