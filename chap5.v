@@ -487,57 +487,6 @@ unfold "◦"; simpl; apply ap.
 induction c; [ apply eq_refl | simpl; apply ap, IHc ].
 Defined.
 
-Definition glop C D (p : C ≃ D) f cs ds :
-  existT f C cs = existT f D ds.
-Proof.
-apply (Σ_type.pair_eq (ua p)).
-bbb.
-
-replace ds with (Σ_pr₁ p ◦ cs ◦ Σ_pr₁ (fst (Σ_pr₂ p))).
-set (t := ua p).
-replace p with (idtoeqv (ua p)) by apply idtoeqv_ua.
-unfold t; clear t.
-destruct (ua p).
-apply eq_refl.
-Defined.
-
-
-bbb.
-
-Definition titi A B (f g : Type → Type) af ag bf bg :
-  existT f A af = existT f B bf
-  → existT g A ag = existT g B bg
-  → existT (λ C, (f C * g C)%type) A (af, ag) =
-    existT (λ C, (f C * g C)%type) B (bf, bg).
-Proof.
-intros p q.
-apply Σ_type.pair_eq_if in p.
-apply Σ_type.pair_eq_if in q.
-destruct p as (abp, p).
-destruct q as (abq, q).
-apply (Σ_type.pair_eq abp).
-destruct abp.
-simpl in p.
-simpl.
-destruct q.
-apply cartesian.pair_eq; simpl; split; [ apply p | apply invert ].
-bbb.
-
-injection p.
-intros _ s.
-apply (Σ_type.pair_eq s).
-About Σ_type.pair_eq.
-bbb.
-
-Definition toto C D (f : C → D) (g : D → C) : ∀ c₀ cs,
-  existT (λ C, (C * (C → C))%type) C (c₀, cs) =
-  existT (λ C, (C * (C → C))%type) D (f c₀, λ d, f (cs (g d))).
-Proof.
-intros.
-apply (titi C D id (λ A, A → A) c₀ cs (f c₀) (λ d, f (cs (g d)))).
-
-bbb.
-
 Definition pre_hott_5_4_4_i I J :
   isHinit_ℕ I → isHinit_ℕ J → ℕAlg_C I = ℕAlg_C J.
 Proof.
@@ -604,9 +553,17 @@ apply Π_type.funext; intros c.
 eapply compose; [ apply gs | apply ap ].
 change ((g ◦ f) c = id c); apply hap, gf.
 bbb.
-apply invert, toto.
+
+replace f with (Σ_pr₁ H1) by (unfold H1; apply eq_refl).
+replace g with (Σ_pr₁ (fst (Σ_pr₂ H1))) by (unfold H1; apply eq_refl).
+bbb.
+
+Definition toto C D (p : C ≃ D) (f : C → D) (g : D → C) d₀ ds :
+  existT (λ A, (A * (A → A))%type) C (g d₀, λ c, g (ds (f c))) =
+  existT _ D (d₀, ds).
 
 bbb.
+
    apply invert, (Σ_type.pair_eq (ua H1⁻⁻¹)).
 
 bbb.
