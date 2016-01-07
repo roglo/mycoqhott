@@ -525,11 +525,18 @@ transparent assert (fg : f = gh).
   intros n; apply eq_refl.
 
  apply (Σ_type.pair_eq fg).
-bbb.
-
 unfold hott_5_1_1 in fg.
-simpl in fg.
-unfold id in fg.
+set (
+  fg' := Π_type.funext
+          (fix H (x : ℕ) : f x = gh x :=
+             match x as n return (f n = gh n) with
+             | 0 => g₀⁻¹
+             | S x0 =>
+                  match H x0 in (_ = y) return (cs (f x0) = cs y) with
+                  | eq_refl _ => eq_refl (cs (f x0))
+                  end • (gs x0)⁻¹
+             end)).
+subst f; simpl in *.
 
 bbb.
 Check (hott_5_1_1 (λ _, C) f gh c₀ (λ _, cs)).
