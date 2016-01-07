@@ -512,10 +512,19 @@ assert (f₀ : f 0 = ℕAlg_c₀ C).
   assert (fs : ∀ n, f (S n) = ℕAlg_cs C (f n)).
    destruct C as ((C, (c₀, cs))); intros; apply eq_refl.
 
-bbb.
+set (fh := ℕH na C (existT _ (ℕAlg_morph_of_ℕ C) (f₀, fs))).
+simpl in fh.
+exists fh.
+intros h.
+destruct C as ((C, (c₀, cs))); simpl in *.
+destruct h as ((h, (h₀, hs))); simpl in *; simpl.
+unfold fh; simpl.
+apply ap.
+transparent assert (fg : f = h).
+ apply (hott_5_1_1 (λ _, C) f h c₀ (λ _, cs)); assumption.
 
-Check (ℕHom_def na C).
-Check (ℕH na C (ℕHom_def na C)).
+ apply (Σ_type.pair_eq fg). 
+ unfold fg; simpl.
 
 bbb.
 unfold isHinit_ℕ.
