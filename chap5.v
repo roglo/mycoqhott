@@ -487,20 +487,16 @@ unfold "◦"; simpl; apply ap.
 induction c; [ apply eq_refl | simpl; apply ap, IHc ].
 Defined.
 
-(* works; but since it also proves I = J, to be cleaned with this goal! *)
-bbb.
-
-Definition pre_hott_5_4_4_i I J :
-  isHinit_ℕ I → isHinit_ℕ J → ℕAlg_C I = ℕAlg_C J.
+Definition hott_5_4_4_i I J : isHinit_ℕ I → isHinit_ℕ J → I = J.
 Proof.
 intros p q.
-assert (cij : isContr (ℕHom I J)); [ apply p | ].
-assert (cji : isContr (ℕHom J I)); [ apply q | ].
-assert (cjj : isContr (ℕHom J J)); [ apply q | ].
+assert (cij : isContr (ℕHom I J)); [ apply p |  ].
+assert (cji : isContr (ℕHom J I)); [ apply q |  ].
+assert (cjj : isContr (ℕHom J J)); [ apply q |  ].
 destruct cij as (f, cij).
 destruct cji as (g, cji).
 destruct cjj as (h, cjj).
-(*transparent*) assert (fg : ℕHom_fun f ◦ ℕHom_fun g = id).
+assert (fg : ℕHom_fun f ◦ ℕHom_fun g = id).
  set
   (J₀ := ℕH J J (existT _ id (eq_refl _, λ c, eq_refl (ℕAlg_cs J (id c))))).
  unfold id in J₀; simpl in J₀.
@@ -530,172 +526,35 @@ destruct cjj as (h, cjj).
   unfold I₀ in H1; injection H1; intros H2.
   apply invert, H2.
 
-  assert (H1 : I = J).
-   set
-    (H1 :=
-     existT isequiv (ℕHom_fun f)
-       (existT _ (ℕHom_fun g)
-          match fg in (_ = y) return (ℕHom_fun f ◦ ℕHom_fun g ∼ y) with
-          | eq_refl _ => homotopy_eq_refl (ℕHom_fun f ◦ ℕHom_fun g)
-          end,
-       existT _ (ℕHom_fun g)
-         match gf in (_ = y) return (ℕHom_fun g ◦ ℕHom_fun f ∼ y) with
-         | eq_refl _ => homotopy_eq_refl (ℕHom_fun g ◦ ℕHom_fun f)
-         end)
-     :
-     ℕAlg_C I ≃ ℕAlg_C J).
-   destruct I as ((C, (c₀, cs))).
-   destruct J as ((D, (d₀, ds))); simpl in *.
-   destruct f as ((f, (f₀, fs))); simpl in *.
-   destruct g as ((g, (g₀, gs))); simpl in *; simpl.
-   apply ap.
-replace c₀ with (g d₀).
-replace cs with (λ c, g (ds (f c))).
-Focus 2.
-apply Π_type.funext; intros c.
-eapply compose; [ apply gs | apply ap ].
-change ((g ◦ f) c = id c); apply hap, gf.
-replace f with (Σ_pr₁ H1) by (unfold H1; apply eq_refl).
-replace g with (Σ_pr₁ (fst (Σ_pr₂ H1))) by (unfold H1; apply eq_refl).
-replace H1 with (idtoeqv (ua H1)) by apply idtoeqv_ua.
-destruct (ua H1); apply eq_refl.
-destruct H1.
-apply eq_refl.
+  set
+   (H1 :=
+    existT isequiv (ℕHom_fun f)
+      (existT _ (ℕHom_fun g)
+         match fg in (_ = y) return (ℕHom_fun f ◦ ℕHom_fun g ∼ y) with
+         | eq_refl _ => homotopy_eq_refl (ℕHom_fun f ◦ ℕHom_fun g)
+         end,
+      existT _ (ℕHom_fun g)
+        match gf in (_ = y) return (ℕHom_fun g ◦ ℕHom_fun f ∼ y) with
+        | eq_refl _ => homotopy_eq_refl (ℕHom_fun g ◦ ℕHom_fun f)
+        end)
+    :
+    ℕAlg_C I ≃ ℕAlg_C J).
+  destruct I as ((C, (c₀, cs))).
+  destruct J as ((D, (d₀, ds))); simpl in *.
+  destruct f as ((f, (f₀, fs))); simpl in *.
+  destruct g as ((g, (g₀, gs))); simpl in *; simpl.
+  apply ap.
+  replace c₀ with (g d₀).
+  replace cs with (λ c, g (ds (f c))).
+   replace f with (Σ_pr₁ H1) by (unfold H1; apply eq_refl).
+   replace g with (Σ_pr₁ (fst (Σ_pr₂ H1))) by (unfold H1; apply eq_refl).
+   replace H1 with (idtoeqv (ua H1)) by apply idtoeqv_ua.
+   destruct (ua H1); apply eq_refl.
+
+   apply Π_type.funext; intros c.
+   eapply compose; [ apply gs | apply ap ].
+   change ((g ◦ f) c = id c); apply hap, gf.
 Defined.
-
-bbb.
-
-Definition tutu : ∀ A B (p : A = B) t, transport _ p t = Σ_pr₁ (idtoeqv p) t.
-Proof.
-intros t.
-destruct p.
-apply eq_refl.
-Defined.
-
-Show.
-change
-  (transport (λ C0, (C0 * (C0 → C0))%type) (ua H1⁻⁻¹) (d₀, ds) =
-   (λ dd, (g (fst dd), λ c, g (snd dd (f c)))) (d₀, ds)).
-set (t := (d₀, ds)).
-set (p' := ua H1⁻⁻¹).
-Check (Σ_pr₁ (idtoeqv p')).
-Check (λ dd : D * (D → D), (g (fst dd), λ c : C, g (snd dd (f c)))).
-destruct p'.
-simpl.
-bbb.
-   unfold transport.
-   destruct (ua H1).
-   set (U := λ C : Type, (C * (C → C))%type) in *.
-(*
-  H1 := existT isequiv f
-          (existT (λ g : C → C, f ◦ g ∼ id) g
-             match fg in (_ = y) return (f ◦ g ∼ y) with
-             | eq_refl _ => homotopy_eq_refl (f ◦ g)
-             end,
-          existT (λ h : C → C, h ◦ f ∼ id) g
-            match gf in (_ = y) return (g ◦ f ∼ y) with
-            | eq_refl _ => homotopy_eq_refl (g ◦ f)
-            end) : C ≃ C
-*)
-Print nat.
-Inductive nat' : Set := O' : nat' | S' : nat' → nat'.
-Fixpoint nat2nat' n :=
-  match n with
-  | O => O'
-  | S n => S' (nat2nat' n)
-  end.
-Fixpoint nat'2nat n :=
-  match n with
-  | O' => O
-  | S' n => S (nat'2nat n)
-  end.
-Theorem toto : (nat : Type) ≃ nat'.
-Proof.
-transparent assert (f : nat → nat').
- fix 1; intros n.
- destruct n; [ apply O' | ].
- apply S', toto, n.
- exists f; unfold f; clear f.
- apply qinv_isequiv.
-transparent assert (f : nat' → nat).
- fix 1; intros n.
- destruct n; [ apply O | ].
- apply S, toto, n.
- exists f; unfold f; clear f.
-split; unfold "◦", "∼", id.
- fix 1; intros n.
- destruct n; [ apply eq_refl | simpl ].
- apply ap, toto.
- fix 1; intros n.
- destruct n; [ apply eq_refl | simpl ].
- apply ap, toto.
-Guarded.
-Defined.
-Theorem titi : existT id (nat : Type) O = existT id (nat' : Type) O'.
-Proof.
-assert (@eq_rect Type nat id O nat' (ua toto) = O').
-unfold eq_rect, id.
-destruct (ua toto).
-
-bbb.
-
-apply (Σ_type.pair_eq (ua toto')).
-Print eq_rect.
-Monomorphic eq_rect = 
-λ (A : Type) (x : A) (P : A → Type) (f : P x) (y : A) 
-(e : x = y), match e in (_ = y0) return (P y0) with
-             | eq_refl _ => f
-             end
-     : ∀ (A : Type) (x : A) (P : A → Type), P x → ∀ y : A, x = y → P y
-Monomorphic transport = 
-λ (A : Type) (P : A → Type) (x y : A) (p : x = y),
-match p in (_ = a) return (P x → P a) with
-| eq_refl _ => id
-end
-     : ∀ (A : Type) (P : A → Type) (x y : A), x = y → P x → P y
-
-transport is not universe polymorphic
-Arguments A, x, y are implicit and maximally inserted
-Argument scopes are [type_scope _ _ _ _ _]
-
-
-unfold transport.
-unfold toto'; simpl.
-bbb.
-
-Abort. Show.
-unfold id; apply cartesian.pair_eq; simpl; split.
-About eq_rect.
-Check (@eq_rect Type C).
-Check (@eq_rect C c₀ (λ c, c₀ = c)).
-Check (ua H1).
-
-bbb.
-unfold transport, H1; clear H1; simpl.
-set (U := (λ C : Type, (C * (C → C))%type)) in *.
-bbb.
-
-destruct H1.
-apply ap, (Σ_type.pair_eq (eq_refl _)); simpl; unfold id.
-apply cartesian.pair_eq; simpl; split.
-assert (Dec : ∀ c, (c = c₀) + (Σ (c₁ : C), c = cs c₁)). Focus 2.
-destruct (Dec d₀) as [H1| H1]; [ apply invert, H1 | ].
-destruct H1 as (c₁, H1).
-apply invert in H1; destruct H1.
-(* bin non, il faut que la décidabilité soit un "ou" exclusif *)
-bbb.
-*)
-  apply ua.
-  exists (ℕHom_fun f); apply qinv_isequiv; exists (ℕHom_fun g).
-  split; [ destruct fg; apply homotopy_eq_refl2 |  ].
-  destruct gf; apply homotopy_eq_refl2.
-Defined.
-
-Definition hott_5_4_4_i I J : isHinit_ℕ I → isHinit_ℕ J → I = J.
-Proof.
-intros p q.
-pose proof pre_hott_5_4_4_i I J p q as r.
-Abort. (* bbb. *)
 
 Definition isProp_Σ_prop A (B : A → Type) :
   (∀ a : A, B a → isProp A)
@@ -714,6 +573,8 @@ Defined.
 Definition hott_5_4_4_ii : isProp (Σ (A : ℕAlg), isHinit_ℕ A).
 Proof.
 intros (I, p) (J, q).
+bbb.
+
 pose proof pre_hott_5_4_4_i I J p q as r.
 assert (I = J). Focus 2.
 apply (Σ_type.pair_eq H).
