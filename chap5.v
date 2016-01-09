@@ -516,16 +516,17 @@ simpl in *.
 set (fh := ℕH na C (existT _ (ℕAlg_morph_of_ℕ C) (f₀, fs))).
 simpl in fh.
 exists fh.
-intros h.
 destruct C as ((C, (c₀, cs))); simpl in *.
-destruct h as ((h, (h₀, hs))); simpl in *; simpl.
+intros gh.
+transparent assert (fg : ℕHom_fun fh = ℕHom_fun gh).
+ apply
+   (hott_5_1_1 (λ _, C) (ℕHom_fun fh) (ℕHom_fun gh) c₀ (λ _, cs) (ℕHom_eq₀ fh)
+      (ℕHom_eq₀ gh) (ℕHom_eqs fh) (ℕHom_eqs gh)).
+bbb.
+destruct gh as ((g, (g₀, gs))); simpl in *; simpl.
 unfold fh; simpl.
-apply ap.
-set (fg := hott_5_1_1 (λ _, C) (ℕHom_fun fh) h c₀ (λ _ : ℕ, cs) f₀ h₀ fs hs).
-apply (Σ_type.pair_eq fg). 
+apply ap, (Σ_type.pair_eq fg).
 replace (f₀, fs) with (ℕHom_eq₀ fh, ℕHom_eqs fh) by apply eq_refl.
-unfold f₀, fs in fg.
-simpl in fg.
-unfold fg; simpl.
-unfold transport.
+destruct fg; fold f.
+replace (eq_refl f) with (eq_refl (ℕHom_fun fh)) by apply eq_refl.
 bbb.
