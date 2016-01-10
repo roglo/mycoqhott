@@ -551,6 +551,8 @@ replace g₀ with (Π_type.happly _ _ fg 0)⁻¹.
  apply (Π_type.funext_quasi_inverse_of_happly f0 g0 h 0).
  apply eq_refl.
 
+ destruct fg; simpl.
+ unfold id, f₀.
 bbb.
 
 rewrite <- EqStr.hap_invert.
