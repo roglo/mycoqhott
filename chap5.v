@@ -522,10 +522,16 @@ transparent assert (fg : ℕHom_fun fh = ℕHom_fun gh).
  apply
    (hott_5_1_1 (λ _, C) (ℕHom_fun fh) (ℕHom_fun gh) c₀ (λ _, cs) (ℕHom_eq₀ fh)
       (ℕHom_eq₀ gh) (ℕHom_eqs fh) (ℕHom_eqs gh)).
-bbb.
+unfold hott_5_1_1 in fg.
+simpl in fg.
+unfold id in fg.
 destruct gh as ((g, (g₀, gs))); simpl in *; simpl.
 unfold fh; simpl.
 apply ap, (Σ_type.pair_eq fg).
+unfold ℕAlg_morph_of_ℕ in fg.
+replace g₀ with ((hap fg 0)⁻¹).
+bbb.
+
 replace (f₀, fs) with (ℕHom_eq₀ fh, ℕHom_eqs fh) by apply eq_refl.
 destruct fg; fold f.
 replace (eq_refl f) with (eq_refl (ℕHom_fun fh)) by apply eq_refl.
