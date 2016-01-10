@@ -529,7 +529,21 @@ destruct gh as ((g, (g₀, gs))); simpl in *; simpl.
 unfold fh; simpl.
 apply ap, (Σ_type.pair_eq fg).
 unfold ℕAlg_morph_of_ℕ in fg.
-replace g₀ with ((hap fg 0)⁻¹).
+replace g₀ with (Π_type.happly _ _ fg 0)⁻¹.
+Focus 2.
+unfold fg; simpl.
+SearchAbout (Π_type.happly _ _ (Π_type.funext _)).
+SearchAbout (_⁻¹ = _⁻¹).
+eapply compose.
+eapply Π_type.funext_quasi_inverse_of_happly.
+bbb.
+
+rewrite <- EqStr.hap_invert.
+unfold fg; simpl.
+simpl.
+
+set (u := λ c, (hap fg (S c))⁻¹).
+simpl in u.
 bbb.
 
 replace (f₀, fs) with (ℕHom_eq₀ fh, ℕHom_eqs fh) by apply eq_refl.
