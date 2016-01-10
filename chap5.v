@@ -530,12 +530,27 @@ unfold fh; simpl.
 apply ap, (Σ_type.pair_eq fg).
 unfold ℕAlg_morph_of_ℕ in fg.
 replace g₀ with (Π_type.happly _ _ fg 0)⁻¹.
-Focus 2.
-unfold fg; simpl.
-SearchAbout (Π_type.happly _ _ (Π_type.funext _)).
-SearchAbout (_⁻¹ = _⁻¹).
-eapply compose.
-eapply Π_type.funext_quasi_inverse_of_happly.
+ Focus 2.
+ unfold fg; simpl.
+ eapply compose; [ | apply hott_2_1_4_iii ].
+ apply ap.
+ set (h :=
+         (fix H (x : ℕ) : morph_of_ℕ C c₀ cs x = g x :=
+            match x as n return (morph_of_ℕ C c₀ cs n = g n) with
+            | 0 => g₀⁻¹
+            | S x0 =>
+                match
+                  H x0 in (_ = y) return (cs (morph_of_ℕ C c₀ cs x0) = cs y)
+                with
+                | eq_refl _ => eq_refl (cs (morph_of_ℕ C c₀ cs x0))
+                end • (gs x0)⁻¹
+            end)).
+ set (f0 := (λ n : ℕ, morph_of_ℕ C c₀ cs n));
+ set (g0 := g).
+ eapply compose.
+ apply (Π_type.funext_quasi_inverse_of_happly f0 g0 h 0).
+ apply eq_refl.
+
 bbb.
 
 rewrite <- EqStr.hap_invert.
