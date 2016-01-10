@@ -546,10 +546,7 @@ replace g₀ with (Π_type.happly _ _ fg 0)⁻¹.
                 end • (gs x0)⁻¹
             end)).
  set (f0 := (λ n : ℕ, morph_of_ℕ C c₀ cs n));
- set (g0 := g).
- eapply compose.
- apply (Π_type.funext_quasi_inverse_of_happly f0 g0 h 0).
- apply eq_refl.
+ apply (Π_type.funext_quasi_inverse_of_happly f0 g h 0).
 
  destruct fg; simpl.
  unfold id, f₀.
