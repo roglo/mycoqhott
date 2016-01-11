@@ -559,43 +559,12 @@ transparent assert ( f₀ : (f 0 = ℕAlg_c₀ C) ).
       destruct fg; apply eq_refl.
 
      apply Π_type.funext; intros n.
-bbb.
+replace (gs n) with ((h (S n))⁻¹ • fs n • ap cs (h n)).
+replace h with (Π_type.happly _ _ (Π_type.funext h)).
+Focus 2.
+apply Π_type.funext; intros m.
+apply (Π_type.funext_quasi_inverse_of_happly f g h).
 
-set (u := (Π_type.happly _ _ fg (S n))⁻¹).
-unfold fg in u.
-About Π_type.funext_quasi_inverse_of_happly.
-set (v := Π_type.funext_quasi_inverse_of_happly f g h (S n)).
-bbb.
-
-set (u := λ n, (Π_type.happly _ _ fg (S n))⁻¹ • fs n).
-bbb.
-
-replace gs with (λ n, transport (λ f, g (S n) = cs (f n)) fg (u n)).
- destruct fg; simpl.
- unfold u; simpl; unfold id.
- apply cartesian.pair_eq; split; [ apply eq_refl | simpl ].
- apply Π_type.funext; intros; apply eq_refl.
-
- apply Π_type.funext; intros n.
- unfold u; simpl.
- destruct fg; simpl; unfold id.
-bbb.
-
- replace gs with ...
-bbb.
- destruct fg; simpl.
- unfold id, f₀.
-bbb.
-
-rewrite <- EqStr.hap_invert.
-unfold fg; simpl.
-simpl.
-
-set (u := λ c, (hap fg (S c))⁻¹).
-simpl in u.
-bbb.
-
-replace (f₀, fs) with (ℕHom_eq₀ fh, ℕHom_eqs fh) by apply eq_refl.
-destruct fg; fold f.
-replace (eq_refl f) with (eq_refl (ℕHom_fun fh)) by apply eq_refl.
+replace (Π_type.funext h) with fg by apply eq_refl.
+destruct fg; apply eq_refl.
 bbb.
