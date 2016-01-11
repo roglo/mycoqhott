@@ -542,6 +542,11 @@ transparent assert ( f₀ : (f 0 = ℕAlg_c₀ C) ).
 
      apply Π_type.funext; intros n.
 bbb.
+     replace (gs n) with ((h (S n))⁻¹ • fs n • ap cs (h n)).
+      replace h with (Π_type.happly f g (Π_type.funext h)).
+      destruct (Π_type.funext h).
+simpl.
+bbb.
 
      replace (gs n) with
         ((Π_type.happly _ _ fg (S n))⁻¹ • fs n •
@@ -561,7 +566,6 @@ set (
          | S x0 => ap cs (H x0) • (gs x0)⁻¹
          end).
 bbb.
-
 
       induction n.
       simpl.
