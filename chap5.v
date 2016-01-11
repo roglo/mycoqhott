@@ -548,6 +548,13 @@ replace g₀ with (Π_type.happly _ _ fg 0)⁻¹.
  set (f0 := (λ n : ℕ, morph_of_ℕ C c₀ cs n));
  apply (Π_type.funext_quasi_inverse_of_happly f0 g h 0).
 
+set (u := λ c, (Π_type.happly _ _ fg (S c))⁻¹).
+simpl in u.
+Print morph_of_ℕ.
+bbb.
+
+ replace gs with ...
+bbb.
  destruct fg; simpl.
  unfold id, f₀.
 bbb.
