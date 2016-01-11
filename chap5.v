@@ -528,29 +528,44 @@ unfold id in fg.
 destruct gh as ((g, (g₀, gs))); simpl in *; simpl.
 unfold fh; simpl.
 apply ap, (Σ_type.pair_eq fg).
+eapply compose.
+ apply (transport_pair (λ h, h 0 = c₀) (λ h, ∀ c, h (S c) = cs (h c))).
+
 unfold ℕ2ℕAlg_str in fg.
+unfold ℕ2ℕAlg_str in f; subst f.
+set (f n := ℕ2ℕAlg C c₀ cs n) in *.
+ set (h :=
+         (fix H (x : ℕ) : f x = g x :=
+            match x as n return (f n = g n) with
+            | 0 => g₀⁻¹
+            | S x0 =>
+                match
+                  H x0 in (_ = y) return (cs (f x0) = cs y)
+                with
+                | eq_refl _ => eq_refl (cs (f x0))
+                end • (gs x0)⁻¹
+            end)) in fg.
+ apply cartesian.pair_eq; split; simpl.
 replace g₀ with (Π_type.happly _ _ fg 0)⁻¹.
  Focus 2.
  unfold fg; simpl.
  eapply compose; [ | apply hott_2_1_4_iii ].
  apply ap.
- set (h :=
-         (fix H (x : ℕ) : ℕ2ℕAlg C c₀ cs x = g x :=
-            match x as n return (ℕ2ℕAlg C c₀ cs n = g n) with
-            | 0 => g₀⁻¹
-            | S x0 =>
-                match
-                  H x0 in (_ = y) return (cs (ℕ2ℕAlg C c₀ cs x0) = cs y)
-                with
-                | eq_refl _ => eq_refl (cs (ℕ2ℕAlg C c₀ cs x0))
-                end • (gs x0)⁻¹
-            end)).
- set (f0 := (λ n : ℕ, ℕ2ℕAlg C c₀ cs n));
+ set (f0 := (λ n : ℕ, ℕ2ℕAlg C c₀ cs n)).
  apply (Π_type.funext_quasi_inverse_of_happly f0 g h 0).
 
-unfold ℕ2ℕAlg_str in f; subst f.
-set (f n := ℕ2ℕAlg C c₀ cs n) in *.
+destruct fg; apply eq_refl.
+
+apply Π_type.funext; intros n.
+set (u := (Π_type.happly _ _ fg (S n))⁻¹).
+unfold fg in u.
+About Π_type.funext_quasi_inverse_of_happly.
+set (v := Π_type.funext_quasi_inverse_of_happly f g h (S n)).
+bbb.
+
 set (u := λ n, (Π_type.happly _ _ fg (S n))⁻¹ • fs n).
+bbb.
+
 replace gs with (λ n, transport (λ f, g (S n) = cs (f n)) fg (u n)).
  destruct fg; simpl.
  unfold u; simpl; unfold id.
