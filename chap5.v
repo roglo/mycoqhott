@@ -506,57 +506,61 @@ unfold isHinit_ℕ.
 intros C.
 set (na := ℕA (existT _ ℕ (0, S))); simpl in na.
 set (f := ℕ2ℕAlg_str C).
-transparent assert (f₀ : f 0 = ℕAlg_c₀ C).
+transparent assert ( f₀ : (f 0 = ℕAlg_c₀ C) ).
  destruct C as ((C, (c₀, cs))); apply eq_refl.
 
-  transparent assert (fs : ∀ n, f (S n) = ℕAlg_cs C (f n)).
-   destruct C as ((C, (c₀, cs))); intros; apply eq_refl.
+ transparent assert ( fs : (∀ n, f (S n) = ℕAlg_cs C (f n)) ).
+  destruct C as ((C, (c₀, cs))); intros; apply eq_refl.
 
-simpl in *.
-set (fh := ℕH na C (existT _ (ℕ2ℕAlg_str C) (f₀, fs))).
-simpl in fh.
-exists fh.
-destruct C as ((C, (c₀, cs))); simpl in *.
-intros gh.
-transparent assert (fg : ℕHom_fun fh = ℕHom_fun gh).
- apply
-   (hott_5_1_1 (λ _, C) (ℕHom_fun fh) (ℕHom_fun gh) c₀ (λ _, cs) (ℕHom_eq₀ fh)
-      (ℕHom_eq₀ gh) (ℕHom_eqs fh) (ℕHom_eqs gh)).
-unfold hott_5_1_1 in fg.
-simpl in fg.
-unfold id in fg.
-destruct gh as ((g, (g₀, gs))); simpl in *; simpl.
-unfold fh; simpl.
-apply ap, (Σ_type.pair_eq fg).
-eapply compose.
- apply (transport_pair (λ h, h 0 = c₀) (λ h, ∀ c, h (S c) = cs (h c))).
+  simpl in *.
+  set (fh := ℕH na C (existT _ (ℕ2ℕAlg_str C) (f₀, fs))).
+  simpl in fh.
+  exists fh.
+  destruct C as ((C, (c₀, cs))); simpl in *.
+  intros gh.
+  transparent assert ( fg : (ℕHom_fun fh = ℕHom_fun gh) ).
+   apply
+    (hott_5_1_1 (λ _, C) (ℕHom_fun fh) (ℕHom_fun gh) c₀ 
+       (λ _, cs) (ℕHom_eq₀ fh) (ℕHom_eq₀ gh) (ℕHom_eqs fh) 
+       (ℕHom_eqs gh)).
 
-unfold ℕ2ℕAlg_str in fg.
-unfold ℕ2ℕAlg_str in f; subst f.
-set (f n := ℕ2ℕAlg C c₀ cs n) in *.
- set (h :=
-         (fix H (x : ℕ) : f x = g x :=
-            match x as n return (f n = g n) with
-            | 0 => g₀⁻¹
-            | S x0 =>
-                match
-                  H x0 in (_ = y) return (cs (f x0) = cs y)
-                with
-                | eq_refl _ => eq_refl (cs (f x0))
-                end • (gs x0)⁻¹
-            end)) in fg.
- apply cartesian.pair_eq; split; simpl.
-replace g₀ with (Π_type.happly _ _ fg 0)⁻¹.
- Focus 2.
- unfold fg; simpl.
- eapply compose; [ | apply hott_2_1_4_iii ].
- apply ap.
- set (f0 := (λ n : ℕ, ℕ2ℕAlg C c₀ cs n)).
- apply (Π_type.funext_quasi_inverse_of_happly f0 g h 0).
+   unfold hott_5_1_1 in fg.
+   simpl in fg.
+   unfold id in fg.
+   destruct gh as ((g, (g₀, gs))); simpl in *; simpl.
+   unfold fh; simpl.
+   apply ap, (Σ_type.pair_eq fg).
+   eapply compose.
+    apply (transport_pair (λ h, h 0 = c₀) (λ h, ∀ c, h (S c) = cs (h c))).
 
-destruct fg; apply eq_refl.
+    unfold ℕ2ℕAlg_str in fg.
 
-apply Π_type.funext; intros n.
+    unfold ℕ2ℕAlg_str in f; subst f.
+    set (f := fun n => ℕ2ℕAlg C c₀ cs n) in *.
+    set
+     (h :=
+      fix H (x : ℕ) : f x = g x :=
+        match x as n return (f n = g n) with
+        | 0 => g₀⁻¹
+        | S x0 =>
+            match H x0 in (_ = y) return (cs (f x0) = cs y) with
+            | eq_refl _ => eq_refl (cs (f x0))
+            end • (gs x0)⁻¹
+        end) in fg.
+    apply cartesian.pair_eq; split; simpl.
+     replace g₀ with (Π_type.happly _ _ fg 0)⁻¹.
+      Focus 2.
+      unfold fg; simpl.
+      eapply compose; [  | apply hott_2_1_4_iii ].
+      apply ap.
+      set (f0 := λ n : ℕ, ℕ2ℕAlg C c₀ cs n).
+      apply (Π_type.funext_quasi_inverse_of_happly f0 g h 0).
+
+      destruct fg; apply eq_refl.
+
+     apply Π_type.funext; intros n.
+bbb.
+
 set (u := (Π_type.happly _ _ fg (S n))⁻¹).
 unfold fg in u.
 About Π_type.funext_quasi_inverse_of_happly.
