@@ -526,41 +526,43 @@ transparent assert ( f₀ : (f 0 = ℕAlg_c₀ C) ).
   exists fh.
   destruct C as ((C, (c₀, cs))); simpl in *.
   intros gh.
-  set (
-    h := fix H (x : ℕ) : f x = ℕHom_fun gh x :=
-       match x as n return (f n = ℕHom_fun gh n) with
-       | 0 => (ℕHom_eq₀ gh)⁻¹
-       | S x0 => ap cs (H x0) • (ℕHom_eqs gh x0)⁻¹
-       end).
-   destruct gh as ((g, (g₀, gs))); simpl in *; simpl.
-   unfold fh; simpl.
-   apply ap, (Σ_type.pair_eq (Π_type.funext h)).
-   eapply compose.
-    apply (transport_pair (λ h, h 0 = c₀) (λ h, ∀ c, h (S c) = cs (h c))).
+  set
+   (h :=
+    fix H (x : ℕ) : f x = ℕHom_fun gh x :=
+      match x as n return (f n = ℕHom_fun gh n) with
+      | 0 => (ℕHom_eq₀ gh)⁻¹
+      | S x0 => ap cs (H x0) • (ℕHom_eqs gh x0)⁻¹
+      end).
+  destruct gh as ((g, (g₀, gs))); simpl in *; simpl.
+  unfold fh; simpl.
+  apply ap, (Σ_type.pair_eq (Π_type.funext h)).
+  eapply compose.
+   apply (transport_pair (λ h, h 0 = c₀) (λ h, ∀ c, h (S c) = cs (h c))).
 
-    unfold ℕ2ℕAlg_str in f; subst f.
-    set (f := fun n => ℕ2ℕAlg C c₀ cs n) in *.
-    apply cartesian.pair_eq; split; simpl.
-     replace g₀ with (Π_type.happly _ _ (Π_type.funext h) 0)⁻¹.
+   unfold ℕ2ℕAlg_str in f; subst f.
+
+   set (f := fun n => ℕ2ℕAlg C c₀ cs n) in *.
+   apply cartesian.pair_eq; split; simpl.
+    replace g₀ with (Π_type.happly _ _ (Π_type.funext h) 0)⁻¹.
+     destruct (Π_type.funext h); apply eq_refl.
+
+     eapply compose; [  | apply hott_2_1_4_iii ]; apply ap.
+     apply (Π_type.funext_quasi_inverse_of_happly _ g h 0).
+
+    apply Π_type.funext; intros n.
+    replace (gs n) with ((h (S n))⁻¹ • fs n • ap cs (h n)).
+     set (fg := Π_type.funext h).
+     replace h with (Π_type.happly f g (Π_type.funext h)); subst fg.
       destruct (Π_type.funext h); apply eq_refl.
 
-      eapply compose; [  | apply hott_2_1_4_iii ]; apply ap.
-      apply (Π_type.funext_quasi_inverse_of_happly _ g h 0).
+      apply Π_type.funext; intros m.
+      apply (Π_type.funext_quasi_inverse_of_happly f g h).
 
-     apply Π_type.funext; intros n.
-     replace (gs n) with ((h (S n))⁻¹ • fs n • ap cs (h n)).
-      set (fg := Π_type.funext h).
-      replace h with (Π_type.happly f g (Π_type.funext h)); subst fg.
-       destruct (Π_type.funext h); apply eq_refl.
-
-       apply Π_type.funext; intros m.
-       apply (Π_type.funext_quasi_inverse_of_happly f g h).
-
-      simpl.
-      rewrite Σ_type.invert_compose.
-      rewrite hott_2_1_4_iii.
-      unfold fs; rewrite <- ru.
-      rewrite <- compose_assoc.
-      rewrite compose_invert_l.
-      apply invert, hott_2_1_4_i_1.
+     simpl.
+     rewrite Σ_type.invert_compose.
+     rewrite hott_2_1_4_iii.
+     unfold fs; rewrite <- ru.
+     rewrite <- compose_assoc.
+     rewrite compose_invert_l.
+     apply invert, hott_2_1_4_i_1.
 Defined.
