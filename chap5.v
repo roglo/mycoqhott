@@ -559,12 +559,23 @@ transparent assert ( f₀ : (f 0 = ℕAlg_c₀ C) ).
       destruct fg; apply eq_refl.
 
      apply Π_type.funext; intros n.
-replace (gs n) with ((h (S n))⁻¹ • fs n • ap cs (h n)).
-replace h with (Π_type.happly _ _ (Π_type.funext h)).
-Focus 2.
-apply Π_type.funext; intros m.
-apply (Π_type.funext_quasi_inverse_of_happly f g h).
+     replace (gs n) with ((h (S n))⁻¹ • fs n • ap cs (h n)).
+      replace h with (Π_type.happly _ _ (Π_type.funext h)).
+       Focus 2.
+       apply Π_type.funext; intros m.
+       apply (Π_type.funext_quasi_inverse_of_happly f g h).
 
-replace (Π_type.funext h) with fg by apply eq_refl.
-destruct fg; apply eq_refl.
+       replace (Π_type.funext h) with fg by apply eq_refl.
+       destruct fg; apply eq_refl.
+
+      simpl.
+      induction n.
+      simpl.
+destruct g₀.
+simpl.
+unfold id, fs.
+rewrite hott_2_1_4_iii, <- ru, <- ru.
+apply eq_refl.
+
+simpl.
 bbb.
