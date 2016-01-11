@@ -552,15 +552,14 @@ unfold ℕ2ℕAlg_str in f; subst f.
 set (f n := ℕ2ℕAlg C c₀ cs n) in *.
 set (u := λ n, (Π_type.happly _ _ fg (S n))⁻¹ • fs n).
 replace gs with (λ n, transport (λ f, g (S n) = cs (f n)) fg (u n)).
-destruct fg; simpl.
-unfold u; simpl.
-unfold id.
-apply cartesian.pair_eq; split; [ apply eq_refl | simpl ].
-apply Π_type.funext; intros; apply eq_refl.
+ destruct fg; simpl.
+ unfold u; simpl; unfold id.
+ apply cartesian.pair_eq; split; [ apply eq_refl | simpl ].
+ apply Π_type.funext; intros; apply eq_refl.
 
-apply Π_type.funext; intros n.
-unfold u; simpl.
-destruct fg; simpl; unfold id.
+ apply Π_type.funext; intros n.
+ unfold u; simpl.
+ destruct fg; simpl; unfold id.
 bbb.
 
  replace gs with ...
