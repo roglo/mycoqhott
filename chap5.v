@@ -34,7 +34,7 @@ Open Scope nat_scope.
          Π (n : ℕ) g(succ(n)) = e_s(n, g(n)),
     Then f and g are equal." *)
 
-Definition hott_5_1_1 E (f g : Π (x : ℕ), E x)
+Definition hott_5_1_1_tac E (f g : Π (x : ℕ), E x)
   (ez : E 0) (es : Π (n : ℕ), E n → E (S n)) :
   f 0 = ez → g 0 = ez
   → (Π (n : ℕ), f (S n) = es n (f n))
@@ -52,14 +52,22 @@ transparent assert (D : ∀ x, f x = g x).
  apply Π_type.funext, D.
 Defined.
 
-(* old version of the proof
-apply Π_type.funext; intros n.
-induction n; [ destruct fz, gz; apply eq_refl | ].
-pose proof (fs n) as p.
-pose proof (gs n) as q.
-destruct IHn, p, q; apply eq_refl.
-Defined.
-*)
+Print ap.
+
+Definition hott_5_1_1 E (f g : Π (x : ℕ), E x)
+  (ez : E 0) (es : Π (n : ℕ), E n → E (S n)) :
+  f 0 = ez → g 0 = ez
+  → (Π (n : ℕ), f (S n) = es n (f n))
+  → (Π (n : ℕ), g (S n) = es n (g n))
+  → f = g
+:=
+  λ fz gz fs gs,
+  Π_type.funext
+    (fix H (x : ℕ) : f x = g x :=
+     match x as n return (f n = g n) with
+     | 0 => fz • gz⁻¹
+     | S x0 => fs x0 • ap (es x0) (H x0) • (gs x0)⁻¹
+     end).
 
 (* "5.2 Uniqueness of inductive types" *)
 
@@ -534,46 +542,25 @@ transparent assert ( f₀ : (f 0 = ℕAlg_c₀ C) ).
     set (f := fun n => ℕ2ℕAlg C c₀ cs n) in *.
     apply cartesian.pair_eq; split; simpl.
      replace g₀ with (Π_type.happly _ _ (Π_type.funext h) 0)⁻¹.
-      Focus 2.
+      destruct (Π_type.funext h); apply eq_refl.
+
       eapply compose; [  | apply hott_2_1_4_iii ]; apply ap.
       apply (Π_type.funext_quasi_inverse_of_happly _ g h 0).
 
-      destruct (Π_type.funext h); apply eq_refl.
-
      apply Π_type.funext; intros n.
-bbb.
      replace (gs n) with ((h (S n))⁻¹ • fs n • ap cs (h n)).
-      replace h with (Π_type.happly f g (Π_type.funext h)).
-      destruct (Π_type.funext h).
-simpl.
-bbb.
+      set (fg := Π_type.funext h).
+      replace h with (Π_type.happly f g (Π_type.funext h)); subst fg.
+       destruct (Π_type.funext h); apply eq_refl.
 
-     replace (gs n) with
-        ((Π_type.happly _ _ fg (S n))⁻¹ • fs n •
-         ap cs (Π_type.happly _ _ fg n)).
-      destruct fg; apply eq_refl.
+       apply Π_type.funext; intros m.
+       apply (Π_type.funext_quasi_inverse_of_happly f g h).
 
-      unfold fg; simpl.
-      do 2 rewrite (Π_type.funext_quasi_inverse_of_happly f g h).
-simpl.
-rewrite Σ_type.invert_compose.
-rewrite hott_2_1_4_iii.
-unfold fs; rewrite <- ru.
-set (
-  h' := fix H (x : ℕ) : f x = g x :=
-         match x as n return (f n = g n) with
-         | 0 => g₀⁻¹
-         | S x0 => ap cs (H x0) • (gs x0)⁻¹
-         end).
-bbb.
-
-      induction n.
       simpl.
-destruct g₀.
-simpl.
-unfold id, fs.
-rewrite <- ru, <- ru.
-apply eq_refl.
-
-simpl.
-bbb.
+      rewrite Σ_type.invert_compose.
+      rewrite hott_2_1_4_iii.
+      unfold fs; rewrite <- ru.
+      rewrite <- compose_assoc.
+      rewrite compose_invert_l.
+      apply invert, hott_2_1_4_i_1.
+Defined.
