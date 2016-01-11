@@ -492,12 +492,12 @@ exists p; intros r.
 apply q.
 Defined.
 
-Fixpoint morph_of_ℕ C (c₀ : C) cs n :=
-  match n with 0 => c₀ | S n => cs (morph_of_ℕ C c₀ cs n) end.
+Fixpoint ℕ2ℕAlg C (c₀ : C) cs n :=
+  match n with 0 => c₀ | S n => cs (ℕ2ℕAlg C c₀ cs n) end.
 
-Definition ℕAlg_morph_of_ℕ (A : ℕAlg) n : ℕAlg_C A :=
+Definition ℕ2ℕAlg_str (A : ℕAlg) n : ℕAlg_C A :=
   match A with
-  | ℕA (existT _ C (c₀, cs)) => morph_of_ℕ C c₀ cs n
+  | ℕA (existT _ C (c₀, cs)) => ℕ2ℕAlg C c₀ cs n
   end.
 
 Definition hott_5_4_5 : isHinit_ℕ (ℕA (existT _ ℕ (0, S))).
@@ -505,7 +505,7 @@ Proof.
 unfold isHinit_ℕ.
 intros C.
 set (na := ℕA (existT _ ℕ (0, S))); simpl in na.
-set (f := ℕAlg_morph_of_ℕ C).
+set (f := ℕ2ℕAlg_str C).
 transparent assert (f₀ : f 0 = ℕAlg_c₀ C).
  destruct C as ((C, (c₀, cs))); apply eq_refl.
 
@@ -513,7 +513,7 @@ transparent assert (f₀ : f 0 = ℕAlg_c₀ C).
    destruct C as ((C, (c₀, cs))); intros; apply eq_refl.
 
 simpl in *.
-set (fh := ℕH na C (existT _ (ℕAlg_morph_of_ℕ C) (f₀, fs))).
+set (fh := ℕH na C (existT _ (ℕ2ℕAlg_str C) (f₀, fs))).
 simpl in fh.
 exists fh.
 destruct C as ((C, (c₀, cs))); simpl in *.
@@ -528,29 +528,30 @@ unfold id in fg.
 destruct gh as ((g, (g₀, gs))); simpl in *; simpl.
 unfold fh; simpl.
 apply ap, (Σ_type.pair_eq fg).
-unfold ℕAlg_morph_of_ℕ in fg.
+unfold ℕ2ℕAlg_str in fg.
 replace g₀ with (Π_type.happly _ _ fg 0)⁻¹.
  Focus 2.
  unfold fg; simpl.
  eapply compose; [ | apply hott_2_1_4_iii ].
  apply ap.
  set (h :=
-         (fix H (x : ℕ) : morph_of_ℕ C c₀ cs x = g x :=
-            match x as n return (morph_of_ℕ C c₀ cs n = g n) with
+         (fix H (x : ℕ) : ℕ2ℕAlg C c₀ cs x = g x :=
+            match x as n return (ℕ2ℕAlg C c₀ cs n = g n) with
             | 0 => g₀⁻¹
             | S x0 =>
                 match
-                  H x0 in (_ = y) return (cs (morph_of_ℕ C c₀ cs x0) = cs y)
+                  H x0 in (_ = y) return (cs (ℕ2ℕAlg C c₀ cs x0) = cs y)
                 with
-                | eq_refl _ => eq_refl (cs (morph_of_ℕ C c₀ cs x0))
+                | eq_refl _ => eq_refl (cs (ℕ2ℕAlg C c₀ cs x0))
                 end • (gs x0)⁻¹
             end)).
- set (f0 := (λ n : ℕ, morph_of_ℕ C c₀ cs n));
+ set (f0 := (λ n : ℕ, ℕ2ℕAlg C c₀ cs n));
  apply (Π_type.funext_quasi_inverse_of_happly f0 g h 0).
 
-set (u := λ c, (Π_type.happly _ _ fg (S c))⁻¹).
-simpl in u.
-Print morph_of_ℕ.
+unfold ℕ2ℕAlg_str in f; subst f.
+set (f n := ℕ2ℕAlg C c₀ cs n) in *.
+set (u := λ n, (Π_type.happly _ _ fg (S n))⁻¹).
+(* find gs in function of fg *)
 bbb.
 
  replace gs with ...
