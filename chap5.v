@@ -573,3 +573,11 @@ Defined.
          P(X) = ∑ (x:A) (B(x) → X).       (5.4.6)" *)
 
 Definition W_poly_funct X A B := Σ (x : A), (B x → X).
+
+(* "By definition, a P-*algebra* is then a type C equipped a function
+    s_C : PC → C. By the universal property of Σ-types, this is
+    equivalent to giving a function Π (a:A) (B(a) → C) → C. We will
+    also call such objects W-*algebras* for A and B, and we write
+         WAlg(A,B) :≡ Σ (C:U) Π (a:A) (B(a) → C) → C." *)
+
+Definition WAlg A B := Σ (C : Type), Π (a : A), (B a → C) → C.
