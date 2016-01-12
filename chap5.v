@@ -566,3 +566,8 @@ transparent assert ( f₀ : (f 0 = ℕAlg_c₀ C) ).
      rewrite compose_invert_l.
      apply invert, hott_2_1_4_i_1.
 Defined.
+
+(* "For a more generic case, consider the W-type associated to A : U
+    and B : A → U . In this case we have an associated polynomial functor:
+    ∑ ( B ( x ) → X ).  P( X ) = (5.4.6)" *)
+
