@@ -52,8 +52,6 @@ transparent assert (D : ∀ x, f x = g x).
  apply Π_type.funext, D.
 Defined.
 
-Print ap.
-
 Definition hott_5_1_1 E (f g : Π (x : ℕ), E x)
   (ez : E 0) (es : Π (n : ℕ), E n → E (S n)) :
   f 0 = ez → g 0 = ez
@@ -580,4 +578,34 @@ Definition W_poly_funct X A B := Σ (x : A), (B x → X).
     also call such objects W-*algebras* for A and B, and we write
          WAlg(A,B) :≡ Σ (C:U) Π (a:A) (B(a) → C) → C." *)
 
-Definition WAlg A B := Σ (C : Type), Π (a : A), (B a → C) → C.
+Inductive WAlg A B :=
+  WA : (Σ (C : Type), Π (a : A), (B a → C) → C) → WAlg A B.
+
+(* "Similarly, for P-algebras (C,sC) and (D,sD), a *homomorphism*
+    between them (f,sf) : (C,sC) → (D,s D) consists of a function f :
+    C → D and a homotopy between maps PC → D
+        sf : f ◦ sC = sD ◦ Pf,
+    where Pf : PC → PD is the result of the easily-definable action
+    of P on f : C → D." *)
+
+Definition WAlg_C {A B} (wa : WAlg A B) : Type :=
+  match wa with WA _ _ a => Σ_pr₁ a end.
+Definition WAlg_sC {A B} (wa : WAlg A B) :
+   ∀ a,  (B a → WAlg_C wa) → WAlg_C wa :=
+  match wa with WA _ _ a => Σ_pr₂ a end.
+
+bbb.
+
+Definition PAlg_hom_def (CA DA : WAlg) :=
+  let C := ℕAlg_C Ca in
+  let D := ℕAlg_C Da in
+  let c₀ := ℕAlg_c₀ Ca in
+  let d₀ := ℕAlg_c₀ Da in
+  let cs := ℕAlg_cs Ca in
+  let ds := ℕAlg_cs Da in
+  Σ (h: C → D), ((h c₀ = d₀) * Π (c : C), (h (cs c) = ds (h c)))%type.
+
+Inductive ℕHom (Ca Da : ℕAlg) := ℕH : ℕHom_def Ca Da → ℕHom Ca Da.
+
+Definition PAlg_hom CA DA :=
+  Σ
