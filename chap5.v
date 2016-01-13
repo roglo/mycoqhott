@@ -591,7 +591,7 @@ Inductive WAlg A B :=
 Definition WAlg_C {A B} (wa : WAlg A B) : Type :=
   match wa with WA _ _ a => Σ_pr₁ a end.
 Definition WAlg_sC {A B} (wa : WAlg A B) :
-   ∀ a, (B a → WAlg_C wa) → WAlg_C wa :=
+  ∀ a, (B a → WAlg_C wa) → WAlg_C wa :=
   match wa with WA _ _ a => Σ_pr₂ a end.
 
 About WAlg_sC.
