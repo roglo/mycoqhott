@@ -591,21 +591,15 @@ Inductive WAlg A B :=
 Definition WAlg_C {A B} (wa : WAlg A B) : Type :=
   match wa with WA _ _ a => Σ_pr₁ a end.
 Definition WAlg_sC {A B} (wa : WAlg A B) :
-   ∀ a,  (B a → WAlg_C wa) → WAlg_C wa :=
+   ∀ a, (B a → WAlg_C wa) → WAlg_C wa :=
   match wa with WA _ _ a => Σ_pr₂ a end.
 
-bbb.
+About WAlg_sC.
 
-Definition PAlg_hom_def (CA DA : WAlg) :=
-  let C := ℕAlg_C Ca in
-  let D := ℕAlg_C Da in
-  let c₀ := ℕAlg_c₀ Ca in
-  let d₀ := ℕAlg_c₀ Da in
-  let cs := ℕAlg_cs Ca in
-  let ds := ℕAlg_cs Da in
-  Σ (h: C → D), ((h c₀ = d₀) * Π (c : C), (h (cs c) = ds (h c)))%type.
+Definition WAlg_hom_def {A B} (CA DA : WAlg A B) :=
+  Σ (f : WAlg_C CA → WAlg_C DA),
+  (∀ (a : A) (g : B a → WAlg_C CA),
+   f (WAlg_sC CA a g) = WAlg_sC DA a (f ◦ g)).
 
-Inductive ℕHom (Ca Da : ℕAlg) := ℕH : ℕHom_def Ca Da → ℕHom Ca Da.
-
-Definition PAlg_hom CA DA :=
-  Σ
+Inductive WAlg_hom {A B} (CA DA : WAlg A B) :=
+  WH : WAlg_hom_def CA DA → WAlg_hom CA DA.
