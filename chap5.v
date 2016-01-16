@@ -614,3 +614,6 @@ Inductive WAlg_hom {A B} (CA DA : WAlg A B) :=
                C ----→ D
                    f
     " *)
+
+(* In terms of elements, f is a P-homomorphism (or W-homomorphism) if
+        f(sC(a,h)) = sD(a,f ◦ h)." *)
