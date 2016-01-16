@@ -603,3 +603,14 @@ Definition WAlg_hom_def {A B} (CA DA : WAlg A B) :=
 
 Inductive WAlg_hom {A B} (CA DA : WAlg A B) :=
   WH : WAlg_hom_def CA DA → WAlg_hom CA DA.
+
+(* "Such an algebra homomorphism can be represented suggestively in
+    the form
+                   Pf
+              PC ----→ PD
+               |       |
+            sC |  sf   | sD
+               ↓       ↓
+               C ----→ D
+                   f
+    " *)
