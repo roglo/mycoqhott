@@ -622,5 +622,9 @@ Inductive WAlg_hom {A B} (CA DA : WAlg A B) :=
        WHom_{A,B} ((C,sC),(D,sD)) :≡
          Σ(f:C→D) Π(a:A) Π(h:B(a)→C) f(sC(a,h))=sD(a,f◦h)" *)
 
-Definition WHom {A B} C sC D sD :=
+Definition WHom {A B} (WC WD : WAlg A B) :=
+  let C := WAlg_C WC in
+  let D := WAlg_C WD in
+  let sC := WAlg_sC WC in
+  let sD := WAlg_sC WD in
   Σ (f : C → D), Π (a : A), Π (h : B a → C), f (sC a h) = sD a (f ◦ h).
