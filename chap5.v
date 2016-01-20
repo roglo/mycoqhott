@@ -628,3 +628,14 @@ Definition WHom {A B} (WC WD : WAlg A B) :=
   let sC := WAlg_sC WC in
   let sD := WAlg_sC WD in
   Σ (f : C → D), Π (a : A), Π (h : B a → C), f (sC a h) = sD a (f ◦ h).
+
+(* "Finally, a P-algebra (C,sC) is said to be *homotopy-initial* if
+    for every P-algebra (D,sD), the type of all algebra homomorphisms
+    (C,sC) → (D,sD) is contractible. That is,
+
+       isHinit_W(A,B,I) :≡ Π (C:WAlg(A,B)) isContr(WHom_{A,B}(I,C))." *)
+
+(* "Now the analogous theorem to Theorem 5.4.5 is:
+
+    Theorem 5.4.7. For any type A : U and type family B : A → U , the
+    W-algebra (W_(x:A) B(x), sup) is h-initial." *)
