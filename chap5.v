@@ -617,3 +617,10 @@ Inductive WAlg_hom {A B} (CA DA : WAlg A B) :=
 
 (* "In terms of elements, f is a P-homomorphism (or W-homomorphism) if
         f(sC(a,h)) = sD(a,f ◦ h)." *)
+
+(* "We have the type of W-homomorphisms:
+       WHom_{A,B} ((C,sC),(D,sD)) :≡
+         Σ(f:C→D) Π(a:A) Π(h:B(a)→C) f(sC(a,h))=sD(a,f◦h)" *)
+
+Definition WHom {A B} C sC D sD :=
+  Σ (f : C → D), Π (a : A), Π (h : B a → C), f (sC a h) = sD a (f ◦ h).
