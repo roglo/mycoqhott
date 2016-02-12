@@ -216,8 +216,8 @@ Theorem gen_star_star' {A} {a b c : A} {p q : a = b} {r s : b = c} : ∀ α β,
   @star A a b c p q r s α β = @star' A a b c p q r s α β.
 Proof.
 intros.
-destruct α as (p).
-destruct β as (r).
+destruct α.
+destruct β.
 destruct p, r.
 unfold "★", "★'"; simpl.
 constructor.
@@ -1240,7 +1240,7 @@ Proof.
 intros p.
 pose proof @extensionality A B f g as H.
 apply isequiv_qinv in H.
-destruct H as (h, α, β).
+destruct H as (h, (α, β)).
 apply h, p.
 Defined.
 
