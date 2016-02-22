@@ -163,8 +163,7 @@ Fixpoint iter {C} c₀ (cs : C → C) m :=
 (* rec_ℕ C c₀ cs n ≡ cs n (cs (n-1) (cs (n-2) … (cs 0 c₀))) with 'n' cs *)
 
 Definition iter_f {A B} (cs : _ → _ → B) (r : ℕ * A) :=
-  let '(n, a) := r in
-  (S n, cs n a).
+  (S (fst r), cs (fst r) (snd r)).
 
 Definition rec_ℕ' {C} (c₀ : C) (cs : ℕ → C → C) (n : ℕ) :=
   snd (iter (0, c₀) (iter_f cs) n).
@@ -181,56 +180,6 @@ Theorem rec_ℕ_succ : ∀ C (c₀ : C) cs n,
 Proof.
 intros.
 unfold rec_ℕ'; simpl; f_equal.
-(**)
-induction n; [ reflexivity | simpl; rewrite IHn ].
-bbb.
-
-set (u := iter (0, c₀) (iter_f cs) n).
-replace (iter_f cs) with (λ '(m,a), iter_f cs (m, a)) by reflexivity.
-simpl.
-subst u; simpl.
-Print iter.
-destruct u; simpl.
-change
-  (snd (iter_f cs (iter_f cs (iter (0, c₀) (iter_f cs) n))) =
-   cs (S n) (cs n (snd (iter (0, c₀) (iter_f cs) n)))).
-Print iter.
-change (   snd (iter_f cs (iter (0, c₀) (iter_f cs) n)) =
-   cs n (snd (iter (0, c₀) (iter_f cs) n))
-Print iter_f.
-replace (iter_f cs) with (λ r, iter_f cs (fst r, snd r)).
-replace (iter_f cs) with (λ '(m,a), iter_f cs (m, a)) by reflexivity.
-simpl.
-simpl.
-rewrite IHn.
-simpl.
-set (u := iter (0, c₀) (λ pat : ℕ * C, let '(m, a) := pat in (S m, cs m a)) n).
-rewrite (surjective_pairing (iter (0, c₀) (iter_f cs) n)); simpl.
-induction n; [ reflexivity | ].
-simpl; rewrite IHn.
-rewrite (surjective_pairing (iter (0, c₀) (iter_f cs) n)); simpl.
-rewrite (surjective_pairing (iter (0, c₀) (iter_f cs) n)) in IHn.
-simpl in IHn.
-rewrite (surjective_pairing (iter (0, c₀) (iter_f cs) (S n))).
-simpl.
-rewrite (surjective_pairing (iter (0, c₀) (iter_f cs) n)).
-simpl.
-rewrite IHn.
-simpl.
-rewrite IHn.
-Print iter_f.
-bbb.
-set (c :=  snd (iter_f cs (iter (0, c₀) (iter_f cs) (S n)))).
-
-Print iter_f.
-Check surjective_pairing.
-set (x := iter (0, c₀) (iter_f cs) n) in *.
-rewrite (surjective_pairing x).
-simpl.
-unfold x; simpl.
-simpl.
-
-bbb.
 induction n; [ reflexivity | simpl ].
 rewrite IHn; reflexivity.
 Qed.
