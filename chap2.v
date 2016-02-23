@@ -2482,8 +2482,9 @@ set (f xy := (pr₁ HAC (pr₁ xy), pr₁ (HBD (pr₁ xy)) (pr₂ xy))).
 exists f; apply qinv_isequiv.
 set
  (g xy :=
-    existT B (pr₁ HAC⁻⁻¹ (fst xy))
-      (pr₁ (HBD (pr₁ HAC⁻⁻¹ (fst xy)))⁻⁻¹ (snd xy))).
+    let '(x, y) := xy in
+    existT B (pr₁ HAC⁻⁻¹ x)
+      (pr₁ (HBD (pr₁ HAC⁻⁻¹ x))⁻⁻¹ y)).
 exists g; split; unfold "◦", "∼", id.
  intros (x, y).
  subst f g; simpl.
