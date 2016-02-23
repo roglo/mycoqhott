@@ -385,7 +385,7 @@ apply ind_ℕ with (n := x).
  apply IHy.
 Qed.
 
-Definition pair_succ r := (S (fst r), S (snd r)).
+Definition pair_succ '(x, y) := (S x, S y).
 
 (* bon, mais après ça, j'arrête cet exo paskeu j'ai déjà fait des
    preuves de ce genre, c'est long et casse-couilles *)
