@@ -645,3 +645,4 @@ intros C.
 set (P X := W_poly_funct X A B).
 set (W := W_type A B).
 About sup.
+(* to be terminated... *)

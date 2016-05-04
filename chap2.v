@@ -2481,8 +2481,8 @@ unfold equivalence.
 set (f xy := (pr₁ HAC (pr₁ xy), pr₁ (HBD (pr₁ xy)) (pr₂ xy))).
 exists f; apply qinv_isequiv.
 set
- (g :=
-    λ '(x, y),
+ (g z :=
+    let '(x, y) := z in
     existT B (pr₁ HAC⁻⁻¹ x)
       (pr₁ (HBD (pr₁ HAC⁻⁻¹ x))⁻⁻¹ y)).
 exists g; split; unfold "◦", "∼", id.
