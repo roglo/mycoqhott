@@ -3220,18 +3220,19 @@ apply Π_type.funext; intros x.
 destruct x as [a| b]; reflexivity.
 Defined.
 
-Definition ex_2_9 {X A B : Type} : (A + B → X) ≃ (A → X) * (B → X)
-:=
-  existT isequiv (λ f : A + B → X, (f ◦ inl, f ◦ inr))
+Definition ex_2_9 {X A B : Type} : (A + B → X) ≃ (A → X) * (B → X) :=
+  existT _ (λ f : A + B → X, (f ◦ inl, f ◦ inr))
     (qinv_isequiv (λ f : A + B → X, (f ◦ inl, f ◦ inr))
        (existT _ (λ f x, coproduct_map (pr₁ f) (pr₂ f) x)
           (λ x : (A → X) * (B → X),
-           let (f, g) return ((pr₁ x, pr₂ x) = x) := x in
+           let (f, g) as p return ((pr₁ p, pr₂ p) = p) := x in
            eq_refl (f, g),
            λ f : A + B → X,
            Π_type.funext
              (λ x,
-              match x with
+              match x as s
+              return (coproduct_map (λ y, f (inl y)) (λ y, f (inr y)) s = f s)
+              with
               | inl a => eq_refl (f (inl a))
               | inr b => eq_refl (f (inr b))
               end)))).
