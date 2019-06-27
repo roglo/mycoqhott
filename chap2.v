@@ -3061,8 +3061,8 @@ Definition hott_2_1_2_proof_4_eq_proof_1 {A} {x y z : A}
 Inductive ilist A : ℕ → Type :=
   | Nil : ilist A 0
   | Cons : ∀ n, A → ilist A n → ilist A (S n).
-Arguments Nil [A].
-Arguments Cons [A] [n] x l.
+Arguments Nil {A}.
+Arguments Cons {A} [n] x l.
 
 Fixpoint n_dim_path' {A nx ny} (x : ilist A nx) (y : ilist A ny) :=
   match x with
