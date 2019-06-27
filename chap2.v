@@ -2110,7 +2110,7 @@ Definition encode (m n : ℕ) : m = n → code m n :=
 Definition decode (m n : ℕ) : code m n → m = n.
 Proof.
 revert m n.
-fix 1; rename decode into IHn.
+fix IHn 1.
 intros m n p.
 destruct m.
  destruct n; [ reflexivity | refine (match p with end) ].
