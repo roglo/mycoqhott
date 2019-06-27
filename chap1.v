@@ -51,7 +51,7 @@ Proof.
 intros A a C c.
 exists
   (λ _ p,
-   match p return (∀ D, D _ (eq_refl _) → D _ p) with
+   match p in (_ = y) return (∀ D, D _ (eq_refl _) → D y p) with
    | eq_refl _ => λ _, id
    end C c).
 reflexivity.
