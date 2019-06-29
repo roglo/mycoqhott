@@ -22,18 +22,21 @@ Class category :=
 Arguments Hom [_].
 Notation "g '◦' f" := (comp f g) (at level 40, left associativity).
 
+Arguments Obj : clear implicits.
+(*
 Coercion Obj : category >-> Sortclass.
+*)
 
-Definition dom {C : category} {O1 O2 : Obj} (f : Hom O1 O2) := O1.
-Definition cod {C : category} {O1 O2 : Obj} (f : Hom O1 O2) := O2.
+Definition dom {C : category} {O1 O2 : Obj C} (f : Hom O1 O2) := O1.
+Definition cod {C : category} {O1 O2 : Obj C} (f : Hom O1 O2) := O2.
 
-Definition is_initial {C : category} (c : @Obj C) :=
+Definition is_initial {C : category} (c : Obj C) :=
   ∀ d, ∃ f : Hom c d, ∀ g, f = g.
-Definition is_terminal {C : category} (c : @Obj C) :=
+Definition is_terminal {C : category} (c : Obj C) :=
   ∀ d, ∃ f : Hom d c, ∀ g, f = g.
 
 Class functor (C D : category) :=
-  { f_map_obj : @Obj C → @Obj D;
+  { f_map_obj : Obj C → Obj D;
     f_map_arr {a b} : Hom a b → Hom (f_map_obj a) (f_map_obj b);
     f_comp {a b c} (f : Hom a b) (g : Hom b c) :
       f_map_arr (g ◦ f) = f_map_arr g ◦ f_map_arr f;
@@ -42,7 +45,7 @@ Class functor (C D : category) :=
 Arguments f_map_obj [_] [_] [_].
 Arguments f_map_arr [_] [_] _ [_] [_].
 
-Definition is_isomorphism {C : category} {A B : Obj} (f : Hom A B) :=
+Definition is_isomorphism {C : category} {A B : Obj C} (f : Hom A B) :=
   ∃ g : Hom B A, g ◦ f = hid ∧ f ◦ g = hid.
 
 (* A cone to a functor D(J,C) consists of an object c in C and a
@@ -51,7 +54,7 @@ Definition is_isomorphism {C : category} {A B : Obj} (f : Hom A B) :=
    commutes. *)
 
 Record cone {J C} (D : functor J C) :=
-  { c_top : @Obj C;
+  { c_top : Obj C;
     c_fam : ∀ j, Hom c_top (f_map_obj j);
     c_commute : ∀ i j (α : Hom i j), c_fam j = f_map_arr D α ◦ c_fam i }.
 
@@ -560,13 +563,13 @@ split. {
   now symmetry.
 }
 intros h Hh.
-assert (Hh' : ∀ j : J, c_fam D c j = c_fam D l j ◦ h). {
+assert (Hh' : ∀ j : Obj J, c_fam D c j = c_fam D l j ◦ h). {
   intros j; specialize (Hh j).
   now symmetry.
 }
 remember
   (existT
      (λ ϑ : Hom (c_top D c) (c_top D l),
-      ∀ j : J, c_fam D c j = c_fam D l j ◦ ϑ) h Hh') as hh.
+      ∀ j : Obj J, c_fam D c j = c_fam D l j ◦ ϑ) h Hh') as hh.
 now rewrite (H1 hh); subst hh.
 Qed.
