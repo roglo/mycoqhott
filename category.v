@@ -596,8 +596,6 @@ Record cocone {J C} (D : functor J C) :=
     cc_fam : ∀ j, Hom (f_map_obj j) cc_top;
     cd_commute : ∀ i j (α : Hom i j), cc_fam i = cc_fam j ◦ f_map_arr D α }.
 
-Print is_limit.
+Definition is_colimit {J C} {D : functor J C} (cn : cone D) :=
+  @is_initial (cCone D) cn.
 
-...
-
-Definition is_colimit {J C} {D : functor J C} cn := is_limit cn.
