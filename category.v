@@ -584,7 +584,7 @@ Qed.
 Definition op C :=
   {| Obj := Obj C;
      Hom c d := Hom d c;
-     comp _ _ _ Hyx Hzy := Hyx ◦ Hzy;
+     comp _ _ _ f g := f ◦ g;
      hid := @hid C;
      unit_l _ _ f := unit_r f;
      unit_r _ _ f := unit_l f;
