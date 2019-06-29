@@ -594,11 +594,13 @@ Definition op C :=
 Record co_cone {J C} (D : functor J C) :=
   { cc_top : Obj C;
     cc_fam : ∀ j, Hom (f_map_obj j) cc_top;
-    cd_commute : ∀ i j (α : Hom i j), cc_fam i = cc_fam j ◦ f_map_arr D α }.
+    cc_commute : ∀ i j (α : Hom i j), cc_fam i = cc_fam j ◦ f_map_arr D α }.
+
+(* category of co-cones *)
 
 Definition cCo_cone {J C} (D : functor J C) :=
-  {| Obj := co_cone D;
-     Hom := cCone_Hom |}.
+  {| Obj := co_cone D |}.
+     Hom := cCone_Hom;
      comp := cCone_comp;
      hid := cCone_id;
      unit_l := cCone_unit_l;
@@ -606,6 +608,6 @@ Definition cCo_cone {J C} (D : functor J C) :=
      assoc := cCone_assoc;
      Hom_set := cCone_Hom_set |}.
 
-Definition is_colimit {J C} {D : functor J C} (cn : cone D) :=
-  @is_initial (cCocone D) cn.
+Definition is_colimit {J C} {D : functor J C} (cn : co_cone D) :=
+  @is_initial (cCo_cone D) cn.
 
