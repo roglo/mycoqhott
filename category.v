@@ -596,19 +596,19 @@ Record co_cone {J C} (D : functor (op J) (op C)) :=
     cc_fam : ∀ j, @Hom (op C) (f_map_obj j) cc_top;
     cc_commute : ∀ i j α, cc_fam i = comp (f_map_arr D α) (cc_fam j) }.
 
-Definition functor_op_of_functor {C D} (F : functor C D) :=
+Definition fop {C D} (F : functor C D) :=
   {| f_map_obj (x : Obj (op C)) := (@f_map_obj C D F x : Obj (op D));
      f_map_arr _ _ f := f_map_arr F f;
      f_comp _ _ _ (f : Hom _ _) (g : Hom _ _) := @f_comp _ _ F _ _ _ g f;
      f_id a := @f_id _ _ F a |}.
 
 Definition co_cone_of_cone {J C} {D : functor J C} (cn : cone D) :
-  co_cone (functor_op_of_functor D)
+  co_cone (fop D)
 :=
   {| cc_top := c_top _ cn;
      cc_fam j :=
        c_fam D cn j :
-         Hom (@f_map_obj _ _ (functor_op_of_functor D) j) (c_top D cn);
+         Hom (@f_map_obj _ _ (fop D) j) (c_top D cn);
      cc_commute i j := @c_commute J C D cn j i |}.
 
 (* category of co-cones *)
@@ -625,3 +625,8 @@ Definition cCoCone {J C} (D : functor (op J) (op C)) :=
 Definition is_colimit {J C} {D : functor (op J) (op C)} (cn : co_cone D) :=
   @is_initial (cCoCone D) cn.
 
+Definition cCoCone2 {J C} {D : functor J C} :=
+  op (cCone (fop D)).
+
+Check @cCoCone.
+Check @cCoCone2.
