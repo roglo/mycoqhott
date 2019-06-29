@@ -596,17 +596,26 @@ Record co_cone {J C} (D : functor (op J) (op C)) :=
     cc_fam : ∀ j, @Hom (op C) (f_map_obj j) cc_top;
     cc_commute : ∀ i j α, cc_fam i = comp (f_map_arr D α) (cc_fam j) }.
 
-Definition co_cone_of_cone {J C} {D : functor J C} (cn : cone D) :=
-  {| cc_top := c_top D cn;
-     cc_fam j := cc_fam D cn j |}.
+Definition functor_op_of_functor {C D} (F : functor C D) :=
+  {| f_map_obj (x : Obj (op C)) := (@f_map_obj C D F x : Obj (op D));
+     f_map_arr _ _ f := f_map_arr F f;
+     f_comp _ _ _ (f : Hom _ _) (g : Hom _ _) := @f_comp _ _ F _ _ _ g f;
+     f_id a := @f_id _ _ F a |}.
 
-...
+Definition co_cone_of_cone {J C} {D : functor J C} (cn : cone D) :
+  co_cone (functor_op_of_functor D)
+:=
+  {| cc_top := c_top _ cn;
+     cc_fam j :=
+       c_fam D cn j :
+         Hom (@f_map_obj _ _ (functor_op_of_functor D) j) (c_top D cn);
+     cc_commute i j := @c_commute J C D cn j i |}.
 
 (* category of co-cones *)
 
 Definition cCo_cone {J C} (D : functor J C) :=
-  {| Obj := co_cone D;
-     Hom := cCone_Hom |}.
+  {| Obj := co_cone (functor_op_of_functor D);
+     Hom f g := 42 |}.
      comp := cCone_comp;
      hid := cCone_id;
      unit_l := cCone_unit_l;
