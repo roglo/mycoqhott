@@ -27,34 +27,6 @@ Coercion Obj : category >-> Sortclass.
 Definition dom {C : category} {O1 O2 : Obj} (f : Hom O1 O2) := O1.
 Definition cod {C : category} {O1 O2 : Obj} (f : Hom O1 O2) := O2.
 
-(* *)
-
-(*
-Definition cTyp :=
-  {| Obj := Type;
-     Hom A B := A → B;
-     comp A B C f g := λ x, g (f x);
-     id _ A := A;
-     unit_l _ _ _ := eq_refl;
-     unit_r _ _ _ := eq_refl;
-     assoc _ _ _ _ _ _ _ := eq_refl |}.
-*)
-
-(*
-Definition cDiscr T :=
-  {| Obj := T;
-     Hom t1 t2 := t1 = t2;
-     comp _ _ _ f g := match g with eq_refl => f end;
-     id _ := eq_refl;
-     unit_l _ _ f := match f with eq_refl => eq_refl end;
-     unit_r _ _ f := eq_refl;
-     assoc _ _ _ _ _ _ f := match f with eq_refl => eq_refl end |}.
-
-Definition cTwo := cDiscr (unit + unit).
-*)
-
-(* *)
-
 Definition is_initial {C : category} (c : @Obj C) :=
   ∀ d, ∃ f : Hom c d, ∀ g, f = g.
 Definition is_terminal {C : category} (c : @Obj C) :=
@@ -72,50 +44,6 @@ Arguments f_map_arr [_] [_] _ [_] [_].
 
 Definition is_isomorphism {C : category} {A B : Obj} (f : Hom A B) :=
   ∃ g : Hom B A, g ◦ f = hid ∧ f ◦ g = hid.
-
-(* *)
-
-(*
-Theorem two_functor_map_arr (C : category) D1 D2 :
-  ∀ (b1 b2 : @Obj cTwo) (f : Hom b1 b2),
-  Hom (if b1 then D1 else D2) (if b2 then D1 else D2).
-Proof.
-intros.
-intros.
-destruct b1, b2; [ apply id | discriminate f | discriminate f | apply id ].
-Defined.
-
-Theorem two_functor_comp C D1 D2 :
-  ∀ (a b c : @Obj cTwo) (f : Hom a b) (g : Hom b c),
-  two_functor_map_arr C D1 D2 a c (g ◦ f) =
-  two_functor_map_arr C D1 D2 b c g ◦ two_functor_map_arr C D1 D2 a b f.
-Proof.
-intros.
-unfold two_functor_map_arr.
-destruct a as [a| a], b as [b| b], c as [c| c].
--now rewrite unit_l.
--now rewrite unit_l.
--discriminate f.
--discriminate f.
--discriminate f.
--discriminate f.
--now rewrite unit_l.
--now rewrite unit_l.
-Qed.
-
-Theorem two_functor_id C D1 D2 :
-  ∀ a : @Obj cTwo, two_functor_map_arr C D1 D2 a a id = id.
-Proof.
-intros.
-now destruct a.
-Qed.
-
-Definition two_functor {C : category} (D1 D2 : Obj) :=
-  {| f_map_obj (b : @Obj cTwo) := if b then D1 else D2;
-     f_map_arr := two_functor_map_arr C D1 D2;
-     f_comp := two_functor_comp C D1 D2;
-     f_id := two_functor_id C D1 D2 |}.
-*)
 
 (* A cone to a functor D(J,C) consists of an object c in C and a
    family of arrows in C : cj : c → Dj one for each object j ∈ J, such
@@ -190,7 +118,7 @@ intros j.
 apply Hom_set.
 Defined.
 
-(**)
+(* Borrowed from HoTT *)
 
 Definition mid {A} (x : A) := x.
 
@@ -416,6 +344,13 @@ Proof. intros; now destruct p. Qed.
 Theorem compose_eq_refl : ∀ A (x : A) (p : x = x), compose p eq_refl = p.
 Proof. now intros; destruct p. Qed.
 
+Theorem isContr_isProp {A} : isContr A → isProp A.
+Proof.
+intros f x y.
+destruct f as (a & Ha).
+apply @compose with (y := a); [ now destruct (Ha x) | now apply Ha ].
+Qed.
+
 Theorem isProp_isSet {A} : isProp A → isSet A.
 Proof.
 intros f x y p q.
@@ -453,9 +388,6 @@ revert A B HAB HA.
 induction n; intros. {
   destruct HAB as (f, Hf).
   destruct Hf as ((g, Hfg), (h, Hhf)).
-(*
-  destruct Hf as (g, Hgf, Hfg).
-*)
   move h before g.
   unfold mid, "◦◦", "∼" in Hfg, Hhf.
   cbn in HA |-*.
@@ -468,9 +400,6 @@ induction n; intros. {
 }
 destruct HAB as (f, Hf).
 destruct Hf as ((g, Hfg), (h, Hhf)).
-(*
-destruct Hf as (g, Hgf, Hfg).
-*)
 cbn in HA |-*.
 move h before g.
 unfold mid, "◦◦", "∼" in Hfg, Hhf.
@@ -489,12 +418,6 @@ split.
  unfold "◦◦", "∼", mid.
  apply Hfg.
 Qed.
-
-Definition lift {A P} {x y : A} (u : P x) (p : x = y)
-  : existT _ x u = existT _ y (transport P _ u)
-  := match p with
-     | eq_refl _ => eq_refl (existT P x (transport P (eq_refl x) u))
-     end.
 
 Theorem pair_transport_eq_existT {A} {P : A → Type} :
   ∀ a b (Ha : P a) (Hb : P b),
