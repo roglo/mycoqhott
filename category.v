@@ -613,17 +613,15 @@ Definition co_cone_of_cone {J C} {D : functor J C} (cn : cone D) :
 
 (* category of co-cones *)
 
-Definition cCo_cone {J C} (D : functor J C) :=
-  let D_op := functor_op_of_functor D in
-  {| Obj := co_cone D_op;
+Definition cCoCone {J C} (D : functor (op J) (op C)) :=
+  {| Obj := co_cone D;
      Hom f g := Hom (cc_top _ f) (cc_top _ g);
      comp _ _ _ := comp;
-     hid := 42 |}.
-     hid := cCone_id;
-     unit_l := cCone_unit_l;
-     unit_r := cCone_unit_r;
-     assoc := cCone_assoc;
-     Hom_set := cCone_Hom_set |}.
+     unit_l _ _ := unit_l;
+     unit_r _ _ := unit_r;
+     assoc _ _ _ _ := assoc;
+     Hom_set c c' := Hom_set (cc_top D c) (cc_top D c') |}.
 
-Definition is_colimit {J C} {D : functor J C} (cn : co_cone D) :=
-  @is_initial (cCo_cone D) cn.
+Definition is_colimit {J C} {D : functor (op J) (op C)} (cn : co_cone D) :=
+  @is_initial (cCoCone D) cn.
+
