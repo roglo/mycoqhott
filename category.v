@@ -591,14 +591,14 @@ Definition op C :=
      assoc _ _ _ _ f g h := eq_sym (assoc h g f);
      Hom_set x y := Hom_set y x |}.
 
-Record co_cone {J C} (D : functor J C) :=
+Record co_cone {J C} (D : functor (op J) (op C)) :=
   { cc_top : Obj C;
-    cc_fam : ∀ j, Hom (f_map_obj j) cc_top;
-    cc_commute : ∀ i j (α : Hom i j), cc_fam i = cc_fam j ◦ f_map_arr D α }.
+    cc_fam : ∀ j, @Hom (op C) (f_map_obj j) cc_top;
+    cc_commute : ∀ i j α, cc_fam i = comp (f_map_arr D α) (cc_fam j) }.
 
 Definition co_cone_of_cone {J C} {D : functor J C} (cn : cone D) :=
   {| cc_top := c_top D cn;
-     cc_fam j := c_fam cn j |}.
+     cc_fam j := cc_fam D cn j |}.
 
 ...
 
