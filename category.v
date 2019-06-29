@@ -614,8 +614,10 @@ Definition co_cone_of_cone {J C} {D : functor J C} (cn : cone D) :
 (* category of co-cones *)
 
 Definition cCo_cone {J C} (D : functor J C) :=
-  {| Obj := co_cone (functor_op_of_functor D);
-     Hom f g := 42 |}.
+  let D_op := functor_op_of_functor D in
+  {| Obj := co_cone D_op;
+     Hom f g := Hom (cc_top _ f) (cc_top _ g);
+     comp := 42 |}.
      comp := cCone_comp;
      hid := cCone_id;
      unit_l := cCone_unit_l;
