@@ -590,3 +590,14 @@ Definition op C :=
      unit_r _ _ f := unit_l f;
      assoc _ _ _ _ f g h := eq_sym (assoc h g f);
      Hom_set x y := Hom_set y x |}.
+
+Record cocone {J C} (D : functor J C) :=
+  { cc_top : Obj C;
+    cc_fam : ∀ j, Hom (f_map_obj j) cc_top;
+    cd_commute : ∀ i j (α : Hom i j), cc_fam i = cc_fam j ◦ f_map_arr D α }.
+
+Print is_limit.
+
+...
+
+Definition is_colimit {J C} {D : functor J C} cn := is_limit cn.
