@@ -575,3 +575,18 @@ remember
       ∀ j : Obj J, c_fam D c j = c_fam D l j ◦ ϑ) h Hh') as hh.
 now rewrite (H1 hh); subst hh.
 Qed.
+
+(* The opposite (or “dual”) category C^op of a category C has the same
+   objects as C, and an arrow f : C → D in C^op is an arrow f : D → C
+   in C. That is C^op is just C with all of the arrows formally turned
+   around. *)
+
+Definition op C :=
+  {| Obj := Obj C;
+     Hom c d := Hom d c;
+     comp _ _ _ Hyx Hzy := Hyx ◦ Hzy;
+     hid := @hid C;
+     unit_l _ _ f := unit_r f;
+     unit_r _ _ f := unit_l f;
+     assoc _ _ _ _ f g h := eq_sym (assoc h g f);
+     Hom_set x y := Hom_set y x |}.
