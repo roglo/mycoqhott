@@ -48,79 +48,6 @@ Arguments f_map_arr [_] [_] _ [_] [_].
 Definition is_isomorphism {C : category} {A B : Obj C} (f : Hom A B) :=
   ∃ g : Hom B A, g ◦ f = hid ∧ f ◦ g = hid.
 
-(* A cone to a functor D(J,C) consists of an object c in C and a
-   family of arrows in C : cj : c → Dj one for each object j ∈ J, such
-   that for each arrow α : i → j in J, the following triangle
-   commutes. *)
-
-Record cone {J C} (D : functor J C) :=
-  { c_top : Obj C;
-    c_fam : ∀ j, Hom c_top (f_map_obj j);
-    c_commute : ∀ i j (α : Hom i j), c_fam j = f_map_arr D α ◦ c_fam i }.
-
-(* category of cones *)
-
-Definition cCone_Hom {J C} {D : functor J C} (cn cn' : cone D) :=
-  { ϑ & ∀ j, c_fam D cn j = c_fam D cn' j ◦ ϑ }.
-
-Definition cCone_comp {J C} {D : functor J C} (c c' c'' : cone D)
-  (ch : cCone_Hom c c') (ch' : cCone_Hom c' c'') : cCone_Hom c c'' :=
-  existT
-    (λ ϑ, ∀ j, c_fam D c j = c_fam D c'' j ◦ ϑ)
-    (projT1 ch' ◦ projT1 ch)
-    (λ j,
-       eq_trans
-         (eq_trans (projT2 ch j)
-            (f_equal (comp (projT1 ch)) (projT2 ch' j)))
-         (assoc (projT1 ch) (projT1 ch') (c_fam D c'' j))).
-
-Definition cCone_id {J C} {D : functor J C} (c : cone D) : cCone_Hom c c :=
-   existT (λ ϑ, ∀ j, c_fam D c j = c_fam D c j ◦ ϑ) hid
-     (λ j, eq_sym (unit_l (c_fam D c j))).
-
-Theorem cCone_unit_l {J C} {D : functor J C} :
-  ∀ (c c' : cone D) (f : cCone_Hom c c'),
-  cCone_comp c c c' (cCone_id c) f = f.
-Proof.
-intros.
-unfold cCone_comp; cbn.
-destruct f as (f & Hf); cbn.
-apply eq_existT_uncurried.
-exists (unit_l _).
-apply extensionality.
-intros j.
-apply Hom_set.
-Defined.
-
-Theorem cCone_unit_r {J C} {D : functor J C} :
-  ∀ (c c' : cone D) (f : cCone_Hom c c'),
-  cCone_comp c c' c' f (cCone_id c') = f.
-Proof.
-intros.
-unfold cCone_comp; cbn.
-destruct f as (f & Hf); cbn.
-apply eq_existT_uncurried.
-exists (unit_r _).
-apply extensionality.
-intros j.
-apply Hom_set.
-Defined.
-
-Theorem cCone_assoc {J C} {D : functor J C} :
-  ∀ (c c' c'' c''' : cone D) (f : cCone_Hom c c') (g : cCone_Hom c' c'')
-    (h : cCone_Hom c'' c'''),
-    cCone_comp c c' c''' f (cCone_comp c' c'' c''' g h) =
-    cCone_comp c c'' c''' (cCone_comp c c' c'' f g) h.
-Proof.
-intros.
-unfold cCone_comp; cbn.
-apply eq_existT_uncurried.
-exists (assoc _ _ _).
-apply extensionality.
-intros j.
-apply Hom_set.
-Defined.
-
 (* Borrowed from HoTT *)
 
 Definition mid {A} (x : A) := x.
@@ -511,6 +438,81 @@ Proof.
 intros * HP HS.
 now apply (isnType_isnType_sigT A 1 P).
 Qed.
+
+(* end HoTT *)
+
+(* A cone to a functor D(J,C) consists of an object c in C and a
+   family of arrows in C : cj : c → Dj one for each object j ∈ J, such
+   that for each arrow α : i → j in J, the following triangle
+   commutes. *)
+
+Record cone {J C} (D : functor J C) :=
+  { c_top : Obj C;
+    c_fam : ∀ j, Hom c_top (f_map_obj j);
+    c_commute : ∀ i j (α : Hom i j), c_fam j = f_map_arr D α ◦ c_fam i }.
+
+(* category of cones *)
+
+Definition cCone_Hom {J C} {D : functor J C} (cn cn' : cone D) :=
+  { ϑ & ∀ j, c_fam D cn j = c_fam D cn' j ◦ ϑ }.
+
+Definition cCone_comp {J C} {D : functor J C} (c c' c'' : cone D)
+  (ch : cCone_Hom c c') (ch' : cCone_Hom c' c'') : cCone_Hom c c'' :=
+  existT
+    (λ ϑ, ∀ j, c_fam D c j = c_fam D c'' j ◦ ϑ)
+    (projT1 ch' ◦ projT1 ch)
+    (λ j,
+       eq_trans
+         (eq_trans (projT2 ch j)
+            (f_equal (comp (projT1 ch)) (projT2 ch' j)))
+         (assoc (projT1 ch) (projT1 ch') (c_fam D c'' j))).
+
+Definition cCone_id {J C} {D : functor J C} (c : cone D) : cCone_Hom c c :=
+   existT (λ ϑ, ∀ j, c_fam D c j = c_fam D c j ◦ ϑ) hid
+     (λ j, eq_sym (unit_l (c_fam D c j))).
+
+Theorem cCone_unit_l {J C} {D : functor J C} :
+  ∀ (c c' : cone D) (f : cCone_Hom c c'),
+  cCone_comp c c c' (cCone_id c) f = f.
+Proof.
+intros.
+unfold cCone_comp; cbn.
+destruct f as (f & Hf); cbn.
+apply eq_existT_uncurried.
+exists (unit_l _).
+apply extensionality.
+intros j.
+apply Hom_set.
+Defined.
+
+Theorem cCone_unit_r {J C} {D : functor J C} :
+  ∀ (c c' : cone D) (f : cCone_Hom c c'),
+  cCone_comp c c' c' f (cCone_id c') = f.
+Proof.
+intros.
+unfold cCone_comp; cbn.
+destruct f as (f & Hf); cbn.
+apply eq_existT_uncurried.
+exists (unit_r _).
+apply extensionality.
+intros j.
+apply Hom_set.
+Defined.
+
+Theorem cCone_assoc {J C} {D : functor J C} :
+  ∀ (c c' c'' c''' : cone D) (f : cCone_Hom c c') (g : cCone_Hom c' c'')
+    (h : cCone_Hom c'' c'''),
+    cCone_comp c c' c''' f (cCone_comp c' c'' c''' g h) =
+    cCone_comp c c'' c''' (cCone_comp c c' c'' f g) h.
+Proof.
+intros.
+unfold cCone_comp; cbn.
+apply eq_existT_uncurried.
+exists (assoc _ _ _).
+apply extensionality.
+intros j.
+apply Hom_set.
+Defined.
 
 Theorem cCone_Hom_set {J C} {D : functor J C} :
   ∀ c c' : cone D, isSet (cCone_Hom c c').
