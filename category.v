@@ -603,14 +603,13 @@ Record co_cone {J C} (D_op : functor (op J) (op C)) :=
     cc_commute : ∀ i j α, cc_fam i = comp (f_map_arr D_op α) (cc_fam j) }.
 *)
 
-Definition fop {C D} (F : functor C D) :=
+Definition fop {C D} (F : functor C D) : functor (op C) (op D) :=
   {| f_map_obj (x : Obj (op C)) := (@f_map_obj C D F x : Obj (op D));
      f_map_arr _ _ f := f_map_arr F f;
      f_comp _ _ _ (f : Hom _ _) (g : Hom _ _) := @f_comp _ _ F _ _ _ g f;
      f_id a := @f_id _ _ F a |}.
 
-...
-
+(*
 Definition co_cone_of_cone {J C} {D : functor J C} (cn : cone D) :
   co_cone (fop D)
 :=
@@ -619,10 +618,20 @@ Definition co_cone_of_cone {J C} {D : functor J C} (cn : cone D) :
        c_fam D cn j :
          Hom (@f_map_obj _ _ (fop D) j) (c_top D cn);
      cc_commute i j := @c_commute J C D cn j i |}.
+*)
 
 (* category of co-cones *)
 
-Definition cCoCone {J C} (D_op : functor (op J) (op C)) :=
+Definition cCoCone {J C} (op : functor J C) :=
+  {| Obj := co_cone op;
+     Hom f g := Hom (cc_top _ f) (cc_top _ g);
+     comp _ _ _ := comp;
+     unit_l _ _ := unit_l;
+     unit_r _ _ := unit_r;
+     assoc _ _ _ _ := assoc;
+     Hom_set c c' := Hom_set (cc_top op c) (cc_top op c') |}.
+
+Definition cCoCone2 {J C} (D_op : functor (op J) (op C)) :=
   {| Obj := cone D_op;
      Hom f g := Hom (c_top _ f) (c_top _ g);
      comp _ _ _ := comp;
@@ -631,18 +640,12 @@ Definition cCoCone {J C} (D_op : functor (op J) (op C)) :=
      assoc _ _ _ _ := assoc;
      Hom_set c c' := Hom_set (c_top D_op c) (c_top D_op c') |}.
 
-Definition cCoCone2 {J C} (op : functor J C) :=
-  {| Obj := co_cone op;
-     Hom f g := Hom (c_top _ f) (c_top _ g);
-     comp _ _ _ := comp;
-     unit_l _ _ := unit_l;
-     unit_r _ _ := unit_r;
-     assoc _ _ _ _ := assoc;
-     Hom_set c c' := Hom_set (c_top op c) (c_top op c') |}.
+Definition is_colimit {J C} {D : functor J C} (cc : co_cone D) :=
+  @is_initial (cCoCone D) cc.
 
-Definition is_colimit {J C} {D_op : functor (op J) (op C)}
-    (cn : cone D_op) :=
-  @is_initial (cCoCone D_op) cn.
+...
+
+Print cCone.
 
 Definition cCoCone2 {J C} (D_op : functor (op J) (op C)) := op (cCone D_op).
 
