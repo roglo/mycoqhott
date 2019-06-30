@@ -591,10 +591,10 @@ Definition op C :=
      assoc _ _ _ _ f g h := eq_sym (assoc h g f);
      Hom_set x y := Hom_set y x |}.
 
-Record co_cone {J C} (D : functor (op J) (op C)) :=
+Record co_cone {J C} (D_op : functor (op J) (op C)) :=
   { cc_top : Obj C;
     cc_fam : ∀ j, @Hom (op C) (f_map_obj j) cc_top;
-    cc_commute : ∀ i j α, cc_fam i = comp (f_map_arr D α) (cc_fam j) }.
+    cc_commute : ∀ i j α, cc_fam i = comp (f_map_arr D_op α) (cc_fam j) }.
 
 Definition fop {C D} (F : functor C D) :=
   {| f_map_obj (x : Obj (op C)) := (@f_map_obj C D F x : Obj (op D));
@@ -613,28 +613,38 @@ Definition co_cone_of_cone {J C} {D : functor J C} (cn : cone D) :
 
 (* category of co-cones *)
 
-Definition cCoCone {J C} (D : functor (op J) (op C)) :=
-  {| Obj := co_cone D;
+Definition cCoCone {J C} (D_op : functor (op J) (op C)) :=
+  {| Obj := co_cone D_op;
      Hom f g := Hom (cc_top _ f) (cc_top _ g);
      comp _ _ _ := comp;
      unit_l _ _ := unit_l;
      unit_r _ _ := unit_r;
      assoc _ _ _ _ := assoc;
-     Hom_set c c' := Hom_set (cc_top D c) (cc_top D c') |}.
+     Hom_set c c' := Hom_set (cc_top D_op c) (cc_top D_op c') |}.
 
-Definition is_colimit {J C} {D : functor (op J) (op C)} (cn : co_cone D) :=
-  @is_initial (cCoCone D) cn.
+Definition is_colimit {J C} {D_op : functor (op J) (op C)}
+    (cn : co_cone D_op) :=
+  @is_initial (cCoCone D_op) cn.
 
-Definition cCoCone2 {J C} (D : functor J C) :=
-  op (cCone (fop D)).
+Definition cCoCone2 {J C} (D_op : functor (op J) (op C)) := op (cCone D_op).
 
-Check @cCoCone.
-Check @cCoCone2.
-
-Theorem glop {J C} {D : functor J C} :
-  Obj (cCoCone (fop D)) = Obj (cCoCone2 D).
+Theorem glop {J C} {op : functor J C} :
+  Obj (cCoCone2 (fop op)) ≃ Obj (cCoCone (fop op)).
 Proof.
 cbn.
+unfold "≃".
+assert (cone (fop op) → co_cone (fop op)). {
+  intros cn.
+  apply co_cone_of_cone.
 Print cone.
-Print co_cone.
-(* comment se fait-il que le typage ait laissé passer ça ? *)
+...
+
+Theorem glop {J C} {D_op : functor (op J) (op C)} :
+  Obj (cCoCone2 D_op) ≃ Obj (cCoCone D_op).
+Proof.
+cbn.
+unfold "≃".
+assert (cone D_op → co_cone D_op). {
+  intros cn.
+  apply co_cone_of_cone in cn.
+...
