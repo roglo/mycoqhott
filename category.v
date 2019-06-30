@@ -591,34 +591,16 @@ Definition op C :=
      assoc _ _ _ _ f g h := eq_sym (assoc h g f);
      Hom_set x y := Hom_set y x |}.
 
-Record co_cone {J C} (D_op : functor J C) :=
+Record co_cone {J C} (D : functor J C) :=
   { cc_top : Obj C;
     cc_fam : ∀ j, Hom (f_map_obj j) cc_top;
-    cc_commute : ∀ i j α, cc_fam i = cc_fam j ◦ f_map_arr D_op α }.
-
-(*
-Record co_cone {J C} (D_op : functor (op J) (op C)) :=
-  { cc_top : Obj C;
-    cc_fam : ∀ j, @Hom (op C) (f_map_obj j) cc_top;
-    cc_commute : ∀ i j α, cc_fam i = comp (f_map_arr D_op α) (cc_fam j) }.
-*)
+    cc_commute : ∀ i j α, cc_fam i = cc_fam j ◦ f_map_arr D α }.
 
 Definition fop {C D} (F : functor C D) : functor (op C) (op D) :=
   {| f_map_obj (x : Obj (op C)) := (@f_map_obj C D F x : Obj (op D));
      f_map_arr _ _ f := f_map_arr F f;
      f_comp _ _ _ (f : Hom _ _) (g : Hom _ _) := @f_comp _ _ F _ _ _ g f;
      f_id a := @f_id _ _ F a |}.
-
-(*
-Definition co_cone_of_cone {J C} {D : functor J C} (cn : cone D) :
-  co_cone (fop D)
-:=
-  {| cc_top := c_top _ cn;
-     cc_fam j :=
-       c_fam D cn j :
-         Hom (@f_map_obj _ _ (fop D) j) (c_top D cn);
-     cc_commute i j := @c_commute J C D cn j i |}.
-*)
 
 (* category of co-cones *)
 
@@ -658,42 +640,4 @@ Definition cCoCone4 {J C} (D_op : functor (op J) (op C)) :=
 Definition is_colimit {J C} {D : functor J C} (cc : co_cone D) :=
   @is_initial (cCoCone D) cc.
 
-...
-
-Print cCone.
-
-Definition cCoCone2 {J C} (D_op : functor (op J) (op C)) := op (cCone D_op).
-
-Theorem glop {J C} {F_op : functor (op J) (op C)} :
-  cCoCone2 F_op = cCoCone F_op.
-Proof.
-unfold cCoCone2, cCoCone.
-remember (@cCone (op J) (op C) F_op) as c eqn:Hc.
-cbn; unfold op.
-
-...
-
-
-Theorem glop {J C} {op : functor J C} :
-  cCoCone2 (fop op) = cCoCone (fop op).
-Proof.
-...
-Qed.
-...
-
-Theorem glop {J C} {op : functor J C} :
-  Obj (cCoCone2 (fop op)) = Obj (cCoCone (fop op)).
-Proof.
-easy.
-Qed.
-...
-
-Theorem glop {J C} {D_op : functor (op J) (op C)} :
-  Obj (cCoCone2 D_op) ≃ Obj (cCoCone D_op).
-Proof.
-cbn.
-unfold "≃".
-assert (cone D_op → co_cone D_op). {
-  intros cn.
-  apply co_cone_of_cone in cn.
 ...
