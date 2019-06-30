@@ -642,10 +642,9 @@ Definition is_colimit {J C} {D : functor J C} (cc : co_cone D) :=
 
 Theorem glop {J C} {D : functor J C} (cc : co_cone D)
   (J' := op J) (C' := op C) (D' := fop D) :
-  forall (i j : Obj (op J)) (α : @Hom (op J) i j),
-  @eq (@Hom C' (@cc_top J C D cc) (@f_map_obj (op J) C' D' j)) (@cc_fam J C D cc j)
-    (@comp C' (@cc_top J C D cc) (@f_map_obj (op J) C' D' i) (@f_map_obj (op J) C' D' j)
-       (@cc_fam J C D cc i) (@f_map_arr (op J) C' D' i j α)).
+  ∀ (i j : Obj (op J)) (α : @Hom (op J) i j),
+  cc_fam D cc j =
+    @comp C' _ _ _ (@cc_fam J C D cc i) (@f_map_arr (op J) C' D' i j α).
 Admitted.
 
 Definition obj_1_2 {J C} {D : functor J C} (cc : co_cone D) : cone (fop D) :=
