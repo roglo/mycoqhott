@@ -640,4 +640,12 @@ Definition cCoCone4 {J C} (D_op : functor (op J) (op C)) :=
 Definition is_colimit {J C} {D : functor J C} (cc : co_cone D) :=
   @is_initial (cCoCone D) cc.
 
+Definition obj_1_2 {J C} {D : functor J C} (cc : co_cone D) : cone (fop D) :=
+  {| c_top := (cc_top D cc : Obj (op C));
+     c_fam := 42 |}.
+
+...
+
+Definition functor_cCoCone_1_2 {J C} :
+
 ...
