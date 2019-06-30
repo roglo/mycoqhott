@@ -640,7 +640,7 @@ Definition cCoCone4 {J C} (D_op : functor (op J) (op C)) :=
 Definition is_colimit {J C} {D : functor J C} (cc : co_cone D) :=
   @is_initial (cCoCone D) cc.
 
-Definition co_cone_cone_fop {J C} {D : functor J C} :
+Definition cone_fop_obj_of_co_cone_obj {J C} {D : functor J C} :
     Obj (cCoCone D) → Obj (cCoCone2 (fop D)) :=
   λ cc,
   let J' := op J in
@@ -650,17 +650,15 @@ Definition co_cone_cone_fop {J C} {D : functor J C} :
      c_fam j := cc_fam D cc j : @Hom C' (cc_top D cc) (@f_map_obj _ _ D' j);
      c_commute i j := cc_commute D cc j i |}.
 
-(*
-Print functor.
-Definition isomorphic_categories C D := (functor C D * functor D C).
-Definition are_isomorphic_categories (C D : category) :=
-  ({ f & f C = D } * { g & g D = C })%type.
-Print are_isomorphic_categories.
-*)
-
 Definition functor_cCoCone2_of_cCoCone {J C} {D : functor J C} :
   functor (cCoCone D) (cCoCone2 (fop D)) :=
-  {| f_map_obj := co_cone_cone_fop;
-     f_map_arr := 42 |}.
+  {| f_map_obj := cone_fop_obj_of_co_cone_obj;
+     f_map_arr _ _ f := f;
+     f_comp _ _ _ _ _ := eq_refl;
+     f_id _ := eq_refl |}.
+
+Definition functor_cCoCone_of_cCoCone2 {J C} {D : functor J C} :
+  functor (cCoCone2 (fop D)) (cCoCone D) :=
+  {| f_map_obj := 42 |}.
 
 ...
