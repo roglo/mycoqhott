@@ -625,7 +625,7 @@ Definition cCoCone {J C} (D : functor (op J) (op C)) :=
 Definition is_colimit {J C} {D : functor (op J) (op C)} (cn : co_cone D) :=
   @is_initial (cCoCone D) cn.
 
-Definition cCoCone2 {J C} {D : functor J C} :=
+Definition cCoCone2 {J C} (D : functor J C) :=
   op (cCone (fop D)).
 
 Check @cCoCone.
