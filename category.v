@@ -640,9 +640,21 @@ Definition cCoCone4 {J C} (D_op : functor (op J) (op C)) :=
 Definition is_colimit {J C} {D : functor J C} (cc : co_cone D) :=
   @is_initial (cCoCone D) cc.
 
+Theorem glop {J C} {D : functor J C} (cc : co_cone D)
+  (J' := op J) (C' := op C) (D' := fop D) :
+  forall (i j : Obj (op J)) (α : @Hom (op J) i j),
+  @eq (@Hom C' (@cc_top J C D cc) (@f_map_obj (op J) C' D' j)) (@cc_fam J C D cc j)
+    (@comp C' (@cc_top J C D cc) (@f_map_obj (op J) C' D' i) (@f_map_obj (op J) C' D' j)
+       (@cc_fam J C D cc i) (@f_map_arr (op J) C' D' i j α)).
+Admitted.
+
 Definition obj_1_2 {J C} {D : functor J C} (cc : co_cone D) : cone (fop D) :=
-  {| c_top := (cc_top D cc : Obj (op C));
-     c_fam := 42 |}.
+  let J' := op J in
+  let C' := op C in
+  let D' := fop D in
+  {| c_top := cc_top D cc : Obj C';
+     c_fam j := cc_fam D cc j : @Hom C' (cc_top D cc) (@f_map_obj _ _ D' j);
+     c_commute := glop cc |}.
 
 ...
 
