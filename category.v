@@ -38,9 +38,9 @@ Definition is_terminal {C : category} (c : Obj C) :=
 Class functor (C D : category) :=
   { f_map_obj : Obj C → Obj D;
     f_map_arr {a b} : Hom a b → Hom (f_map_obj a) (f_map_obj b);
-    f_comp {a b c} (f : Hom a b) (g : Hom b c) :
+    f_comp_prop {a b c} (f : Hom a b) (g : Hom b c) :
       f_map_arr (g ◦ f) = f_map_arr g ◦ f_map_arr f;
-    f_id {a} : @f_map_arr a _ hid = hid }.
+    f_id_prop {a} : @f_map_arr a _ hid = hid }.
 
 Arguments f_map_obj [_] [_] [_].
 Arguments f_map_arr [_] [_] _ [_] [_].
@@ -599,8 +599,8 @@ Record co_cone {J C} (D : functor J C) :=
 Definition fop {C D} (F : functor C D) : functor (op C) (op D) :=
   {| f_map_obj (x : Obj (op C)) := (@f_map_obj C D F x : Obj (op D));
      f_map_arr _ _ f := f_map_arr F f;
-     f_comp _ _ _ (f : Hom _ _) (g : Hom _ _) := @f_comp _ _ F _ _ _ g f;
-     f_id a := @f_id _ _ F a |}.
+     f_comp_prop _ _ _ f g := @f_comp_prop _ _ F _ _ _ g f;
+     f_id_prop a := @f_id_prop _ _ F a |}.
 
 (* category of co-cones *)
 
@@ -654,8 +654,8 @@ Definition functor_cCoCone2_of_cCoCone {J C} {D : functor J C} :
   functor (cCoCone D) (cCoCone2 (fop D)) :=
   {| f_map_obj := cone_fop_obj_of_co_cone_obj;
      f_map_arr _ _ f := f;
-     f_comp _ _ _ _ _ := eq_refl;
-     f_id _ := eq_refl |}.
+     f_comp_prop _ _ _ _ _ := eq_refl;
+     f_id_prop _ := eq_refl |}.
 
 Definition functor_cCoCone_of_cCoCone2 {J C} {D : functor J C} :
   functor (cCoCone2 (fop D)) (cCoCone D) :=
