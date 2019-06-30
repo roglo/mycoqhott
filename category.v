@@ -650,6 +650,16 @@ Definition cone_fop_obj_of_co_cone_obj {J C} {D : functor J C} :
      c_fam j := cc_fam D cc j : @Hom C' (cc_top D cc) (@f_map_obj _ _ D' j);
      c_commute i j := cc_commute D cc j i |}.
 
+Definition co_cone_obj_of_cone_fop_obj {J C} {D : functor J C} :
+    Obj (cCoCone2 (fop D)) → Obj (cCoCone D) :=
+  λ cn,
+  let J' := op J in
+  let C' := op C in
+  let D' := fop D in
+  {| cc_top := c_top D' cn : Obj C;
+     cc_fam j := c_fam D' cn j : @Hom C' (c_top D' cn) (@f_map_obj _ _ D j);
+     cc_commute i j := c_commute D' cn j i |}.
+
 Definition functor_cCoCone2_of_cCoCone {J C} {D : functor J C} :
   functor (cCoCone D) (cCoCone2 (fop D)) :=
   {| f_map_obj := cone_fop_obj_of_co_cone_obj;
@@ -657,36 +667,14 @@ Definition functor_cCoCone2_of_cCoCone {J C} {D : functor J C} :
      f_comp_prop _ _ _ _ _ := eq_refl;
      f_id_prop _ := eq_refl |}.
 
-Definition co_cone_obj_of_cone_fop_obj {J C} {D : functor J C} :
-    Obj (cCoCone2 (fop D)) → Obj (cCoCone D) :=
-  λ cn,
-  let J' := op J in
-  let C' := op C in
-  let D' := fop D in
-  {| c_top := c_top D' cn : Obj (cCoCone D) |}.
-  {| c_top := c_top D' cn : co_cone D |}.
-
-...
-
-  {| Obj := co_cone D;
-  {| Obj := cone D_op;
-
-...
-
-(*
-Definition co_cone_obj_of_cone_fop_obj {J C} {D : functor J C} :
-    Obj (cCoCone2 (fop D)) → Obj (cCoCone D) :=
-  λ cn,
-  let J' := op J in
-  let C' := op C in
-  let D' := fop D in
-  {| c_top := c_top D' cn : Obj C';
-     c_fam j := c_fam D' cn j : @Hom C' (c_top D' cn) (@f_map_obj _ _ D' j);
-     c_commute i j := c_commute D' cn i j |}.
-*)
+Set Printing Implicit.
 
 Definition functor_cCoCone_of_cCoCone2 {J C} {D : functor J C} :
   functor (cCoCone2 (fop D)) (cCoCone D) :=
-  {| f_map_obj := co_cone_obj_of_cone_fop_obj |}.
+  {| f_map_obj := co_cone_obj_of_cone_fop_obj;
+     f_map_arr _ _ f := f;
+     f_comp_prop _ _ _ _ _ := eq_refl;
+     f_id_prop x := 42 |}.
+     f_id_prop _ := eq_refl |}.
 
 ...
