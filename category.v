@@ -641,6 +641,8 @@ Definition cCoCone2 {J C} (D_op : functor (op J) (op C)) :=
      assoc _ _ _ _ := assoc;
      Hom_set c c' := Hom_set (c_top D_op c) (c_top D_op c') |}.
 
+...
+
 Definition cCoCone3 {J C} (D : functor J C) :=
   op
   {| Obj := cone D;
