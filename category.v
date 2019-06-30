@@ -591,16 +591,25 @@ Definition op C :=
      assoc _ _ _ _ f g h := eq_sym (assoc h g f);
      Hom_set x y := Hom_set y x |}.
 
+Record co_cone {J C} (D_op : functor J C) :=
+  { cc_top : Obj C;
+    cc_fam : ∀ j, Hom (f_map_obj j) cc_top;
+    cc_commute : ∀ i j α, cc_fam i = cc_fam j ◦ f_map_arr D_op α }.
+
+(*
 Record co_cone {J C} (D_op : functor (op J) (op C)) :=
   { cc_top : Obj C;
     cc_fam : ∀ j, @Hom (op C) (f_map_obj j) cc_top;
     cc_commute : ∀ i j α, cc_fam i = comp (f_map_arr D_op α) (cc_fam j) }.
+*)
 
 Definition fop {C D} (F : functor C D) :=
   {| f_map_obj (x : Obj (op C)) := (@f_map_obj C D F x : Obj (op D));
      f_map_arr _ _ f := f_map_arr F f;
      f_comp _ _ _ (f : Hom _ _) (g : Hom _ _) := @f_comp _ _ F _ _ _ g f;
      f_id a := @f_id _ _ F a |}.
+
+...
 
 Definition co_cone_of_cone {J C} {D : functor J C} (cn : cone D) :
   co_cone (fop D)
@@ -614,29 +623,51 @@ Definition co_cone_of_cone {J C} {D : functor J C} (cn : cone D) :
 (* category of co-cones *)
 
 Definition cCoCone {J C} (D_op : functor (op J) (op C)) :=
-  {| Obj := co_cone D_op;
-     Hom f g := Hom (cc_top _ f) (cc_top _ g);
+  {| Obj := cone D_op;
+     Hom f g := Hom (c_top _ f) (c_top _ g);
      comp _ _ _ := comp;
      unit_l _ _ := unit_l;
      unit_r _ _ := unit_r;
      assoc _ _ _ _ := assoc;
-     Hom_set c c' := Hom_set (cc_top D_op c) (cc_top D_op c') |}.
+     Hom_set c c' := Hom_set (c_top D_op c) (c_top D_op c') |}.
+
+Definition cCoCone2 {J C} (op : functor J C) :=
+  {| Obj := co_cone op;
+     Hom f g := Hom (c_top _ f) (c_top _ g);
+     comp _ _ _ := comp;
+     unit_l _ _ := unit_l;
+     unit_r _ _ := unit_r;
+     assoc _ _ _ _ := assoc;
+     Hom_set c c' := Hom_set (c_top op c) (c_top op c') |}.
 
 Definition is_colimit {J C} {D_op : functor (op J) (op C)}
-    (cn : co_cone D_op) :=
+    (cn : cone D_op) :=
   @is_initial (cCoCone D_op) cn.
 
 Definition cCoCone2 {J C} (D_op : functor (op J) (op C)) := op (cCone D_op).
 
-Theorem glop {J C} {op : functor J C} :
-  Obj (cCoCone2 (fop op)) ≃ Obj (cCoCone (fop op)).
+Theorem glop {J C} {F_op : functor (op J) (op C)} :
+  cCoCone2 F_op = cCoCone F_op.
 Proof.
-cbn.
-unfold "≃".
-assert (cone (fop op) → co_cone (fop op)). {
-  intros cn.
-  apply co_cone_of_cone.
-Print cone.
+unfold cCoCone2, cCoCone.
+remember (@cCone (op J) (op C) F_op) as c eqn:Hc.
+cbn; unfold op.
+
+...
+
+
+Theorem glop {J C} {op : functor J C} :
+  cCoCone2 (fop op) = cCoCone (fop op).
+Proof.
+...
+Qed.
+...
+
+Theorem glop {J C} {op : functor J C} :
+  Obj (cCoCone2 (fop op)) = Obj (cCoCone (fop op)).
+Proof.
+easy.
+Qed.
 ...
 
 Theorem glop {J C} {D_op : functor (op J) (op C)} :
