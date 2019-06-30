@@ -650,6 +650,14 @@ Definition co_cone_cone_fop {J C} {D : functor J C} :
      c_fam j := cc_fam D cc j : @Hom C' (cc_top D cc) (@f_map_obj _ _ D' j);
      c_commute i j := cc_commute D cc j i |}.
 
+(*
+Print functor.
+Definition isomorphic_categories C D := (functor C D * functor D C).
+Definition are_isomorphic_categories (C D : category) :=
+  ({ f & f C = D } * { g & g D = C })%type.
+Print are_isomorphic_categories.
+*)
+
 Definition functor_cCoCone2_of_cCoCone {J C} {D : functor J C} :
   functor (cCoCone D) (cCoCone2 (fop D)) :=
   {| f_map_obj := co_cone_cone_fop;
