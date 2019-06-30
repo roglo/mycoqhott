@@ -622,16 +622,17 @@ Definition co_cone_of_cone {J C} {D : functor J C} (cn : cone D) :
 
 (* category of co-cones *)
 
-Definition cCoCone {J C} (op : functor J C) :=
-  {| Obj := co_cone op;
+Definition cCoCone {J C} (D : functor J C) :=
+  {| Obj := co_cone D;
      Hom f g := Hom (cc_top _ f) (cc_top _ g);
      comp _ _ _ := comp;
      unit_l _ _ := unit_l;
      unit_r _ _ := unit_r;
      assoc _ _ _ _ := assoc;
-     Hom_set c c' := Hom_set (cc_top op c) (cc_top op c') |}.
+     Hom_set c c' := Hom_set (cc_top D c) (cc_top D c') |}.
 
 Definition cCoCone2 {J C} (D_op : functor (op J) (op C)) :=
+  op
   {| Obj := cone D_op;
      Hom f g := Hom (c_top _ f) (c_top _ g);
      comp _ _ _ := comp;
@@ -639,6 +640,20 @@ Definition cCoCone2 {J C} (D_op : functor (op J) (op C)) :=
      unit_r _ _ := unit_r;
      assoc _ _ _ _ := assoc;
      Hom_set c c' := Hom_set (c_top D_op c) (c_top D_op c') |}.
+
+Definition cCoCone3 {J C} (D : functor J C) :=
+  op
+  {| Obj := cone D;
+     Hom := cCone_Hom;
+     comp := cCone_comp;
+     hid := cCone_id;
+     unit_l := cCone_unit_l;
+     unit_r := cCone_unit_r;
+     assoc := cCone_assoc;
+     Hom_set := cCone_Hom_set |}.
+
+Definition cCoCone4 {J C} (D_op : functor (op J) (op C)) :=
+  op (cCone D_op).
 
 Definition is_colimit {J C} {D : functor J C} (cc : co_cone D) :=
   @is_initial (cCoCone D) cc.
