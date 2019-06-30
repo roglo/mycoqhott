@@ -630,3 +630,11 @@ Definition cCoCone2 {J C} (D : functor J C) :=
 
 Check @cCoCone.
 Check @cCoCone2.
+
+Theorem glop {J C} {D : functor J C} :
+  Obj (cCoCone (fop D)) = Obj (cCoCone2 D).
+Proof.
+cbn.
+Print cone.
+Print co_cone.
+(* comment se fait-il que le typage ait laissé passer ça ? *)
