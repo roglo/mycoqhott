@@ -687,8 +687,16 @@ Definition glop {J C} {D : functor J C} :
   ∀ (x y : Obj (CoCone D)) (f : Hom x y),
   @Hom (CoCone4 (fop D)) (cone_fop_of_co_cone x) (cone_fop_of_co_cone y).
 intros.
-cbn.
-cbn in x, y.
+cbn in *.
+Print Cone_Hom.
+exists f.
+intros j; cbn in *.
+Show Proof.
+Search comp.
+Check cc_commute.
+...
+destruct x, y; cbn in *.
+specialize (cc_commute1 j j) as H1.
 ...
 
 Definition functor_CoCone4_of_CoCone {J C} {D : functor J C} :
