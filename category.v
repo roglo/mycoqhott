@@ -683,7 +683,15 @@ split.
 -apply functor_CoCone_of_CoCone2.
 Qed.
 
+Definition glop {J C} {D : functor J C} :
+  ∀ (x y : Obj (CoCone D)) (f : Hom x y),
+  @Hom (CoCone4 (fop D)) (cone_fop_of_co_cone x) (cone_fop_of_co_cone y).
+intros.
+cbn.
+cbn in x, y.
+...
+
 Definition functor_CoCone4_of_CoCone {J C} {D : functor J C} :
   functor (CoCone D) (CoCone4 (fop D)) :=
   {| f_map_obj := cone_fop_of_co_cone : Obj (CoCone _) → Obj (CoCone4 _);
-     f_map_arr _ _ f := 42 |}.
+     f_map_arr := glop |}.
