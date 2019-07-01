@@ -683,6 +683,7 @@ split.
 -apply functor_CoCone_of_CoCone2.
 Qed.
 
+(*
 Definition glop {J C} {D : functor J C} :
   ∀ (x y : Obj (CoCone D)) (f : Hom x y),
   @Hom (CoCone4 (fop D)) (cone_fop_of_co_cone x) (cone_fop_of_co_cone y).
@@ -691,6 +692,9 @@ cbn in *.
 Print Cone_Hom.
 exists f.
 intros j; cbn in *.
+Check cc_fam.
+Check cc_commute.
+...
 Show Proof.
 Search comp.
 Check cc_commute.
@@ -698,8 +702,12 @@ Check cc_commute.
 destruct x, y; cbn in *.
 specialize (cc_commute1 j j) as H1.
 ...
+*)
+
+Set Printing Implicit.
 
 Definition functor_CoCone4_of_CoCone {J C} {D : functor J C} :
   functor (CoCone D) (CoCone4 (fop D)) :=
   {| f_map_obj := cone_fop_of_co_cone : Obj (CoCone _) → Obj (CoCone4 _);
+     f_map_arr x y f := 2 |}.
      f_map_arr := glop |}.
