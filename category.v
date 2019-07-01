@@ -462,39 +462,42 @@ Qed.
    commutes. *)
 
 Record cone {J C} (D : functor J C) :=
-  { c_top : Obj C;
-    c_fam : ∀ j, Hom c_top (f_map_obj D j);
-    c_commute : ∀ i j (α : Hom i j), c_fam j = f_map_arr D α ◦ c_fam i }.
+  { cn_top : Obj C;
+    cn_fam : ∀ j, Hom cn_top (f_map_obj D j);
+    cn_commute : ∀ i j (α : Hom i j), cn_fam j = f_map_arr D α ◦ cn_fam i }.
 
 Record co_cone {J C} (D : functor J C) :=
   { cc_top : Obj C;
     cc_fam : ∀ j, Hom (f_map_obj D j) cc_top;
     cc_commute : ∀ i j (α : Hom i j), cc_fam i = cc_fam j ◦ f_map_arr D α }.
 
-Arguments c_top [_] [_] [_].
-Arguments c_fam [_] [_] [_].
+Arguments cn_top [_] [_] [_].
+Arguments cn_fam [_] [_] [_].
 Arguments cc_top [_] [_] [_].
 Arguments cc_fam [_] [_] [_].
 
-(* category of cones *)
+(* category of cones & co-cones *)
 
 Definition Cone_Hom {J C} {D : functor J C} (cn cn' : cone D) :=
-  { ϑ : Hom (c_top cn) (c_top cn') & ∀ j, c_fam cn j = c_fam cn' j ◦ ϑ }.
+  { ϑ : Hom (cn_top cn) (cn_top cn') & ∀ j, cn_fam cn j = cn_fam cn' j ◦ ϑ }.
+
+Definition CoCone_Hom {J C} {D : functor J C} (cc cc' : co_cone D) :=
+  { ϑ : Hom (cc_top cc) (cc_top cc') & ∀ j, cc_fam cc' j = ϑ ◦ cc_fam cc j }.
 
 Definition Cone_comp {J C} {D : functor J C} (c c' c'' : cone D)
   (ch : Cone_Hom c c') (ch' : Cone_Hom c' c'') : Cone_Hom c c'' :=
   existT
-    (λ ϑ, ∀ j, c_fam c j = c_fam c'' j ◦ ϑ)
+    (λ ϑ, ∀ j, cn_fam c j = cn_fam c'' j ◦ ϑ)
     (projT1 ch' ◦ projT1 ch)
     (λ j,
        eq_trans
          (eq_trans (projT2 ch j)
             (f_equal (comp (projT1 ch)) (projT2 ch' j)))
-         (assoc (projT1 ch) (projT1 ch') (c_fam c'' j))).
+         (assoc (projT1 ch) (projT1 ch') (cn_fam c'' j))).
 
 Definition Cone_id {J C} {D : functor J C} (c : cone D) : Cone_Hom c c :=
-   existT (λ ϑ, ∀ j, c_fam c j = c_fam c j ◦ ϑ) hid
-     (λ j, eq_sym (unit_l (c_fam c j))).
+   existT (λ ϑ, ∀ j, cn_fam c j = cn_fam c j ◦ ϑ) hid
+     (λ j, eq_sym (unit_l (cn_fam c j))).
 
 Theorem Cone_unit_l {J C} {D : functor J C} :
   ∀ (c c' : cone D) (f : Cone_Hom c c'),
