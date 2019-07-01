@@ -556,6 +556,19 @@ intros j.
 apply Hom_set.
 Defined.
 
+Theorem CoCone_unit_r {J C} {D : functor J C} :
+  ∀ (c c' : co_cone D) (f : CoCone_Hom c c'),
+  CoCone_comp c c' c' f (CoCone_id c') = f.
+Proof.
+intros.
+destruct f as (f & Hf); cbn.
+apply eq_existT_uncurried.
+exists (unit_r _).
+apply extensionality.
+intros j.
+apply Hom_set.
+Defined.
+
 Theorem Cone_assoc {J C} {D : functor J C} :
   ∀ (c c' c'' c''' : cone D) (f : Cone_Hom c c') (g : Cone_Hom c' c'')
     (h : Cone_Hom c'' c'''),
@@ -601,9 +614,9 @@ Definition CoCone {J C} (D : functor J C) :=
      Hom := CoCone_Hom;
      comp := CoCone_comp;
      hid := CoCone_id;
-     unit_l := CoCone_unit_l |}.
+     unit_l := CoCone_unit_l;
+     unit_r := CoCone_unit_r |}.
 ...
-     unit_r _ _ := unit_r;
      assoc _ _ _ _ := assoc;
      Hom_set c c' := Hom_set (cc_top D c) (cc_top D c') |}.
 
