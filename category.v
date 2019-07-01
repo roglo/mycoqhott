@@ -643,7 +643,6 @@ Definition is_colimit {J C} {D : functor J C} (cc : co_cone D) :=
 Definition cone_fop_obj_of_co_cone_obj {J C} {D : functor J C} :
     Obj (CoCone D) → Obj (CoCone2 (fop D)) :=
   λ cc,
-  let J' := op J in
   let C' := op C in
   let D' := fop D in
   {| c_top := cc_top D cc : Obj C';
@@ -653,7 +652,6 @@ Definition cone_fop_obj_of_co_cone_obj {J C} {D : functor J C} :
 Definition co_cone_obj_of_cone_fop_obj {J C} {D : functor J C} :
     Obj (CoCone2 (fop D)) → Obj (CoCone D) :=
   λ cn,
-  let J' := op J in
   let C' := op C in
   let D' := fop D in
   {| cc_top := c_top D' cn : Obj C;
