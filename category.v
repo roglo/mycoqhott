@@ -673,3 +673,14 @@ Definition functor_cCoCone_of_cCoCone2 {J C} {D : functor J C} :
      f_map_arr _ _ f := f;
      f_comp_prop x y z f g := eq_refl (@comp _ x y z f g);
      f_id_prop x := eq_refl (@hid _ (c_top (fop D) x)) |}.
+
+Definition are_isomorphic_categories (C D : category) :=
+  (functor C D * functor D C)%type.
+
+Theorem cCoCone_and_cCoCone2_are_isomorphic {J C} {D : functor J C} :
+  are_isomorphic_categories (cCoCone D) (cCoCone2 (fop D)).
+Proof.
+split.
+-apply functor_cCoCone2_of_cCoCone.
+-apply functor_cCoCone_of_cCoCone2.
+Qed.
