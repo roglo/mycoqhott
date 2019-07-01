@@ -680,12 +680,18 @@ Theorem F_CoCone_CoCone2_id2 {J C} {D : functor J C} :
   ∀ cc, f_map_obj F_CoCone_CoCone2 (f_map_obj F_CoCone2_CoCone cc) = cc.
 Proof. now intros; destruct cc. Qed.
 
+Check transport.
+
 Definition are_isomorphic_categories (C D : category) :=
   { F : functor C D &
     { G : functor D C &
       ((∀ x, f_map_obj G (f_map_obj F x) = x) *
        (∀ y, f_map_obj F (f_map_obj G y) = y))%type } }.
-(* etc. *)
+
+...
+       (∀ x y (f : Hom x y), f_map_arr G (f_map_arr F f) = f)
+
+Print functor.
 
 ...
 
