@@ -685,4 +685,5 @@ Qed.
 
 Definition functor_CoCone4_of_CoCone {J C} {D : functor J C} :
   functor (CoCone D) (CoCone4 (fop D)) :=
-  {| f_map_obj := cone_fop_of_co_cone : Obj (CoCone _) → Obj (CoCone4 _) |}.
+  {| f_map_obj := cone_fop_of_co_cone : Obj (CoCone _) → Obj (CoCone4 _);
+     f_map_arr _ _ f := 42 |}.
