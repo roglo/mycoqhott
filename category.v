@@ -501,10 +501,7 @@ exists (projT1 g ◦ projT1 f).
 intros j.
 etransitivity.
 apply (projT2 g j).
-etransitivity.
-2: symmetry.
-2: apply assoc.
-cbn.
+etransitivity; [ | symmetry; apply assoc ].
 f_equal.
 apply (projT2 f j).
 Qed.
