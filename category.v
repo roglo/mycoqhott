@@ -453,11 +453,11 @@ Record cone {J C} (D : functor J C) :=
 
 (* category of cones *)
 
-Definition cCone_Hom {J C} {D : functor J C} (cn cn' : cone D) :=
+Definition Cone_Hom {J C} {D : functor J C} (cn cn' : cone D) :=
   { ϑ & ∀ j, c_fam D cn j = c_fam D cn' j ◦ ϑ }.
 
-Definition cCone_comp {J C} {D : functor J C} (c c' c'' : cone D)
-  (ch : cCone_Hom c c') (ch' : cCone_Hom c' c'') : cCone_Hom c c'' :=
+Definition Cone_comp {J C} {D : functor J C} (c c' c'' : cone D)
+  (ch : Cone_Hom c c') (ch' : Cone_Hom c' c'') : Cone_Hom c c'' :=
   existT
     (λ ϑ, ∀ j, c_fam D c j = c_fam D c'' j ◦ ϑ)
     (projT1 ch' ◦ projT1 ch)
@@ -467,16 +467,16 @@ Definition cCone_comp {J C} {D : functor J C} (c c' c'' : cone D)
             (f_equal (comp (projT1 ch)) (projT2 ch' j)))
          (assoc (projT1 ch) (projT1 ch') (c_fam D c'' j))).
 
-Definition cCone_id {J C} {D : functor J C} (c : cone D) : cCone_Hom c c :=
+Definition Cone_id {J C} {D : functor J C} (c : cone D) : Cone_Hom c c :=
    existT (λ ϑ, ∀ j, c_fam D c j = c_fam D c j ◦ ϑ) hid
      (λ j, eq_sym (unit_l (c_fam D c j))).
 
-Theorem cCone_unit_l {J C} {D : functor J C} :
-  ∀ (c c' : cone D) (f : cCone_Hom c c'),
-  cCone_comp c c c' (cCone_id c) f = f.
+Theorem Cone_unit_l {J C} {D : functor J C} :
+  ∀ (c c' : cone D) (f : Cone_Hom c c'),
+  Cone_comp c c c' (Cone_id c) f = f.
 Proof.
 intros.
-unfold cCone_comp; cbn.
+unfold Cone_comp; cbn.
 destruct f as (f & Hf); cbn.
 apply eq_existT_uncurried.
 exists (unit_l _).
@@ -485,12 +485,12 @@ intros j.
 apply Hom_set.
 Defined.
 
-Theorem cCone_unit_r {J C} {D : functor J C} :
-  ∀ (c c' : cone D) (f : cCone_Hom c c'),
-  cCone_comp c c' c' f (cCone_id c') = f.
+Theorem Cone_unit_r {J C} {D : functor J C} :
+  ∀ (c c' : cone D) (f : Cone_Hom c c'),
+  Cone_comp c c' c' f (Cone_id c') = f.
 Proof.
 intros.
-unfold cCone_comp; cbn.
+unfold Cone_comp; cbn.
 destruct f as (f & Hf); cbn.
 apply eq_existT_uncurried.
 exists (unit_r _).
@@ -499,14 +499,14 @@ intros j.
 apply Hom_set.
 Defined.
 
-Theorem cCone_assoc {J C} {D : functor J C} :
-  ∀ (c c' c'' c''' : cone D) (f : cCone_Hom c c') (g : cCone_Hom c' c'')
-    (h : cCone_Hom c'' c'''),
-    cCone_comp c c' c''' f (cCone_comp c' c'' c''' g h) =
-    cCone_comp c c'' c''' (cCone_comp c c' c'' f g) h.
+Theorem Cone_assoc {J C} {D : functor J C} :
+  ∀ (c c' c'' c''' : cone D) (f : Cone_Hom c c') (g : Cone_Hom c' c'')
+    (h : Cone_Hom c'' c'''),
+    Cone_comp c c' c''' f (Cone_comp c' c'' c''' g h) =
+    Cone_comp c c'' c''' (Cone_comp c c' c'' f g) h.
 Proof.
 intros.
-unfold cCone_comp; cbn.
+unfold Cone_comp; cbn.
 apply eq_existT_uncurried.
 exists (assoc _ _ _).
 apply extensionality.
@@ -514,11 +514,11 @@ intros j.
 apply Hom_set.
 Defined.
 
-Theorem cCone_Hom_set {J C} {D : functor J C} :
-  ∀ c c' : cone D, isSet (cCone_Hom c c').
+Theorem Cone_Hom_set {J C} {D : functor J C} :
+  ∀ c c' : cone D, isSet (Cone_Hom c c').
 Proof.
 intros.
-unfold cCone_Hom.
+unfold Cone_Hom.
 apply is_set_is_set_sigT; [ | apply Hom_set ].
 intros f.
 intros p q.
@@ -527,20 +527,20 @@ intros x.
 apply Hom_set.
 Qed.
 
-Definition cCone {J C} (D : functor J C) :=
+Definition Cone {J C} (D : functor J C) :=
   {| Obj := cone D;
-     Hom := cCone_Hom;
-     comp := cCone_comp;
-     hid := cCone_id;
-     unit_l := cCone_unit_l;
-     unit_r := cCone_unit_r;
-     assoc := cCone_assoc;
-     Hom_set := cCone_Hom_set |}.
+     Hom := Cone_Hom;
+     comp := Cone_comp;
+     hid := Cone_id;
+     unit_l := Cone_unit_l;
+     unit_r := Cone_unit_r;
+     assoc := Cone_assoc;
+     Hom_set := Cone_Hom_set |}.
 
 (* A limit for a functor D : J → C is a terminal object in Cone(D) *)
 
 Definition is_limit {J C} {D : functor J C} (cn : cone D) :=
-  @is_terminal (cCone D) cn.
+  @is_terminal (Cone D) cn.
 
 (* Spelling out the definition, the limit of a diagram D has the
    following UMP: given any cone (C, cj) to D, there is a unique
@@ -604,7 +604,7 @@ Definition fop {C D} (F : functor C D) : functor (op C) (op D) :=
 
 (* category of co-cones *)
 
-Definition cCoCone {J C} (D : functor J C) :=
+Definition CoCone {J C} (D : functor J C) :=
   {| Obj := co_cone D;
      Hom f g := Hom (cc_top _ f) (cc_top _ g);
      comp _ _ _ := comp;
@@ -613,7 +613,7 @@ Definition cCoCone {J C} (D : functor J C) :=
      assoc _ _ _ _ := assoc;
      Hom_set c c' := Hom_set (cc_top D c) (cc_top D c') |}.
 
-Definition cCoCone2 {J C} (D_op : functor (op J) (op C)) :=
+Definition CoCone2 {J C} (D_op : functor (op J) (op C)) :=
   op
   {| Obj := cone D_op;
      Hom f g := Hom (c_top _ f) (c_top _ g);
@@ -623,25 +623,25 @@ Definition cCoCone2 {J C} (D_op : functor (op J) (op C)) :=
      assoc _ _ _ _ := assoc;
      Hom_set c c' := Hom_set (c_top D_op c) (c_top D_op c') |}.
 
-Definition cCoCone3 {J C} (D : functor J C) :=
+Definition CoCone3 {J C} (D : functor J C) :=
   op
   {| Obj := cone D;
-     Hom := cCone_Hom;
-     comp := cCone_comp;
-     hid := cCone_id;
-     unit_l := cCone_unit_l;
-     unit_r := cCone_unit_r;
-     assoc := cCone_assoc;
-     Hom_set := cCone_Hom_set |}.
+     Hom := Cone_Hom;
+     comp := Cone_comp;
+     hid := Cone_id;
+     unit_l := Cone_unit_l;
+     unit_r := Cone_unit_r;
+     assoc := Cone_assoc;
+     Hom_set := Cone_Hom_set |}.
 
-Definition cCoCone4 {J C} (D_op : functor (op J) (op C)) :=
-  op (cCone D_op).
+Definition CoCone4 {J C} (D_op : functor (op J) (op C)) :=
+  op (Cone D_op).
 
 Definition is_colimit {J C} {D : functor J C} (cc : co_cone D) :=
-  @is_initial (cCoCone D) cc.
+  @is_initial (CoCone D) cc.
 
 Definition cone_fop_obj_of_co_cone_obj {J C} {D : functor J C} :
-    Obj (cCoCone D) → Obj (cCoCone2 (fop D)) :=
+    Obj (CoCone D) → Obj (CoCone2 (fop D)) :=
   λ cc,
   let J' := op J in
   let C' := op C in
@@ -651,7 +651,7 @@ Definition cone_fop_obj_of_co_cone_obj {J C} {D : functor J C} :
      c_commute i j := cc_commute D cc j i |}.
 
 Definition co_cone_obj_of_cone_fop_obj {J C} {D : functor J C} :
-    Obj (cCoCone2 (fop D)) → Obj (cCoCone D) :=
+    Obj (CoCone2 (fop D)) → Obj (CoCone D) :=
   λ cn,
   let J' := op J in
   let C' := op C in
@@ -660,15 +660,15 @@ Definition co_cone_obj_of_cone_fop_obj {J C} {D : functor J C} :
      cc_fam j := c_fam D' cn j : @Hom C' (c_top D' cn) (@f_map_obj _ _ D j);
      cc_commute i j := c_commute D' cn j i |}.
 
-Definition functor_cCoCone2_of_cCoCone {J C} {D : functor J C} :
-  functor (cCoCone D) (cCoCone2 (fop D)) :=
+Definition functor_CoCone2_of_CoCone {J C} {D : functor J C} :
+  functor (CoCone D) (CoCone2 (fop D)) :=
   {| f_map_obj := cone_fop_obj_of_co_cone_obj;
      f_map_arr _ _ f := f;
      f_comp_prop _ _ _ _ _ := eq_refl;
      f_id_prop _ := eq_refl |}.
 
-Definition functor_cCoCone_of_cCoCone2 {J C} {D : functor J C} :
-  functor (cCoCone2 (fop D)) (cCoCone D) :=
+Definition functor_CoCone_of_CoCone2 {J C} {D : functor J C} :
+  functor (CoCone2 (fop D)) (CoCone D) :=
   {| f_map_obj := co_cone_obj_of_cone_fop_obj;
      f_map_arr _ _ f := f;
      f_comp_prop x y z f g := eq_refl (@comp _ x y z f g);
@@ -677,10 +677,10 @@ Definition functor_cCoCone_of_cCoCone2 {J C} {D : functor J C} :
 Definition are_isomorphic_categories (C D : category) :=
   (functor C D * functor D C)%type.
 
-Theorem cCoCone_and_cCoCone2_are_isomorphic {J C} {D : functor J C} :
-  are_isomorphic_categories (cCoCone D) (cCoCone2 (fop D)).
+Theorem CoCone_and_CoCone2_are_isomorphic {J C} {D : functor J C} :
+  are_isomorphic_categories (CoCone D) (CoCone2 (fop D)).
 Proof.
 split.
--apply functor_cCoCone2_of_cCoCone.
--apply functor_cCoCone_of_cCoCone2.
+-apply functor_CoCone2_of_CoCone.
+-apply functor_CoCone_of_CoCone2.
 Qed.
