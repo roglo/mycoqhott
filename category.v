@@ -682,3 +682,16 @@ split.
 -apply functor_CoCone2_of_CoCone.
 -apply functor_CoCone_of_CoCone2.
 Qed.
+
+Definition co_cone4_fop_obj_of_co_cone_obj {J C} {D : functor J C} :
+  Obj (CoCone D) → Obj (CoCone4 (fop D)) :=
+  λ cc,
+  let C' := op C in
+  let D' := fop D in
+  {| c_top := cc_top D cc : Obj C';
+     c_fam j := cc_fam D cc j : @Hom C' (cc_top D cc) (@f_map_obj _ _ D' j);
+     c_commute i j := cc_commute D cc j i |}.
+
+Definition functor_CoCone4_of_CoCone {J C} {D : functor J C} :
+  functor (CoCone D) (CoCone4 (fop D)) :=
+  {| f_map_obj := co_cone4_fop_obj_of_co_cone_obj |}.
