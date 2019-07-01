@@ -683,16 +683,38 @@ split.
 -apply functor_CoCone_of_CoCone2.
 Qed.
 
-Set Printing All.
-
-Definition glop {J C} {op_D : functor (op J) (op C)} :
-  ∀ (x y : Obj C) (f : Hom x y),
-    @Hom op_D x y.
-
-Definition functor_CoCone4_of_CoCone2 {J C} {op_D : functor (op J) (op C)} :
-  functor (CoCone4 op_D) (CoCone4 op_D) :=
+Definition functor_CoCone4_of_CoCone2 {J C} {D : functor J C} :
+  functor (CoCone4 (fop D)) (CoCone4 (fop D)) :=
   {| f_map_obj x := x;
-     f_map_arr x y f := 2 |}.
+     f_map_arr x y f := f;
+     f_comp_prop x y z f g := eq_refl;
+     f_id_prop _ := eq_refl |}.
+
+Definition functor_CoCone2_of_CoCone4 {J C} {D : functor J C} :
+  functor (CoCone2 (fop D)) (CoCone2 (fop D)) :=
+  {| f_map_obj x := x;
+     f_map_arr x y f := f;
+     f_comp_prop x y z f g := eq_refl;
+     f_id_prop _ := eq_refl |}.
+
+Definition functor_comp {A B C} : functor A B → functor B C → functor A C :=
+  λ F G,
+  {| f_map_obj a := f_map_obj (f_map_obj a);
+     f_map_arr _ _ f := f_map_arr G (f_map_arr F f);
+     f_comp_prop x y z f g :=
+       eq_trans (f_equal (@f_map_arr _ _ _ _ (f_map_obj z)) (f_comp_prop f g))
+                (f_comp_prop (f_map_arr F f) (f_map_arr F g));
+     f_id_prop x :=
+       eq_trans (f_equal (@f_map_arr _ _ _ _ (f_map_obj x)) f_id_prop) f_id_prop |}.
+
+... à voir...
+
+Definition functor_CoCone4_of_CoCone {J C} {D : functor J C} :
+    functor (CoCone D) (CoCone4 (fop D)) :=
+  functor_comp
+    (@functor_CoCone2_of_CoCone4 J C D)
+    (functor_CoCone_of_CoCone2).
+...
 
 (*
 Definition glop {J C} {D : functor J C} :
