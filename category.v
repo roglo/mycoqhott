@@ -683,6 +683,17 @@ split.
 -apply functor_CoCone_of_CoCone2.
 Qed.
 
+Set Printing All.
+
+Definition glop {J C} {op_D : functor (op J) (op C)} :
+  ∀ (x y : Obj C) (f : Hom x y),
+    @Hom op_D x y.
+
+Definition functor_CoCone4_of_CoCone2 {J C} {op_D : functor (op J) (op C)} :
+  functor (CoCone4 op_D) (CoCone4 op_D) :=
+  {| f_map_obj x := x;
+     f_map_arr x y f := 2 |}.
+
 (*
 Definition glop {J C} {D : functor J C} :
   ∀ (x y : Obj (CoCone D)) (f : Hom x y),
