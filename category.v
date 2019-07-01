@@ -30,10 +30,25 @@ Coercion Obj : category >-> Sortclass.
 Definition dom {C : category} {O1 O2 : Obj C} (f : Hom O1 O2) := O1.
 Definition cod {C : category} {O1 O2 : Obj C} (f : Hom O1 O2) := O2.
 
+(* The opposite (or “dual”) category C^op of a category C has the same
+   objects as C, and an arrow f : C → D in C^op is an arrow f : D → C
+   in C. That is C^op is just C with all of the arrows formally turned
+   around. *)
+
+Definition op C :=
+  {| Obj := Obj C;
+     Hom c d := Hom d c;
+     comp _ _ _ f g := f ◦ g;
+     hid := @hid C;
+     unit_l _ _ f := unit_r f;
+     unit_r _ _ f := unit_l f;
+     assoc _ _ _ _ f g h := eq_sym (assoc h g f);
+     Hom_set x y := Hom_set y x |}.
+
 Definition is_initial {C : category} (c : Obj C) :=
-  ∀ d, ∃ f : Hom c d, ∀ g, f = g.
+  ∀ d, ∃ f : Hom c d, ∀ g : Hom c d, f = g.
 Definition is_terminal {C : category} (c : Obj C) :=
-  ∀ d, ∃ f : Hom d c, ∀ g, f = g.
+  ∀ d, ∃ f : Hom d c, ∀ g : Hom d c, f = g.
 
 Class functor (C D : category) :=
   { f_map_obj : Obj C → Obj D;
@@ -451,25 +466,35 @@ Record cone {J C} (D : functor J C) :=
     c_fam : ∀ j, Hom c_top (f_map_obj D j);
     c_commute : ∀ i j (α : Hom i j), c_fam j = f_map_arr D α ◦ c_fam i }.
 
+Record co_cone {J C} (D : functor J C) :=
+  { cc_top : Obj C;
+    cc_fam : ∀ j, Hom (f_map_obj D j) cc_top;
+    cc_commute : ∀ i j (α : Hom i j), cc_fam i = cc_fam j ◦ f_map_arr D α }.
+
+Arguments c_top [_] [_] [_].
+Arguments c_fam [_] [_] [_].
+Arguments cc_top [_] [_] [_].
+Arguments cc_fam [_] [_] [_].
+
 (* category of cones *)
 
 Definition Cone_Hom {J C} {D : functor J C} (cn cn' : cone D) :=
-  { ϑ & ∀ j, c_fam D cn j = c_fam D cn' j ◦ ϑ }.
+  { ϑ : Hom (c_top cn) (c_top cn') & ∀ j, c_fam cn j = c_fam cn' j ◦ ϑ }.
 
 Definition Cone_comp {J C} {D : functor J C} (c c' c'' : cone D)
   (ch : Cone_Hom c c') (ch' : Cone_Hom c' c'') : Cone_Hom c c'' :=
   existT
-    (λ ϑ, ∀ j, c_fam D c j = c_fam D c'' j ◦ ϑ)
+    (λ ϑ, ∀ j, c_fam c j = c_fam c'' j ◦ ϑ)
     (projT1 ch' ◦ projT1 ch)
     (λ j,
        eq_trans
          (eq_trans (projT2 ch j)
             (f_equal (comp (projT1 ch)) (projT2 ch' j)))
-         (assoc (projT1 ch) (projT1 ch') (c_fam D c'' j))).
+         (assoc (projT1 ch) (projT1 ch') (c_fam c'' j))).
 
 Definition Cone_id {J C} {D : functor J C} (c : cone D) : Cone_Hom c c :=
-   existT (λ ϑ, ∀ j, c_fam D c j = c_fam D c j ◦ ϑ) hid
-     (λ j, eq_sym (unit_l (c_fam D c j))).
+   existT (λ ϑ, ∀ j, c_fam c j = c_fam c j ◦ ϑ) hid
+     (λ j, eq_sym (unit_l (c_fam c j))).
 
 Theorem Cone_unit_l {J C} {D : functor J C} :
   ∀ (c c' : cone D) (f : Cone_Hom c c'),
@@ -537,6 +562,20 @@ Definition Cone {J C} (D : functor J C) :=
      assoc := Cone_assoc;
      Hom_set := Cone_Hom_set |}.
 
+(* category of co-cones *)
+
+Definition CoCone {J C} (D : functor J C) :=
+  {| Obj := co_cone D;
+     Hom := CoCone_Hom |}.
+...
+     comp _ _ _ := comp;
+     unit_l _ _ := unit_l;
+     unit_r _ _ := unit_r;
+     assoc _ _ _ _ := assoc;
+     Hom_set c c' := Hom_set (cc_top D c) (cc_top D c') |}.
+
+...
+
 (* A limit for a functor D : J → C is a terminal object in Cone(D) *)
 
 Definition is_limit {J C} {D : functor J C} (cn : cone D) :=
@@ -576,26 +615,6 @@ remember
 now rewrite (H1 hh); subst hh.
 Qed.
 
-(* The opposite (or “dual”) category C^op of a category C has the same
-   objects as C, and an arrow f : C → D in C^op is an arrow f : D → C
-   in C. That is C^op is just C with all of the arrows formally turned
-   around. *)
-
-Definition op C :=
-  {| Obj := Obj C;
-     Hom c d := Hom d c;
-     comp _ _ _ f g := f ◦ g;
-     hid := @hid C;
-     unit_l _ _ f := unit_r f;
-     unit_r _ _ f := unit_l f;
-     assoc _ _ _ _ f g h := eq_sym (assoc h g f);
-     Hom_set x y := Hom_set y x |}.
-
-Record co_cone {J C} (D : functor J C) :=
-  { cc_top : Obj C;
-    cc_fam : ∀ j, Hom (f_map_obj D j) cc_top;
-    cc_commute : ∀ i j α, cc_fam i = cc_fam j ◦ f_map_arr D α }.
-
 Definition fop {C D} (F : functor C D) : functor (op C) (op D) :=
   {| f_map_obj (x : Obj (op C)) := (@f_map_obj C D F x : Obj (op D));
      f_map_arr _ _ f := f_map_arr F f;
@@ -603,6 +622,8 @@ Definition fop {C D} (F : functor C D) : functor (op C) (op D) :=
      f_id_prop a := @f_id_prop _ _ F a |}.
 
 (* category of co-cones *)
+
+... not good ...
 
 Definition CoCone {J C} (D : functor J C) :=
   {| Obj := co_cone D;
