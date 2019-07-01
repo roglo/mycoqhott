@@ -640,8 +640,8 @@ Definition CoCone4 {J C} (D_op : functor (op J) (op C)) :=
 Definition is_colimit {J C} {D : functor J C} (cc : co_cone D) :=
   @is_initial (CoCone D) cc.
 
-Definition cone_fop_obj_of_co_cone_obj {J C} {D : functor J C} :
-    Obj (CoCone D) → Obj (CoCone2 (fop D)) :=
+Definition cone_fop_of_co_cone {J C} {D : functor J C} :
+    co_cone D → cone (fop D) :=
   λ cc,
   let C' := op C in
   let D' := fop D in
@@ -649,8 +649,8 @@ Definition cone_fop_obj_of_co_cone_obj {J C} {D : functor J C} :
      c_fam j := cc_fam D cc j : @Hom C' (cc_top D cc) (@f_map_obj _ _ D' j);
      c_commute i j := cc_commute D cc j i |}.
 
-Definition co_cone_obj_of_cone_fop_obj {J C} {D : functor J C} :
-    Obj (CoCone2 (fop D)) → Obj (CoCone D) :=
+Definition co_cone_of_cone_fop {J C} {D : functor J C} :
+    cone (fop D) → co_cone D :=
   λ cn,
   let C' := op C in
   let D' := fop D in
@@ -660,14 +660,14 @@ Definition co_cone_obj_of_cone_fop_obj {J C} {D : functor J C} :
 
 Definition functor_CoCone2_of_CoCone {J C} {D : functor J C} :
   functor (CoCone D) (CoCone2 (fop D)) :=
-  {| f_map_obj := cone_fop_obj_of_co_cone_obj;
+  {| f_map_obj := cone_fop_of_co_cone : Obj (CoCone _) → Obj (CoCone2 _);
      f_map_arr _ _ f := f;
      f_comp_prop _ _ _ _ _ := eq_refl;
      f_id_prop _ := eq_refl |}.
 
 Definition functor_CoCone_of_CoCone2 {J C} {D : functor J C} :
   functor (CoCone2 (fop D)) (CoCone D) :=
-  {| f_map_obj := co_cone_obj_of_cone_fop_obj;
+  {| f_map_obj := co_cone_of_cone_fop : Obj (CoCone2 _) → Obj (CoCone _);
      f_map_arr _ _ f := f;
      f_comp_prop x y z f g := eq_refl (@comp _ x y z f g);
      f_id_prop x := eq_refl (@hid _ (c_top (fop D) x)) |}.
@@ -683,15 +683,6 @@ split.
 -apply functor_CoCone_of_CoCone2.
 Qed.
 
-Definition co_cone4_fop_obj_of_co_cone_obj {J C} {D : functor J C} :
-  Obj (CoCone D) → Obj (CoCone4 (fop D)) :=
-  λ cc,
-  let C' := op C in
-  let D' := fop D in
-  {| c_top := cc_top D cc : Obj C';
-     c_fam j := cc_fam D cc j : @Hom C' (cc_top D cc) (@f_map_obj _ _ D' j);
-     c_commute i j := cc_commute D cc j i |}.
-
 Definition functor_CoCone4_of_CoCone {J C} {D : functor J C} :
   functor (CoCone D) (CoCone4 (fop D)) :=
-  {| f_map_obj := co_cone4_fop_obj_of_co_cone_obj |}.
+  {| f_map_obj := cone_fop_of_co_cone : Obj (CoCone _) → Obj (CoCone4 _) |}.
