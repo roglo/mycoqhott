@@ -504,15 +504,15 @@ apply (projT2 g j).
 etransitivity; [ | symmetry; apply assoc ].
 f_equal.
 apply (projT2 f j).
-Qed.
-
-Print CoCone_comp.
-
-...
+Defined.
 
 Definition Cone_id {J C} {D : functor J C} (c : cone D) : Cone_Hom c c :=
    existT (λ ϑ, ∀ j, cn_fam c j = cn_fam c j ◦ ϑ) hid
      (λ j, eq_sym (unit_l (cn_fam c j))).
+
+Definition CoCone_id {J C} {D : functor J C} (c : co_cone D) : CoCone_Hom c c :=
+   existT (λ ϑ, ∀ j, cc_fam c j = ϑ ◦ cc_fam c j) hid
+     (λ j, eq_sym (unit_r (cc_fam c j))).
 
 Theorem Cone_unit_l {J C} {D : functor J C} :
   ∀ (c c' : cone D) (f : Cone_Hom c c'),
@@ -520,6 +520,20 @@ Theorem Cone_unit_l {J C} {D : functor J C} :
 Proof.
 intros.
 unfold Cone_comp; cbn.
+destruct f as (f & Hf); cbn.
+apply eq_existT_uncurried.
+exists (unit_l _).
+apply extensionality.
+intros j.
+apply Hom_set.
+Defined.
+
+Theorem CoCone_unit_l {J C} {D : functor J C} :
+  ∀ (c c' : co_cone D) (f : CoCone_Hom c c'),
+  CoCone_comp c c c' (CoCone_id c) f = f.
+Proof.
+intros.
+unfold CoCone_comp; cbn.
 destruct f as (f & Hf); cbn.
 apply eq_existT_uncurried.
 exists (unit_l _).
@@ -585,10 +599,10 @@ Definition Cone {J C} (D : functor J C) :=
 Definition CoCone {J C} (D : functor J C) :=
   {| Obj := co_cone D;
      Hom := CoCone_Hom;
-     comp := CoCone_comp |}.
+     comp := CoCone_comp;
+     hid := CoCone_id;
+     unit_l := CoCone_unit_l |}.
 ...
-     comp _ _ _ := comp;
-     unit_l _ _ := unit_l;
      unit_r _ _ := unit_r;
      assoc _ _ _ _ := assoc;
      Hom_set c c' := Hom_set (cc_top D c) (cc_top D c') |}.
