@@ -667,23 +667,13 @@ Definition functor_cCoCone2_of_cCoCone {J C} {D : functor J C} :
      f_comp_prop _ _ _ _ _ := eq_refl;
      f_id_prop _ := eq_refl |}.
 
-Theorem pouet2 {J C} {D : functor J C} :
-  ∀ (op_D := @fop J C D : functor (op J) (op C))
-     (x y z : Obj (@cCoCone2 J C (@fop J C D)))
-     (f : @Hom (@cCoCone2 J C (@fop J C D)) x y)
-     (g : @Hom (@cCoCone2 J C (@fop J C D)) y z),
-  @eq
-    (@Hom (@cCoCone J C D) (@co_cone_obj_of_cone_fop_obj J C D x)
-       (@co_cone_obj_of_cone_fop_obj J C D z))
-    (@comp (@cCoCone2 J C (@fop J C D)) x y z f g)
-    (@comp (@cCoCone J C D) (@co_cone_obj_of_cone_fop_obj J C D x)
-       (@co_cone_obj_of_cone_fop_obj J C D y)
-       (@co_cone_obj_of_cone_fop_obj J C D z) f g).
-Admitted.
-
 Definition functor_cCoCone_of_cCoCone2 {J C} {D : functor J C} :
   functor (cCoCone2 (fop D)) (cCoCone D) :=
   {| f_map_obj := co_cone_obj_of_cone_fop_obj;
      f_map_arr _ _ f := f;
-     f_comp_prop := pouet2;
+     f_comp_prop x y z f g :=
+       @eq_refl
+         (@Hom (@cCoCone J C D) (@co_cone_obj_of_cone_fop_obj J C D x)
+               (@co_cone_obj_of_cone_fop_obj J C D z))
+         (@comp (@cCoCone2 J C (@fop J C D)) x y z f g);
      f_id_prop x := eq_refl (@hid C (c_top (fop D) x)) |}.
