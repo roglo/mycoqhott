@@ -42,7 +42,7 @@ Class functor (C D : category) :=
       f_map_arr (g ◦ f) = f_map_arr g ◦ f_map_arr f;
     f_id_prop {a} : @f_map_arr a _ hid = hid }.
 
-Arguments f_map_obj [_] [_] [_].
+Arguments f_map_obj [_] [_] _.
 Arguments f_map_arr [_] [_] _ [_] [_].
 
 Definition is_isomorphism {C : category} {A B : Obj C} (f : Hom A B) :=
@@ -448,7 +448,7 @@ Qed.
 
 Record cone {J C} (D : functor J C) :=
   { c_top : Obj C;
-    c_fam : ∀ j, Hom c_top (f_map_obj j);
+    c_fam : ∀ j, Hom c_top (f_map_obj D j);
     c_commute : ∀ i j (α : Hom i j), c_fam j = f_map_arr D α ◦ c_fam i }.
 
 (* category of cones *)
@@ -593,7 +593,7 @@ Definition op C :=
 
 Record co_cone {J C} (D : functor J C) :=
   { cc_top : Obj C;
-    cc_fam : ∀ j, Hom (f_map_obj j) cc_top;
+    cc_fam : ∀ j, Hom (f_map_obj D j) cc_top;
     cc_commute : ∀ i j α, cc_fam i = cc_fam j ◦ f_map_arr D α }.
 
 Definition fop {C D} (F : functor C D) : functor (op C) (op D) :=
@@ -658,19 +658,36 @@ Definition co_cone_of_cone_fop {J C} {D : functor J C} :
      cc_fam j := c_fam D' cn j : @Hom C' (c_top D' cn) (@f_map_obj _ _ D j);
      cc_commute i j := c_commute D' cn j i |}.
 
-Definition functor_CoCone2_of_CoCone {J C} {D : functor J C} :
-  functor (CoCone D) (CoCone2 (fop D)) :=
+Definition F_CoCone_CoCone2 {J C} {D : functor J C} :
+    functor (CoCone D) (CoCone2 (fop D)) :=
   {| f_map_obj := cone_fop_of_co_cone : Obj (CoCone _) → Obj (CoCone2 _);
      f_map_arr _ _ f := f;
      f_comp_prop _ _ _ _ _ := eq_refl;
      f_id_prop _ := eq_refl |}.
 
-Definition functor_CoCone_of_CoCone2 {J C} {D : functor J C} :
-  functor (CoCone2 (fop D)) (CoCone D) :=
+Definition F_CoCone2_CoCone {J C} {D : functor J C} :
+    functor (CoCone2 (fop D)) (CoCone D) :=
   {| f_map_obj := co_cone_of_cone_fop : Obj (CoCone2 _) → Obj (CoCone _);
      f_map_arr _ _ f := f;
      f_comp_prop x y z f g := eq_refl (@comp _ x y z f g);
      f_id_prop x := eq_refl (@hid _ (c_top (fop D) x)) |}.
+
+Theorem F_CoCone_CoCone2_id1 {J C} {D : functor J C} :
+  ∀ cc, f_map_obj F_CoCone2_CoCone (f_map_obj F_CoCone_CoCone2 cc) = cc.
+Proof. now intros; destruct cc. Qed.
+
+Theorem F_CoCone_CoCone2_id2 {J C} {D : functor J C} :
+  ∀ cc, f_map_obj F_CoCone_CoCone2 (f_map_obj F_CoCone2_CoCone cc) = cc.
+Proof. now intros; destruct cc. Qed.
+
+Definition are_isomorphic_categories (C D : category) :=
+  { F : functor C D &
+    { G : functor D C &
+      ((∀ x, f_map_obj G (f_map_obj F x) = x) *
+       (∀ y, f_map_obj F (f_map_obj G y) = y))%type } }.
+(* etc. *)
+
+...
 
 Definition are_equivalent_categories (C D : category) :=
   (functor C D * functor D C)%type.
@@ -699,13 +716,13 @@ Definition functor_CoCone2_of_CoCone4 {J C} {D : functor J C} :
 
 Definition functor_comp {A B C} : functor A B → functor B C → functor A C :=
   λ F G,
-  {| f_map_obj a := f_map_obj (f_map_obj a);
+  {| f_map_obj a := f_map_obj G (f_map_obj F a);
      f_map_arr _ _ f := f_map_arr G (f_map_arr F f);
      f_comp_prop x y z f g :=
-       eq_trans (f_equal (@f_map_arr _ _ _ _ (f_map_obj z)) (f_comp_prop f g))
+       eq_trans (f_equal (@f_map_arr _ _ _ _ (f_map_obj F z)) (f_comp_prop f g))
                 (f_comp_prop (f_map_arr F f) (f_map_arr F g));
      f_id_prop x :=
-       eq_trans (f_equal (@f_map_arr _ _ _ _ (f_map_obj x)) f_id_prop) f_id_prop |}.
+       eq_trans (f_equal (@f_map_arr _ _ _ _ (f_map_obj F x)) f_id_prop) f_id_prop |}.
 
 ... à voir...
 
