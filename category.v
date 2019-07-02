@@ -373,8 +373,8 @@ Proof. now intros; destruct cc. Qed.
 Definition are_isomorphic_categories (C D : category) :=
   { F : functor C D &
     { G : functor D C &
-      ((∀ x, f_map_obj G (f_map_obj F x) = x) *
-       (∀ y, f_map_obj F (f_map_obj G y) = y))%type } }.
+      ((∀ x : Obj C, f_map_obj G (f_map_obj F x) = x) *
+       (∀ y : Obj D, f_map_obj F (f_map_obj G y) = y))%type } }.
 
 ...
 
