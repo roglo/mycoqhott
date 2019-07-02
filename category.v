@@ -712,7 +712,6 @@ Definition cone_fop_of_co_cone {J C} {D : functor J C} :
      cn_fam j := cc_fam cc j : @Hom C' (cc_top cc) (@f_map_obj _ _ D' j);
      cn_commute i j := cc_commute D cc j i |}.
 
-(*
 Definition co_cone_of_cone_fop {J C} {D : functor J C} :
     cone (fop D) → co_cone D :=
   λ cn,
@@ -722,6 +721,7 @@ Definition co_cone_of_cone_fop {J C} {D : functor J C} :
      cc_fam j := cn_fam cn j : @Hom C' (cn_top cn) (@f_map_obj _ _ D j);
      cc_commute i j := cn_commute D' cn j i |}.
 
+(*
 Definition cone_of_co_cone {J C} {D : functor J C} : co_cone D → cone D :=
   λ cc,
   {| cn_top := cc_top cc;
@@ -743,6 +743,21 @@ intros j.
 apply Hom_set.
 Defined.
 
+Definition F_CoCone2_CoCone_comp_prop {J C} {D : functor J C} {x y z : Obj (CoCone2 D)} :
+  ∀ (f : @Hom (@CoCone2 J C D) x y) (g : @Hom (@CoCone2 J C D) y z),
+  @eq (@Hom (@CoCone J C D) (@co_cone_of_cone_fop J C D x) (@co_cone_of_cone_fop J C D z))
+    (@comp (@CoCone2 J C D) x y z f g)
+    (@comp (@CoCone J C D) (@co_cone_of_cone_fop J C D x) (@co_cone_of_cone_fop J C D y)
+       (@co_cone_of_cone_fop J C D z) f g).
+Proof.
+intros; cbn.
+apply eq_existT_uncurried; cbn.
+exists eq_refl; cbn.
+apply extensionality.
+intros j.
+apply Hom_set.
+Defined.
+
 Definition F_CoCone_CoCone2 {J C} {D : functor J C} :
     functor (CoCone D) (CoCone2 D) :=
   {| f_map_obj := cone_fop_of_co_cone : Obj (CoCone D) → Obj (CoCone2 D);
@@ -750,13 +765,13 @@ Definition F_CoCone_CoCone2 {J C} {D : functor J C} :
      f_comp_prop _ _ _ := F_CoCone_CoCone2_comp_prop;
      f_id_prop _ := eq_refl |}.
 
-...
-
 Definition F_CoCone2_CoCone {J C} {D : functor J C} :
-    functor (CoCone2 (fop D)) (CoCone D) :=
-  {| f_map_obj := co_cone_of_cone_fop : Obj (CoCone2 _) → Obj (CoCone _);
+    functor (CoCone2 D) (CoCone D) :=
+  {| f_map_obj := co_cone_of_cone_fop : Obj (CoCone2 D) → Obj (CoCone D);
      f_map_arr _ _ f := f;
-     f_comp_prop x y z f g := eq_refl (@comp _ x y z f g);
+     f_comp_prop _ _ _ := F_CoCone2_CoCone_comp_prop |}.
+...
+     f_comp_prop x y z f g := eq_refl (@comp _ x y z f g) |}.
      f_id_prop x := eq_refl (@hid _ (c_top (fop D) x)) |}.
 
 Theorem F_CoCone_CoCone2_id1 {J C} {D : functor J C} :
