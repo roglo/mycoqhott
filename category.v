@@ -377,4 +377,6 @@ Definition are_isomorphic_categories (C D : category) :=
       ((∀ x, f_map_obj G (f_map_obj F x) = x) *
        (∀ y, f_map_obj F (f_map_obj G y) = y))%type } }.
 ...
-       (∀ x y (f : Hom x y), f_map_arr G (f_map_arr F f) = f)
+
+"transport" to be used
+       (∀ x y (f : Hom x y), f_map_arr G (f_map_arr F f) = f))%type } }.
