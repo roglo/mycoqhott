@@ -49,18 +49,18 @@ Definition is_terminal {C : category} (c : Obj C) :=
 
 Class functor (C D : category) :=
   { f_map_obj : Obj C → Obj D;
-    f_map_arr {a b} : Hom a b → Hom (f_map_obj a) (f_map_obj b);
+    f_map_hom {a b} : Hom a b → Hom (f_map_obj a) (f_map_obj b);
     f_comp_prop {a b c} (f : Hom a b) (g : Hom b c) :
-      f_map_arr (g ◦ f) = f_map_arr g ◦ f_map_arr f;
-    f_id_prop {a} : @f_map_arr a _ hid = hid }.
+      f_map_hom (g ◦ f) = f_map_hom g ◦ f_map_hom f;
+    f_id_prop {a} : @f_map_hom a _ hid = hid }.
 
 Arguments f_map_obj [_] [_] _.
-Arguments f_map_arr [_] [_] _ [_] [_].
+Arguments f_map_hom [_] [_] _ [_] [_].
 
 Definition fop {C D} : functor C D → functor (op C) (op D) :=
   λ F,
   {| f_map_obj (x : Obj (op C)) := (@f_map_obj C D F x : Obj (op D));
-     f_map_arr _ _ f := f_map_arr F f;
+     f_map_hom _ _ f := f_map_hom F f;
      f_comp_prop _ _ _ f g := @f_comp_prop _ _ F _ _ _ g f;
      f_id_prop a := @f_id_prop _ _ F a |}.
 
@@ -75,12 +75,12 @@ Definition is_isomorphism {C : category} {A B : Obj C} (f : Hom A B) :=
 Record cone {J C} (D : functor J C) :=
   { cn_top : Obj C;
     cn_fam : ∀ j, Hom cn_top (f_map_obj D j);
-    cn_commute : ∀ i j (α : Hom i j), cn_fam j = f_map_arr D α ◦ cn_fam i }.
+    cn_commute : ∀ i j (α : Hom i j), cn_fam j = f_map_hom D α ◦ cn_fam i }.
 
 Record co_cone {J C} (D : functor J C) :=
   { cc_top : Obj C;
     cc_fam : ∀ j, Hom (f_map_obj D j) cc_top;
-    cc_commute : ∀ i j (α : Hom i j), cc_fam i = cc_fam j ◦ f_map_arr D α }.
+    cc_commute : ∀ i j (α : Hom i j), cc_fam i = cc_fam j ◦ f_map_hom D α }.
 
 Arguments cn_top [_] [_] [_].
 Arguments cn_fam [_] [_] [_].
@@ -302,7 +302,7 @@ remember
 now rewrite (H1 hh); subst hh.
 Qed.
 
-(* other definition of category of co-cones *)
+(* another definition of category of co-cones *)
 
 Definition CoCone2 {J C} (D : functor J C) := op (Cone (fop D)).
 
@@ -351,14 +351,14 @@ Defined.
 Definition F_CoCone_CoCone2 {J C} {D : functor J C} :
     functor (CoCone D) (CoCone2 D) :=
   {| f_map_obj := cone_fop_of_co_cone : Obj (CoCone D) → Obj (CoCone2 D);
-     f_map_arr _ _ f := f;
+     f_map_hom _ _ f := f;
      f_comp_prop _ _ _ := F_CoCone_CoCone2_comp_prop;
      f_id_prop _ := eq_refl |}.
 
 Definition F_CoCone2_CoCone {J C} {D : functor J C} :
     functor (CoCone2 D) (CoCone D) :=
   {| f_map_obj := co_cone_of_cone_fop : Obj (CoCone2 D) → Obj (CoCone D);
-     f_map_arr _ _ f := f;
+     f_map_hom _ _ f := f;
      f_comp_prop _ _ _ := F_CoCone2_CoCone_comp_prop;
      f_id_prop _ := eq_refl |}.
 
@@ -387,9 +387,9 @@ Definition is_iso_betw_cat {C D} (F : functor C D) :=
     { GF : ∀ x : Obj C, f_map_obj G (f_map_obj F x) = x &
       { FG : ∀ y : Obj D, f_map_obj F (f_map_obj G y) = y &
         ((∀ (x y : Obj C) (f : Hom x y),
-          f_map_arr G (f_map_arr F f) = transport2 GF x y f) *
+          f_map_hom G (f_map_hom F f) = transport2 GF x y f) *
          (∀ (x y : Obj D) (g : Hom x y),
-          f_map_arr F (f_map_arr G g) = transport2 FG x y g))%type }}}.
+          f_map_hom F (f_map_hom G g) = transport2 FG x y g))%type }}}.
 
 Definition are_isomorphic_categories (C D : category) :=
   { F : functor C D & is_iso_betw_cat F }.
@@ -405,3 +405,10 @@ split.
 -now intros; destruct x, y.
 -now intros; destruct x, y.
 Qed.
+
+(* natural transformation *)
+
+Record natural_transformation {C D} {F G : functor C D} :=
+  { nt_hom : ∀ x : Obj C, Hom (f_map_obj F x) (f_map_obj G x);
+    nt_hom_prop : ∀ (x y : Obj C) (f : Hom x y),
+      nt_hom y ◦ f_map_hom F f = f_map_hom G f ◦ nt_hom x }.
