@@ -410,5 +410,5 @@ Qed.
 
 Record natural_transformation {C D} {F G : functor C D} :=
   { nt_hom : ∀ x : Obj C, Hom (f_map_obj F x) (f_map_obj G x);
-    nt_hom_prop : ∀ (x y : Obj C) (f : Hom x y),
+    nt_commute : ∀ (x y : Obj C) (f : Hom x y),
       nt_hom y ◦ f_map_hom F f = f_map_hom G f ◦ nt_hom x }.
