@@ -415,7 +415,14 @@ Record natural_transformation {C D} (F G : functor C D) :=
 
 (* category of functors *)
 
+Definition Fun_comp {C D} (F G H : functor C D) :
+  natural_transformation F G
+  → natural_transformation G H → natural_transformation F H :=
+  λ η η',
+  {| nt_hom x := nt_hom _ _ η' x ◦ nt_hom _ _ η x;
+     nt_commute := 42 |}.
+
 Definition Fun C D :=
   {| Obj := functor C D;
      Hom := natural_transformation;
-     comp := 42 |}.
+     comp := Fun_comp |}.
