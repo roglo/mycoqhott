@@ -492,25 +492,27 @@ Definition CoCone_Hom {J C} {D : functor J C} (cc cc' : co_cone D) :=
   { ϑ : Hom (cc_top cc) (cc_top cc') & ∀ j, cc_fam cc' j = ϑ ◦ cc_fam cc j }.
 
 Definition Cone_comp {J C} {D : functor J C} (c c' c'' : cone D)
-  (f : Cone_Hom c c') (g : Cone_Hom c' c'') : Cone_Hom c c'' :=
-  existT
-    (λ ϑ, ∀ j, cn_fam c j = cn_fam c'' j ◦ ϑ)
-    (projT1 g ◦ projT1 f)
-    (λ j,
-       eq_trans
-         (eq_trans (projT2 f j)
-            (f_equal (comp (projT1 f)) (projT2 g j)))
-         (assoc (projT1 f) (projT1 g) (cn_fam c'' j))).
-
-Definition CoCone_comp {J C} {D : functor J C} (c c' c'' : co_cone D)
-  (f : CoCone_Hom c c') (g : CoCone_Hom c' c'') : CoCone_Hom c c''.
+  (f : Cone_Hom c c') (g : Cone_Hom c' c'') : Cone_Hom c c''.
+Proof.
 exists (projT1 g ◦ projT1 f).
 intros j.
 etransitivity.
-apply (projT2 g j).
-etransitivity; [ | symmetry; apply assoc ].
-f_equal.
-apply (projT2 f j).
+-apply (projT2 f j).
+-etransitivity; [ | apply assoc ].
+ f_equal.
+ apply (projT2 g j).
+Defined.
+
+Definition CoCone_comp {J C} {D : functor J C} (c c' c'' : co_cone D)
+  (f : CoCone_Hom c c') (g : CoCone_Hom c' c'') : CoCone_Hom c c''.
+Proof.
+exists (projT1 g ◦ projT1 f).
+intros j.
+etransitivity.
+-apply (projT2 g j).
+-etransitivity; [ | symmetry; apply assoc ].
+ f_equal.
+ apply (projT2 f j).
 Defined.
 
 Definition Cone_id {J C} {D : functor J C} (c : cone D) : Cone_Hom c c :=
@@ -734,7 +736,7 @@ Definition F_CoCone_CoCone2_comp_prop {J C} {D : functor J C} {x y z : Obj (CoCo
        (cone_fop_of_co_cone z) f g.
 Proof.
 intros; cbn.
-apply eq_existT_uncurried.
+apply eq_existT_uncurried; cbn.
 exists eq_refl; cbn.
 apply extensionality.
 intros j.
