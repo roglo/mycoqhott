@@ -1,2 +1,4 @@
 Tested with coq 8.10
 
+Trying to implement the HoTT book in Coq: not terminated.
+Implementing categories in Coq; work in progress; file category.v
