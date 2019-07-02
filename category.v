@@ -24,9 +24,6 @@ Arguments Hom [_].
 Notation "g '◦' f" := (comp f g) (at level 40, left associativity).
 
 Arguments Obj : clear implicits.
-(*
-Coercion Obj : category >-> Sortclass.
-*)
 
 Definition dom {C : category} {O1 O2 : Obj C} (f : Hom O1 O2) := O1.
 Definition cod {C : category} {O1 O2 : Obj C} (f : Hom O1 O2) := O2.
