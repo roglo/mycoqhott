@@ -363,8 +363,6 @@ Definition F_CoCone2_CoCone {J C} {D : functor J C} :
      f_comp_prop _ _ _ := F_CoCone2_CoCone_comp_prop;
      f_id_prop _ := eq_refl |}.
 
-...
-
 Theorem F_CoCone_CoCone2_id1 {J C} {D : functor J C} :
   ∀ cc, f_map_obj F_CoCone2_CoCone (f_map_obj F_CoCone_CoCone2 cc) = cc.
 Proof. now intros; destruct cc. Qed.
@@ -373,90 +371,10 @@ Theorem F_CoCone_CoCone2_id2 {J C} {D : functor J C} :
   ∀ cc, f_map_obj F_CoCone_CoCone2 (f_map_obj F_CoCone2_CoCone cc) = cc.
 Proof. now intros; destruct cc. Qed.
 
-Check transport.
-
 Definition are_isomorphic_categories (C D : category) :=
   { F : functor C D &
     { G : functor D C &
       ((∀ x, f_map_obj G (f_map_obj F x) = x) *
        (∀ y, f_map_obj F (f_map_obj G y) = y))%type } }.
-
 ...
        (∀ x y (f : Hom x y), f_map_arr G (f_map_arr F f) = f)
-
-Print functor.
-
-...
-
-Definition are_equivalent_categories (C D : category) :=
-  (functor C D * functor D C)%type.
-
-Theorem CoCone_and_CoCone2_are_equivalent {J C} {D : functor J C} :
-  are_equivalent_categories (CoCone D) (CoCone2 (fop D)).
-Proof.
-split.
--apply functor_CoCone2_of_CoCone.
--apply functor_CoCone_of_CoCone2.
-Qed.
-
-Definition functor_CoCone4_of_CoCone2 {J C} {D : functor J C} :
-  functor (CoCone4 (fop D)) (CoCone4 (fop D)) :=
-  {| f_map_obj x := x;
-     f_map_arr x y f := f;
-     f_comp_prop x y z f g := eq_refl;
-     f_id_prop _ := eq_refl |}.
-
-Definition functor_CoCone2_of_CoCone4 {J C} {D : functor J C} :
-  functor (CoCone2 (fop D)) (CoCone2 (fop D)) :=
-  {| f_map_obj x := x;
-     f_map_arr x y f := f;
-     f_comp_prop x y z f g := eq_refl;
-     f_id_prop _ := eq_refl |}.
-
-Definition functor_comp {A B C} : functor A B → functor B C → functor A C :=
-  λ F G,
-  {| f_map_obj a := f_map_obj G (f_map_obj F a);
-     f_map_arr _ _ f := f_map_arr G (f_map_arr F f);
-     f_comp_prop x y z f g :=
-       eq_trans (f_equal (@f_map_arr _ _ _ _ (f_map_obj F z)) (f_comp_prop f g))
-                (f_comp_prop (f_map_arr F f) (f_map_arr F g));
-     f_id_prop x :=
-       eq_trans (f_equal (@f_map_arr _ _ _ _ (f_map_obj F x)) f_id_prop) f_id_prop |}.
-
-... à voir...
-
-Definition functor_CoCone4_of_CoCone {J C} {D : functor J C} :
-    functor (CoCone D) (CoCone4 (fop D)) :=
-  functor_comp
-    (@functor_CoCone2_of_CoCone4 J C D)
-    (functor_CoCone_of_CoCone2).
-...
-
-(*
-Definition glop {J C} {D : functor J C} :
-  ∀ (x y : Obj (CoCone D)) (f : Hom x y),
-  @Hom (CoCone4 (fop D)) (cone_fop_of_co_cone x) (cone_fop_of_co_cone y).
-intros.
-cbn in *.
-Print Cone_Hom.
-exists f.
-intros j; cbn in *.
-Check cc_fam.
-Check cc_commute.
-...
-Show Proof.
-Search comp.
-Check cc_commute.
-...
-destruct x, y; cbn in *.
-specialize (cc_commute1 j j) as H1.
-...
-*)
-
-Set Printing Implicit.
-
-Definition functor_CoCone4_of_CoCone {J C} {D : functor J C} :
-  functor (CoCone D) (CoCone4 (fop D)) :=
-  {| f_map_obj := cone_fop_of_co_cone : Obj (CoCone _) → Obj (CoCone4 _);
-     f_map_arr x y f := 2 |}.
-     f_map_arr := glop |}.
