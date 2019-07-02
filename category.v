@@ -397,6 +397,25 @@ Definition are_isomorphic_categories_2 (C D : category) :=
           ∃ T : Hom x y → Hom (f_map_obj G (f_map_obj F x)) (f_map_obj G (f_map_obj F y)),
           ∀ f : Hom x y, f_map_arr G (f_map_arr F f) = T f } } } }.
 
+Example glop (C D : category) :
+  ∀ (F : functor C D) (G : functor D C)
+     (GF : ∀ x : Obj C, f_map_obj G (f_map_obj F x) = x)
+     (FG : ∀ y : Obj D, f_map_obj F (f_map_obj G y) = y),
+  ∀ x y : Obj C,
+  ∃ T : Hom x y → Hom (f_map_obj G (f_map_obj F x)) (f_map_obj G (f_map_obj F y)),
+  ∀ f : Hom x y, f_map_arr G (f_map_arr F f) = T f.
+Proof.
+intros.
+specialize (@hott4cat.transport (Obj C)) as H1.
+specialize (H1 (λ x, Hom x (f_map_obj G (f_map_obj F y)))).
+specialize (H1 x (f_map_obj G (f_map_obj F x)) (eq_sym (GF x))).
+cbn in H1.
+...
+specialize (@hott4cat.transport (Obj C)) as H1.
+specialize (H1 (λ x, Hom x y)).
+specialize (H1 x (f_map_obj G (f_map_obj F x)) (eq_sym (GF x))).
+cbn in H1.
+
 ...
 
 "transport" to be used
