@@ -386,13 +386,14 @@ split.
 -apply F_CoCone2_CoCone_id.
 Qed.
 
-Theorem eq_eq_eq_pair {A B} : ∀ {x y : A} {z t : B} (p : x = y) (q : z = t), (x, z) = (y, t).
+Theorem eq_eq_eq_pair {A B} {x y : A} {z t : B} :
+  ∀ (p : x = y) (q : z = t), (x, z) = (y, t).
 Proof.
 intros.
 now destruct p, q.
 Defined.
 
-Definition transport2 {C D} (F : functor C D) (G : functor D C)
+Definition transport2 {C D} {F : functor C D} {G : functor D C}
   (GF : ∀ x : Obj C, f_map_obj G (f_map_obj F x) = x) x y :=
   hott4cat.transport (λ '(x, y), Hom x y)
     (eq_eq_eq_pair (eq_sym (GF x)) (eq_sym (GF y))).
@@ -403,4 +404,4 @@ Definition are_isomorphic_categories_2 (C D : category) :=
       { GF : ∀ x : Obj C, f_map_obj G (f_map_obj F x) = x &
         { FG : ∀ y : Obj D, f_map_obj F (f_map_obj G y) = y &
           ∀ (x y : Obj C) (f : Hom x y),
-          f_map_arr G (f_map_arr F f) = transport2 F G GF x y f } } } }.
+          f_map_arr G (f_map_arr F f) = transport2 GF x y f } } } }.
