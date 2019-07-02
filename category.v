@@ -364,27 +364,11 @@ Definition F_CoCone2_CoCone {J C} {D : functor J C} :
 
 Theorem F_CoCone_CoCone2_id {J C} {D : functor J C} :
   ∀ cc, f_map_obj F_CoCone2_CoCone (f_map_obj F_CoCone_CoCone2 cc) = cc.
-Proof. now intros; destruct cc. Qed.
+Proof. now intros; destruct cc. Defined.
 
 Theorem F_CoCone2_CoCone_id {J C} {D : functor J C} :
   ∀ cc, f_map_obj F_CoCone_CoCone2 (f_map_obj F_CoCone2_CoCone cc) = cc.
-Proof. now intros; destruct cc. Qed.
-
-Definition are_isomorphic_categories_1 (C D : category) :=
-  { F : functor C D &
-    { G : functor D C &
-      ((∀ x : Obj C, f_map_obj G (f_map_obj F x) = x) *
-       (∀ y : Obj D, f_map_obj F (f_map_obj G y) = y))%type } }.
-
-Theorem CoCone_CoCone2_iso J C {D : functor J C} :
-  are_isomorphic_categories_1 (CoCone D) (CoCone2 D).
-Proof.
-exists F_CoCone_CoCone2.
-exists F_CoCone2_CoCone.
-split.
--apply F_CoCone_CoCone2_id.
--apply F_CoCone2_CoCone_id.
-Qed.
+Proof. now intros; destruct cc. Defined.
 
 Theorem eq_eq_eq_pair {A B} {x y : A} {z t : B} :
   ∀ (p : x = y) (q : z = t), (x, z) = (y, t).
@@ -398,10 +382,26 @@ Definition transport2 {C D} {F : functor C D} {G : functor D C}
   hott4cat.transport (λ '(x, y), Hom x y)
     (eq_eq_eq_pair (eq_sym (GF x)) (eq_sym (GF y))).
 
-Definition are_isomorphic_categories_2 (C D : category) :=
-  { F : functor C D &
-    { G : functor D C &
-      { GF : ∀ x : Obj C, f_map_obj G (f_map_obj F x) = x &
-        { FG : ∀ y : Obj D, f_map_obj F (f_map_obj G y) = y &
-          ∀ (x y : Obj C) (f : Hom x y),
-          f_map_arr G (f_map_arr F f) = transport2 GF x y f } } } }.
+Definition is_iso_betw_cat {C D} (F : functor C D) :=
+  { G : functor D C &
+    { GF : ∀ x : Obj C, f_map_obj G (f_map_obj F x) = x &
+      { FG : ∀ y : Obj D, f_map_obj F (f_map_obj G y) = y &
+        ((∀ (x y : Obj C) (f : Hom x y),
+          f_map_arr G (f_map_arr F f) = transport2 GF x y f) *
+         (∀ (x y : Obj D) (g : Hom x y),
+          f_map_arr F (f_map_arr G g) = transport2 FG x y g))%type }}}.
+
+Definition are_isomorphic_categories (C D : category) :=
+  { F : functor C D & is_iso_betw_cat F }.
+
+Theorem CoCone_CoCone2_iso J C {D : functor J C} :
+  are_isomorphic_categories (CoCone D) (CoCone2 D).
+Proof.
+exists F_CoCone_CoCone2.
+exists F_CoCone2_CoCone.
+exists F_CoCone_CoCone2_id.
+exists F_CoCone2_CoCone_id.
+split.
+-now intros; destruct x, y.
+-now intros; destruct x, y.
+Qed.
