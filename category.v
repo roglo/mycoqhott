@@ -362,11 +362,11 @@ Definition F_CoCone2_CoCone {J C} {D : functor J C} :
      f_comp_prop _ _ _ := F_CoCone2_CoCone_comp_prop;
      f_id_prop _ := eq_refl |}.
 
-Theorem F_CoCone_CoCone2_id1 {J C} {D : functor J C} :
+Theorem F_CoCone_CoCone2_id {J C} {D : functor J C} :
   ∀ cc, f_map_obj F_CoCone2_CoCone (f_map_obj F_CoCone_CoCone2 cc) = cc.
 Proof. now intros; destruct cc. Qed.
 
-Theorem F_CoCone_CoCone2_id2 {J C} {D : functor J C} :
+Theorem F_CoCone2_CoCone_id {J C} {D : functor J C} :
   ∀ cc, f_map_obj F_CoCone_CoCone2 (f_map_obj F_CoCone2_CoCone cc) = cc.
 Proof. now intros; destruct cc. Qed.
 
@@ -375,7 +375,20 @@ Definition are_isomorphic_categories (C D : category) :=
     { G : functor D C &
       ((∀ x, f_map_obj G (f_map_obj F x) = x) *
        (∀ y, f_map_obj F (f_map_obj G y) = y))%type } }.
+
 ...
 
 "transport" to be used
        (∀ x y (f : Hom x y), f_map_arr G (f_map_arr F f) = f))%type } }.
+
+...
+
+Theorem CoCone_CoCone2_iso J C {D : functor J C} :
+  are_isomorphic_categories (CoCone D) (CoCone2 D).
+Proof.
+exists F_CoCone_CoCone2.
+exists F_CoCone2_CoCone.
+split.
+-apply F_CoCone_CoCone2_id.
+-apply F_CoCone2_CoCone_id.
+Qed.
