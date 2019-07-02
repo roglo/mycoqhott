@@ -386,69 +386,21 @@ split.
 -apply F_CoCone2_CoCone_id.
 Qed.
 
-Check hott4cat.transport.
-
-Definition are_isomorphic_categories_2 (C D : category) :=
-  { F : functor C D &
-    { G : functor D C &
-      { GF : ∀ x : Obj C, f_map_obj G (f_map_obj F x) = x &
-        { FG : ∀ y : Obj D, f_map_obj F (f_map_obj G y) = y &
-          ∀ x y : Obj C,
-          ∃ T : Hom x y → Hom (f_map_obj G (f_map_obj F x)) (f_map_obj G (f_map_obj F y)),
-          ∀ f : Hom x y, f_map_arr G (f_map_arr F f) = T f } } } }.
-
-Definition transport_pair {A} B C x y (p : x = y) b c
-  : hott4cat.transport (λ z : A, (B z * C z)%type) p (b, c) =
-    (hott4cat.transport B p b, hott4cat.transport C p c)
-  := match p with
-     | eq_refl _ =>
-         eq_refl (hott4cat.transport B (eq_refl x) b, hott4cat.transport C (eq_refl x) c)
-     end.
-
 Theorem eq_eq_eq_pair {A B} : ∀ {x y : A} {z t : B} (p : x = y) (q : z = t), (x, z) = (y, t).
 Proof.
 intros.
 now destruct p, q.
 Defined.
 
-Example glop (C D : category) :
-  ∀ (F : functor C D) (G : functor D C)
-     (GF : ∀ x : Obj C, f_map_obj G (f_map_obj F x) = x)
-     (FG : ∀ y : Obj D, f_map_obj F (f_map_obj G y) = y),
-  ∀ x y : Obj C,
-  ∃ T : Hom x y → Hom (f_map_obj G (f_map_obj F x)) (f_map_obj G (f_map_obj F y)),
-  ∀ f : Hom x y, f_map_arr G (f_map_arr F f) = T f.
-Proof.
-intros.
-exists (hott4cat.transport (λ '(x, y), Hom x y) (eq_eq_eq_pair (eq_sym (GF x)) (eq_sym (GF y)))).
-intros f.
-unfold hott4cat.transport.
-unfold eq_eq_eq_pair.
-...
-specialize (@hott4cat.transport (Obj C * Obj C)) as H1.
-specialize (H1 (λ z, let '(x, y) := z in Hom x y)).
-specialize (H1 (x, y)); cbn in H1.
-specialize (H1 (f_map_obj G (f_map_obj F x), f_map_obj G (f_map_obj F y))).
-cbn in H1.
-specialize (H1 (eq_eq_eq_pair _ _ _ _ _ _ (eq_sym (GF x)) (eq_sym (GF y)))).
-exists H1.
-Show Proof.
+Definition transport2 {C D} (F : functor C D) (G : functor D C)
+  (GF : ∀ x : Obj C, f_map_obj G (f_map_obj F x) = x) x y :=
+  hott4cat.transport (λ '(x, y), Hom x y)
+    (eq_eq_eq_pair (eq_sym (GF x)) (eq_sym (GF y))).
 
-intros f.
-...
-specialize (@transport_pair (Obj C)) as H1.
-...
-specialize (@hott4cat.transport (Obj C)) as H1.
-specialize (H1 (λ x, Hom x (f_map_obj G (f_map_obj F y)))).
-specialize (H1 x (f_map_obj G (f_map_obj F x)) (eq_sym (GF x))).
-cbn in H1.
-...
-specialize (@hott4cat.transport (Obj C)) as H1.
-specialize (H1 (λ x, Hom x y)).
-specialize (H1 x (f_map_obj G (f_map_obj F x)) (eq_sym (GF x))).
-cbn in H1.
-
-...
-
-"transport" to be used
-       (∀ x y (f : Hom x y), f_map_arr G (f_map_arr F f) = f))%type } }.
+Definition are_isomorphic_categories_2 (C D : category) :=
+  { F : functor C D &
+    { G : functor D C &
+      { GF : ∀ x : Obj C, f_map_obj G (f_map_obj F x) = x &
+        { FG : ∀ y : Obj D, f_map_obj F (f_map_obj G y) = y &
+          ∀ (x y : Obj C) (f : Hom x y),
+          f_map_arr G (f_map_arr F f) = transport2 F G GF x y f } } } }.
