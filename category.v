@@ -405,15 +405,11 @@ Definition transport_pair {A} B C x y (p : x = y) b c
          eq_refl (hott4cat.transport B (eq_refl x) b, hott4cat.transport C (eq_refl x) c)
      end.
 
-(*
-Theorem glop A B : ∀ (x y : A) (z t : B) (p : x = y) (q : z = t), (x, z) = (y, t).
+Theorem eq_eq_eq_pair {A B} : ∀ {x y : A} {z t : B} (p : x = y) (q : z = t), (x, z) = (y, t).
 Proof.
 intros.
 now destruct p, q.
 Defined.
-Search ((_, _) = (_, _)).
-...
-*)
 
 Example glop (C D : category) :
   ∀ (F : functor C D) (G : functor D C)
@@ -424,13 +420,23 @@ Example glop (C D : category) :
   ∀ f : Hom x y, f_map_arr G (f_map_arr F f) = T f.
 Proof.
 intros.
-specialize (@transport_pair (Obj C)) as H1.
+exists (hott4cat.transport (λ '(x, y), Hom x y) (eq_eq_eq_pair (eq_sym (GF x)) (eq_sym (GF y)))).
+intros f.
+unfold hott4cat.transport.
+unfold eq_eq_eq_pair.
 ...
 specialize (@hott4cat.transport (Obj C * Obj C)) as H1.
 specialize (H1 (λ z, let '(x, y) := z in Hom x y)).
 specialize (H1 (x, y)); cbn in H1.
 specialize (H1 (f_map_obj G (f_map_obj F x), f_map_obj G (f_map_obj F y))).
 cbn in H1.
+specialize (H1 (eq_eq_eq_pair _ _ _ _ _ _ (eq_sym (GF x)) (eq_sym (GF y)))).
+exists H1.
+Show Proof.
+
+intros f.
+...
+specialize (@transport_pair (Obj C)) as H1.
 ...
 specialize (@hott4cat.transport (Obj C)) as H1.
 specialize (H1 (λ x, Hom x (f_map_obj G (f_map_obj F y)))).
