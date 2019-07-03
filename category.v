@@ -412,24 +412,29 @@ Definition nat_transf {C D} (F G : functor C D) :=
   { ϑ : ∀ x, Hom (f_map_obj F x) (f_map_obj G x) &
     ∀ x y (f : Hom x y), ϑ y ◦ f_map_hom F f = f_map_hom G f ◦ ϑ x }.
 
+Definition nt_hom {C D} {F G : functor C D} (η : nat_transf F G) :=
+  projT1 η.
+Definition nt_commute {C D} {F G : functor C D} (η : nat_transf F G) :=
+  projT2 η.
+
 (* category of functors *)
 
 Theorem Fun_comp_nt_commute {C D} {F G H : functor C D} :
   ∀ (η : nat_transf F G) (η' : nat_transf G H),
   ∀ (x y : Obj C) (f : Hom x y),
-  projT1 η' y ◦ projT1 η y ◦ f_map_hom F f =
-  f_map_hom H f ◦ (projT1 η' x ◦ projT1 η x).
+  nt_hom η' y ◦ nt_hom η y ◦ f_map_hom F f =
+  f_map_hom H f ◦ (nt_hom η' x ◦ nt_hom η x).
 Proof.
 intros.
-rewrite assoc, (projT2 η).
+rewrite assoc, (nt_commute η).
 do 2 rewrite <- assoc.
-apply f_equal, (projT2 η').
+apply f_equal, (nt_commute η').
 Defined.
 
 Definition Fun_comp {C D} (F G H : functor C D) :
   nat_transf F G → nat_transf G H → nat_transf F H :=
   λ η η',
-  existT _ (λ x, projT1 η' x ◦ projT1 η x) (Fun_comp_nt_commute η η').
+  existT _ (λ x, nt_hom η' x ◦ nt_hom η x) (Fun_comp_nt_commute η η').
 
 Definition Fun C D :=
   {| Obj := functor C D;
