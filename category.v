@@ -104,6 +104,9 @@ Definition is_equiv_betw_cat {C D} (F : functor C D) :=
     functor_comp F G = functor_id C &
     functor_comp G F = functor_id D }.
 
+Definition are_equivalent_categories (C D : category) :=
+  { F : functor C D & is_equiv_betw_cat F }.
+
 (* A cone to a functor D(J,C) consists of an object c in C and a
    family of arrows in C : cj : c → Dj one for each object j ∈ J, such
    that for each arrow α : i → j in J, the following triangle
@@ -423,6 +426,7 @@ intros.
 now destruct p, q.
 Defined.
 
+(*
 ...
 
 Definition transport2 {C D} {F : functor C D} {G : functor D C}
@@ -456,6 +460,22 @@ split.
 -now intros; destruct x, y.
 -now intros; destruct x, y.
 Qed.
+*)
+
+Theorem CoCone_CoCone2_iso J C {D : functor J C} :
+  are_equivalent_categories (CoCone D) (CoCone2 D).
+Proof.
+exists F_CoCone_CoCone2.
+exists F_CoCone2_CoCone.
+...
+exists F_CoCone_CoCone2_id.
+exists F_CoCone2_CoCone_id.
+split.
+-now intros; destruct x, y.
+-now intros; destruct x, y.
+Qed.
+
+...
 
 (* natural transformation *)
 
