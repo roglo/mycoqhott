@@ -263,8 +263,11 @@ Theorem Cone_Hom_set {J C} {D : functor J C} :
   ∀ c c' : cone D, isSet (Cone_Hom c c').
 Proof.
 intros.
+intros f g p q.
 Check eq_pair_dep_eq_Cone_Hom.
+Check hott4cat.is_set_is_set_sigT.
 ...
+intros.
 unfold Cone_Hom.
 apply hott4cat.is_set_is_set_sigT; [ | apply Hom_set ].
 intros f.
