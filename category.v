@@ -417,19 +417,19 @@ Qed.
 
 (* natural transformation *)
 
-Definition nat_transf {C D} (F G : functor C D) :=
+Definition natural_transformation {C D} (F G : functor C D) :=
   { ϑ : ∀ x, Hom (f_map_obj F x) (f_map_obj G x) &
     ∀ x y (f : Hom x y), ϑ y ◦ f_map_hom F f = f_map_hom G f ◦ ϑ x }.
 
-Definition nt_hom {C D} {F G : functor C D} (η : nat_transf F G) :=
-  projT1 η.
-Definition nt_commute {C D} {F G : functor C D} (η : nat_transf F G) :=
-  projT2 η.
+Definition nt_hom {C D} {F G : functor C D}
+  (η : natural_transformation F G) := projT1 η.
+Definition nt_commute {C D} {F G : functor C D}
+  (η : natural_transformation F G) := projT2 η.
 
 (* category of functors *)
 
-Theorem Fun_comp_nt_commute {C D} {F G H : functor C D} :
-  ∀ (η : nat_transf F G) (η' : nat_transf G H),
+Theorem Fun_cat_comp_nt_commute {C D} {F G H : functor C D} :
+  ∀ (η : natural_transformation F G) (η' : natural_transformation G H),
   ∀ (x y : Obj C) (f : Hom x y),
   nt_hom η' y ◦ nt_hom η y ◦ f_map_hom F f =
   f_map_hom H f ◦ (nt_hom η' x ◦ nt_hom η x).
@@ -440,14 +440,15 @@ do 2 rewrite <- assoc.
 apply f_equal, (nt_commute η').
 Defined.
 
-Definition Fun_comp {C D} (F G H : functor C D) :
-    nat_transf F G → nat_transf G H → nat_transf F H :=
+Definition Fun_cat_comp {C D} (F G H : functor C D) :
+    natural_transformation F G → natural_transformation G H →
+    natural_transformation F H :=
   λ η η',
-  existT _ (λ x, nt_hom η' x ◦ nt_hom η x) (Fun_comp_nt_commute η η').
+  existT _ (λ x, nt_hom η' x ◦ nt_hom η x) (Fun_cat_comp_nt_commute η η').
 
-Definition Fun_id {C D} (F : functor C D) : nat_transf F F.
+Definition Fun_cat_id {C D} (F : functor C D) : natural_transformation F F.
 Proof.
-unfold nat_transf.
+unfold natural_transformation.
 exists (λ z, f_map_hom F (idc z)).
 intros x y f.
 etransitivity; [ apply f_equal, f_id_prop | ].
@@ -457,12 +458,12 @@ etransitivity; [ | apply unit_l ].
 now destruct (@f_id_prop C D F x).
 Defined.
 
-Theorem Fun_unit_l {C D} (F G : functor C D) :
-  ∀ (f : nat_transf F G), Fun_comp F F G (Fun_id F) f = f.
+Theorem Fun_cat_unit_l {C D} (F G : functor C D) :
+  ∀ (f : natural_transformation F G), Fun_cat_comp F F G (Fun_cat_id F) f = f.
 Proof.
 intros.
 destruct f as (f, Hf).
-unfold Fun_comp; cbn.
+unfold Fun_cat_comp; cbn.
 apply eq_existT_uncurried.
 assert (p : (λ x : Obj C, f x ◦ f_map_hom F (idc x)) = f). {
   apply extensionality.
@@ -477,12 +478,12 @@ apply extensionality; intros g.
 apply Hom_set.
 Qed.
 
-Theorem Fun_unit_r {C D} (F G : functor C D) :
-  ∀ (f : nat_transf F G), Fun_comp F G G f (Fun_id G) = f.
+Theorem Fun_cat_unit_r {C D} (F G : functor C D) :
+  ∀ (f : natural_transformation F G), Fun_cat_comp F G G f (Fun_cat_id G) = f.
 Proof.
 intros.
 destruct f as (f, Hf).
-unfold Fun_comp; cbn.
+unfold Fun_cat_comp; cbn.
 apply eq_existT_uncurried.
 assert (p : (λ x : Obj C, f_map_hom G (idc x) ◦ f x) = f). {
   apply extensionality.
@@ -497,13 +498,14 @@ apply extensionality; intros g.
 apply Hom_set.
 Qed.
 
-Theorem Fun_assoc {C D} (F G H I : functor C D) :
-  ∀ (η : nat_transf F G) (η' : nat_transf G H) (η'' : nat_transf H I),
-  Fun_comp F G I η (Fun_comp G H I η' η'') =
-  Fun_comp F H I (Fun_comp F G H η η') η''.
+Theorem Fun_cat_assoc {C D} (F G H I : functor C D) :
+  ∀ (η : natural_transformation F G) (η' : natural_transformation G H)
+     (η'' : natural_transformation H I),
+  Fun_cat_comp F G I η (Fun_cat_comp G H I η' η'') =
+  Fun_cat_comp F H I (Fun_cat_comp F G H η η') η''.
 Proof.
 intros.
-unfold Fun_comp; cbn.
+unfold Fun_cat_comp; cbn.
 apply eq_existT_uncurried.
 assert
  (p :
@@ -518,7 +520,8 @@ apply extensionality; intros z.
 apply Hom_set.
 Qed.
 
-Theorem Fun_Hom_set {C D} : ∀ F G : functor C D, isSet (nat_transf F G).
+Theorem Fun_cat_Hom_set {C D} : ∀ F G : functor C D,
+  isSet (natural_transformation F G).
 Proof.
 intros.
 apply hott4cat.is_set_is_set_sigT. {
@@ -535,13 +538,13 @@ Qed.
 
 Definition Fun C D :=
   {| Obj := functor C D;
-     Hom := nat_transf;
-     comp := Fun_comp;
-     idc := Fun_id;
-     unit_l := Fun_unit_l;
-     unit_r := Fun_unit_r;
-     assoc := Fun_assoc;
-     Hom_set := Fun_Hom_set |}.
+     Hom := natural_transformation;
+     comp := Fun_cat_comp;
+     idc := Fun_cat_id;
+     unit_l := Fun_cat_unit_l;
+     unit_r := Fun_cat_unit_r;
+     assoc := Fun_cat_assoc;
+     Hom_set := Fun_cat_Hom_set |}.
 
 (* universe inconsistency; voir Hugo
 Definition Cat :=
@@ -550,13 +553,14 @@ Definition Cat :=
 
 (* isomorphism between functors *)
 
-Definition is_iso_betw_fun {C D} {F G : functor C D} (α : nat_transf F G) :=
-  { β : nat_transf G F &
-    Fun_comp _ _ _ α β = Fun_id F &
-    Fun_comp _ _ _ β α = Fun_id G }.
+Definition is_iso_betw_fun {C D} {F G : functor C D}
+  (α : natural_transformation F G) :=
+  { β : natural_transformation G F &
+    Fun_cat_comp _ _ _ α β = Fun_cat_id F &
+    Fun_cat_comp _ _ _ β α = Fun_cat_id G }.
 
 Definition are_isomorphic_functors {C D} (F G : functor C D) :=
-  { α : nat_transf F G & is_iso_betw_fun α }.
+  { α : natural_transformation F G & is_iso_betw_fun α }.
 
 Theorem functor_comp_prop {C D E} {F : functor C D} {G : functor D E} :
    ∀ (a b c : Obj C) (f : Hom a b) (g : Hom b c),
@@ -590,15 +594,19 @@ Definition functor_id C : functor C C :=
      f_comp_prop _ _ _ _ _ := eq_refl;
      f_id_prop _ := eq_refl |}.
 
-Definition is_equiv_betw_cat_guetta {C D} (F : functor C D) :=
-  { G : functor D C &
-    are_isomorphic_functors (functor_comp F G) (functor_id C) &
-    are_isomorphic_functors (functor_comp G F) (functor_id D) }.
-
 Definition is_equiv_betw_cat_allioux {C D} (F : functor C D) :=
   { G : functor D C &
     functor_comp F G = functor_id C &
     functor_comp G F = functor_id D }.
+
+(* according to Léonard, this definition below is equivalent to
+   is_equiv_betw_cat_allioux, one direction being easy, but the
+   other way around requires univalence *)
+
+Definition is_equiv_betw_cat_guetta {C D} (F : functor C D) :=
+  { G : functor D C &
+    are_isomorphic_functors (functor_comp F G) (functor_id C) &
+    are_isomorphic_functors (functor_comp G F) (functor_id D) }.
 
 ...
 
