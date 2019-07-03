@@ -393,3 +393,41 @@ Proof.
 intros * HP HS.
 now apply (isnType_isnType_sigT A 1 P).
 Qed.
+
+Definition happly {A B} (f g : Π (x : A), B x)
+  : f = g → Π (x : A), f x = g x
+  := λ p,
+     match p with
+     | eq_refl _ => λ y, eq_refl (f y)
+     end.
+
+Axiom extensionality : ∀ {A B} f g, isequiv (@happly A B f g).
+
+Definition funext {A B} {f g : Π (x : A), B x}
+  : (∀ x : A, f x = g x) → f = g
+  := λ p,
+     match isequiv_qinv (happly f g) (extensionality f g) with
+     | existT _ h _ => h p
+     end.
+
+Theorem funext_prop_uniq_princ {A B} : ∀ (f g : Π (x : A), B x) (p : f = g),
+  p = funext (happly f g p).
+Proof.
+intros.
+unfold funext; simpl.
+set (q := isequiv_qinv (happly f g) (extensionality f g)).
+destruct q as (k, (α, β)).
+apply invert, β.
+Defined.
+
+Definition ex_3_1_6 A B : (Π (a : A), isSet (B a)) → isSet (Π (a : A), B a).
+Proof.
+intros r f g p q.
+unfold isSet in r.
+pose proof funext_prop_uniq_princ f g p as Hp.
+pose proof funext_prop_uniq_princ f g q as Hq.
+assert (∀ x : A, happly _ _ p x = happly _ _ q x) as Hx by (intros; apply r).
+apply funext in Hx.
+rewrite Hp, Hq, Hx.
+reflexivity.
+Defined.
