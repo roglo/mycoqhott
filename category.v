@@ -497,10 +497,46 @@ apply extensionality; intros g.
 apply Hom_set.
 Qed.
 
+Theorem Fun_assoc {C D} (F G H I : functor C D) :
+  ∀ (η : nat_transf F G) (η' : nat_transf G H) (η'' : nat_transf H I),
+  Fun_comp F G I η (Fun_comp G H I η' η'') =
+  Fun_comp F H I (Fun_comp F G H η η') η''.
+Proof.
+intros.
+unfold Fun_comp; cbn.
+apply eq_existT_uncurried.
+assert
+ (p :
+    (λ x : Obj C, nt_hom η'' x ◦ nt_hom η' x ◦ nt_hom η x) =
+    (λ x : Obj C, nt_hom η'' x ◦ (nt_hom η' x ◦ nt_hom η x))). {
+  apply extensionality; intros; apply assoc.
+}
+exists p.
+apply extensionality; intros x.
+apply extensionality; intros y.
+apply extensionality; intros z.
+apply Hom_set.
+Qed.
+
+Theorem Fun_Hom_set {C D} : ∀ F G : functor C D, isSet (nat_transf F G).
+Proof.
+intros.
+apply hott4cat.is_set_is_set_sigT. {
+  intros ϑ f g.
+  apply extensionality; intros x.
+  apply extensionality; intros y.
+  apply extensionality; intros h.
+  apply Hom_set.
+}
+intros f g p q.
+...
+
 Definition Fun C D :=
   {| Obj := functor C D;
      Hom := nat_transf;
      comp := Fun_comp;
      hid := Fun_id;
      unit_l := Fun_unit_l;
-     unit_r := Fun_unit_r |}.
+     unit_r := Fun_unit_r;
+     assoc := Fun_assoc;
+     Hom_set := Fun_Hom_set  |}.
