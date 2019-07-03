@@ -426,16 +426,14 @@ intros.
 now destruct p, q.
 Defined.
 
-(*
-...
-
 Definition transport2 {C D} {F : functor C D} {G : functor D C}
   (GF : ∀ x : Obj C, f_map_obj G (f_map_obj F x) = x) x y :=
   hott4cat.transport (λ '(x, y), Hom x y)
     (eq_eq_eq_pair (eq_sym (GF x)) (eq_sym (GF y))).
 
-(* Seems to be equivalent to is_equiv_betw_cat above *)
-(* to be tested *)
+(* Guetta & Allioux pretend the following to be equivalent to
+   is_equiv_betw_cat above, but testing the latter to CoCone
+   and CoCone2 does not seem to work *)
 
 Definition is_iso_betw_cat {C D} (F : functor C D) :=
   { G : functor D C &
@@ -460,36 +458,6 @@ split.
 -now intros; destruct x, y.
 -now intros; destruct x, y.
 Qed.
-*)
-
-Theorem CoCone_CoCone2_iso J C {D : functor J C} :
-  are_equivalent_categories (CoCone D) (CoCone2 D).
-Proof.
-exists F_CoCone_CoCone2.
-exists F_CoCone2_CoCone. {
-  unfold functor_comp, functor_id; cbn.
-  unfold functor_comp_id_prop; cbn.
-  unfold co_cone_of_cone_fop, cone_fop_of_co_cone; cbn.
-  unfold functor_comp_prop.
-Check f_map_obj.
-...
-Theorem glop {C D} {F : functor C D} : ∀ u u2 u3 u4 v1 v2 v3 v4,
-  u2 = v2 → u3 = v3 → u4 = v4 →
-  {| f_map_obj := u; f_map_hom := u2; f_comp_prop := u3; f_id_prop := u4 |} =
-  {| f_map_obj := u; f_map_hom := v2; f_comp_prop := v3; f_id_prop := v4 |}.
-intros.
-cbn.
-...
-
-...
-exists F_CoCone_CoCone2_id.
-exists F_CoCone2_CoCone_id.
-split.
--now intros; destruct x, y.
--now intros; destruct x, y.
-Qed.
-
-...
 
 (* natural transformation *)
 
@@ -646,20 +614,3 @@ Definition is_equiv_betw_cat_guetta {C D} (F : functor C D) :=
   { G : functor D C &
     are_isomorphic_functors (functor_comp F G) (functor_id C) &
     are_isomorphic_functors (functor_comp G F) (functor_id D) }.
-
-...
-
-(* ceci, ci-dessous, est censé être pareil que is_equiv_betw_cat_allioux,
-   qu'y disent *)
-
-Definition is_iso_betw_cat2 {C D} (F : functor C D) :=
-  { G : functor D C &
-    { GF : ∀ x : Obj C, f_map_obj G (f_map_obj F x) = x &
-      { FG : ∀ y : Obj D, f_map_obj F (f_map_obj G y) = y &
-        ((∀ (x y : Obj C) (f : Hom x y),
-          f_map_hom G (f_map_hom F f) = transport2 GF x y f) *
-         (∀ (x y : Obj D) (g : Hom x y),
-          f_map_hom F (f_map_hom G g) = transport2 FG x y g))%type }}}.
-
-Definition are_isomorphic_categories (C D : category) :=
-  { F : functor C D & is_iso_betw_cat F }.
