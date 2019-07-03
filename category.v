@@ -89,15 +89,30 @@ Arguments cc_fam [_] [_] [_].
 
 (* category of cones & co-cones *)
 
-Definition Cone_Hom {J C} {D : functor J C} (cn cn' : cone D) :=
-  { ϑ : Hom (cn_top cn) (cn_top cn') & ∀ j, cn_fam cn j = cn_fam cn' j ◦ ϑ }.
+Record Cone_Hom {J C} {D : functor J C} (cn cn' : cone D) :=
+  { cnh_hom : Hom (cn_top cn) (cn_top cn');
+    cnh_commute : ∀ j, cn_fam cn j = cn_fam cn' j ◦ cnh_hom }.
 
-Definition CoCone_Hom {J C} {D : functor J C} (cc cc' : co_cone D) :=
-  { ϑ : Hom (cc_top cc) (cc_top cc') & ∀ j, cc_fam cc' j = ϑ ◦ cc_fam cc j }.
+Record CoCone_Hom {J C} {D : functor J C} (cc cc' : co_cone D) :=
+  { cch_hom : Hom (cc_top cc) (cc_top cc');
+    cch_commute : ∀ j, cc_fam cc' j = cch_hom ◦ cc_fam cc j }.
+
+Arguments cnh_hom [_] [_] [_] [_] [_].
+Arguments cch_hom [_] [_] [_] [_] [_].
 
 Definition Cone_comp {J C} {D : functor J C} (c c' c'' : cone D)
   (f : Cone_Hom c c') (g : Cone_Hom c' c'') : Cone_Hom c c''.
 Proof.
+remember (cnh_hom g ◦ cnh_hom f) as h eqn:Hh.
+assert (Hcom : ∀ j, cn_fam c j = cn_fam c'' j ◦ h). {
+  intros.
+  etransitivity; [ apply cnh_commute | ].
+  f_equal.
+
+}
+apply {| cnh_hom := h; cnh_commute := Hcom |}.
+
+...
 exists (projT1 g ◦ projT1 f).
 intros j.
 etransitivity.
