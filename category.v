@@ -473,10 +473,10 @@ exists F_CoCone2_CoCone. {
   unfold functor_comp_prop.
 Check f_map_obj.
 ...
-Theorem glop {C D} {F : functor C D} : ∀ u1 u2 u3 u4 v1 v2 v3 v4,
-  u1 = v1 → u2 = v2 → u3 = v3 → u4 = v4 →
-  {| f_map_obj := u1; f_map_hom := u2; f_comp_prop := u3; f_id_prop := u4 |} =
-  {| f_map_obj := v1; f_map_hom := v2; f_comp_prop := v3; f_id_prop := v4 |}.
+Theorem glop {C D} {F : functor C D} : ∀ u u2 u3 u4 v1 v2 v3 v4,
+  u2 = v2 → u3 = v3 → u4 = v4 →
+  {| f_map_obj := u; f_map_hom := u2; f_comp_prop := u3; f_id_prop := u4 |} =
+  {| f_map_obj := u; f_map_hom := v2; f_comp_prop := v3; f_id_prop := v4 |}.
 intros.
 cbn.
 ...
