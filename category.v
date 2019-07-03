@@ -529,6 +529,7 @@ apply hott4cat.is_set_is_set_sigT. {
   apply Hom_set.
 }
 change (isSet (∀ x, Hom (f_map_obj F x) (f_map_obj G x))).
+...
 intros f g p q.
 ...
 apply hott4cat.isProp_isSet.
