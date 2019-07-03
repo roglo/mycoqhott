@@ -408,35 +408,30 @@ Qed.
 
 (* natural transformation *)
 
-Record natural_transformation {C D} (F G : functor C D) :=
-  { nt_hom : ∀ x : Obj C, Hom (f_map_obj F x) (f_map_obj G x);
-    nt_commute : ∀ (x y : Obj C) (f : Hom x y),
-      nt_hom y ◦ f_map_hom F f = f_map_hom G f ◦ nt_hom x }.
-
-Arguments nt_hom [_] [_] [_] [_].
+Definition nat_transf {C D} (F G : functor C D) :=
+  { ϑ : ∀ x, Hom (f_map_obj F x) (f_map_obj G x) &
+    ∀ x y (f : Hom x y), ϑ y ◦ f_map_hom F f = f_map_hom G f ◦ ϑ x }.
 
 (* category of functors *)
 
 Theorem Fun_comp_nt_commute {C D} {F G H : functor C D} :
-  ∀ (η : natural_transformation F G) (η' : natural_transformation G H),
+  ∀ (η : nat_transf F G) (η' : nat_transf G H),
   ∀ (x y : Obj C) (f : Hom x y),
-  nt_hom η' y ◦ nt_hom η y ◦ f_map_hom F f =
-  f_map_hom H f ◦ (nt_hom η' x ◦ nt_hom η x).
+  projT1 η' y ◦ projT1 η y ◦ f_map_hom F f =
+  f_map_hom H f ◦ (projT1 η' x ◦ projT1 η x).
 Proof.
 intros.
-rewrite assoc, nt_commute.
+rewrite assoc, (projT2 η).
 do 2 rewrite <- assoc.
-apply f_equal, nt_commute.
+apply f_equal, (projT2 η').
 Defined.
 
 Definition Fun_comp {C D} (F G H : functor C D) :
-  natural_transformation F G
-  → natural_transformation G H → natural_transformation F H :=
+  nat_transf F G → nat_transf G H → nat_transf F H :=
   λ η η',
-  {| nt_hom x := nt_hom η' x ◦ nt_hom η x;
-     nt_commute := Fun_comp_nt_commute η η' |}.
+  existT _ (λ x, projT1 η' x ◦ projT1 η x) (Fun_comp_nt_commute η η').
 
 Definition Fun C D :=
   {| Obj := functor C D;
-     Hom := natural_transformation;
+     Hom := nat_transf;
      comp := Fun_comp |}.
