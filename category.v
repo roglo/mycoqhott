@@ -413,14 +413,28 @@ Record natural_transformation {C D} (F G : functor C D) :=
     nt_commute : ∀ (x y : Obj C) (f : Hom x y),
       nt_hom y ◦ f_map_hom F f = f_map_hom G f ◦ nt_hom x }.
 
+Arguments nt_hom [_] [_] [_] [_].
+
 (* category of functors *)
+
+Theorem Fun_comp_nt_commute {C D} {F G H : functor C D} :
+  ∀ (η : natural_transformation F G) (η' : natural_transformation G H),
+  ∀ (x y : Obj C) (f : Hom x y),
+    nt_hom η' y ◦ nt_hom η y ◦ f_map_hom F f =
+    f_map_hom H f ◦ (nt_hom η' x ◦ nt_hom η x).
+Proof.
+intros.
+rewrite assoc, nt_commute.
+do 2 rewrite <- assoc.
+apply f_equal, nt_commute.
+Defined.
 
 Definition Fun_comp {C D} (F G H : functor C D) :
   natural_transformation F G
   → natural_transformation G H → natural_transformation F H :=
   λ η η',
-  {| nt_hom x := nt_hom _ _ η' x ◦ nt_hom _ _ η x;
-     nt_commute := 42 |}.
+  {| nt_hom x := nt_hom η' x ◦ nt_hom η x;
+     nt_commute := Fun_comp_nt_commute η η' |}.
 
 Definition Fun C D :=
   {| Obj := functor C D;
