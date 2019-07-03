@@ -539,4 +539,4 @@ Definition Fun C D :=
      unit_l := Fun_unit_l;
      unit_r := Fun_unit_r;
      assoc := Fun_assoc;
-     Hom_set := Fun_Hom_set  |}.
+     Hom_set := Fun_Hom_set |}.
