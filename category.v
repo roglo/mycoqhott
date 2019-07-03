@@ -100,7 +100,8 @@ Record CoCone_Hom {J C} {D : functor J C} (cc cc' : co_cone D) :=
 Arguments cnh_hom [_] [_] [_] [_] [_].
 Arguments cch_hom [_] [_] [_] [_] [_].
 
-Theorem Cone_Hom_of_pair_dep {J C} {D : functor J C} (cn cn' : cone D) :
+Theorem eq_pair_dep_eq_Cone_Hom {J C} {D : functor J C}
+     (cn cn' : cone D) :
   let P := λ u, ∀ j : Obj J, cn_fam cn j = cn_fam cn' j ◦ u in
   ∀ (f g : Hom (cn_top cn) (cn_top cn')) (fc : P f) (gc : P g),
    existT P f fc = existT P g gc
@@ -115,7 +116,8 @@ intros j.
 apply Hom_set.
 Defined.
 
-Theorem CoCone_Hom_of_pair_dep {J C} {D : functor J C} (cc cc' : co_cone D) :
+Theorem eq_pair_dep_eq_CoCone_Hom {J C} {D : functor J C}
+     (cc cc' : co_cone D) :
   let P := λ u, ∀ j : Obj J, cc_fam cc' j = u ◦ cc_fam cc j in
   ∀ (f g : Hom (cc_top cc) (cc_top cc')) (fc : P f) (gc : P g),
    existT P f fc = existT P g gc
@@ -175,7 +177,7 @@ Proof.
 intros.
 unfold Cone_comp; cbn.
 destruct f as (f & Hf); cbn.
-apply Cone_Hom_of_pair_dep.
+apply eq_pair_dep_eq_Cone_Hom.
 apply eq_existT_uncurried.
 exists (unit_l _).
 apply extensionality.
@@ -189,7 +191,7 @@ Proof.
 intros.
 unfold CoCone_comp; cbn.
 destruct f as (f & Hf); cbn.
-apply CoCone_Hom_of_pair_dep.
+apply eq_pair_dep_eq_CoCone_Hom.
 apply eq_existT_uncurried.
 exists (unit_l _).
 apply extensionality.
@@ -204,7 +206,7 @@ Proof.
 intros.
 unfold Cone_comp; cbn.
 destruct f as (f & Hf); cbn.
-apply Cone_Hom_of_pair_dep.
+apply eq_pair_dep_eq_Cone_Hom.
 apply eq_existT_uncurried.
 exists (unit_r _).
 apply extensionality.
@@ -218,7 +220,7 @@ Theorem CoCone_unit_r {J C} {D : functor J C} :
 Proof.
 intros.
 destruct f as (f & Hf); cbn.
-apply CoCone_Hom_of_pair_dep.
+apply eq_pair_dep_eq_CoCone_Hom.
 apply eq_existT_uncurried.
 exists (unit_r _).
 apply extensionality.
@@ -234,7 +236,7 @@ Theorem Cone_assoc {J C} {D : functor J C} :
 Proof.
 intros.
 unfold Cone_comp; cbn.
-apply Cone_Hom_of_pair_dep.
+apply eq_pair_dep_eq_Cone_Hom.
 apply eq_existT_uncurried.
 exists (assoc _ _ _).
 apply extensionality.
@@ -249,7 +251,7 @@ Theorem CoCone_assoc {J C} {D : functor J C} :
     CoCone_comp c c'' c''' (CoCone_comp c c' c'' f g) h.
 Proof.
 intros.
-apply CoCone_Hom_of_pair_dep.
+apply eq_pair_dep_eq_CoCone_Hom.
 apply eq_existT_uncurried.
 exists (assoc _ _ _).
 apply extensionality.
@@ -261,6 +263,7 @@ Theorem Cone_Hom_set {J C} {D : functor J C} :
   ∀ c c' : cone D, isSet (Cone_Hom c c').
 Proof.
 intros.
+Check eq_pair_dep_eq_Cone_Hom.
 ...
 unfold Cone_Hom.
 apply hott4cat.is_set_is_set_sigT; [ | apply Hom_set ].
