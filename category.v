@@ -74,7 +74,7 @@ Proof.
 intros.
 etransitivity; [ | apply f_id_prop ].
 apply f_equal, f_id_prop.
-Qed.
+Defined.
 
 Theorem functor_comp_prop {C D E} {F : functor C D} {G : functor D E} :
    ∀ (a b c : Obj C) (f : Hom a b) (g : Hom b c),
@@ -84,7 +84,7 @@ Proof.
 intros.
 etransitivity; [ | apply f_comp_prop ].
 apply f_equal, f_comp_prop.
-Qed.
+Defined.
 
 Definition functor_comp {C D E} : functor C D → functor D E → functor C E :=
   λ F G,
@@ -466,7 +466,11 @@ Theorem CoCone_CoCone2_iso J C {D : functor J C} :
   are_equivalent_categories (CoCone D) (CoCone2 D).
 Proof.
 exists F_CoCone_CoCone2.
-exists F_CoCone2_CoCone.
+exists F_CoCone2_CoCone. {
+  unfold functor_comp, functor_id; cbn.
+  unfold functor_comp_id_prop; cbn.
+...
+
 ...
 exists F_CoCone_CoCone2_id.
 exists F_CoCone2_CoCone_id.
