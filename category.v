@@ -455,11 +455,20 @@ etransitivity; [ apply unit_r | ].
 symmetry.
 etransitivity; [ | apply unit_l ].
 now destruct (@f_id_prop C D F x).
-Qed.
+Defined.
+
+Theorem Fun_unit_l {C D} (F G : functor C D) :
+  ∀ (f : nat_transf F G), Fun_comp F F G (Fun_id F) f = f.
+Proof.
+intros.
+destruct f as (f, Hf).
+unfold Fun_comp; cbn.
+apply eq_existT_uncurried.
+...
 
 Definition Fun C D :=
   {| Obj := functor C D;
      Hom := nat_transf;
      comp := Fun_comp;
      hid := Fun_id;
-     unit_l := 42 |}.
+     unit_l := Fun_unit_l |}.
