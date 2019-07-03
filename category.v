@@ -439,4 +439,5 @@ Definition Fun_comp {C D} (F G H : functor C D) :
 Definition Fun C D :=
   {| Obj := functor C D;
      Hom := nat_transf;
-     comp := Fun_comp |}.
+     comp := Fun_comp;
+     hid := 42 |}.
