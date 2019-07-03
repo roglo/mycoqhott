@@ -100,6 +100,21 @@ Record CoCone_Hom {J C} {D : functor J C} (cc cc' : co_cone D) :=
 Arguments cnh_hom [_] [_] [_] [_] [_].
 Arguments cch_hom [_] [_] [_] [_] [_].
 
+Definition pair_dep_of_Cone_Hom {J C} {D : functor J C} {cn cn' : cone D} :
+  Cone_Hom cn cn' → {u & ∀ j : Obj J, cn_fam cn j = cn_fam cn' j ◦ u} :=
+  λ f, existT _ (cnh_hom f) (cnh_commute cn cn' f).
+
+(*
+Definition pair_dep_of_Cone_Hom {J C} {D : functor J C} {cn cn' : cone D} :
+  Cone_Hom cn cn'
+  → {u : Hom (cn_top cn) (cn_top cn') & ∀ j : Obj J, cn_fam cn j = cn_fam cn' j ◦ u}
+  :=
+  λ f, existT _ (cnh_hom f) (cnh_commute cn cn' f).
+  existT (λ u : Hom (cn_top cn) (cn_top cn'), ∀ j : Obj J, cn_fam cn j = cn_fam cn' j ◦ u)
+     (cnh_hom f) (cnh_commute cn cn' f).
+*)
+
+(*
 Theorem eq_pair_dep_eq_Cone_Hom {J C} {D : functor J C}
      (cn cn' : cone D) :
   let P := λ u, ∀ j : Obj J, cn_fam cn j = cn_fam cn' j ◦ u in
@@ -131,6 +146,7 @@ apply f_equal, extensionality.
 intros j.
 apply Hom_set.
 Defined.
+*)
 
 Definition Cone_comp {J C} {D : functor J C} (c c' c'' : cone D)
   (f : Cone_Hom c c') (g : Cone_Hom c' c'') : Cone_Hom c c''.
@@ -174,6 +190,9 @@ Theorem Cone_unit_l {J C} {D : functor J C} :
   ∀ (c c' : cone D) (f : Cone_Hom c c'),
   Cone_comp c c c' (Cone_id c) f = f.
 Proof.
+intros.
+remember (pair_dep_of_Cone_Hom f) as p.
+...
 intros.
 unfold Cone_comp; cbn.
 destruct f as (f & Hf); cbn.
@@ -266,6 +285,7 @@ intros.
 intros f g p q.
 Check eq_pair_dep_eq_Cone_Hom.
 Check hott4cat.is_set_is_set_sigT.
+destruct f, g.
 ...
 intros.
 unfold Cone_Hom.
