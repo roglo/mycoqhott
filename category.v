@@ -89,118 +89,65 @@ Arguments cc_fam [_] [_] [_].
 
 (* category of cones & co-cones *)
 
-Record Cone_Hom {J C} {D : functor J C} (cn cn' : cone D) :=
-  { cnh_hom : Hom (cn_top cn) (cn_top cn');
-    cnh_commute : ∀ j, cn_fam cn j = cn_fam cn' j ◦ cnh_hom }.
+Definition Cone_Hom {J C} {D : functor J C} (cn cn' : cone D) :=
+  { ϑ : Hom (cn_top cn) (cn_top cn') & ∀ j, cn_fam cn j = cn_fam cn' j ◦ ϑ }.
 
-Record CoCone_Hom {J C} {D : functor J C} (cc cc' : co_cone D) :=
-  { cch_hom : Hom (cc_top cc) (cc_top cc');
-    cch_commute : ∀ j, cc_fam cc' j = cch_hom ◦ cc_fam cc j }.
+Definition CoCone_Hom {J C} {D : functor J C} (cc cc' : co_cone D) :=
+  { ϑ : Hom (cc_top cc) (cc_top cc') & ∀ j, cc_fam cc' j = ϑ ◦ cc_fam cc j }.
 
-Arguments cnh_hom [_] [_] [_] [_] [_].
-Arguments cch_hom [_] [_] [_] [_] [_].
-
-Definition pair_dep_of_Cone_Hom {J C} {D : functor J C} {cn cn' : cone D} :
-  Cone_Hom cn cn' → {u & ∀ j : Obj J, cn_fam cn j = cn_fam cn' j ◦ u} :=
-  λ f, existT _ (cnh_hom f) (cnh_commute cn cn' f).
-
-(*
-Definition pair_dep_of_Cone_Hom {J C} {D : functor J C} {cn cn' : cone D} :
-  Cone_Hom cn cn'
-  → {u : Hom (cn_top cn) (cn_top cn') & ∀ j : Obj J, cn_fam cn j = cn_fam cn' j ◦ u}
-  :=
-  λ f, existT _ (cnh_hom f) (cnh_commute cn cn' f).
-  existT (λ u : Hom (cn_top cn) (cn_top cn'), ∀ j : Obj J, cn_fam cn j = cn_fam cn' j ◦ u)
-     (cnh_hom f) (cnh_commute cn cn' f).
-*)
-
-(*
-Theorem eq_pair_dep_eq_Cone_Hom {J C} {D : functor J C}
-     (cn cn' : cone D) :
-  let P := λ u, ∀ j : Obj J, cn_fam cn j = cn_fam cn' j ◦ u in
-  ∀ (f g : Hom (cn_top cn) (cn_top cn')) (fc : P f) (gc : P g),
-   existT P f fc = existT P g gc
-   → {| cnh_hom := f; cnh_commute := fc |} =
-      {| cnh_hom := g; cnh_commute := gc |}.
-Proof.
-intros * H.
-injection H; intros H1.
-destruct H1.
-apply f_equal, extensionality.
-intros j.
-apply Hom_set.
-Defined.
-
-Theorem eq_pair_dep_eq_CoCone_Hom {J C} {D : functor J C}
-     (cc cc' : co_cone D) :
-  let P := λ u, ∀ j : Obj J, cc_fam cc' j = u ◦ cc_fam cc j in
-  ∀ (f g : Hom (cc_top cc) (cc_top cc')) (fc : P f) (gc : P g),
-   existT P f fc = existT P g gc
-   → {| cch_hom := f; cch_commute := fc |} =
-      {| cch_hom := g; cch_commute := gc |}.
-Proof.
-intros * H.
-injection H; intros H1.
-destruct H1.
-apply f_equal, extensionality.
-intros j.
-apply Hom_set.
-Defined.
-*)
+Definition cnh_hom {J C} {D : functor J C} {cn cn'}
+  (cnh : Cone_Hom cn cn') := projT1 cnh.
+Definition cnh_commute {J C} {D : functor J C} {cn cn'}
+  (cnh : Cone_Hom cn cn') := projT2 cnh.
+Definition cch_hom {J C} {D : functor J C} {cc cc'}
+  (cch : CoCone_Hom cc cc') := projT1 cch.
+Definition cch_commute {J C} {D : functor J C} {cc cc'}
+  (cch : CoCone_Hom cc cc') := projT2 cch.
 
 Definition Cone_comp {J C} {D : functor J C} (c c' c'' : cone D)
   (f : Cone_Hom c c') (g : Cone_Hom c' c'') : Cone_Hom c c''.
 Proof.
-remember (cnh_hom g ◦ cnh_hom f) as h eqn:Hh.
-assert (Hcom : ∀ j, cn_fam c j = cn_fam c'' j ◦ h). {
-  intros.
-  rewrite Hh.
-  etransitivity; [ apply (cnh_commute _ _ f) | ].
-  etransitivity; [ | apply assoc ].
-  apply f_equal, cnh_commute.
-}
-apply {| cnh_hom := h; cnh_commute := Hcom |}.
+exists (cnh_hom g ◦ cnh_hom f).
+intros j.
+etransitivity.
+-apply (cnh_commute f j).
+-etransitivity; [ | apply assoc ].
+ f_equal.
+ apply (cnh_commute g j).
 Defined.
 
 Definition CoCone_comp {J C} {D : functor J C} (c c' c'' : co_cone D)
   (f : CoCone_Hom c c') (g : CoCone_Hom c' c'') : CoCone_Hom c c''.
 Proof.
-remember (cch_hom g ◦ cch_hom f) as h eqn:Hh.
-assert (Hcom : ∀ j, cc_fam c'' j = h ◦ cc_fam c j). {
-  intros.
-  rewrite Hh.
-  etransitivity; [ apply (cch_commute _ _ g) | ].
-  etransitivity; [ | symmetry; apply assoc ].
-  f_equal; apply cch_commute.
-}
-apply {| cch_hom := h; cch_commute := Hcom |}.
+exists (cch_hom g ◦ cch_hom f).
+intros j.
+etransitivity.
+-apply (cch_commute g j).
+-etransitivity; [ | symmetry; apply assoc ].
+ f_equal.
+ apply (cch_commute f j).
 Defined.
 
-Definition Cone_id {J C} {D : functor J C} (cn : cone D) :
-    Cone_Hom cn cn :=
-  {| cnh_hom := hid;
-     cnh_commute j := eq_sym (unit_l (cn_fam cn j)) |}.
+Definition Cone_id {J C} {D : functor J C} (c : cone D) : Cone_Hom c c :=
+   existT (λ ϑ, ∀ j, cn_fam c j = cn_fam c j ◦ ϑ) hid
+     (λ j, eq_sym (unit_l (cn_fam c j))).
 
-Definition CoCone_id {J C} {D : functor J C} (cc : co_cone D) :
-    CoCone_Hom cc cc :=
-  {| cch_hom := hid;
-     cch_commute j := eq_sym (unit_r (cc_fam cc j)) |}.
+Definition CoCone_id {J C} {D : functor J C} (c : co_cone D) : CoCone_Hom c c :=
+   existT (λ ϑ, ∀ j, cc_fam c j = ϑ ◦ cc_fam c j) hid
+     (λ j, eq_sym (unit_r (cc_fam c j))).
 
 Theorem Cone_unit_l {J C} {D : functor J C} :
   ∀ (c c' : cone D) (f : Cone_Hom c c'),
   Cone_comp c c c' (Cone_id c) f = f.
 Proof.
 intros.
-remember (pair_dep_of_Cone_Hom f) as p.
-...
-intros.
 unfold Cone_comp; cbn.
 destruct f as (f & Hf); cbn.
-apply eq_pair_dep_eq_Cone_Hom.
 apply eq_existT_uncurried.
 exists (unit_l _).
 apply extensionality.
-intros j; apply Hom_set.
+intros j.
+apply Hom_set.
 Defined.
 
 Theorem CoCone_unit_l {J C} {D : functor J C} :
@@ -210,7 +157,6 @@ Proof.
 intros.
 unfold CoCone_comp; cbn.
 destruct f as (f & Hf); cbn.
-apply eq_pair_dep_eq_CoCone_Hom.
 apply eq_existT_uncurried.
 exists (unit_l _).
 apply extensionality.
@@ -225,7 +171,6 @@ Proof.
 intros.
 unfold Cone_comp; cbn.
 destruct f as (f & Hf); cbn.
-apply eq_pair_dep_eq_Cone_Hom.
 apply eq_existT_uncurried.
 exists (unit_r _).
 apply extensionality.
@@ -239,7 +184,6 @@ Theorem CoCone_unit_r {J C} {D : functor J C} :
 Proof.
 intros.
 destruct f as (f & Hf); cbn.
-apply eq_pair_dep_eq_CoCone_Hom.
 apply eq_existT_uncurried.
 exists (unit_r _).
 apply extensionality.
@@ -255,7 +199,6 @@ Theorem Cone_assoc {J C} {D : functor J C} :
 Proof.
 intros.
 unfold Cone_comp; cbn.
-apply eq_pair_dep_eq_Cone_Hom.
 apply eq_existT_uncurried.
 exists (assoc _ _ _).
 apply extensionality.
@@ -270,7 +213,6 @@ Theorem CoCone_assoc {J C} {D : functor J C} :
     CoCone_comp c c'' c''' (CoCone_comp c c' c'' f g) h.
 Proof.
 intros.
-apply eq_pair_dep_eq_CoCone_Hom.
 apply eq_existT_uncurried.
 exists (assoc _ _ _).
 apply extensionality.
@@ -281,12 +223,6 @@ Defined.
 Theorem Cone_Hom_set {J C} {D : functor J C} :
   ∀ c c' : cone D, isSet (Cone_Hom c c').
 Proof.
-intros.
-intros f g p q.
-Check eq_pair_dep_eq_Cone_Hom.
-Check hott4cat.is_set_is_set_sigT.
-destruct f, g.
-...
 intros.
 unfold Cone_Hom.
 apply hott4cat.is_set_is_set_sigT; [ | apply Hom_set ].
@@ -357,7 +293,7 @@ unfold is_limit in Hlim.
 unfold is_terminal in Hlim.
 specialize (Hlim c) as H1.
 destruct H1 as (f, H1).
-exists (projT1 f).
+exists (cnh_hom f).
 split. {
   intros j.
   destruct f as (f, Hf).
@@ -513,6 +449,7 @@ Definition Fun_id {C D} (F : functor C D) : nat_transf F F.
 Proof.
 Print functor.
 unfold nat_transf.
+...
 exists (f_map_hom F).
 ...
 
