@@ -67,6 +67,43 @@ Definition fop {C D} : functor C D → functor (op C) (op D) :=
 Definition is_isomorphism {C : category} {A B : Obj C} (f : Hom A B) :=
   ∃ g : Hom B A, g ◦ f = idc A ∧ f ◦ g = idc B.
 
+Theorem functor_comp_id_prop {C D E} {F : functor C D} {G : functor D E} :
+  ∀ x : Obj C,
+   f_map_hom G (f_map_hom F (idc x)) = idc (f_map_obj G (f_map_obj F x)).
+Proof.
+intros.
+etransitivity; [ | apply f_id_prop ].
+apply f_equal, f_id_prop.
+Qed.
+
+Theorem functor_comp_prop {C D E} {F : functor C D} {G : functor D E} :
+   ∀ (a b c : Obj C) (f : Hom a b) (g : Hom b c),
+   f_map_hom G (f_map_hom F (g ◦ f)) =
+   f_map_hom G (f_map_hom F g) ◦ f_map_hom G (f_map_hom F f).
+Proof.
+intros.
+etransitivity; [ | apply f_comp_prop ].
+apply f_equal, f_comp_prop.
+Qed.
+
+Definition functor_comp {C D E} : functor C D → functor D E → functor C E :=
+  λ F G,
+  {| f_map_obj x := f_map_obj G (f_map_obj F x);
+     f_map_hom x y f := f_map_hom G (f_map_hom F f);
+     f_comp_prop := functor_comp_prop;
+     f_id_prop := functor_comp_id_prop |}.
+
+Definition functor_id C : functor C C :=
+  {| f_map_obj x := x;
+     f_map_hom x y f := f;
+     f_comp_prop _ _ _ _ _ := eq_refl;
+     f_id_prop _ := eq_refl |}.
+
+Definition is_equiv_betw_cat {C D} (F : functor C D) :=
+  { G : functor D C &
+    functor_comp F G = functor_id C &
+    functor_comp G F = functor_id D }.
+
 (* A cone to a functor D(J,C) consists of an object c in C and a
    family of arrows in C : cj : c → Dj one for each object j ∈ J, such
    that for each arrow α : i → j in J, the following triangle
@@ -386,10 +423,15 @@ intros.
 now destruct p, q.
 Defined.
 
+...
+
 Definition transport2 {C D} {F : functor C D} {G : functor D C}
   (GF : ∀ x : Obj C, f_map_obj G (f_map_obj F x) = x) x y :=
   hott4cat.transport (λ '(x, y), Hom x y)
     (eq_eq_eq_pair (eq_sym (GF x)) (eq_sym (GF y))).
+
+(* Seems to be equivalent to is_equiv_betw_cat above *)
+(* to be tested *)
 
 Definition is_iso_betw_cat {C D} (F : functor C D) :=
   { G : functor D C &
@@ -561,43 +603,6 @@ Definition is_iso_betw_fun {C D} {F G : functor C D}
 
 Definition are_isomorphic_functors {C D} (F G : functor C D) :=
   { α : natural_transformation F G & is_iso_betw_fun α }.
-
-Theorem functor_comp_prop {C D E} {F : functor C D} {G : functor D E} :
-   ∀ (a b c : Obj C) (f : Hom a b) (g : Hom b c),
-   f_map_hom G (f_map_hom F (g ◦ f)) =
-   f_map_hom G (f_map_hom F g) ◦ f_map_hom G (f_map_hom F f).
-Proof.
-intros.
-etransitivity; [ | apply f_comp_prop ].
-apply f_equal, f_comp_prop.
-Qed.
-
-Theorem functor_comp_id_prop {C D E} {F : functor C D} {G : functor D E} :
-  ∀ x : Obj C,
-   f_map_hom G (f_map_hom F (idc x)) = idc (f_map_obj G (f_map_obj F x)).
-Proof.
-intros.
-etransitivity; [ | apply f_id_prop ].
-apply f_equal, f_id_prop.
-Qed.
-
-Definition functor_comp {C D E} : functor C D → functor D E → functor C E :=
-  λ F G,
-  {| f_map_obj x := f_map_obj G (f_map_obj F x);
-     f_map_hom x y f := f_map_hom G (f_map_hom F f);
-     f_comp_prop := functor_comp_prop;
-     f_id_prop := functor_comp_id_prop |}.
-
-Definition functor_id C : functor C C :=
-  {| f_map_obj x := x;
-     f_map_hom x y f := f;
-     f_comp_prop _ _ _ _ _ := eq_refl;
-     f_id_prop _ := eq_refl |}.
-
-Definition is_equiv_betw_cat_allioux {C D} (F : functor C D) :=
-  { G : functor D C &
-    functor_comp F G = functor_id C &
-    functor_comp G F = functor_id D }.
 
 (* according to Léonard, this definition below is equivalent to
    is_equiv_betw_cat_allioux, one direction being easy, but the
