@@ -447,10 +447,9 @@ Definition Fun_comp {C D} (F G H : functor C D) :
 
 Definition Fun_id {C D} (F : functor C D) : nat_transf F F.
 Proof.
-Print functor.
 unfold nat_transf.
-...
-exists (f_map_hom F).
+exists (λ _, f_map_hom F hid).
+intros x h f.
 ...
 
 Definition Fun C D :=
