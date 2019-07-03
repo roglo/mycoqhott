@@ -528,7 +528,16 @@ apply hott4cat.is_set_is_set_sigT. {
   apply extensionality; intros h.
   apply Hom_set.
 }
+change (isSet (∀ x, Hom (f_map_obj F x) (f_map_obj G x))).
 intros f g p q.
+...
+apply hott4cat.isProp_isSet.
+intros u v.
+apply extensionality.
+intros x.
+specialize (@Hom_set D (f_map_obj F x) (f_map_obj G x)) as H1.
+specialize (H1 (u x) (v x)).
+unfold isSet in H1.
 ...
 
 Definition Fun C D :=
