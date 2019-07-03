@@ -89,37 +89,47 @@ Arguments cc_fam [_] [_] [_].
 
 (* category of cones & co-cones *)
 
-Definition Cone_Hom {J C} {D : functor J C} (cn cn' : cone D) :=
-  { ϑ : Hom (cn_top cn) (cn_top cn') & ∀ j, cn_fam cn j = cn_fam cn' j ◦ ϑ }.
+Record Cone_Hom {J C} {D : functor J C} (cn cn' : cone D) :=
+  { cnh_hom : Hom (cn_top cn) (cn_top cn');
+    cnh_commute : ∀ j, cn_fam cn j = cn_fam cn' j ◦ cnh_hom }.
 
-Definition CoCone_Hom {J C} {D : functor J C} (cc cc' : co_cone D) :=
-  { ϑ : Hom (cc_top cc) (cc_top cc') & ∀ j, cc_fam cc' j = ϑ ◦ cc_fam cc j }.
+Record CoCone_Hom {J C} {D : functor J C} (cc cc' : co_cone D) :=
+  { cch_hom : Hom (cc_top cc) (cc_top cc');
+    cch_commute : ∀ j, cc_fam cc' j = cch_hom ◦ cc_fam cc j }.
+
+Arguments cnh_hom [_] [_] [_] [_] [_].
+Arguments cch_hom [_] [_] [_] [_] [_].
 
 Definition Cone_comp {J C} {D : functor J C} (c c' c'' : cone D)
   (f : Cone_Hom c c') (g : Cone_Hom c' c'') : Cone_Hom c c''.
 Proof.
-exists (projT1 g ◦ projT1 f).
-intros j.
-etransitivity.
--apply (projT2 f j).
--etransitivity; [ | apply assoc ].
- f_equal.
- apply (projT2 g j).
+remember (cnh_hom g ◦ cnh_hom f) as h eqn:Hh.
+assert (Hcom : ∀ j, cn_fam c j = cn_fam c'' j ◦ h). {
+  intros.
+  rewrite Hh.
+  etransitivity; [ apply (cnh_commute _ _ f) | ].
+  etransitivity; [ | apply assoc ].
+  apply f_equal, cnh_commute.
+}
+apply {| cnh_hom := h; cnh_commute := Hcom |}.
 Defined.
 
 Definition CoCone_comp {J C} {D : functor J C} (c c' c'' : co_cone D)
   (f : CoCone_Hom c c') (g : CoCone_Hom c' c'') : CoCone_Hom c c''.
 Proof.
-exists (projT1 g ◦ projT1 f).
-intros j.
-etransitivity.
--apply (projT2 g j).
--etransitivity; [ | symmetry; apply assoc ].
- f_equal.
- apply (projT2 f j).
+remember (cch_hom g ◦ cch_hom f) as h eqn:Hh.
+assert (Hcom : ∀ j, cc_fam c'' j = h ◦ cc_fam c j). {
+  intros.
+  rewrite Hh.
+  etransitivity; [ apply (cch_commute _ _ g) | ].
+  etransitivity; [ | symmetry; apply assoc ].
+  f_equal; apply cch_commute.
+}
+apply {| cch_hom := h; cch_commute := Hcom |}.
 Defined.
 
 Definition Cone_id {J C} {D : functor J C} (c : cone D) : Cone_Hom c c :=
+...
    existT (λ ϑ, ∀ j, cn_fam c j = cn_fam c j ◦ ϑ) hid
      (λ j, eq_sym (unit_l (cn_fam c j))).
 
