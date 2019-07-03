@@ -449,11 +449,17 @@ Definition Fun_id {C D} (F : functor C D) : nat_transf F F.
 Proof.
 unfold nat_transf.
 exists (λ _, f_map_hom F hid).
-intros x h f.
-...
+intros x y f.
+etransitivity; [ apply f_equal, f_id_prop | ].
+etransitivity; [ apply unit_r | ].
+symmetry.
+etransitivity; [ | apply unit_l ].
+now destruct (@f_id_prop C D F x).
+Qed.
 
 Definition Fun C D :=
   {| Obj := functor C D;
      Hom := nat_transf;
      comp := Fun_comp;
-     hid F := 42 |}.
+     hid := Fun_id;
+     unit_l := 42 |}.
