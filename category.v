@@ -13,9 +13,9 @@ Class category :=
   { Obj : Type;
     Hom : Obj → Obj → Type;
     comp : ∀ {A B C}, Hom A B → Hom B C → Hom A C;
-    hid : ∀ {A}, Hom A A;
-    unit_l : ∀ {A B} (f : Hom A B), comp hid f = f;
-    unit_r : ∀ {A B} (f : Hom A B), comp f hid = f;
+    idc : ∀ A, Hom A A;
+    unit_l : ∀ {A B} (f : Hom A B), comp (idc A) f = f;
+    unit_r : ∀ {A B} (f : Hom A B), comp f (idc B) = f;
     assoc : ∀ {A B C D} (f : Hom A B) (g : Hom B C) (h : Hom C D),
       comp f (comp g h) = comp (comp f g) h;
     Hom_set x y : isSet (Hom x y) }.
@@ -36,7 +36,7 @@ Definition op C :=
   {| Obj := Obj C;
      Hom c d := Hom d c;
      comp _ _ _ f g := f ◦ g;
-     hid := @hid C;
+     idc := @idc C;
      unit_l _ _ f := unit_r f;
      unit_r _ _ f := unit_l f;
      assoc _ _ _ _ f g h := eq_sym (assoc h g f);
@@ -52,7 +52,7 @@ Class functor (C D : category) :=
     f_map_hom {a b} : Hom a b → Hom (f_map_obj a) (f_map_obj b);
     f_comp_prop {a b c} (f : Hom a b) (g : Hom b c) :
       f_map_hom (g ◦ f) = f_map_hom g ◦ f_map_hom f;
-    f_id_prop {a} : @f_map_hom a _ hid = hid }.
+    f_id_prop {a} : @f_map_hom a _ (idc a) = idc (f_map_obj a) }.
 
 Arguments f_map_obj [_] [_] _.
 Arguments f_map_hom [_] [_] _ [_] [_].
@@ -65,7 +65,7 @@ Definition fop {C D} : functor C D → functor (op C) (op D) :=
      f_id_prop a := @f_id_prop _ _ F a |}.
 
 Definition is_isomorphism {C : category} {A B : Obj C} (f : Hom A B) :=
-  ∃ g : Hom B A, g ◦ f = hid ∧ f ◦ g = hid.
+  ∃ g : Hom B A, g ◦ f = idc A ∧ f ◦ g = idc B.
 
 (* A cone to a functor D(J,C) consists of an object c in C and a
    family of arrows in C : cj : c → Dj one for each object j ∈ J, such
@@ -129,11 +129,11 @@ etransitivity.
 Defined.
 
 Definition Cone_id {J C} {D : functor J C} (c : cone D) : Cone_Hom c c :=
-   existT (λ ϑ, ∀ j, cn_fam c j = cn_fam c j ◦ ϑ) hid
+   existT (λ ϑ, ∀ j, cn_fam c j = cn_fam c j ◦ ϑ) (idc (cn_top c))
      (λ j, eq_sym (unit_l (cn_fam c j))).
 
 Definition CoCone_id {J C} {D : functor J C} (c : co_cone D) : CoCone_Hom c c :=
-   existT (λ ϑ, ∀ j, cc_fam c j = ϑ ◦ cc_fam c j) hid
+   existT (λ ϑ, ∀ j, cc_fam c j = ϑ ◦ cc_fam c j) (idc (cc_top c))
      (λ j, eq_sym (unit_r (cc_fam c j))).
 
 Theorem Cone_unit_l {J C} {D : functor J C} :
@@ -250,7 +250,7 @@ Definition Cone {J C} (D : functor J C) :=
   {| Obj := cone D;
      Hom := Cone_Hom;
      comp := Cone_comp;
-     hid := Cone_id;
+     idc := Cone_id;
      unit_l := Cone_unit_l;
      unit_r := Cone_unit_r;
      assoc := Cone_assoc;
@@ -262,7 +262,7 @@ Definition CoCone {J C} (D : functor J C) :=
   {| Obj := co_cone D;
      Hom := CoCone_Hom;
      comp := CoCone_comp;
-     hid := CoCone_id;
+     idc := CoCone_id;
      unit_l := CoCone_unit_l;
      unit_r := CoCone_unit_r;
      assoc := CoCone_assoc;
@@ -448,7 +448,7 @@ Definition Fun_comp {C D} (F G H : functor C D) :
 Definition Fun_id {C D} (F : functor C D) : nat_transf F F.
 Proof.
 unfold nat_transf.
-exists (λ _, f_map_hom F hid).
+exists (λ z, f_map_hom F (idc z)).
 intros x y f.
 etransitivity; [ apply f_equal, f_id_prop | ].
 etransitivity; [ apply unit_r | ].
@@ -464,7 +464,7 @@ intros.
 destruct f as (f, Hf).
 unfold Fun_comp; cbn.
 apply eq_existT_uncurried.
-assert (p : (λ x : Obj C, f x ◦ f_map_hom F hid) = f). {
+assert (p : (λ x : Obj C, f x ◦ f_map_hom F (idc x)) = f). {
   apply extensionality.
   intros c.
   rewrite f_id_prop.
@@ -484,7 +484,7 @@ intros.
 destruct f as (f, Hf).
 unfold Fun_comp; cbn.
 apply eq_existT_uncurried.
-assert (p : (λ x : Obj C, f_map_hom G hid ◦ f x) = f). {
+assert (p : (λ x : Obj C, f_map_hom G (idc x) ◦ f x) = f). {
   apply extensionality.
   intros c.
   rewrite f_id_prop.
@@ -537,11 +537,16 @@ Definition Fun C D :=
   {| Obj := functor C D;
      Hom := nat_transf;
      comp := Fun_comp;
-     hid := Fun_id;
+     idc := Fun_id;
      unit_l := Fun_unit_l;
      unit_r := Fun_unit_r;
      assoc := Fun_assoc;
      Hom_set := Fun_Hom_set |}.
+
+(* universe inconsistency; voir Hugo
+Definition Cat :=
+  {| Obj := category |}.
+*)
 
 (* isomorphism between functors *)
 
@@ -550,12 +555,66 @@ Definition is_iso_betw_fun {C D} {F G : functor C D} (α : nat_transf F G) :=
     Fun_comp _ _ _ α β = Fun_id F &
     Fun_comp _ _ _ β α = Fun_id G }.
 
-Definition are_isomorphic_functors {C D} {F G : functor C D} :=
+Definition are_isomorphic_functors {C D} (F G : functor C D) :=
   { α : nat_transf F G & is_iso_betw_fun α }.
+
+Theorem functor_comp_prop {C D E} {F : functor C D} {G : functor D E} :
+   ∀ (a b c : Obj C) (f : Hom a b) (g : Hom b c),
+   f_map_hom G (f_map_hom F (g ◦ f)) =
+   f_map_hom G (f_map_hom F g) ◦ f_map_hom G (f_map_hom F f).
+Proof.
+intros.
+Admitted.
+
+Theorem functor_comp_id_prop {C D E} {F : functor C D} {G : functor D E} :
+  ∀ x : Obj C,
+   f_map_hom G (f_map_hom F (idc x)) = idc (f_map_obj G (f_map_obj F x)).
+Proof.
+intros.
+...
+
+(*
+Theorem functor_comp_id_prop_2 {C D E} {F : functor C D} {G : functor D E} :
+  ∀ x : Obj C,
+    f_map_hom G (f_map_hom F (@idc C x)) =
+    @idc E (@f_map_obj D E G (@f_map_obj C D F x)).
+Abort.
+Theorem functor_comp_id_prop_ini {C D E} {F : functor C D} {G : functor D E} :
+  ∀ x : Obj C,
+    @f_map_hom D E G (@f_map_obj C D F x) (@f_map_obj C D F x) (@f_map_hom C D F x x (@idc C x)) =
+    @idc E (@f_map_obj D E G (@f_map_obj C D F x)).
+Abort.
+*)
+
+Definition functor_comp {C D E} : functor C D → functor D E → functor C E :=
+  λ F G,
+  {| f_map_obj x := f_map_obj G (f_map_obj F x);
+     f_map_hom x y f := f_map_hom G (f_map_hom F f);
+     f_comp_prop := functor_comp_prop;
+     f_id_prop := functor_comp_id_prop |}.
+
+Definition functor_id C : functor C C :=
+  {| f_map_obj x := x;
+     f_map_hom x y f := f;
+     f_comp_prop _ _ _ _ _ := eq_refl;
+     f_id_prop _ := eq_refl |}.
+
+Definition is_equiv_betw_cat_guetta {C D} (F : functor C D) :=
+  { G : functor D C &
+    are_isomorphic_functors (functor_comp F G) (functor_id C) &
+    are_isomorphic_functors (functor_comp G F) (functor_id D) }.
+
+Definition is_equiv_betw_cat_allioux {C D} (F : functor C D) :=
+  { G : functor D C &
+    functor_comp F G = functor_id C &
+    functor_comp G F = functor_id D }.
 
 ...
 
-Definition is_iso_betw_cat {C D} (F : functor C D) :=
+(* ceci, ci-dessous, est censé être pareil que is_equiv_betw_cat_allioux,
+   qu'y disent *)
+
+Definition is_iso_betw_cat2 {C D} (F : functor C D) :=
   { G : functor D C &
     { GF : ∀ x : Obj C, f_map_obj G (f_map_obj F x) = x &
       { FG : ∀ y : Obj D, f_map_obj F (f_map_obj G y) = y &
