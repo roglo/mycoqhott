@@ -542,3 +542,27 @@ Definition Fun C D :=
      unit_r := Fun_unit_r;
      assoc := Fun_assoc;
      Hom_set := Fun_Hom_set |}.
+
+(* isomorphism between functors *)
+
+Definition is_iso_betw_fun {C D} {F G : functor C D} (α : nat_transf F G) :=
+  { β : nat_transf G F &
+    Fun_comp _ _ _ α β = Fun_id F &
+    Fun_comp _ _ _ β α = Fun_id G }.
+
+Definition are_isomorphic_functors {C D} {F G : functor C D} :=
+  { α : nat_transf F G & is_iso_betw_fun α }.
+
+...
+
+Definition is_iso_betw_cat {C D} (F : functor C D) :=
+  { G : functor D C &
+    { GF : ∀ x : Obj C, f_map_obj G (f_map_obj F x) = x &
+      { FG : ∀ y : Obj D, f_map_obj F (f_map_obj G y) = y &
+        ((∀ (x y : Obj C) (f : Hom x y),
+          f_map_hom G (f_map_hom F f) = transport2 GF x y f) *
+         (∀ (x y : Obj D) (g : Hom x y),
+          f_map_hom F (f_map_hom G g) = transport2 FG x y g))%type }}}.
+
+Definition are_isomorphic_categories (C D : category) :=
+  { F : functor C D & is_iso_betw_cat F }.
