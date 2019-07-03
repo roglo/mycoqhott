@@ -464,11 +464,43 @@ intros.
 destruct f as (f, Hf).
 unfold Fun_comp; cbn.
 apply eq_existT_uncurried.
-...
+assert (p : (λ x : Obj C, f x ◦ f_map_hom F hid) = f). {
+  apply extensionality.
+  intros c.
+  rewrite f_id_prop.
+  apply unit_l.
+}
+exists p.
+apply extensionality; intros x.
+apply extensionality; intros y.
+apply extensionality; intros g.
+apply Hom_set.
+Qed.
+
+Theorem Fun_unit_r {C D} (F G : functor C D) :
+  ∀ (f : nat_transf F G), Fun_comp F G G f (Fun_id G) = f.
+Proof.
+intros.
+destruct f as (f, Hf).
+unfold Fun_comp; cbn.
+apply eq_existT_uncurried.
+assert (p : (λ x : Obj C, f_map_hom G hid ◦ f x) = f). {
+  apply extensionality.
+  intros c.
+  rewrite f_id_prop.
+  apply unit_r.
+}
+exists p.
+apply extensionality; intros x.
+apply extensionality; intros y.
+apply extensionality; intros g.
+apply Hom_set.
+Qed.
 
 Definition Fun C D :=
   {| Obj := functor C D;
      Hom := nat_transf;
      comp := Fun_comp;
      hid := Fun_id;
-     unit_l := Fun_unit_l |}.
+     unit_l := Fun_unit_l;
+     unit_r := Fun_unit_r |}.
