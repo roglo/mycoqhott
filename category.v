@@ -564,27 +564,18 @@ Theorem functor_comp_prop {C D E} {F : functor C D} {G : functor D E} :
    f_map_hom G (f_map_hom F g) ◦ f_map_hom G (f_map_hom F f).
 Proof.
 intros.
-Admitted.
+etransitivity; [ | apply f_comp_prop ].
+apply f_equal, f_comp_prop.
+Qed.
 
 Theorem functor_comp_id_prop {C D E} {F : functor C D} {G : functor D E} :
   ∀ x : Obj C,
    f_map_hom G (f_map_hom F (idc x)) = idc (f_map_obj G (f_map_obj F x)).
 Proof.
 intros.
-...
-
-(*
-Theorem functor_comp_id_prop_2 {C D E} {F : functor C D} {G : functor D E} :
-  ∀ x : Obj C,
-    f_map_hom G (f_map_hom F (@idc C x)) =
-    @idc E (@f_map_obj D E G (@f_map_obj C D F x)).
-Abort.
-Theorem functor_comp_id_prop_ini {C D E} {F : functor C D} {G : functor D E} :
-  ∀ x : Obj C,
-    @f_map_hom D E G (@f_map_obj C D F x) (@f_map_obj C D F x) (@f_map_hom C D F x x (@idc C x)) =
-    @idc E (@f_map_obj D E G (@f_map_obj C D F x)).
-Abort.
-*)
+etransitivity; [ | apply f_id_prop ].
+apply f_equal, f_id_prop.
+Qed.
 
 Definition functor_comp {C D E} : functor C D → functor D E → functor C E :=
   λ F G,
