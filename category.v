@@ -432,12 +432,19 @@ apply f_equal, (nt_commute η').
 Defined.
 
 Definition Fun_comp {C D} (F G H : functor C D) :
-  nat_transf F G → nat_transf G H → nat_transf F H :=
+    nat_transf F G → nat_transf G H → nat_transf F H :=
   λ η η',
   existT _ (λ x, nt_hom η' x ◦ nt_hom η x) (Fun_comp_nt_commute η η').
+
+Definition Fun_id {C D} (F : functor C D) : nat_transf F F.
+Proof.
+Print functor.
+unfold nat_transf.
+exists (f_map_hom F).
+...
 
 Definition Fun C D :=
   {| Obj := functor C D;
      Hom := nat_transf;
      comp := Fun_comp;
-     hid := 42 |}.
+     hid F := 42 |}.
