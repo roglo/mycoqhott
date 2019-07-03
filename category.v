@@ -420,8 +420,8 @@ Arguments nt_hom [_] [_] [_] [_].
 Theorem Fun_comp_nt_commute {C D} {F G H : functor C D} :
   ∀ (η : natural_transformation F G) (η' : natural_transformation G H),
   ∀ (x y : Obj C) (f : Hom x y),
-    nt_hom η' y ◦ nt_hom η y ◦ f_map_hom F f =
-    f_map_hom H f ◦ (nt_hom η' x ◦ nt_hom η x).
+  nt_hom η' y ◦ nt_hom η y ◦ f_map_hom F f =
+  f_map_hom H f ◦ (nt_hom η' x ◦ nt_hom η x).
 Proof.
 intros.
 rewrite assoc, nt_commute.
