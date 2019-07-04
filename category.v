@@ -635,7 +635,7 @@ now intros a.
 Qed.
 
 Definition SetCat@{u} :=
-  {| Obj := Set_type;
+  {| Obj := Set_type@{u};
      Hom A B := st_type A → st_type B;
      comp A B C HAB HBC HA := HBC (HAB HA);
      idc _ A := A;
