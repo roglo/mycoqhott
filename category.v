@@ -1,6 +1,7 @@
 (* categories *)
 (* http://angg.twu.net/tmp/2016-optativa/awodey__category_theory.pdf *)
 
+Set Universe Polymorphism.
 Require Import Utf8.
 Require hott4cat.
 Set Nested Proofs Allowed.
@@ -621,7 +622,7 @@ Definition is_equiv_betw_cat_guetta {C D} (F : functor C D) :=
 
 (* category of sets *)
 
-Definition Set_type@{u} := { A : Type@{u} & isSet A }.
+Definition Set_type := { A : Type & isSet A }.
 
 Definition st_type (st : Set_type) := projT1 st.
 Definition st_is_set (st : Set_type) := projT2 st.
@@ -634,7 +635,7 @@ apply hott4cat.ex_3_1_6.
 now intros a.
 Qed.
 
-Definition SetCat@{u} :=
+Definition SetCat :=
   {| Obj := Set_type;
      Hom A B := st_type A → st_type B;
      comp A B C HAB HBC HA := HBC (HAB HA);
@@ -643,19 +644,6 @@ Definition SetCat@{u} :=
      unit_r _ _ _ := eq_refl;
      assoc _ _ _ _ _ _ _ := eq_refl;
      Hom_set := SetCat_Hom_set |}.
-
-Set Printing Universes.
-Check Set.
-Check nat.
-Check Type.
-Inductive Fin n := elem : ∀ i, i < n → Fin n.
-Check forall T : nat, Fin T.
-Check forall T : Set, T.
-Check forall T : Type, T.
-Definition id (T : Set) (x : T) : T := x.
-Check id _ 0.
-Check id Set.
-Check id Type.
 
 (* representable functors *)
 
@@ -670,17 +658,8 @@ Check id Type.
 
 (* Constraint category.u <= Set_type.u. *)
 
-Definition functor_on_set {C} A : functor C _ :=
+Definition functor_on_set {C} A : functor C SetCat :=
   {| f_map_obj X := existT isSet (Hom A X) (Hom_set A X) : Obj SetCat |}.
-
-Error:
-In environment
-C : category
-A : Obj ?category
-X : Obj ?category
-The term "existT isSet (Hom A X) (Hom_set A X)" has type "{x : Type@{isSet.u0} & isSet x}"
-while it is expected to have type "Obj SetCat" (universe inconsistency: Cannot enforce isSet.u0 =
-Set_type.u because Set_type.u < category.u <= isSet.u0).
 
 ...
 
