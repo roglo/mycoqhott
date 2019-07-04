@@ -686,3 +686,19 @@ Definition hom_functor {C} A : functor C SetCat :=
 
 Definition is_representable_functor {C} (F : functor C SetCat) :
   { X : Obj C & are_isomorphic_functors F (hom_functor X) }.
+
+(* Yoneda lemma *)
+
+(*
+  Let F be an arbitrary functor from C to SetCat. Then Yoneda's lemma
+  says that: (h^A being the hom_functor above)
+
+  For each object A of C, the natural transformations from h^A to F
+  are in one-to-one correspondence with the elements of F(A). That is,
+
+     Nat (h^A, F) ≅ F (A)
+
+   Moreover this isomorphism is natural in A and F when both sides are
+   regarded as functors from Set^C x C to Set. (Here the notation Set^C
+   denotes the category of functors from C to Set.)
+*)
