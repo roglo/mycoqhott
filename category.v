@@ -656,10 +656,15 @@ Definition SetCat :=
         g ↦ f ∘ g for each g in Hom(A, X).
 *)
 
-(* Constraint category.u <= Set_type.u. *)
+Definition toto {C} {A : Obj C} (X Y : Obj C) (F : Hom X Y) :
+  @Hom SetCat (existT isSet (Hom A X) (Hom_set A X))
+       (existT isSet (Hom A Y) (Hom_set A Y)).
+Proof.
+...
 
 Definition functor_on_set {C} A : functor C SetCat :=
-  {| f_map_obj X := existT isSet (Hom A X) (Hom_set A X) : Obj SetCat |}.
+  {| f_map_obj X := existT isSet (Hom A X) (Hom_set A X) : Obj SetCat;
+     f_map_hom := toto |}.
 
 ...
 
