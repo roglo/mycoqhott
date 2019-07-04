@@ -645,8 +645,17 @@ Definition SetCat@{u} :=
      Hom_set := SetCat_Hom_set |}.
 
 Set Printing Universes.
-
-Print SetCat.
+Check Set.
+Check nat.
+Check Type.
+Inductive Fin n := elem : ∀ i, i < n → Fin n.
+Check forall T : nat, Fin T.
+Check forall T : Set, T.
+Check forall T : Type, T.
+Definition id (T : Set) (x : T) : T := x.
+Check id _ 0.
+Check id Set.
+Check id Type.
 
 (* representable functors *)
 
