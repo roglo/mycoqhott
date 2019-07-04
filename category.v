@@ -646,8 +646,6 @@ Definition SetCat :=
 
 (* representable functors *)
 
-Print functor.
-
 (*
   Hom(A,–) : C → Set
   This is a covariant functor given by:
@@ -657,10 +655,20 @@ Print functor.
         g ↦ f ∘ g for each g in Hom(A, X).
 *)
 
-Check f_map_obj.
+Definition glop {C} A : functor C _ :=
+  {| f_map_obj X := existT _ (Hom A X) (Hom_set A X) : Obj SetCat |}.
 
-Definition glop {C} A D : functor C D :=
-  {| f_map_obj (X : Obj C) := existT _ (Hom A X) (Hom_set A) : Obj D |}.
+...
+
+Definition glop {C} A : functor C SetCat :=
+  {| f_map_obj X := existT _ (Hom A X) (Hom_set A X) : Obj SetCat |}.
+
+...
+
+Definition glop {C} A : functor C SetCat :=
+  {| f_map_obj (X : Obj C) := existT _ (Hom A X) (Hom_set A X) : Obj SetCat |}.
+
+...
 
 Definition tagada {C} (B B' : Obj C) (g : Hom B B') (A : Obj C) :=
   {| f_map_obj A := g ◦ |}.
