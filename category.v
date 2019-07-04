@@ -286,7 +286,7 @@ intros x.
 apply Hom_set.
 Qed.
 
-Definition Cone {J C} (D : functor J C) :=
+Definition ConeCat {J C} (D : functor J C) :=
   {| Obj := cone D;
      Hom := Cone_Hom;
      comp := Cone_comp;
@@ -296,9 +296,7 @@ Definition Cone {J C} (D : functor J C) :=
      assoc := Cone_assoc;
      Hom_set := Cone_Hom_set |}.
 
-(* category of co-cones *)
-
-Definition CoCone {J C} (D : functor J C) :=
+Definition CoConeCat {J C} (D : functor J C) :=
   {| Obj := co_cone D;
      Hom := CoCone_Hom;
      comp := CoCone_comp;
@@ -312,10 +310,10 @@ Definition CoCone {J C} (D : functor J C) :=
    and a colimit an initial object in CoCone(D) *)
 
 Definition is_limit {J C} {D : functor J C} (cn : cone D) :=
-  @is_terminal (Cone D) cn.
+  @is_terminal (ConeCat D) cn.
 
 Definition is_colimit {J C} {D : functor J C} (cc : co_cone D) :=
-  @is_initial (CoCone D) cc.
+  @is_initial (CoConeCat D) cc.
 
 (* Spelling out the definition, the limit of a diagram D has the
    following UMP: given any cone (C, cj) to D, there is a unique
@@ -353,7 +351,7 @@ Qed.
 
 (* another definition of category of co-cones *)
 
-Definition CoCone2 {J C} (D : functor J C) := op (Cone (fop D)).
+Definition CoConeCat2 {J C} (D : functor J C) := op (ConeCat (fop D)).
 
 Definition cone_fop_of_co_cone {J C} {D : functor J C} :
     co_cone D → cone (fop D) :=
@@ -369,10 +367,11 @@ Definition co_cone_of_cone_fop {J C} {D : functor J C} :
      cc_fam j := cn_fam cn j : @Hom (op C) (cn_top cn) (f_map_obj D j);
      cc_commute i j := cn_commute (fop D) cn j i |}.
 
-Definition F_CoCone_CoCone2_comp_prop {J C} {D : functor J C} {x y z : Obj (CoCone D)} :
+Definition F_CoConeCat_CoConeCat2_comp_prop {J C} {D : functor J C}
+  {x y z : Obj (CoConeCat D)} :
   ∀ (f : Hom x y) (g : Hom y z),
    g ◦ f =
-   @comp (CoCone2 D) (cone_fop_of_co_cone x) (cone_fop_of_co_cone y)
+   @comp (CoConeCat2 D) (cone_fop_of_co_cone x) (cone_fop_of_co_cone y)
        (cone_fop_of_co_cone z) f g.
 Proof.
 intros; cbn.
@@ -383,10 +382,11 @@ intros j.
 apply Hom_set.
 Defined.
 
-Definition F_CoCone2_CoCone_comp_prop {J C} {D : functor J C} {x y z : Obj (CoCone2 D)} :
+Definition F_CoConeCat2_CoConeCat_comp_prop {J C} {D : functor J C}
+  {x y z : Obj (CoConeCat2 D)} :
   ∀ (f : Hom x y) (g : Hom y z),
   g ◦ f =
-  @comp (CoCone D) (co_cone_of_cone_fop x) (co_cone_of_cone_fop y)
+  @comp (CoConeCat D) (co_cone_of_cone_fop x) (co_cone_of_cone_fop y)
         (co_cone_of_cone_fop z) f g.
 Proof.
 intros; cbn.
@@ -397,26 +397,30 @@ intros j.
 apply Hom_set.
 Defined.
 
-Definition F_CoCone_CoCone2 {J C} {D : functor J C} :
-    functor (CoCone D) (CoCone2 D) :=
-  {| f_map_obj := cone_fop_of_co_cone : Obj (CoCone D) → Obj (CoCone2 D);
+Definition F_CoConeCat_CoConeCat2 {J C} {D : functor J C} :
+    functor (CoConeCat D) (CoConeCat2 D) :=
+  {| f_map_obj :=
+       cone_fop_of_co_cone : Obj (CoConeCat D) → Obj (CoConeCat2 D);
      f_map_hom _ _ f := f;
-     f_comp_prop _ _ _ := F_CoCone_CoCone2_comp_prop;
+     f_comp_prop _ _ _ := F_CoConeCat_CoConeCat2_comp_prop;
      f_id_prop _ := eq_refl |}.
 
-Definition F_CoCone2_CoCone {J C} {D : functor J C} :
-    functor (CoCone2 D) (CoCone D) :=
-  {| f_map_obj := co_cone_of_cone_fop : Obj (CoCone2 D) → Obj (CoCone D);
+Definition F_CoConeCat2_CoConeCat {J C} {D : functor J C} :
+    functor (CoConeCat2 D) (CoConeCat D) :=
+  {| f_map_obj :=
+       co_cone_of_cone_fop : Obj (CoConeCat2 D) → Obj (CoConeCat D);
      f_map_hom _ _ f := f;
-     f_comp_prop _ _ _ := F_CoCone2_CoCone_comp_prop;
+     f_comp_prop _ _ _ := F_CoConeCat2_CoConeCat_comp_prop;
      f_id_prop _ := eq_refl |}.
 
-Theorem F_CoCone_CoCone2_id {J C} {D : functor J C} :
-  ∀ cc, f_map_obj F_CoCone2_CoCone (f_map_obj F_CoCone_CoCone2 cc) = cc.
+Theorem F_CoConeCat_CoConeCat2_id {J C} {D : functor J C} :
+  ∀ cc,
+  f_map_obj F_CoConeCat2_CoConeCat (f_map_obj F_CoConeCat_CoConeCat2 cc) = cc.
 Proof. now intros; destruct cc. Defined.
 
-Theorem F_CoCone2_CoCone_id {J C} {D : functor J C} :
-  ∀ cc, f_map_obj F_CoCone_CoCone2 (f_map_obj F_CoCone2_CoCone cc) = cc.
+Theorem F_CoConeCat2_CoConeCat_id {J C} {D : functor J C} :
+  ∀ cc,
+  f_map_obj F_CoConeCat_CoConeCat2 (f_map_obj F_CoConeCat2_CoConeCat cc) = cc.
 Proof. now intros; destruct cc. Defined.
 
 Theorem eq_eq_eq_pair {A B} {x y : A} {z t : B} :
@@ -432,8 +436,8 @@ Definition transport2 {C D} {F : functor C D} {G : functor D C}
     (eq_eq_eq_pair (eq_sym (GF x)) (eq_sym (GF y))).
 
 (* Guetta & Allioux pretend the following to be equivalent to
-   is_equiv_betw_cat above, but testing the latter to CoCone
-   and CoCone2 does not seem to work *)
+   is_equiv_betw_cat above, but testing the latter to CoConeCat
+   and CoConeCat2 does not seem to work *)
 
 Definition is_iso_betw_cat {C D} (F : functor C D) :=
   { G : functor D C &
@@ -447,13 +451,13 @@ Definition is_iso_betw_cat {C D} (F : functor C D) :=
 Definition are_isomorphic_categories (C D : category) :=
   { F : functor C D & is_iso_betw_cat F }.
 
-Theorem CoCone_CoCone2_iso J C {D : functor J C} :
-  are_isomorphic_categories (CoCone D) (CoCone2 D).
+Theorem CoConeCat_CoConeCat2_iso J C {D : functor J C} :
+  are_isomorphic_categories (CoConeCat D) (CoConeCat2 D).
 Proof.
-exists F_CoCone_CoCone2.
-exists F_CoCone2_CoCone.
-exists F_CoCone_CoCone2_id.
-exists F_CoCone2_CoCone_id.
+exists F_CoConeCat_CoConeCat2.
+exists F_CoConeCat2_CoConeCat.
+exists F_CoConeCat_CoConeCat2_id.
+exists F_CoConeCat2_CoConeCat_id.
 split.
 -now intros; destruct x, y.
 -now intros; destruct x, y.
@@ -580,7 +584,7 @@ intros x.
 apply Hom_set.
 Qed.
 
-Definition Fun C D :=
+Definition FunCat C D :=
   {| Obj := functor C D;
      Hom := natural_transformation;
      comp := Fun_cat_comp;
@@ -614,3 +618,20 @@ Definition is_equiv_betw_cat_guetta {C D} (F : functor C D) :=
   { G : functor D C &
     are_isomorphic_functors (functor_comp F G) (functor_id C) &
     are_isomorphic_functors (functor_comp G F) (functor_id D) }.
+
+(* category of sets *)
+
+Theorem SetCat_Hom_set :
+  ∀ x y : {A : Type & isSet A}, isSet (projT1 x → projT1 y).
+Proof.
+intros (A, HA) (B, HB).
+move B before A; cbn.
+apply hott4cat.ex_3_1_6.
+now intros a.
+Qed.
+
+Definition SetCat :=
+  {| Obj := { A & isSet A };
+     Hom A B := projT1 A → projT1 B;
+     comp := 42;
+     Hom_set := SetCat_Hom_set |}.
