@@ -7,11 +7,11 @@ Set Nested Proofs Allowed.
 
 Axiom extensionality : ∀ A B (f g : ∀ x : A, B x), (∀ x, f x = g x) → f = g.
 
-Definition isSet (A : Type) := ∀ (a b : A) (p q : a = b), p = q.
+Definition isSet@{u} (A : Type@{u}) := ∀ (a b : A) (p q : a = b), p = q.
 
-Class category :=
-  { Obj : Type;
-    Hom : Obj → Obj → Type;
+Class category@{u} :=
+  { Obj : Type@{u};
+    Hom : Obj → Obj → Type@{u};
     comp : ∀ {A B C}, Hom A B → Hom B C → Hom A C;
     idc : ∀ A, Hom A A;
     unit_l : ∀ {A B} (f : Hom A B), comp (idc A) f = f;
@@ -621,7 +621,7 @@ Definition is_equiv_betw_cat_guetta {C D} (F : functor C D) :=
 
 (* category of sets *)
 
-Definition Set_type := { A : Type & isSet A }.
+Definition Set_type@{u} := { A : Type@{u} & isSet A }.
 
 Definition st_type (st : Set_type) := projT1 st.
 Definition st_is_set (st : Set_type) := projT2 st.
@@ -634,7 +634,7 @@ apply hott4cat.ex_3_1_6.
 now intros a.
 Qed.
 
-Definition SetCat :=
+Definition SetCat@{u} :=
   {| Obj := Set_type;
      Hom A B := st_type A → st_type B;
      comp A B C HAB HBC HA := HBC (HAB HA);
@@ -643,6 +643,10 @@ Definition SetCat :=
      unit_r _ _ _ := eq_refl;
      assoc _ _ _ _ _ _ _ := eq_refl;
      Hom_set := SetCat_Hom_set |}.
+
+Set Printing Universes.
+
+Print SetCat.
 
 (* representable functors *)
 
@@ -655,8 +659,19 @@ Definition SetCat :=
         g ↦ f ∘ g for each g in Hom(A, X).
 *)
 
-Definition functor_on_set {C} A : functor C SetCat :=
-  {| f_map_obj X := existT _ (Hom A X) (Hom_set A X) : Obj SetCat |}.
+(* Constraint category.u <= Set_type.u. *)
+
+Definition functor_on_set {C} A : functor C _ :=
+  {| f_map_obj X := existT isSet (Hom A X) (Hom_set A X) : Obj SetCat |}.
+
+Error:
+In environment
+C : category
+A : Obj ?category
+X : Obj ?category
+The term "existT isSet (Hom A X) (Hom_set A X)" has type "{x : Type@{isSet.u0} & isSet x}"
+while it is expected to have type "Obj SetCat" (universe inconsistency: Cannot enforce isSet.u0 =
+Set_type.u because Set_type.u < category.u <= isSet.u0).
 
 ...
 
