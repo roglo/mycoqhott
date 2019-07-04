@@ -656,15 +656,24 @@ Definition SetCat :=
         g ↦ f ∘ g for each g in Hom(A, X).
 *)
 
-Definition toto {C} {A : Obj C} (X Y : Obj C) (F : Hom X Y) :
-  @Hom SetCat (existT isSet (Hom A X) (Hom_set A X))
-       (existT isSet (Hom A Y) (Hom_set A Y)).
+Theorem hom_functor_comp_prop {C} {A : Obj C} :
+  ∀ (B B' B'' : Obj C) (f : Hom B B') (g : Hom B' B''),
+  (λ h, g ◦ f ◦ h) =
+  (@comp SetCat (existT isSet (Hom A B) (Hom_set A B))
+         (existT isSet (Hom A B') (Hom_set A B'))
+         (existT isSet (Hom A B'') (Hom_set A B''))
+         (λ h : st_type (existT isSet (Hom A B) (Hom_set A B)),
+                f ◦ h)
+         (λ h : st_type (existT isSet (Hom A B') (Hom_set A B')),
+                g ◦ h)).
 Proof.
-...
+intros.
+Admitted.
 
-Definition functor_on_set {C} A : functor C SetCat :=
+Definition hom_functor {C} A : functor C SetCat :=
   {| f_map_obj X := existT isSet (Hom A X) (Hom_set A X) : Obj SetCat;
-     f_map_hom := toto |}.
+     f_map_hom _ _ F G := F ◦ G;
+     f_comp_prop := hom_functor_comp_prop |}.
 
 ...
 
