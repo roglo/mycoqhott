@@ -669,13 +669,20 @@ apply extensionality; intros h.
 apply assoc.
 Qed.
 
+Theorem hom_functor_id_prop {C} {A : Obj C} :
+  ∀ B : Obj C,
+  (λ h, idc B ◦ h) = (@idc SetCat (existT isSet (Hom A B) (Hom_set A B))).
+Proof.
+intros.
+apply extensionality; intros h; cbn.
+apply unit_r.
+Qed.
+
 Definition hom_functor {C} A : functor C SetCat :=
   {| f_map_obj X := existT isSet (Hom A X) (Hom_set A X) : Obj SetCat;
      f_map_hom _ _ F G := F ◦ G;
      f_comp_prop := hom_functor_comp_prop;
-     f_id_prop := 42 |}.
-
-...
+     f_id_prop := hom_functor_id_prop |}.
 
 Definition is_representable_functor {C} (F : functor C SetCat) :
-  { X : Obj C & are_isomorphic_functors F (functor_on_set X) }.
+  { X : Obj C & are_isomorphic_functors F (hom_functor X) }.
