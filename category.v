@@ -621,7 +621,7 @@ Definition is_equiv_betw_cat_guetta {C D} (F : functor C D) :=
 
 (* category of sets *)
 
-Definition Set_type := { A & isSet A }.
+Definition Set_type := { A : Type & isSet A }.
 
 Definition st_type (st : Set_type) := projT1 st.
 Definition st_is_set (st : Set_type) := projT2 st.
@@ -655,23 +655,10 @@ Definition SetCat :=
         g ↦ f ∘ g for each g in Hom(A, X).
 *)
 
-Definition glop {C} A : functor C _ :=
+Definition functor_on_set {C} A : functor C SetCat :=
   {| f_map_obj X := existT _ (Hom A X) (Hom_set A X) : Obj SetCat |}.
 
 ...
-
-Definition glop {C} A : functor C SetCat :=
-  {| f_map_obj X := existT _ (Hom A X) (Hom_set A X) : Obj SetCat |}.
-
-...
-
-Definition glop {C} A : functor C SetCat :=
-  {| f_map_obj (X : Obj C) := existT _ (Hom A X) (Hom_set A X) : Obj SetCat |}.
-
-...
-
-Definition tagada {C} (B B' : Obj C) (g : Hom B B') (A : Obj C) :=
-  {| f_map_obj A := g ◦ |}.
 
 Definition is_representable_functor {C} (F : functor C SetCat) :
-  { X : Obj C & are_isomorphic_functors F (glop X) }.
+  { X : Obj C & are_isomorphic_functors F (functor_on_set X) }.
