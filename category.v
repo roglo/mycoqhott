@@ -662,18 +662,18 @@ Theorem hom_functor_comp_prop {C} {A : Obj C} :
   (@comp SetCat (existT isSet (Hom A B) (Hom_set A B))
          (existT isSet (Hom A B') (Hom_set A B'))
          (existT isSet (Hom A B'') (Hom_set A B''))
-         (λ h : st_type (existT isSet (Hom A B) (Hom_set A B)),
-                f ◦ h)
-         (λ h : st_type (existT isSet (Hom A B') (Hom_set A B')),
-                g ◦ h)).
+         (λ h, f ◦ h) (λ h, g ◦ h)).
 Proof.
 intros.
-Admitted.
+apply extensionality; intros h.
+apply assoc.
+Qed.
 
 Definition hom_functor {C} A : functor C SetCat :=
   {| f_map_obj X := existT isSet (Hom A X) (Hom_set A X) : Obj SetCat;
      f_map_hom _ _ F G := F ◦ G;
-     f_comp_prop := hom_functor_comp_prop |}.
+     f_comp_prop := hom_functor_comp_prop;
+     f_id_prop := 42 |}.
 
 ...
 
