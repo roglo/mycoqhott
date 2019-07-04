@@ -648,9 +648,22 @@ Definition SetCat :=
 
 Print functor.
 
-Definition glop {C} (X : Obj C) : functor C C :=
-  {| f_map_obj x := x;
-     f_map_hom x y := 42 |}.
+(*
+  Hom(A,–) : C → Set
+  This is a covariant functor given by:
+    Hom(A,–) maps each object X in C to the set of morphisms, Hom(A, X)
+    Hom(A,–) maps each morphism f : X → Y to the function
+        Hom(A, f) : Hom(A, X) → Hom(A, Y) given by
+        g ↦ f ∘ g for each g in Hom(A, X).
+*)
+
+Check f_map_obj.
+
+Definition glop {C} A D : functor C D :=
+  {| f_map_obj (X : Obj C) := existT _ (Hom A X) (Hom_set A) : Obj D |}.
+
+Definition tagada {C} (B B' : Obj C) (g : Hom B B') (A : Obj C) :=
+  {| f_map_obj A := g ◦ |}.
 
 Definition is_representable_functor {C} (F : functor C SetCat) :
-  { X : Obj C & are_isomorphic_functors F (glop C) }.
+  { X : Obj C & are_isomorphic_functors F (glop X) }.
