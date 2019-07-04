@@ -643,3 +643,14 @@ Definition SetCat :=
      unit_r _ _ _ := eq_refl;
      assoc _ _ _ _ _ _ _ := eq_refl;
      Hom_set := SetCat_Hom_set |}.
+
+(* representable functors *)
+
+Print functor.
+
+Definition glop {C} (X : Obj C) : functor C C :=
+  {| f_map_obj x := x;
+     f_map_hom x y := 42 |}.
+
+Definition is_representable_functor {C} (F : functor C SetCat) :
+  { X : Obj C & are_isomorphic_functors F (glop C) }.
