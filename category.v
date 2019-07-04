@@ -621,8 +621,12 @@ Definition is_equiv_betw_cat_guetta {C D} (F : functor C D) :=
 
 (* category of sets *)
 
-Theorem SetCat_Hom_set :
-  ∀ x y : {A : Type & isSet A}, isSet (projT1 x → projT1 y).
+Definition Set_type := { A & isSet A }.
+
+Definition st_type (st : Set_type) := projT1 st.
+Definition st_is_set (st : Set_type) := projT2 st.
+
+Theorem SetCat_Hom_set : ∀ x y : Set_type, isSet (st_type x → st_type y).
 Proof.
 intros (A, HA) (B, HB).
 move B before A; cbn.
@@ -631,7 +635,9 @@ now intros a.
 Qed.
 
 Definition SetCat :=
-  {| Obj := { A & isSet A };
-     Hom A B := projT1 A → projT1 B;
-     comp := 42;
+  {| Obj := Set_type;
+     Hom A B := st_type A → st_type B;
+     comp A B C HAB HBC HA := HBC (HAB HA);
+     idc A B := B;
+     unit_l := 42;
      Hom_set := SetCat_Hom_set |}.
