@@ -707,7 +707,11 @@ Example NT {C} (F : functor C SetCat) :
   natural_transformation (hom_functor A) F.
 intros.
 Print natural_transformation.
+Check (λ f, f_map_hom F f).
+  {ϑ : ∀ x : Obj C, Hom (f_map_obj F x) (f_map_obj G x) &
+
 unfold natural_transformation.
+Search Hom.
 Check (f_map_hom (hom_functor A)).
 ..
 
