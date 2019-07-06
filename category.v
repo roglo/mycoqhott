@@ -714,6 +714,8 @@ specialize (@f_id_prop C SetCat G A) as H2.
 specialize (f_map_hom (hom_functor A) u) as H3.
 cbn in H3.
 remember (idc A) as h.
+Print Set_type.
+Check (f_map_obj F A).
 ...
 
 Lemma Yoneda {C} (F : functor C SetCat) :
