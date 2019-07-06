@@ -705,10 +705,19 @@ Definition is_representable_functor {C} (F : functor C SetCat) :
 Example toto {C} (F : functor C SetCat) (A : Obj C):
   ∀ X : Obj C, Hom (f_map_obj (hom_functor A) X) (f_map_obj F X).
 Proof.
-intros X u.
-cbn in u.
+intros X f; cbn in f.
+set (H1 := λ _ : Hom A A, f).
+set (H2 := f_map_hom F f : st_type (f_map_obj F A) → st_type (f_map_obj F X)).
+...
+assert (H1 : Hom A X → Obj SetCat). {
+  intros f; cbn.
+  unfold Set_type.
+  exists (
 assert (H4 : Hom A A → Obj SetCat). {
-  intros u.
+  intros f; cbn.
+  unfold Set_type.
+  exists (
+...
 
 set (G := hom_functor A) in u.
 apply (f_map_hom F u).
