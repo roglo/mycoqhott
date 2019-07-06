@@ -707,6 +707,9 @@ Example toto {C} (F : functor C SetCat) (A : Obj C):
 Proof.
 intros X u.
 cbn in u.
+assert (H4 : Hom A A → Obj SetCat). {
+  intros u.
+
 set (G := hom_functor A) in u.
 apply (f_map_hom F u).
 specialize (@f_id_prop C SetCat F A) as H1.
