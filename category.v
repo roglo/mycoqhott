@@ -708,6 +708,9 @@ Proof.
 intros X f; cbn in f.
 set (H1 := λ _ : Hom A A, f).
 set (H2 := f_map_hom F f : st_type (f_map_obj F A) → st_type (f_map_obj F X)).
+cbn in H2.
+assert (H3 : Hom A A → st_type (f_map_obj F A)). {
+  intros i; cbn.
 ...
 assert (H1 : Hom A X → Obj SetCat). {
   intros f; cbn.
