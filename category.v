@@ -702,18 +702,13 @@ Definition is_representable_functor {C} (F : functor C SetCat) :
    denotes the category of functors from C to Set.)
 *)
 
-Example NT {C} (F : functor C SetCat) :
-  ∀ A : Obj C,
-  natural_transformation (hom_functor A) F.
-intros.
-Print natural_transformation.
-Check (λ f, f_map_hom F f).
-  {ϑ : ∀ x : Obj C, Hom (f_map_obj F x) (f_map_obj G x) &
-
-unfold natural_transformation.
-Search Hom.
-Check (f_map_hom (hom_functor A)).
-..
+Example toto {C} (F : functor C SetCat) (A : Obj C):
+  ∀ X : Obj C, Hom (f_map_obj (hom_functor A) X) (f_map_obj F X).
+Proof.
+intros X f; cbn in f.
+apply (f_map_hom F f).
+specialize (@f_id_prop C SetCat F A) as H1.
+...
 
 Lemma Yoneda {C} (F : functor C SetCat) :
   ∀ A : Obj C,
