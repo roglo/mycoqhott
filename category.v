@@ -708,11 +708,11 @@ Proof.
 intros X u.
 cbn in u.
 set (G := hom_functor A) in u.
+apply (f_map_hom F u).
 specialize (@f_id_prop C SetCat F A) as H1.
 specialize (@f_id_prop C SetCat G A) as H2.
 specialize (f_map_hom (hom_functor A) u) as H3.
 cbn in H3.
-apply (f_map_hom F u).
 remember (idc A) as h.
 ...
 
