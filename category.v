@@ -705,13 +705,15 @@ Definition is_representable_functor {C} (F : functor C SetCat) :
 Example toto {C} (F : functor C SetCat) (A : Obj C):
   ∀ X : Obj C, Hom (f_map_obj (hom_functor A) X) (f_map_obj F X).
 Proof.
-intros X f; cbn in f.
-apply (f_map_hom F f).
+intros X u.
+cbn in u.
+set (G := hom_functor A) in u.
 specialize (@f_id_prop C SetCat F A) as H1.
-specialize (@f_id_prop C SetCat (hom_functor A) A) as H2.
-cbn in H2.
-specialize (f_map_hom (hom_functor A) f) as H3.
+specialize (@f_id_prop C SetCat G A) as H2.
+specialize (f_map_hom (hom_functor A) u) as H3.
 cbn in H3.
+apply (f_map_hom F u).
+remember (idc A) as h.
 ...
 
 Lemma Yoneda {C} (F : functor C SetCat) :
