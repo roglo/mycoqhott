@@ -708,6 +708,10 @@ Proof.
 intros X f; cbn in f.
 apply (f_map_hom F f).
 specialize (@f_id_prop C SetCat F A) as H1.
+specialize (@f_id_prop C SetCat (hom_functor A) A) as H2.
+cbn in H2.
+specialize (f_map_hom (hom_functor A) f) as H3.
+cbn in H3.
 ...
 
 Lemma Yoneda {C} (F : functor C SetCat) :
