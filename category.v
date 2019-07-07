@@ -701,6 +701,12 @@ Definition is_representable_functor {C} (F : functor C SetCat) :
    regarded as functors from Set^C x C to Set. (Here the notation Set^C
    denotes the category of functors from C to Set.)
 *)
+Definition happly {A B} (f g : ∀ (x : A), B x)
+  : f = g → ∀ (x : A), f x = g x
+  := λ p,
+     match p with
+     | eq_refl _ => λ y, eq_refl (f y)
+     end.
 
 Lemma Yoneda {C} (F : functor C SetCat) :
   ∀ (A : Obj C),
@@ -710,11 +716,11 @@ Lemma Yoneda {C} (F : functor C SetCat) :
   (∀ x : NT, g (f x) = x) ∧ (∀ y : FA, f (g y) = y).
 Proof.
 intros.
-set (φ := λ Φ : NT, nt_hom Φ A (idc A)).
-exists φ.
-assert (∀ Φ₁ Φ₂, φ Φ₁ = φ Φ₂ → Φ₁ = Φ₂). {
+set (h := λ Φ : NT, nt_hom Φ A (idc A)).
+exists h.
+assert (Hinj : ∀ Φ₁ Φ₂, h Φ₁ = h Φ₂ → Φ₁ = Φ₂). {
   intros * HΦ.
-  unfold φ in HΦ.
+  unfold h in HΦ.
   destruct Φ₁ as (h1 & Hcomm1).
   destruct Φ₂ as (h2 & Hcomm2).
   move h2 before h1.
@@ -725,17 +731,20 @@ assert (∀ Φ₁ Φ₂, φ Φ₁ = φ Φ₂ → Φ₁ = Φ₂). {
     apply extensionality; intros f.
     specialize (Hcomm1 A X f) as H1.
     specialize (Hcomm2 A X f) as H2.
-    cbn in H1, H2.
-    assert (∀ g : Hom A A, h1 X (f ◦ g) = f_map_hom F f (h1 A g)). {
-      intros g.
-...
-  specialize (nt_commute Φ₁ A A (idc A)) as H1.
-  specialize (nt_commute Φ₂ A A (idc A)) as H2.
-assert (∀ (Φ : NT) (a : Hom A A) X (f : Hom _ _), nt_hom Φ A ◦ f = f ◦ ...
-...
-The term "42" has type "nat" while it is expected to have type "st_type (f_map_obj F A)".
-...
-Check (projT1 Φ₁ A ◦ f_map_hom (hom_functor A) (idc A)).
-Check (nt_hom Φ₂ A (idc A)).
-Check f_map_hom.
-...
+    specialize (@happly _ _ _ _ H1 (idc A)) as H'1.
+    specialize (@happly _ _ _ _ H2 (idc A)) as H'2.
+    cbn in H'1, H'2.
+    rewrite unit_l in H'1, H'2.
+    rewrite H'1, H'2.
+    now f_equal.
+  }
+  exists H.
+  cbn.
+  apply extensionality; intros X.
+  apply extensionality; intros Y.
+  apply extensionality; intros f.
+  destruct H; cbn.
+  apply hott4cat.ex_3_1_6.
+  intros g.
+  apply st_is_set.
+}
