@@ -702,42 +702,13 @@ Definition is_representable_functor {C} (F : functor C SetCat) :
    denotes the category of functors from C to Set.)
 *)
 
-Example toto {C} (F : functor C SetCat) (A : Obj C)
-  (Φ : natural_transformation (hom_functor A) F) :
-  ∀ X : Obj C, Hom (f_map_obj (hom_functor A) X) (f_map_obj F X).
-Proof.
-intros *; cbn in X.
-cbn; intros f.
-apply (f_map_hom F f ◦ nt_hom Φ A), idc.
-Qed.
-
 Lemma Yoneda {C} (F : functor C SetCat) :
-  ∀ (A : Obj C) (Φ : natural_transformation (hom_functor A) F),
-  ∃ f :
-...
-
-Lemma Yoneda {C} (F : functor C SetCat) :
-  ∀ (A : Obj C) (Φ : natural_transformation (hom_functor A) F),
+  ∀ (A : Obj C),
+  let NT := natural_transformation (hom_functor A) F in
   let FA := st_type (f_map_obj F A) in
   ∃ f : NT → FA, ∃ g : FA → NT,
   (∀ x : NT, g (f x) = x) ∧ (∀ y : FA, f (g y) = y).
 Proof.
 intros.
-Print natural_transformation.
-Print functor.
-Check (f_map_hom (hom_functor A) (idc A)).
-(*
-f_map_hom (hom_functor A) (idc A)
-     : Hom (f_map_obj (hom_functor A) A) (f_map_obj (hom_functor A) A)
-*)
-Search (Hom _ _ → _).
-exists (λ η, f_map_hom _ (nt_hom η A)).
-...
-Error: Illegal application (Non-functional construction):
-The expression "nt_hom η A" of type "Hom (f_map_obj ?F A) (f_map_obj ?G A)"
-cannot be applied to the term
- "42" : "nat"
-...
-exists (λ η, nt_hom η A (f_map_hom (hom_functor A) (idc A))).
-exists (λ η, nt_hom η A (idc (f_map_obj F A))).
+exists (λ Φ : NT, nt_hom Φ A (idc A)).
 ...
