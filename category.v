@@ -687,6 +687,30 @@ Definition hom_functor {C} A : functor C SetCat :=
 Definition is_representable_functor {C} (F : functor C SetCat) :
   { X : Obj C & are_isomorphic_functors F (hom_functor X) }.
 
+(* *)
+
+Definition happly {A B} (f g : ∀ (x : A), B x)
+  : f = g → ∀ (x : A), f x = g x
+  := λ p,
+     match p with
+     | eq_refl _ => λ y, eq_refl (f y)
+     end.
+
+Theorem glop : ∀ A B (f : A → B),
+  (∀ x y : A, f x = f y → x = y)
+  → (∀ y : B, { x & f x = y })
+  → ∃ g : B → A,
+     (∀ x, g (f x) = x) ∧ (∀ y, f (g y) = y).
+Proof.
+intros * Hinj Hsurj.
+exists (λ y : B, projT1 (Hsurj y)).
+split. {
+  intros x.
+  apply Hinj.
+  specialize (Hsurj (f x)) as H1.
+  destruct H1 as (y & Hxy).
+...
+
 (* Yoneda lemma *)
 
 (*
@@ -701,12 +725,6 @@ Definition is_representable_functor {C} (F : functor C SetCat) :
    regarded as functors from Set^C x C to Set. (Here the notation Set^C
    denotes the category of functors from C to Set.)
 *)
-Definition happly {A B} (f g : ∀ (x : A), B x)
-  : f = g → ∀ (x : A), f x = g x
-  := λ p,
-     match p with
-     | eq_refl _ => λ y, eq_refl (f y)
-     end.
 
 Lemma Yoneda {C} (F : functor C SetCat) :
   ∀ (A : Obj C),
@@ -750,3 +768,46 @@ assert (Hinj : ∀ Φ₁ Φ₂, h Φ₁ = h Φ₂ → Φ₁ = Φ₂). {
 }
 assert (Hsurj : ∀ b, { Φ : NT & h Φ = b }). {
   intros b.
+  set (ϑ := λ (X : Obj C) (g : Hom A X), f_map_hom F g b).
+  assert (P : ∀ (X Y : Obj C) (f : Hom X Y),
+             (λ HA : Hom A X, ϑ Y (f ◦ HA)) = (λ HA : Hom A X, f_map_hom F f (ϑ X HA))). {
+    intros.
+    apply extensionality.
+    intros g.
+    unfold ϑ.
+    now rewrite f_comp_prop.
+  }
+  exists (existT _ ϑ P).
+  cbn; unfold ϑ.
+  now rewrite f_id_prop.
+}
+Check glop.
+...
+set (g :=
+        λ b : st_type (f_map_obj F A),
+          let ϑ := λ (X : Obj C) (g : Hom A X), f_map_hom F g b in
+          let P :
+            ∀ (X Y : Obj C) (f : Hom X Y),
+              (λ HA : Hom A X, ϑ Y (f ◦ HA)) = (λ HA : Hom A X, f_map_hom F f (ϑ X HA)) :=
+            λ (X Y : Obj C) (f : Hom X Y),
+              extensionality (Hom A X) (λ _ : Hom A X, st_type (f_map_obj F Y)) (λ HA : Hom A X, ϑ Y (f ◦ HA))
+                (λ HA : Hom A X, f_map_hom F f (ϑ X HA))
+                (λ g : Hom A X,
+                   eq_ind_r (λ h0 : Hom (f_map_obj F A) (f_map_obj F Y), h0 b = f_map_hom F f (f_map_hom F g b))
+                     eq_refl (f_comp_prop g f)) in
+          existT (λ Φ : NT, h Φ = b)
+            (existT
+               (λ ϑ0 : ∀ x : Obj C, Hom (f_map_obj (hom_functor A) x) (f_map_obj F x),
+                  ∀ (x y : Obj C) (f : Hom x y), ϑ0 y ◦ f_map_hom (hom_functor A) f = f_map_hom F f ◦ ϑ0 x) ϑ P)
+            (eq_ind_r (λ h0 : Hom (f_map_obj F A) (f_map_obj F A), h0 b = b) eq_refl f_id_prop)).
+cbn in g.
+(*
+set (i := λ c : FA, projT1 (Hsurj c)).
+*)
+set (i := λ c : FA, projT1 (g c)).
+exists i.
+split. {
+  intros X.
+  unfold h, i; cbn.
+  destruct X; cbn in *.
+  apply eq_existT_uncurried; cbn.
