@@ -710,13 +710,17 @@ Lemma Yoneda {C} (F : functor C SetCat) :
   (∀ x : NT, g (f x) = x) ∧ (∀ y : FA, f (g y) = y).
 Proof.
 intros.
-set (f := λ Φ : NT, nt_hom Φ A (idc A)).
-exists f.
-assert (∀ Φ₁ Φ₂, f Φ₁ = f Φ₂ → Φ₁ = Φ₂). {
+set (φ := λ Φ : NT, nt_hom Φ A (idc A)).
+exists φ.
+assert (∀ Φ₁ Φ₂, φ Φ₁ = φ Φ₂ → Φ₁ = Φ₂). {
   intros * HΦ.
-  unfold f in HΦ.
+  unfold φ in HΦ.
   specialize (nt_commute Φ₁ A A (idc A)) as H1.
   specialize (nt_commute Φ₂ A A (idc A)) as H2.
+assert (∀ (Φ : NT) (a : Hom A A) X (f : Hom _ _), nt_hom Φ A ◦ f = f ◦ ...
+...
+The term "42" has type "nat" while it is expected to have type "st_type (f_map_obj F A)".
+...
 Check (projT1 Φ₁ A ◦ f_map_hom (hom_functor A) (idc A)).
 Check (nt_hom Φ₂ A (idc A)).
 Check f_map_hom.
