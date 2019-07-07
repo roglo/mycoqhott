@@ -712,4 +712,7 @@ Proof.
 intros.
 set (f := λ Φ : NT, nt_hom Φ A (idc A)).
 exists f.
+assert (∀ Φ₁ Φ₂, f Φ₁ = f Φ₂ → Φ₁ = Φ₂). {
+  intros * HΦ.
+  unfold f in HΦ.
 ...
