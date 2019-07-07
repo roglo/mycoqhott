@@ -689,13 +689,6 @@ Definition is_representable_functor {C} (F : functor C SetCat) :
 
 (* *)
 
-Definition happly {A B} (f g : ∀ (x : A), B x)
-  : f = g → ∀ (x : A), f x = g x
-  := λ p,
-     match p with
-     | eq_refl _ => λ y, eq_refl (f y)
-     end.
-
 Theorem glop : ∀ A B (f : A → B),
   (∀ x y : A, f x = f y → x = y)
   → (∀ y : B, { x & f x = y })
@@ -749,8 +742,8 @@ assert (Hinj : ∀ Φ₁ Φ₂, h Φ₁ = h Φ₂ → Φ₁ = Φ₂). {
     apply extensionality; intros f.
     specialize (Hcomm1 A X f) as H1.
     specialize (Hcomm2 A X f) as H2.
-    specialize (@happly _ _ _ _ H1 (idc A)) as H'1.
-    specialize (@happly _ _ _ _ H2 (idc A)) as H'2.
+    specialize (@hott4cat.happly _ _ _ _ H1 (idc A)) as H'1.
+    specialize (@hott4cat.happly _ _ _ _ H2 (idc A)) as H'2.
     cbn in H'1, H'2.
     rewrite unit_l in H'1, H'2.
     rewrite H'1, H'2.
