@@ -717,7 +717,7 @@ assert (∀ Φ₁ Φ₂, f Φ₁ = f Φ₂ → Φ₁ = Φ₂). {
   unfold f in HΦ.
   specialize (nt_commute Φ₁ A A (idc A)) as H1.
   specialize (nt_commute Φ₂ A A (idc A)) as H2.
-  unfold nt_hom in HΦ.
-  remember (f_map_hom (hom_functor A) (idc A)) as H3.
-  cbn in H3, HeqH3.
+Check (projT1 Φ₁ A ◦ f_map_hom (hom_functor A) (idc A)).
+Check (nt_hom Φ₂ A (idc A)).
+Check f_map_hom.
 ...
