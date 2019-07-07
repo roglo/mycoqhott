@@ -702,40 +702,22 @@ Definition is_representable_functor {C} (F : functor C SetCat) :
    denotes the category of functors from C to Set.)
 *)
 
-Example toto {C} (F : functor C SetCat) (A : Obj C):
+Example toto {C} (F : functor C SetCat) (A : Obj C)
+  (Φ : natural_transformation (hom_functor A) F) :
   ∀ X : Obj C, Hom (f_map_obj (hom_functor A) X) (f_map_obj F X).
 Proof.
-intros X f; cbn in f.
-set (H1 := λ _ : Hom A A, f).
-set (H2 := f_map_hom F f : st_type (f_map_obj F A) → st_type (f_map_obj F X)).
-cbn in H2.
-assert (H3 : Hom A A → st_type (f_map_obj F A)). {
-  intros i; cbn.
-...
-assert (H1 : Hom A X → Obj SetCat). {
-  intros f; cbn.
-  unfold Set_type.
-  exists (
-assert (H4 : Hom A A → Obj SetCat). {
-  intros f; cbn.
-  unfold Set_type.
-  exists (
-...
+intros *; cbn in X.
+cbn; intros f.
+apply (f_map_hom F f ◦ nt_hom Φ A), idc.
+Qed.
 
-set (G := hom_functor A) in u.
-apply (f_map_hom F u).
-specialize (@f_id_prop C SetCat F A) as H1.
-specialize (@f_id_prop C SetCat G A) as H2.
-specialize (f_map_hom (hom_functor A) u) as H3.
-cbn in H3.
-remember (idc A) as h.
-Print Set_type.
-Check (f_map_obj F A).
+Lemma Yoneda {C} (F : functor C SetCat) :
+  ∀ (A : Obj C) (Φ : natural_transformation (hom_functor A) F),
+  ∃ f :
 ...
 
 Lemma Yoneda {C} (F : functor C SetCat) :
-  ∀ A : Obj C,
-  let NT := natural_transformation (hom_functor A) F in
+  ∀ (A : Obj C) (Φ : natural_transformation (hom_functor A) F),
   let FA := st_type (f_map_obj F A) in
   ∃ f : NT → FA, ∃ g : FA → NT,
   (∀ x : NT, g (f x) = x) ∧ (∀ y : FA, f (g y) = y).
