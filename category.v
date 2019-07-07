@@ -710,5 +710,6 @@ Lemma Yoneda {C} (F : functor C SetCat) :
   (∀ x : NT, g (f x) = x) ∧ (∀ y : FA, f (g y) = y).
 Proof.
 intros.
-exists (λ Φ : NT, nt_hom Φ A (idc A)).
+set (f := λ Φ : NT, nt_hom Φ A (idc A)).
+exists f.
 ...
