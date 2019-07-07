@@ -715,6 +715,20 @@ exists φ.
 assert (∀ Φ₁ Φ₂, φ Φ₁ = φ Φ₂ → Φ₁ = Φ₂). {
   intros * HΦ.
   unfold φ in HΦ.
+  destruct Φ₁ as (h1 & Hcomm1).
+  destruct Φ₂ as (h2 & Hcomm2).
+  move h2 before h1.
+  apply eq_existT_uncurried.
+  cbn in HΦ.
+  assert (h1 = h2). {
+    apply extensionality; intros X.
+    apply extensionality; intros f.
+    specialize (Hcomm1 A X f) as H1.
+    specialize (Hcomm2 A X f) as H2.
+    cbn in H1, H2.
+    assert (∀ g : Hom A A, h1 X (f ◦ g) = f_map_hom F f (h1 A g)). {
+      intros g.
+...
   specialize (nt_commute Φ₁ A A (idc A)) as H1.
   specialize (nt_commute Φ₂ A A (idc A)) as H2.
 assert (∀ (Φ : NT) (a : Hom A A) X (f : Hom _ _), nt_hom Φ A ◦ f = f ◦ ...
