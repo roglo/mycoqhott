@@ -748,5 +748,5 @@ assert (Hinj : ∀ Φ₁ Φ₂, h Φ₁ = h Φ₂ → Φ₁ = Φ₂). {
   intros g.
   apply st_is_set.
 }
-assert (Hsurg : ∀ b, { Φ : NT & h Φ = b }). {
+assert (Hsurj : ∀ b, { Φ : NT & h Φ = b }). {
   intros b.
