@@ -752,7 +752,8 @@ Qed.
 Definition category_product (C1 C2 : category) : category :=
   {| Obj := Obj C1 * Obj C2;
      Hom X Y := (Hom (fst X) (fst Y) * Hom (snd X) (snd Y))%type;
-     comp := 42 |}.
+     comp _ _ _ f g := (fst g ◦ fst f, snd g ◦ snd f);
+     idc := 42 |}.
 
 (*
   [...]
