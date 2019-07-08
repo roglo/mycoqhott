@@ -809,10 +809,7 @@ Definition category_product (C1 C2 : category) : category :=
 *)
 
 Theorem Yoneda_natural {C} (F : functor C SetCat) (A : Obj C) :
-  let NT := natural_transformation (hom_functor A) F in
-  let FA := st_type (f_map_obj F A) in
-...
-   category_product SetCat C → SetCat
+  True.
 Proof.
-intros.
+Check (category_product C SetCat).
 ...
