@@ -689,7 +689,6 @@ Definition is_representable_functor {C} (F : functor C SetCat) :
 
 (* *)
 
-(*
 Theorem glop : ∀ A B (f : A → B),
   (∀ x y : A, f x = f y → x = y)
   → (∀ y : B, { x & f x = y })
@@ -704,7 +703,6 @@ split. {
   specialize (Hsurj (f x)) as H1.
   destruct H1 as (y & Hxy).
 ...
-*)
 
 (* Yoneda lemma *)
 
@@ -731,7 +729,7 @@ Proof.
 intros.
 set (h := λ Φ : NT, nt_hom Φ A (idc A)).
 exists h.
-(*
+(**)
 assert (Hinj : ∀ Φ₁ Φ₂, h Φ₁ = h Φ₂ → Φ₁ = Φ₂). {
   intros * HΦ.
   unfold h in HΦ.
@@ -765,8 +763,10 @@ assert (Hinj : ∀ Φ₁ Φ₂, h Φ₁ = h Φ₂ → Φ₁ = Φ₂). {
 assert (Hsurj : ∀ b, { Φ : NT & h Φ = b }). {
   intros b.
   set (ϑ := λ (X : Obj C) (g : Hom A X), f_map_hom F g b).
-  assert (P : ∀ (X Y : Obj C) (f : Hom X Y),
-             (λ HA : Hom A X, ϑ Y (f ◦ HA)) = (λ HA : Hom A X, f_map_hom F f (ϑ X HA))). {
+  assert
+    (P : ∀ (X Y : Obj C) (f : Hom X Y),
+        (λ HA : Hom A X, ϑ Y (f ◦ HA)) =
+        (λ HA : Hom A X, f_map_hom F f (ϑ X HA))). {
     intros.
     apply extensionality.
     intros g.
@@ -778,7 +778,7 @@ assert (Hsurj : ∀ b, { Φ : NT & h Φ = b }). {
   now rewrite f_id_prop.
 }
 Check glop.
-*)
+...
 set (g :=
         λ b : st_type (f_map_obj F A),
           let ϑ := λ (X : Obj C) (g : Hom A X), f_map_hom F g b in
@@ -809,4 +809,13 @@ split. {
   apply eq_existT_uncurried; cbn.
   assert (p : (λ X (g0 : Hom A X), f_map_hom F g0 (θ A (idc A))) = θ). {
     apply extensionality; intros X.
-    apply extensionality; intros Y.
+    apply extensionality; intros f.
+    specialize (θ_comm A X f) as H1.
+    specialize (@hott4cat.happly _ _ _ _ H1 (idc A)) as H2.
+    cbn in H2.
+    now rewrite unit_l in H2.
+  }
+  exists p.
+  apply extensionality; intros X.
+  apply extensionality; intros Y.
+  apply extensionality; intros f.
