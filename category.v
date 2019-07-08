@@ -697,9 +697,7 @@ Definition is_representable_functor {C} (F : functor C SetCat) :=
   are in one-to-one correspondence with the elements of F(A). That is,
      Nat (h^A, F) ≅ F (A)
 
-  Moreover this isomorphism is natural in A and F when both sides are
-  regarded as functors from Set^C x C to Set. (Here the notation Set^C
-  denotes the category of functors from C to Set.)
+  [...]
 
   (wikipedia)
 *)
@@ -711,7 +709,7 @@ Lemma Yoneda {C} (F : functor C SetCat) (A : Obj C) :
   (∀ x : NT, g (f x) = x) ∧ (∀ y : FA, f (g y) = y).
 Proof.
 intros.
-set (h := λ Φ : NT, nt_hom Φ A (idc A)).
+set (h := λ Φ : NT, nt_hom Φ A (idc A) : FA); cbn in h.
 exists h.
 set (ϑ := λ (u : FA) (X : Obj C) (f : Hom A X), f_map_hom F f u).
 assert (Hϑ :
@@ -748,3 +746,22 @@ split.
  unfold ϑ.
  now rewrite f_id_prop.
 Qed.
+
+(*
+  [...]
+
+     Nat (h^A, F) ≅ F (A)
+
+  Moreover this isomorphism is natural in A and F when both sides are
+  regarded as functors from Set^C x C to Set. (Here the notation Set^C
+  denotes the category of functors from C to Set.)
+*)
+
+Theorem Yoneda_natural {C} (F : functor C SetCat) (A : Obj C) :
+  let NT := natural_transformation (hom_functor A) F in
+  let FA := st_type (f_map_obj F A) in
+...
+   category_product SetCat C → SetCat
+Proof.
+intros.
+...
