@@ -749,12 +749,10 @@ Qed.
 
 (* product of categories *)
 
-Definition glop {C1 C2} (X Y : Obj C1 * Obj C2) : Type.
-...
-
 Definition category_product (C1 C2 : category) : category :=
   {| Obj := Obj C1 * Obj C2;
-     Hom X Y := 42 |}.
+     Hom X Y := (Hom (fst X) (fst Y) * Hom (snd X) (snd Y))%type;
+     comp := 42 |}.
 
 (*
   [...]
