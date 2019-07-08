@@ -721,8 +721,7 @@ Qed.
    denotes the category of functors from C to Set.)
 *)
 
-Lemma Yoneda {C} (F : functor C SetCat) :
-  ∀ (A : Obj C),
+Lemma Yoneda {C} (F : functor C SetCat) (A : Obj C) :
   let NT := natural_transformation (hom_functor A) F in
   let FA := st_type (f_map_obj F A) in
   ∃ f : NT → FA, ∃ g : FA → NT,
