@@ -716,9 +716,11 @@ Qed.
   are in one-to-one correspondence with the elements of F(A). That is,
      Nat (h^A, F) ≅ F (A)
 
-   Moreover this isomorphism is natural in A and F when both sides are
-   regarded as functors from Set^C x C to Set. (Here the notation Set^C
-   denotes the category of functors from C to Set.)
+  Moreover this isomorphism is natural in A and F when both sides are
+  regarded as functors from Set^C x C to Set. (Here the notation Set^C
+  denotes the category of functors from C to Set.)
+
+  (wikipedia)
 *)
 
 Lemma Yoneda {C} (F : functor C SetCat) (A : Obj C) :
