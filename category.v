@@ -811,5 +811,6 @@ Definition category_product (C1 C2 : category) : category :=
 Theorem Yoneda_natural {C} (F : functor C SetCat) (A : Obj C) :
   True.
 Proof.
-Check (category_product C SetCat).
+Check (st_type (f_map_obj F A)).
+Check (functor (category_product C SetCat) SetCat).
 ...
