@@ -717,8 +717,8 @@ set (ϑ := λ (u : FA) (X : Obj C) (f : Hom A X), f_map_hom F f u).
 assert (Hϑ :
   ∀ u : FA,
   ∀ (X Y : Obj C) (f : Hom X Y),
-  (λ HA : Hom A X, ϑ u Y (f ◦ HA)) =
-  (λ HA : Hom A X, f_map_hom F f (ϑ u X HA))). {
+  (λ g : Hom A X, ϑ u Y (f ◦ g)) =
+  (λ g : Hom A X, f_map_hom F f (ϑ u X g))). {
   intros.
   apply extensionality; intros g.
   unfold ϑ; cbn.
