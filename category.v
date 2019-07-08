@@ -691,7 +691,7 @@ Definition is_representable_functor {C} (F : functor C SetCat) :=
 
 Theorem inj_surj_exists_inv : ∀ A B (f : A → B),
   (∀ x y : A, f x = f y → x = y)
-  → (∀ y : B, { x & f x = y })
+  → (∀ y : B, { x : A & f x = y })
   → ∃ g : B → A,
      (∀ x, g (f x) = x) ∧ (∀ y, f (g y) = y).
 Proof.
