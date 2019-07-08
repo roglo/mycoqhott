@@ -420,6 +420,66 @@ destruct q as (k, (α, β)).
 apply invert, β.
 Defined.
 
+Theorem hott_2_6_1 {A B} : ∀ x y : A * B,
+  (x = y) → (fst x = fst y) * (snd x = snd y).
+Proof.
+intros x y p.
+split; destruct p; reflexivity.
+Defined.
+
+Theorem pair_eq {A B} {x y : A * B} :
+  (fst x = fst y) * (snd x = snd y) → (x = y).
+Proof.
+intros p.
+destruct x as (a, b).
+destruct y as (a', b').
+simpl in p.
+destruct p as (p, q).
+destruct p, q; reflexivity.
+Defined.
+
+Theorem hott_2_6_2 {A B : Type} : ∀ x y : (A * B)%type,
+  ((fst x = fst y) * (snd x = snd y))%type ≃ (x = y).
+Proof.
+intros.
+set (f := hott_2_6_1 x y).
+set (g := @pair_eq A B x y).
+apply quasi_inv.
+unfold "≃".
+apply existT with (x := f).
+apply qinv_isequiv.
+exists g; split.
+ intros r; unfold id; simpl.
+ destruct r as (p, q).
+ destruct x as (a, b).
+ destruct y as (a', b').
+ simpl in p, q, f, g.
+ destruct p, q; reflexivity.
+
+ intros p; unfold id; simpl.
+ destruct p, x; reflexivity.
+Qed.
+
+Definition ex_3_1_5 {A B} : isSet A → isSet B → isSet (A * B).
+Proof.
+intros r s x y p q.
+pose proof hott_2_6_2 x y as e.
+destruct x as (xa, xb).
+destruct y as (ya, yb); simpl in e.
+apply quasi_inv in e.
+destruct e as (f, ((g, Hg), (h, Hh))).
+unfold "◦◦", "∼", id in Hg, Hh.
+pose proof Hh p as Hhp.
+pose proof Hh q as Hhq.
+destruct (f p) as (fpa, fpb).
+destruct (f q) as (fqa, fqb).
+pose proof r xa ya fpa fqa as Hra.
+pose proof s xb yb fpb fqb as Hrb.
+destruct Hra, Hrb.
+unfold mid in Hhp, Hhq.
+destruct Hhp; assumption.
+Defined.
+
 Definition ex_3_1_6 A B : (Π (a : A), isSet (B a)) → isSet (Π (a : A), B a).
 Proof.
 intros r f g p q.

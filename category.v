@@ -749,11 +749,54 @@ Qed.
 
 (* product of categories *)
 
+Definition pair_unit_l {C1 C2} (X Y : Obj C1 * Obj C2)
+     (f : Hom (fst X) (fst Y) * Hom (snd X) (snd Y)) :
+  (fst f ◦ fst (idc (fst X), idc (snd X)),
+   snd f ◦ snd (idc (fst X), idc (snd X))) = f.
+Proof.
+destruct f as (f1, f2); cbn.
+now do 2 rewrite unit_l.
+Qed.
+
+Definition pair_unit_r {C1 C2} (X Y : Obj C1 * Obj C2)
+     (f : Hom (fst X) (fst Y) * Hom (snd X) (snd Y)) :
+  (fst (idc (fst Y), idc (snd Y)) ◦ fst f,
+   snd (idc (fst Y), idc (snd Y)) ◦ snd f) = f.
+Proof.
+destruct f as (f1, f2); cbn.
+now do 2 rewrite unit_r.
+Qed.
+
+Definition pair_assoc {C1 C2} (X Y Z T : Obj C1 * Obj C2)
+  (f : Hom (fst X) (fst Y) * Hom (snd X) (snd Y))
+  (g : Hom (fst Y) (fst Z) * Hom (snd Y) (snd Z))
+  (h : Hom (fst Z) (fst T) * Hom (snd Z) (snd T)) :
+  (fst (fst h ◦ fst g, snd h ◦ snd g) ◦ fst f,
+   snd (fst h ◦ fst g, snd h ◦ snd g) ◦ snd f) =
+  (fst h ◦ fst (fst g ◦ fst f, snd g ◦ snd f),
+   snd h ◦ snd (fst g ◦ fst f, snd g ◦ snd f)).
+Proof.
+destruct f as (f1, f2).
+destruct g as (g1, g2).
+destruct h as (h1, h2); cbn.
+now do 2 rewrite assoc.
+Qed.
+
+Definition pair_isSet {C1 C2} (X Y : Obj C1 * Obj C2) :
+  isSet (Hom (fst X) (fst Y) * Hom (snd X) (snd Y)).
+Proof.
+apply hott4cat.ex_3_1_5; apply Hom_set.
+Qed.
+
 Definition category_product (C1 C2 : category) : category :=
   {| Obj := Obj C1 * Obj C2;
      Hom X Y := (Hom (fst X) (fst Y) * Hom (snd X) (snd Y))%type;
      comp _ _ _ f g := (fst g ◦ fst f, snd g ◦ snd f);
-     idc := 42 |}.
+     idc X := (idc (fst X), idc (snd X));
+     unit_l := pair_unit_l;
+     unit_r := pair_unit_r;
+     assoc := pair_assoc;
+     Hom_set := pair_isSet |}.
 
 (*
   [...]
