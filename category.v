@@ -687,25 +687,6 @@ Definition hom_functor {C} A : functor C SetCat :=
 Definition is_representable_functor {C} (F : functor C SetCat) :=
   { X : Obj C & are_isomorphic_functors F (hom_functor X) }.
 
-(* *)
-
-Theorem inj_surj_exists_inv : ∀ A B (f : A → B),
-  (∀ x y : A, f x = f y → x = y)
-  → (∀ y : B, { x : A & f x = y })
-  → ∃ g : B → A,
-     (∀ x, g (f x) = x) ∧ (∀ y, f (g y) = y).
-Proof.
-intros * Hinj Hsurj.
-exists (λ y : B, projT1 (Hsurj y)).
-split. {
-  intros x.
-  destruct (Hsurj (f x)) as (y & Hxy); cbn.
-  now apply Hinj.
-}
-intros x.
-now destruct (Hsurj x) as (y & Hxy).
-Qed.
-
 (* Yoneda lemma *)
 
 (*
@@ -732,54 +713,38 @@ Proof.
 intros.
 set (h := λ Φ : NT, nt_hom Φ A (idc A)).
 exists h.
-assert (Hinj : ∀ Φ₁ Φ₂, h Φ₁ = h Φ₂ → Φ₁ = Φ₂). {
-  intros * HΦ.
-  unfold h in HΦ.
-  destruct Φ₁ as (h1 & Hcomm1).
-  destruct Φ₂ as (h2 & Hcomm2).
-  move h2 before h1.
-  apply eq_existT_uncurried.
-  cbn in HΦ.
-  assert (h1 = h2). {
-    apply extensionality; intros X.
-    apply extensionality; intros f.
-    specialize (Hcomm1 A X f) as H1.
-    specialize (Hcomm2 A X f) as H2.
-    specialize (@hott4cat.happly _ _ _ _ H1 (idc A)) as H'1.
-    specialize (@hott4cat.happly _ _ _ _ H2 (idc A)) as H'2.
-    cbn in H'1, H'2.
-    rewrite unit_l in H'1, H'2.
-    rewrite H'1, H'2.
-    now f_equal.
-  }
-  exists H.
-  cbn.
-  apply extensionality; intros X.
-  apply extensionality; intros Y.
-  apply extensionality; intros f.
-  destruct H; cbn.
-  apply hott4cat.ex_3_1_6.
-  intros g.
-  apply st_is_set.
+set (ϑ := λ (u : FA) (X : Obj C) (f : Hom A X), f_map_hom F f u).
+assert (Hϑ :
+  ∀ u : FA,
+  ∀ (X Y : Obj C) (f : Hom X Y),
+  (λ HA : Hom A X, ϑ u Y (f ◦ HA)) =
+  (λ HA : Hom A X, f_map_hom F f (ϑ u X HA))). {
+  intros.
+  apply extensionality; intros g.
+  unfold ϑ; cbn.
+  now rewrite f_comp_prop.
 }
-assert (Hsurj : ∀ b, { Φ : NT & h Φ = b }). {
-  intros b.
-  set (ϑ := λ (X : Obj C) (g : Hom A X), f_map_hom F g b).
-  assert
-    (P : ∀ (X Y : Obj C) (f : Hom X Y),
-        (λ HA : Hom A X, ϑ Y (f ◦ HA)) =
-        (λ HA : Hom A X, f_map_hom F f (ϑ X HA))). {
-    intros.
-    apply extensionality.
-    intros g.
-    unfold ϑ.
-    now rewrite f_comp_prop.
-  }
-  exists (existT _ ϑ P).
-  cbn; unfold ϑ.
-  now rewrite f_id_prop.
-}
-specialize (inj_surj_exists_inv _ _ _ Hinj Hsurj) as H1.
-destruct H1 as (g & Hg).
-now exists g.
+exists (λ u, existT _ (ϑ u) (Hϑ u) : NT); cbn.
+split.
+-intros (η, Hη); cbn.
+ apply eq_existT_uncurried.
+ assert (p : ϑ (η A (idc A)) = η). {
+   apply extensionality; intros X.
+   apply extensionality; intros f.
+   unfold ϑ; cbn.
+   specialize (Hη A X f) as H1; cbn in H1.
+   specialize (@hott4cat.happly _ _ _ _ H1 (idc A)) as H2.
+   cbn in H2.
+   now rewrite unit_l in H2.
+ }
+ exists p.
+ apply extensionality; intros X.
+ apply extensionality; intros Y.
+ apply extensionality; intros f.
+ apply hott4cat.ex_3_1_6.
+ intros g.
+ apply st_is_set.
+-intros u.
+ unfold ϑ.
+ now rewrite f_id_prop.
 Qed.
