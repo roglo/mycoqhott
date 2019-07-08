@@ -702,6 +702,27 @@ Definition is_representable_functor {C} (F : functor C SetCat) :=
   (wikipedia)
 *)
 
+Definition Yoneda_NT_FA {C} (F : functor C SetCat) (A : Obj C) :=
+  λ Φ : natural_transformation (hom_functor A) F,
+  nt_hom Φ A (idc A) : st_type (f_map_obj F A).
+
+Definition Yoneda_FA_NT {C} (F : functor C SetCat) (A : Obj C) :
+  st_type (f_map_obj F A) → natural_transformation (hom_functor A) F.
+Proof.
+intros u.
+set (ϑ := λ (X : Obj C) (f : Hom A X), f_map_hom F f u).
+assert (Hϑ :
+  ∀ (X Y : Obj C) (f : Hom X Y),
+  (λ g : Hom A X, ϑ Y (f ◦ g)) =
+  (λ g : Hom A X, f_map_hom F f (ϑ X g))). {
+  intros.
+  apply extensionality; intros g.
+  unfold ϑ; cbn.
+  now rewrite f_comp_prop.
+}
+apply (existT _ ϑ Hϑ).
+Defined.
+
 Lemma Yoneda {C} (F : functor C SetCat) (A : Obj C) :
   let NT := natural_transformation (hom_functor A) F in
   let FA := st_type (f_map_obj F A) in
@@ -709,27 +730,14 @@ Lemma Yoneda {C} (F : functor C SetCat) (A : Obj C) :
   (∀ x : NT, g (f x) = x) ∧ (∀ y : FA, f (g y) = y).
 Proof.
 intros.
-set (h := λ Φ : NT, nt_hom Φ A (idc A) : FA); cbn in h.
-exists h.
-set (ϑ := λ (u : FA) (X : Obj C) (f : Hom A X), f_map_hom F f u).
-assert (Hϑ :
-  ∀ u : FA,
-  ∀ (X Y : Obj C) (f : Hom X Y),
-  (λ g : Hom A X, ϑ u Y (f ◦ g)) =
-  (λ g : Hom A X, f_map_hom F f (ϑ u X g))). {
-  intros.
-  apply extensionality; intros g.
-  unfold ϑ; cbn.
-  now rewrite f_comp_prop.
-}
-exists (λ u, existT _ (ϑ u) (Hϑ u) : NT); cbn.
+exists (Yoneda_NT_FA F A).
+exists (Yoneda_FA_NT F A).
 split.
 -intros (η, Hη); cbn.
  apply eq_existT_uncurried.
- assert (p : ϑ (η A (idc A)) = η). {
+ assert (p : (λ X f, f_map_hom F f (η A (idc A))) = η). {
    apply extensionality; intros X.
    apply extensionality; intros f.
-   unfold ϑ; cbn.
    specialize (Hη A X f) as H1; cbn in H1.
    specialize (@hott4cat.happly _ _ _ _ H1 (idc A)) as H2.
    cbn in H2.
@@ -742,9 +750,8 @@ split.
  apply hott4cat.ex_3_1_6.
  intros g.
  apply st_is_set.
--intros u.
- unfold ϑ.
- now rewrite f_id_prop.
+-intros u; cbn.
+ now rewrite f_id_prop; cbn.
 Qed.
 
 (* product of categories *)
