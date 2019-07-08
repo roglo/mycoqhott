@@ -747,6 +747,15 @@ split.
  now rewrite f_id_prop.
 Qed.
 
+(* product of categories *)
+
+Definition glop {C1 C2} (X Y : Obj C1 * Obj C2) : Type.
+...
+
+Definition category_product (C1 C2 : category) : category :=
+  {| Obj := Obj C1 * Obj C2;
+     Hom X Y := 42 |}.
+
 (*
   [...]
 
