@@ -976,21 +976,30 @@ destruct η as (η, η_prop).
 cbn in *.
 apply f_equal.
 specialize (η_prop Y Z g) as H1.
-Check (f_map_hom F f T).
-apply (@hott4cat.happly _ _ _ _ _ (f_map_hom F f T)) in H1.
+now specialize (@hott4cat.happly _ _ _ _ H1 (f_map_hom F f T)) as H2.
+Qed.
 
-specialize (η_prop Y Z g (f_map_hom F f T)) as H1.
-...
+Theorem functor_Set_C_C_Set_id_prop {C} (D := Set_C_C C) (X : Obj D) :
+  functor_Set_C_C_Set_map_hom X X (idc X) = idc (f_map_obj (fst X) (snd X)).
+Proof.
+cbn in *.
+destruct X as (F, X); cbn.
+apply extensionality; intros T; cbn.
+now rewrite f_id_prop.
+Qed.
 
-Definition functor_Set_C_C_Set C (D := Set_C_C C) : functor D SetCat :=
-  {| f_map_obj (X : Obj D) := f_map_obj (fst X) (snd X);
+Definition functor_Set_C_C_Set C : functor (Set_C_C C) SetCat :=
+  {| f_map_obj (X : Obj (Set_C_C C)) := f_map_obj (fst X) (snd X);
      f_map_hom := functor_Set_C_C_Set_map_hom;
-     f_comp_prop X Y Z f g := 42 |}.
-...
+     f_comp_prop := functor_Set_C_C_Set_comp_prop;
+     f_id_prop := functor_Set_C_C_Set_id_prop |}.
 
 Theorem Yoneda_natural {C} (F : functor C SetCat) (A : Obj C) :
   True.
 Proof.
+Check (functor_Set_C_C_Set C).
+...
+
 Check (natural_transformation (hom_functor A) F).
 Check (st_type (f_map_obj F A)).
 Check Yoneda_NT_FA.
