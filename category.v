@@ -573,6 +573,7 @@ Theorem Fun_cat_Hom_set {C D} : ∀ F G : functor C D,
   isSet (natural_transformation F G).
 Proof.
 intros.
+intros a b c d.
 apply hott4cat.is_set_is_set_sigT. {
   intros ϑ f g.
   apply extensionality; intros x.
@@ -694,9 +695,7 @@ Proof.
 destruct F, G; cbn in *.
 (* perhaps should implement "functor" as dependent pair(s) because it would
    allow me to unse eq_existT_uncurried and hott theorems *)
-(* (eq_existT_pair_transport) *)
-...
-destruct F, G; cbn in *.
+(* (hott4cat.is_set_is_set_sigT) *)
 Set Keep Proof Equalities.
 injection p; intros H1 H2 H3 H4.
 destruct H4.
@@ -709,7 +708,15 @@ destruct H2.
 apply hott4cat.eq_existT_pair_transport in H1.
 destruct H1 as (Hp1 & H1).
 destruct H1.
+move Hp1 after Hp3; move Hp2 after Hp3.
+injection p; intros H1 H2 H3.
+injection H3.
+intros H4.
+apply hott4cat.eq_existT_pair_transport in H4.
+destruct H4 as (Hp4 & H4).
+move Hp4 before Hp3.
 ...
+(*
 destruct F, G; cbn in *.
 injection p; intros H1 H2; destruct H2.
 apply hott4cat.eq_existT_pair_transport in H1.
@@ -727,6 +734,7 @@ destruct H2 as (Hp2 & H2).
 move Hp2 before Hp1.
 unfold hott4cat.transport in H1, H2.
 ...
+*)
 
 Definition CatCat :=
   {| Obj := category;
