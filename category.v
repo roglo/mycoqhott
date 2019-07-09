@@ -998,11 +998,40 @@ Definition functor_SetC_C_Set2_map_obj {C} (A : Obj (SetC_C C)) : Obj SetCat.
 Proof.
 exists (natural_transformation (hom_functor (snd A)) (fst A)).
 apply FunCat_Hom_set.
-Qed.
+Defined.
+
+Definition functor_SetC_C_Set2_map_hom {C} (X Y : Obj (SetC_C C))
+    (f : Hom X Y) :
+  Hom (functor_SetC_C_Set2_map_obj X) (functor_SetC_C_Set2_map_obj Y).
+Proof.
+cbn; intros η.
+destruct X as (F, X).
+destruct Y as (G, Y).
+move G before F; cbn in F, G, f, η |-*.
+destruct f as (η', f).
+move η after η'.
+assert (ϑ : ∀ x, Hom (f_map_obj (hom_functor Y) x) (f_map_obj G x)). {
+  intros A.
+  destruct η as (ϑ1, Hϑ1).
+  destruct η' as (ϑ2, Hϑ2).
+  move ϑ1 after ϑ2.
+  cbn in ϑ1, ϑ2; cbn.
+  intros g; move g before f; move A after X.
+  apply ϑ2, ϑ1.
+  eapply comp; [ apply f | apply g ].
+}
+exists ϑ.
+intros Z T g.
+destruct η as (ϑ1, Hϑ1).
+destruct η' as (ϑ2, Hϑ2).
+move ϑ1 after ϑ2.
+apply extensionality; intros h; cbn; cbn in h, ϑ.
+specialize (ϑ T (comp h g)) as H1.
+...
 
 Definition functor_SetC_C_Set2 C : functor (SetC_C C) SetCat :=
   {| f_map_obj := functor_SetC_C_Set2_map_obj;
-     f_map_hom := 42 |}.
+     f_map_hom X Y f := 42 |}.
 ...
 
 Theorem Yoneda_natural {C} (F : functor C SetCat) (A : Obj C) :
