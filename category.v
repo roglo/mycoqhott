@@ -692,6 +692,24 @@ Qed.
 Theorem CatCat_Hom_set C C' (F G : functor C C') (p q : F = G) : p = q.
 Proof.
 destruct F, G; cbn in *.
+Print functor.
+Print eq_existT_uncurried.
+...
+destruct F, G; cbn in *.
+Set Keep Proof Equalities.
+injection p; intros H1 H2 H3 H4.
+destruct H4.
+apply hott4cat.eq_existT_pair_transport in H3.
+destruct H3 as (Hp3 & H3).
+destruct H3.
+apply hott4cat.eq_existT_pair_transport in H2.
+destruct H2 as (Hp2 & H2).
+destruct H2.
+apply hott4cat.eq_existT_pair_transport in H1.
+destruct H1 as (Hp1 & H1).
+destruct H1.
+...
+destruct F, G; cbn in *.
 injection p; intros H1 H2; destruct H2.
 apply hott4cat.eq_existT_pair_transport in H1.
 destruct H1 as (Hp1, H1).
