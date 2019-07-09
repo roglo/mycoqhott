@@ -944,9 +944,9 @@ Definition category_product (C1 C2 : category) : category :=
   denotes the category of functors from C to Set.)
 *)
 
-Definition Set_C_C (C : category) := category_product (FunCat C SetCat) C.
+Definition SetC_C (C : category) := category_product (FunCat C SetCat) C.
 
-Definition functor_Set_C_C_Set_map_hom {C} (D := Set_C_C C) (X Y : Obj D)
+Definition functor_SetC_C_Set_map_hom {C} (D := SetC_C C) (X Y : Obj D)
   (f : Hom X Y) : Hom (f_map_obj (fst X) (snd X)) (f_map_obj (fst Y) (snd Y)).
 Proof.
 cbn in X, Y, f.
@@ -957,10 +957,10 @@ destruct f as (f, g).
 now apply f, (f_map_hom F g).
 Defined.
 
-Theorem functor_Set_C_C_Set_comp_prop {C} (D := Set_C_C C) (X Y Z : Obj D)
+Theorem functor_SetC_C_Set_comp_prop {C} (D := SetC_C C) (X Y Z : Obj D)
   (f : Hom X Y) (g : Hom Y Z) :
-  functor_Set_C_C_Set_map_hom X Z (g ◦ f) =
-  functor_Set_C_C_Set_map_hom Y Z g ◦ functor_Set_C_C_Set_map_hom X Y f.
+  functor_SetC_C_Set_map_hom X Z (g ◦ f) =
+  functor_SetC_C_Set_map_hom Y Z g ◦ functor_SetC_C_Set_map_hom X Y f.
 Proof.
 cbn in *.
 destruct X as (F, X).
@@ -979,8 +979,8 @@ specialize (η_prop Y Z g) as H1.
 now specialize (@hott4cat.happly _ _ _ _ H1 (f_map_hom F f T)) as H2.
 Qed.
 
-Theorem functor_Set_C_C_Set_id_prop {C} (D := Set_C_C C) (X : Obj D) :
-  functor_Set_C_C_Set_map_hom X X (idc X) = idc (f_map_obj (fst X) (snd X)).
+Theorem functor_SetC_C_Set_id_prop {C} (D := SetC_C C) (X : Obj D) :
+  functor_SetC_C_Set_map_hom X X (idc X) = idc (f_map_obj (fst X) (snd X)).
 Proof.
 cbn in *.
 destruct X as (F, X); cbn.
@@ -988,16 +988,32 @@ apply extensionality; intros T; cbn.
 now rewrite f_id_prop.
 Qed.
 
-Definition functor_Set_C_C_Set C : functor (Set_C_C C) SetCat :=
-  {| f_map_obj (X : Obj (Set_C_C C)) := f_map_obj (fst X) (snd X);
-     f_map_hom := functor_Set_C_C_Set_map_hom;
-     f_comp_prop := functor_Set_C_C_Set_comp_prop;
-     f_id_prop := functor_Set_C_C_Set_id_prop |}.
+Definition functor_SetC_C_Set C : functor (SetC_C C) SetCat :=
+  {| f_map_obj (X : Obj (SetC_C C)) := f_map_obj (fst X) (snd X);
+     f_map_hom := functor_SetC_C_Set_map_hom;
+     f_comp_prop := functor_SetC_C_Set_comp_prop;
+     f_id_prop := functor_SetC_C_Set_id_prop |}.
+
+Definition glop {C} (X : Obj (SetC_C C)) : Obj SetCat.
+Proof.
+destruct X as (F, A); cbn in *.
+assert (ϑ : ∀ G (X : Obj C), Hom (f_map_obj F X) (f_map_obj G X)). {
+  intros.
+  apply nt_hom.
+  unfold natural_transformation.
+...
+  assert (ϑ : ∀ x : Obj C, Hom (f_map_obj F x) (f_map_obj G x)). {
+    intros Y.
+...
+
+Definition functor_SetC_C_Set2 C : functor (SetC_C C) SetCat :=
+  {| f_map_obj := glop |}.
+...
 
 Theorem Yoneda_natural {C} (F : functor C SetCat) (A : Obj C) :
   True.
 Proof.
-Check (functor_Set_C_C_Set C).
+Check (functor_SetC_C_Set C).
 ...
 
 Check (natural_transformation (hom_functor A) F).
