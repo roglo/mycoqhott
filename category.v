@@ -693,9 +693,6 @@ Qed.
 Theorem CatCat_Hom_set C C' (F G : functor C C') (p q : F = G) : p = q.
 Proof.
 destruct F, G; cbn in *.
-(* perhaps should implement "functor" as dependent pair(s) because it would
-   allow me to unse eq_existT_uncurried and hott theorems *)
-(* (hott4cat.is_set_is_set_sigT) *)
 Set Keep Proof Equalities.
 injection p; intros H1 H2 H3 H4.
 destruct H4.
@@ -715,27 +712,10 @@ intros H4.
 apply hott4cat.eq_existT_pair_transport in H4.
 destruct H4 as (Hp4 & H4).
 move Hp4 before Hp3.
-...
-(*
-destruct F, G; cbn in *.
-injection p; intros H1 H2; destruct H2.
-apply hott4cat.eq_existT_pair_transport in H1.
-destruct H1 as (Hp1, H1).
-cbn in H1.
-destruct H1; cbn in *.
-destruct Hp1; cbn in *.
-Set Keep Proof Equalities.
-injection p.
-intros H1 H2.
-apply hott4cat.eq_existT_pair_transport in H1.
-apply hott4cat.eq_existT_pair_transport in H2.
-destruct H1 as (Hp1 & H1).
-destruct H2 as (Hp2 & H2).
-move Hp2 before Hp1.
-unfold hott4cat.transport in H1, H2.
-...
-*)
+(* doesn't work; but is it true? *)
+Abort.
 
+(* Hom_set does not work: perhaps false or not
 Definition CatCat :=
   {| Obj := category;
      Hom := functor;
@@ -744,7 +724,8 @@ Definition CatCat :=
      unit_l := CatCat_unit_l;
      unit_r := CatCat_unit_r;
      assoc := CatCat_assoc;
-     Hom_set C C' F G p q := 42 |}.
+     Hom_set := 42 |}.
+*)
 
 (* isomorphism between functors *)
 
