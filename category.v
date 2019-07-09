@@ -946,6 +946,14 @@ Definition category_product (C1 C2 : category) : category :=
 
 Definition Set_C_C (C : category) := category_product (FunCat C SetCat) C.
 
+Definition glop C (D := Set_C_C C) :=
+  {| f_map_obj (X : Obj D) := f_map_obj (fst X) (snd X);
+     f_map_hom := 42 |}.
+...
+
+Definition glop C (D := Set_C_C C) : functor D SetCat :=
+  {| f_map_obj (X : Obj D) := f_map_obj (fst X) (snd X) |}.
+
 Theorem Yoneda_natural {C} (F : functor C SetCat) (A : Obj C) :
   True.
 Proof.
