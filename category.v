@@ -963,18 +963,23 @@ Theorem functor_Set_C_C_Set_comp_prop {C} (D := Set_C_C C) (X Y Z : Obj D)
   functor_Set_C_C_Set_map_hom Y Z g ◦ functor_Set_C_C_Set_map_hom X Y f.
 Proof.
 cbn in *.
-destruct X as (F, A).
-destruct Y as (G, B).
-destruct Z as (H, E); cbn in *.
+destruct X as (F, X).
+destruct Y as (G, Y).
+destruct Z as (H, Z); cbn in *.
 destruct f as (η, f).
 destruct g as (η', g).
 move η' before η; cbn.
 apply extensionality; intros T; cbn.
 rewrite f_comp_prop; cbn.
-destruct η'; cbn.
-destruct η; cbn.
-apply f_equal.
+destruct η' as (η', η'_prop).
+destruct η as (η, η_prop).
 cbn in *.
+apply f_equal.
+specialize (η_prop Y Z g) as H1.
+Check (f_map_hom F f T).
+apply (@hott4cat.happly _ _ _ _ _ (f_map_hom F f T)) in H1.
+
+specialize (η_prop Y Z g (f_map_hom F f T)) as H1.
 ...
 
 Definition functor_Set_C_C_Set C (D := Set_C_C C) : functor D SetCat :=
