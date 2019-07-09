@@ -831,9 +831,9 @@ Definition is_representable_functor {C} (F : functor C SetCat) :=
   (wikipedia)
 *)
 
-Definition Yoneda_NT_FA {C} (F : functor C SetCat) (A : Obj C) :=
-  λ Φ : natural_transformation (hom_functor A) F,
-  nt_hom Φ A (idc A) : st_type (f_map_obj F A).
+Definition Yoneda_NT_FA {C} (F : functor C SetCat) (A : Obj C) :
+  natural_transformation (hom_functor A) F → st_type (f_map_obj F A) :=
+  λ Φ, nt_hom Φ A (idc A) : st_type (f_map_obj F A).
 
 Definition Yoneda_FA_NT {C} (F : functor C SetCat) (A : Obj C) :
   st_type (f_map_obj F A) → natural_transformation (hom_functor A) F.
