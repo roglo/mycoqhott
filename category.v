@@ -994,20 +994,15 @@ Definition functor_SetC_C_Set C : functor (SetC_C C) SetCat :=
      f_comp_prop := functor_SetC_C_Set_comp_prop;
      f_id_prop := functor_SetC_C_Set_id_prop |}.
 
+(*
 Definition glop {C} (X : Obj (SetC_C C)) : Obj SetCat.
 Proof.
-destruct X as (F, A); cbn in *.
-assert (ϑ : ∀ G (X : Obj C), Hom (f_map_obj F X) (f_map_obj G X)). {
-  intros.
-  apply nt_hom.
-  unfold natural_transformation.
-...
-  assert (ϑ : ∀ x : Obj C, Hom (f_map_obj F x) (f_map_obj G x)). {
-    intros Y.
+exists (@natural_transformation _ _ (@hom_functor _ _) _).
+(* universe inconsistency *)
 ...
 
 Definition functor_SetC_C_Set2 C : functor (SetC_C C) SetCat :=
-  {| f_map_obj := glop |}.
+  {| f_map_obj X := glop |}.
 ...
 
 Theorem Yoneda_natural {C} (F : functor C SetCat) (A : Obj C) :
@@ -1015,15 +1010,4 @@ Theorem Yoneda_natural {C} (F : functor C SetCat) (A : Obj C) :
 Proof.
 Check (functor_SetC_C_Set C).
 ...
-
-Check (natural_transformation (hom_functor A) F).
-Check (st_type (f_map_obj F A)).
-Check Yoneda_NT_FA.
-Check Yoneda_FA_NT.
-Check (functor (category_product C SetCat) SetCat).
-...
-Yoneda_NT_FA
-     : ∀ (F : functor C SetCat) (A : Obj C), natural_transformation (hom_functor A) F → st_type (f_map_obj F A)
-Yoneda_FA_NT
-     : ∀ (F : functor C SetCat) (A : Obj C), st_type (f_map_obj F A) → natural_transformation (hom_functor A) F
-...
+*)
