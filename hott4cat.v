@@ -1,6 +1,7 @@
 (* HoTT stuff required for categories *)
 (* Borrowed from the other files over HoTT *)
 
+Set Universe Polymorphism.
 Require Import Utf8.
 
 Definition isSet (A : Type) := ∀ (a b : A) (p q : a = b), p = q.

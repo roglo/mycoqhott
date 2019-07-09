@@ -477,7 +477,7 @@ Definition nt_commute {C D} {F G : functor C D}
 
 (* category of functors *)
 
-Theorem Fun_cat_comp_nt_commute {C D} {F G H : functor C D} :
+Theorem FunCat_comp_nt_commute {C D} {F G H : functor C D} :
   ∀ (η : natural_transformation F G) (η' : natural_transformation G H),
   ∀ (x y : Obj C) (f : Hom x y),
   nt_hom η' y ◦ nt_hom η y ◦ f_map_hom F f =
@@ -489,13 +489,13 @@ do 2 rewrite <- assoc.
 apply f_equal, (nt_commute η').
 Defined.
 
-Definition Fun_cat_comp {C D} (F G H : functor C D) :
+Definition FunCat_comp {C D} (F G H : functor C D) :
     natural_transformation F G → natural_transformation G H →
     natural_transformation F H :=
   λ η η',
-  existT _ (λ x, nt_hom η' x ◦ nt_hom η x) (Fun_cat_comp_nt_commute η η').
+  existT _ (λ x, nt_hom η' x ◦ nt_hom η x) (FunCat_comp_nt_commute η η').
 
-Definition Fun_cat_id {C D} (F : functor C D) : natural_transformation F F.
+Definition FunCat_id {C D} (F : functor C D) : natural_transformation F F.
 Proof.
 unfold natural_transformation.
 exists (λ z, f_map_hom F (idc z)).
@@ -507,12 +507,12 @@ etransitivity; [ | apply unit_l ].
 now destruct (@f_id_prop C D F x).
 Defined.
 
-Theorem Fun_cat_unit_l {C D} (F G : functor C D) :
-  ∀ (f : natural_transformation F G), Fun_cat_comp F F G (Fun_cat_id F) f = f.
+Theorem FunCat_unit_l {C D} (F G : functor C D) :
+  ∀ (f : natural_transformation F G), FunCat_comp F F G (FunCat_id F) f = f.
 Proof.
 intros.
 destruct f as (f, Hf).
-unfold Fun_cat_comp; cbn.
+unfold FunCat_comp; cbn.
 apply eq_existT_uncurried.
 assert (p : (λ x : Obj C, f x ◦ f_map_hom F (idc x)) = f). {
   apply extensionality.
@@ -527,12 +527,12 @@ apply extensionality; intros g.
 apply Hom_set.
 Qed.
 
-Theorem Fun_cat_unit_r {C D} (F G : functor C D) :
-  ∀ (f : natural_transformation F G), Fun_cat_comp F G G f (Fun_cat_id G) = f.
+Theorem FunCat_unit_r {C D} (F G : functor C D) :
+  ∀ (f : natural_transformation F G), FunCat_comp F G G f (FunCat_id G) = f.
 Proof.
 intros.
 destruct f as (f, Hf).
-unfold Fun_cat_comp; cbn.
+unfold FunCat_comp; cbn.
 apply eq_existT_uncurried.
 assert (p : (λ x : Obj C, f_map_hom G (idc x) ◦ f x) = f). {
   apply extensionality.
@@ -547,14 +547,14 @@ apply extensionality; intros g.
 apply Hom_set.
 Qed.
 
-Theorem Fun_cat_assoc {C D} (F G H I : functor C D) :
+Theorem FunCat_assoc {C D} (F G H I : functor C D) :
   ∀ (η : natural_transformation F G) (η' : natural_transformation G H)
      (η'' : natural_transformation H I),
-  Fun_cat_comp F G I η (Fun_cat_comp G H I η' η'') =
-  Fun_cat_comp F H I (Fun_cat_comp F G H η η') η''.
+  FunCat_comp F G I η (FunCat_comp G H I η' η'') =
+  FunCat_comp F H I (FunCat_comp F G H η η') η''.
 Proof.
 intros.
-unfold Fun_cat_comp; cbn.
+unfold FunCat_comp; cbn.
 apply eq_existT_uncurried.
 assert
  (p :
@@ -569,7 +569,7 @@ apply extensionality; intros z.
 apply Hom_set.
 Qed.
 
-Theorem Fun_cat_Hom_set {C D} : ∀ F G : functor C D,
+Theorem FunCat_Hom_set {C D} : ∀ F G : functor C D,
   isSet (natural_transformation F G).
 Proof.
 intros.
@@ -589,12 +589,12 @@ Qed.
 Definition FunCat C D :=
   {| Obj := functor C D;
      Hom := natural_transformation;
-     comp := Fun_cat_comp;
-     idc := Fun_cat_id;
-     unit_l := Fun_cat_unit_l;
-     unit_r := Fun_cat_unit_r;
-     assoc := Fun_cat_assoc;
-     Hom_set := Fun_cat_Hom_set |}.
+     comp := FunCat_comp;
+     idc := FunCat_id;
+     unit_l := FunCat_unit_l;
+     unit_r := FunCat_unit_r;
+     assoc := FunCat_assoc;
+     Hom_set := FunCat_Hom_set |}.
 
 (* category of categories *)
 
@@ -734,8 +734,8 @@ Definition CatCat :=
 Definition is_iso_betw_fun {C D} {F G : functor C D}
   (α : natural_transformation F G) :=
   { β : natural_transformation G F &
-    Fun_cat_comp _ _ _ α β = Fun_cat_id F &
-    Fun_cat_comp _ _ _ β α = Fun_cat_id G }.
+    FunCat_comp _ _ _ α β = FunCat_id F &
+    FunCat_comp _ _ _ β α = FunCat_id G }.
 
 Definition are_isomorphic_functors {C D} (F G : functor C D) :=
   { α : natural_transformation F G & is_iso_betw_fun α }.
@@ -994,15 +994,15 @@ Definition functor_SetC_C_Set C : functor (SetC_C C) SetCat :=
      f_comp_prop := functor_SetC_C_Set_comp_prop;
      f_id_prop := functor_SetC_C_Set_id_prop |}.
 
-(*
-Definition glop {C} (X : Obj (SetC_C C)) : Obj SetCat.
+Definition functor_SetC_C_Set2_map_obj {C} (A : Obj (SetC_C C)) : Obj SetCat.
 Proof.
-exists (@natural_transformation _ _ (@hom_functor _ _) _).
-(* universe inconsistency *)
-...
+exists (natural_transformation (hom_functor (snd A)) (fst A)).
+apply FunCat_Hom_set.
+Qed.
 
 Definition functor_SetC_C_Set2 C : functor (SetC_C C) SetCat :=
-  {| f_map_obj X := glop |}.
+  {| f_map_obj := functor_SetC_C_Set2_map_obj;
+     f_map_hom := 42 |}.
 ...
 
 Theorem Yoneda_natural {C} (F : functor C SetCat) (A : Obj C) :
@@ -1010,4 +1010,3 @@ Theorem Yoneda_natural {C} (F : functor C SetCat) (A : Obj C) :
 Proof.
 Check (functor_SetC_C_Set C).
 ...
-*)
