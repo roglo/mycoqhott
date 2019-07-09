@@ -692,10 +692,9 @@ Qed.
 Theorem CatCat_Hom_set C C' (F G : functor C C') (p q : F = G) : p = q.
 Proof.
 destruct F, G; cbn in *.
-Print functor.
-Print eq_existT_uncurried.
 (* perhaps should implement "functor" as dependent pair(s) because it would
    allow me to unse eq_existT_uncurried and hott theorems *)
+(* (eq_existT_pair_transport) *)
 ...
 destruct F, G; cbn in *.
 Set Keep Proof Equalities.
