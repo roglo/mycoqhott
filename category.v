@@ -690,6 +690,7 @@ f_equal.
  now destruct f_id_prop; cbn.
 Qed.
 
+(*
 Theorem CatCat_Hom_set C C' (F G : functor C C') (p q : F = G) : p = q.
 Proof.
 destruct F, G; cbn in *.
@@ -713,9 +714,10 @@ apply hott4cat.eq_existT_pair_transport in H4.
 destruct H4 as (Hp4 & H4).
 move Hp4 before Hp3.
 (* doesn't work; but is it true? *)
-Abort.
+...
 
-(* Hom_set does not work: perhaps false or not
+Hom_set does not work: perhaps false or not
+
 Definition CatCat :=
   {| Obj := category;
      Hom := functor;
