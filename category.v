@@ -694,6 +694,8 @@ Proof.
 destruct F, G; cbn in *.
 Print functor.
 Print eq_existT_uncurried.
+(* perhaps should implement "functor" as dependent pair(s) because it would
+   allow me to unse eq_existT_uncurried and hott theorems *)
 ...
 destruct F, G; cbn in *.
 Set Keep Proof Equalities.
