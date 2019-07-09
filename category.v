@@ -946,13 +946,42 @@ Definition category_product (C1 C2 : category) : category :=
 
 Definition Set_C_C (C : category) := category_product (FunCat C SetCat) C.
 
-Definition glop C (D := Set_C_C C) :=
-  {| f_map_obj (X : Obj D) := f_map_obj (fst X) (snd X);
-     f_map_hom := 42 |}.
+Definition functor_Set_C_C_Set_map_hom {C} (D := Set_C_C C) (X Y : Obj D)
+  (f : Hom X Y) : Hom (f_map_obj (fst X) (snd X)) (f_map_obj (fst Y) (snd Y)).
+Proof.
+cbn in X, Y, f.
+intros T.
+destruct X as (F, A).
+destruct Y as (G, B).
+destruct f as (f, g).
+now apply f, (f_map_hom F g).
+Defined.
+
+Theorem functor_Set_C_C_Set_comp_prop {C} (D := Set_C_C C) (X Y Z : Obj D)
+  (f : Hom X Y) (g : Hom Y Z) :
+  functor_Set_C_C_Set_map_hom X Z (g ◦ f) =
+  functor_Set_C_C_Set_map_hom Y Z g ◦ functor_Set_C_C_Set_map_hom X Y f.
+Proof.
+cbn in *.
+destruct X as (F, A).
+destruct Y as (G, B).
+destruct Z as (H, E); cbn in *.
+destruct f as (η, f).
+destruct g as (η', g).
+move η' before η; cbn.
+apply extensionality; intros T; cbn.
+rewrite f_comp_prop; cbn.
+destruct η'; cbn.
+destruct η; cbn.
+apply f_equal.
+cbn in *.
 ...
 
-Definition glop C (D := Set_C_C C) : functor D SetCat :=
-  {| f_map_obj (X : Obj D) := f_map_obj (fst X) (snd X) |}.
+Definition functor_Set_C_C_Set C (D := Set_C_C C) : functor D SetCat :=
+  {| f_map_obj (X : Obj D) := f_map_obj (fst X) (snd X);
+     f_map_hom := functor_Set_C_C_Set_map_hom;
+     f_comp_prop X Y Z f g := 42 |}.
+...
 
 Theorem Yoneda_natural {C} (F : functor C SetCat) (A : Obj C) :
   True.
