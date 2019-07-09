@@ -953,3 +953,8 @@ Check Yoneda_NT_FA.
 Check Yoneda_FA_NT.
 Check (functor (category_product C SetCat) SetCat).
 ...
+Yoneda_NT_FA
+     : ∀ (F : functor C SetCat) (A : Obj C), natural_transformation (hom_functor A) F → st_type (f_map_obj F A)
+Yoneda_FA_NT
+     : ∀ (F : functor C SetCat) (A : Obj C), st_type (f_map_obj F A) → natural_transformation (hom_functor A) F
+...
