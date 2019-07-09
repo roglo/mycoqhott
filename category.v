@@ -944,6 +944,8 @@ Definition category_product (C1 C2 : category) : category :=
   denotes the category of functors from C to Set.)
 *)
 
+Definition Set_C_C (C : category) := category_product (FunCat C SetCat) C.
+
 Theorem Yoneda_natural {C} (F : functor C SetCat) (A : Obj C) :
   True.
 Proof.
