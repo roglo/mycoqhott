@@ -1163,3 +1163,6 @@ Definition are_adjoint {C D} (F : functor C D) (G : functor D C) :=
 Check natural_transformation.
 
 Print are_adjoint.
+
+Search (_ → functor _ _).
+Check @hom_functor.
