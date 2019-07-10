@@ -1100,4 +1100,15 @@ Definition functor_SetC_C_Set2 C : functor (SetC_C C) SetCat :=
 Theorem Yoneda_natural {C} :
   natural_transformation (functor_SetC_C_Set1 C) (functor_SetC_C_Set2 C).
 Proof.
+unfold natural_transformation.
+cbn.
+assert (ϑ : ∀ F : functor C SetCat * Obj C,
+  st_type (f_map_obj (fst F) (snd F))
+  → natural_transformation (hom_functor (snd F)) (fst F)). {
+  intros (F, A) T.
+  cbn in T; cbn.
 ...
+}
+exists ϑ.
+intros F G η.
+apply extensionality; intros T.
