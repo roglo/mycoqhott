@@ -1130,8 +1130,9 @@ unfold functor_SetC_C_Set2_map_hom; cbn.
 apply eq_existT_uncurried; cbn.
 assert (p :
    (λ (X : Obj C) (f1 : Hom B X),
-       f_map_hom G f1 (let (f2, g) := η in (projT1 f2) B (f_map_hom F g T))) =
-    (λ (A : Obj C) (g : Hom B A), projT1 (fst η) A (f_map_hom F (g ◦ snd η) T))). {
+    f_map_hom G f1 (let (f2, g) := η in (projT1 f2) B (f_map_hom F g T))) =
+   (λ (A : Obj C) (g : Hom B A),
+    projT1 (fst η) A (f_map_hom F (g ◦ snd η) T))). {
   apply extensionality; intros X.
   apply extensionality; intros f.
   destruct η as (η, g); cbn in *.
