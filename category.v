@@ -1160,6 +1160,12 @@ Definition are_adjoint {C D} (F : functor C D) (G : functor D C) :=
   ∃ g : Hom Y (f_map_obj G X) → Hom (f_map_obj F Y) X,
   (∀ x, g (f x) = x) ∧ (∀ y, f (g y) = y).
 
+Example glop {C D} (F : functor C D) (G : functor D C) : True.
+Check hom_functor.
+Check (λ X, (λ Y, Hom X (f_map_obj G Y)) : Obj D → _).
+...
+Check (λ X, (λ Y, f_map_hom (hom_functor _) (Hom X (f_map_obj G Y))) : Obj D → _).
+
 Check natural_transformation.
 
 Print are_adjoint.
