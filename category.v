@@ -1100,23 +1100,7 @@ Definition functor_SetC_C_Set2 C : functor (SetC_C C) SetCat :=
 Theorem Yoneda_natural {C} :
   natural_transformation (functor_SetC_C_Set1 C) (functor_SetC_C_Set2 C).
 Proof.
-unfold natural_transformation.
-cbn.
-(*
-assert (ϑppp : ∀ F : functor C SetCat * Obj C,
-  st_type (f_map_obj (fst F) (snd F))
-  → natural_transformation (hom_functor (snd F)) (fst F)). {
-  intros (F, A) T.
-  cbn in T; cbn.
-  unfold natural_transformation; cbn.
-  set (ϑ := λ X (f : Hom A X), f_map_hom F f T).
-  exists ϑ.
-  intros X Y f.
-  apply extensionality; intros g.
-  unfold ϑ.
-  now rewrite f_comp_prop.
-}
-*)
+unfold natural_transformation; cbn.
 set (ϑ :=
      λ F0 : functor C SetCat * Obj C,
        let
@@ -1152,7 +1136,9 @@ assert (p :
   destruct η as (η, g); cbn in *.
   destruct η as (η, Hη); cbn.
   rewrite f_comp_prop; cbn.
-...
+  specialize (Hη B X f) as H1; cbn in H1.
+  specialize (@hott4cat.happly _ _ _ _ H1) as H2; cbn in H2.
+  symmetry; apply H2.
 }
 exists p.
 cbn.
@@ -1162,4 +1148,4 @@ apply extensionality; intros g.
 apply hott4cat.ex_3_1_6.
 intros h.
 now destruct (f_map_obj G Y).
-...
+Qed.
