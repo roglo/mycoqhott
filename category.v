@@ -1007,15 +1007,70 @@ Proof.
 cbn; intros η.
 set (ϑ := λ A g, projT1 (fst f) A (projT1 η A (g ◦ snd f))).
 exists ϑ.
-intros Z T g.
-apply extensionality; intros h; cbn; cbn in h, ϑ.
-specialize (ϑ T (comp h g)) as H1.
+intros Z T h.
+apply extensionality; intros g; cbn; cbn in h, ϑ.
+specialize (ϑ T (comp g h)) as H1.
 unfold ϑ.
+destruct X as (F, X).
+destruct Y as (G, Y).
+move G before F.
+cbn in *.
+destruct f as (η', f).
+move η after η'.
+move Z before Y; move T before Z.
+move g before f; move h before g.
+cbn in *.
+specialize @FunCat_comp_nt_commute as H2.
+specialize (H2 C SetCat (hom_functor X) F G η η' Z T h).
+cbn in H2.
+unfold nt_hom in H2.
+specialize (@hott4cat.happly _ _ _ _ H2 (g ◦ f)) as H3.
+cbn in H3.
+etransitivity; [ | apply H3 ].
+do 2 apply f_equal.
+apply assoc.
+Defined.
+
+Theorem functor_SetC_C_Set2_comp_prop {C} (X Y Z : Obj (SetC_C C))
+    (f : Hom X Y) (g : Hom Y Z) :
+  functor_SetC_C_Set2_map_hom X Z (g ◦ f) =
+  functor_SetC_C_Set2_map_hom Y Z g ◦ functor_SetC_C_Set2_map_hom X Y f.
+Proof.
+apply extensionality; intros η.
+unfold functor_SetC_C_Set2_map_hom; cbn.
+apply eq_existT_uncurried.
+destruct f as (η', f).
+destruct g as (η'', g); cbn in η, η', η'', f, g |-*.
+move η after η'; move η'' before η'.
+destruct X as (F, X).
+destruct Y as (G, Y).
+destruct Z as (H, Z).
+move Y before X; move Z before Y; move g before f.
+move G before F; move H before G.
+cbn in *.
+unfold nt_hom.
+assert (p
+  : (λ (A : Obj C) (g0 : Hom Z A),
+       projT1 η'' A (projT1 η' A (projT1 η A (g0 ◦ (g ◦ f))))) =
+    (λ (A : Obj C) (g0 : Hom Z A),
+       projT1 η'' A (projT1 η' A (projT1 η A (g0 ◦ g ◦ f))))). {
+  apply extensionality; intros A.
+  apply extensionality; intros h.
+  do 3 apply f_equal.
+  symmetry; apply assoc.
+}
+exists p; cbn.
+apply extensionality; intros A.
+apply extensionality; intros B.
+apply extensionality; intros h.
+cbn.
+(* exprimer la valeur exacte de p *)
 ...
 
 Definition functor_SetC_C_Set2 C : functor (SetC_C C) SetCat :=
   {| f_map_obj := functor_SetC_C_Set2_map_obj;
-     f_map_hom X Y f := 42 |}.
+     f_map_hom := functor_SetC_C_Set2_map_hom;
+     f_comp_prop := functor_SetC_C_Set2_comp_prop |}.
 ...
 
 Theorem Yoneda_natural {C} (F : functor C SetCat) (A : Obj C) :
