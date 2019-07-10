@@ -1097,9 +1097,12 @@ Definition functor_SetC_C_Set2 C : functor (SetC_C C) SetCat :=
      f_comp_prop := functor_SetC_C_Set2_comp_prop;
      f_id_prop := functor_SetC_C_Set2_id_prop |}.
 
-Theorem Yoneda_natural {C} (F : functor C SetCat) (A : Obj C) :
-  True.
-Proof.
-Check (functor_SetC_C_Set1 C).
-Check (functor_SetC_C_Set2 C).
+(*
+The term "functor_SetC_C_Set2 C" has type
+ "functor@{Top.4742 Top.4740} (SetC_C@{Top.4742 Top.4741 Top.4742 Top.4741} C) SetCat@{Top.4740 Top.4742}"
+while it is expected to have type
+ "functor@{Top.4734 Top.4735} (SetC_C@{Top.4734 Top.4741 Top.4735 Top.4738} C) SetCat@{Top.4735 Top.4738}".
+*)
+Theorem Yoneda_natural {C} :
+  natural_transformation (functor_SetC_C_Set1 C) (functor_SetC_C_Set2 C).
 ...
