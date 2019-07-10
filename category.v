@@ -1037,6 +1037,16 @@ Theorem functor_SetC_C_Set2_comp_prop {C} (X Y Z : Obj (SetC_C C))
   functor_SetC_C_Set2_map_hom Y Z g ◦ functor_SetC_C_Set2_map_hom X Y f.
 Proof.
 apply extensionality; intros η.
+assert (ppppp
+  : (λ (A : Obj C) (g0 : Hom (snd Z) A),
+       projT1 (fst g) A (projT1 (fst f) A (projT1 η A (g0 ◦ (snd g ◦ snd f))))) =
+    (λ (A : Obj C) (g0 : Hom (snd Z) A),
+       projT1 (fst g) A (projT1 (fst f) A (projT1 η A (g0 ◦ snd g ◦ snd f))))). {
+  apply extensionality; intros A.
+  apply extensionality; intros h.
+  do 3 apply f_equal.
+  symmetry; apply assoc.
+}
 unfold functor_SetC_C_Set2_map_hom; cbn.
 apply eq_existT_uncurried.
 destruct f as (η', f).
@@ -1049,22 +1059,12 @@ move Y before X; move Z before Y; move g before f.
 move G before F; move H before G.
 cbn in *.
 unfold nt_hom.
-assert (p
-  : (λ (A : Obj C) (g0 : Hom Z A),
-       projT1 η'' A (projT1 η' A (projT1 η A (g0 ◦ (g ◦ f))))) =
-    (λ (A : Obj C) (g0 : Hom Z A),
-       projT1 η'' A (projT1 η' A (projT1 η A (g0 ◦ g ◦ f))))). {
-  apply extensionality; intros A.
-  apply extensionality; intros h.
-  do 3 apply f_equal.
-  symmetry; apply assoc.
-}
-exists p; cbn.
+exists ppppp; cbn.
 apply extensionality; intros A.
 apply extensionality; intros B.
 apply extensionality; intros h.
 cbn.
-(* exprimer la valeur exacte de p *)
+(* exprimer la valeur exacte de ppppp *)
 ...
 
 Definition functor_SetC_C_Set2 C : functor (SetC_C C) SetCat :=
