@@ -1102,23 +1102,24 @@ Theorem Yoneda_natural {C} :
 Proof.
 unfold natural_transformation; cbn.
 set (ϑ :=
-     λ F0 : functor C SetCat * Obj C,
-       let
-         (F, A) as p
-          return (st_type (f_map_obj (fst p) (snd p)) → natural_transformation (hom_functor (snd p)) (fst p)) :=
-         F0 in
-       λ T : st_type (f_map_obj (fst (F, A)) (snd (F, A))),
-         let ϑ := λ (X : Obj C) (f : Hom A X), f_map_hom F f T in
-         existT
-           (λ ϑ0 : ∀ x : Obj C, Hom A x → st_type (f_map_obj F x),
-              ∀ (x y : Obj C) (f : Hom x y),
-                (λ HA : Hom A x, ϑ0 y (f ◦ HA)) = (λ HA : Hom A x, f_map_hom F f (ϑ0 x HA))) ϑ
-           (λ (X Y : Obj C) (f : Hom X Y),
-              extensionality (Hom A X) (λ _ : Hom A X, st_type (f_map_obj F Y)) (λ HA : Hom A X, ϑ Y (f ◦ HA))
-                (λ HA : Hom A X, f_map_hom F f (ϑ X HA))
-                (λ g : Hom A X,
-                   eq_ind_r (λ h : Hom (f_map_obj F A) (f_map_obj F Y), h T = f_map_hom F f (f_map_hom F g T))
-                     eq_refl (f_comp_prop g f)))).
+  λ F : functor C SetCat * Obj C,
+  let (F, A) as p
+    return
+      (st_type (f_map_obj (fst p) (snd p))
+      → natural_transformation (hom_functor (snd p)) (fst p)) := F
+  in
+  λ T : st_type (f_map_obj F A),
+  let ϑ := λ (X : Obj C) (f : Hom A X), f_map_hom F f T in
+  existT _ ϑ
+    (λ (X Y : Obj C) (f : Hom X Y),
+     extensionality _
+       (λ _ : Hom A X, st_type (f_map_obj F Y)) (λ HA : Hom A X, ϑ Y (f ◦ HA))
+       (λ HA : Hom A X, f_map_hom F f (ϑ X HA))
+       (λ g : Hom A X,
+        eq_ind_r
+          (λ h : Hom (f_map_obj F A) (f_map_obj F Y),
+           h T = f_map_hom F f (f_map_hom F g T))
+          eq_refl (f_comp_prop g f)))).
 exists ϑ.
 intros F G η.
 apply extensionality; intros T.
@@ -1129,7 +1130,7 @@ unfold functor_SetC_C_Set2_map_hom; cbn.
 apply eq_existT_uncurried; cbn.
 assert (p :
    (λ (X : Obj C) (f1 : Hom B X),
-       f_map_hom G f1 (let (f2, g) := η in (let (x, _) := f2 in x) B (f_map_hom F g T))) =
+       f_map_hom G f1 (let (f2, g) := η in (projT1 f2) B (f_map_hom F g T))) =
     (λ (A : Obj C) (g : Hom B A), projT1 (fst η) A (f_map_hom F (g ◦ snd η) T))). {
   apply extensionality; intros X.
   apply extensionality; intros f.
