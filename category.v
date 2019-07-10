@@ -1008,13 +1008,9 @@ cbn; intros η.
 set (ϑ := λ A g, projT1 (fst f) A (projT1 η A (g ◦ snd f))).
 exists ϑ.
 intros Z T g.
-(*
-destruct η as (ϑ1, Hϑ1).
-destruct η' as (ϑ2, Hϑ2).
-move ϑ2 before ϑ1.
-*)
 apply extensionality; intros h; cbn; cbn in h, ϑ.
 specialize (ϑ T (comp h g)) as H1.
+unfold ϑ.
 ...
 
 Definition functor_SetC_C_Set2 C : functor (SetC_C C) SetCat :=
