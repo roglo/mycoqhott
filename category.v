@@ -1151,3 +1151,15 @@ apply hott4cat.ex_3_1_6.
 intros h.
 now destruct (f_map_obj G Y).
 Qed.
+
+(* adjunction *)
+
+Definition are_adjoint {C D} (F : functor C D) (G : functor D C) :=
+  ∀ X Y,
+  ∃ f : Hom (f_map_obj F Y) X → Hom Y (f_map_obj G X),
+  ∃ g : Hom Y (f_map_obj G X) → Hom (f_map_obj F Y) X,
+  (∀ x, g (f x) = x) ∧ (∀ y, f (g y) = y).
+
+Check natural_transformation.
+
+Print are_adjoint.
