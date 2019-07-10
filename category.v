@@ -946,7 +946,7 @@ Definition category_product (C1 C2 : category) : category :=
 
 Definition SetC_C (C : category) := category_product (FunCat C SetCat) C.
 
-Definition functor_SetC_C_Set_map_hom {C} (D := SetC_C C) (X Y : Obj D)
+Definition functor_SetC_C_Set1_map_hom {C} (D := SetC_C C) (X Y : Obj D)
   (f : Hom X Y) : Hom (f_map_obj (fst X) (snd X)) (f_map_obj (fst Y) (snd Y)).
 Proof.
 cbn in X, Y, f.
@@ -957,10 +957,10 @@ destruct f as (f, g).
 now apply f, (f_map_hom F g).
 Defined.
 
-Theorem functor_SetC_C_Set_comp_prop {C} (D := SetC_C C) (X Y Z : Obj D)
+Theorem functor_SetC_C_Set1_comp_prop {C} (D := SetC_C C) (X Y Z : Obj D)
   (f : Hom X Y) (g : Hom Y Z) :
-  functor_SetC_C_Set_map_hom X Z (g ◦ f) =
-  functor_SetC_C_Set_map_hom Y Z g ◦ functor_SetC_C_Set_map_hom X Y f.
+  functor_SetC_C_Set1_map_hom X Z (g ◦ f) =
+  functor_SetC_C_Set1_map_hom Y Z g ◦ functor_SetC_C_Set1_map_hom X Y f.
 Proof.
 cbn in *.
 destruct X as (F, X).
@@ -979,8 +979,8 @@ specialize (η_prop Y Z g) as H1.
 now specialize (@hott4cat.happly _ _ _ _ H1 (f_map_hom F f T)) as H2.
 Qed.
 
-Theorem functor_SetC_C_Set_id_prop {C} (D := SetC_C C) (X : Obj D) :
-  functor_SetC_C_Set_map_hom X X (idc X) = idc (f_map_obj (fst X) (snd X)).
+Theorem functor_SetC_C_Set1_id_prop {C} (D := SetC_C C) (X : Obj D) :
+  functor_SetC_C_Set1_map_hom X X (idc X) = idc (f_map_obj (fst X) (snd X)).
 Proof.
 cbn in *.
 destruct X as (F, X); cbn.
@@ -988,11 +988,11 @@ apply extensionality; intros T; cbn.
 now rewrite f_id_prop.
 Qed.
 
-Definition functor_SetC_C_Set C : functor (SetC_C C) SetCat :=
+Definition functor_SetC_C_Set1 C : functor (SetC_C C) SetCat :=
   {| f_map_obj (X : Obj (SetC_C C)) := f_map_obj (fst X) (snd X);
-     f_map_hom := functor_SetC_C_Set_map_hom;
-     f_comp_prop := functor_SetC_C_Set_comp_prop;
-     f_id_prop := functor_SetC_C_Set_id_prop |}.
+     f_map_hom := functor_SetC_C_Set1_map_hom;
+     f_comp_prop := functor_SetC_C_Set1_comp_prop;
+     f_id_prop := functor_SetC_C_Set1_id_prop |}.
 
 Definition functor_SetC_C_Set2_map_obj {C} (A : Obj (SetC_C C)) : Obj SetCat.
 Proof.
@@ -1068,15 +1068,38 @@ intros i.
 now destruct (f_map_obj H B).
 Qed.
 
+Theorem functor_SetC_C_Set2_id_prop {C} (X : Obj (SetC_C C)) :
+  functor_SetC_C_Set2_map_hom X X (idc X) = idc (functor_SetC_C_Set2_map_obj X).
+Proof.
+apply extensionality; intros η; cbn.
+destruct η as (η, Hη); cbn in *.
+unfold functor_SetC_C_Set2_map_hom; cbn.
+apply eq_existT_uncurried; cbn.
+assert (p : (λ A g, f_map_hom (fst X) (idc A) (η A (g ◦ idc (snd X)))) = η). {
+  apply extensionality; intros A.
+  apply extensionality; intros f.
+  rewrite unit_l.
+  destruct X as (F, X); cbn in *.
+  now rewrite f_id_prop.
+}
+exists p; cbn.
+apply extensionality; intros Y.
+apply extensionality; intros Z.
+apply extensionality; intros f.
+apply hott4cat.ex_3_1_6.
+intros i.
+now destruct (f_map_obj (fst X) Z).
+Qed.
+
 Definition functor_SetC_C_Set2 C : functor (SetC_C C) SetCat :=
   {| f_map_obj := functor_SetC_C_Set2_map_obj;
      f_map_hom := functor_SetC_C_Set2_map_hom;
      f_comp_prop := functor_SetC_C_Set2_comp_prop;
-     f_id_prop := 42 |}.
-...
+     f_id_prop := functor_SetC_C_Set2_id_prop |}.
 
 Theorem Yoneda_natural {C} (F : functor C SetCat) (A : Obj C) :
   True.
 Proof.
-Check (functor_SetC_C_Set C).
+Check (functor_SetC_C_Set1 C).
+Check (functor_SetC_C_Set2 C).
 ...
