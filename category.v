@@ -8,11 +8,11 @@ Set Nested Proofs Allowed.
 
 Axiom extensionality : ∀ A B (f g : ∀ x : A, B x), (∀ x, f x = g x) → f = g.
 
-Definition isSet@{u} (A : Type@{u}) := ∀ (a b : A) (p q : a = b), p = q.
+Definition isSet (A : Type) := ∀ (a b : A) (p q : a = b), p = q.
 
-Class category@{u} :=
-  { Obj : Type@{u};
-    Hom : Obj → Obj → Type@{u};
+Class category :=
+  { Obj : Type;
+    Hom : Obj → Obj → Type;
     comp : ∀ {A B C}, Hom A B → Hom B C → Hom A C;
     idc : ∀ A, Hom A A;
     unit_l : ∀ {A B} (f : Hom A B), comp (idc A) f = f;
@@ -466,7 +466,7 @@ Qed.
 
 (* natural transformation *)
 
-Definition natural_transformation {C D} (F G : functor C D) :=
+Definition natural_transformation {C D} (F : functor C D) (G : functor C D) :=
   { ϑ : ∀ x, Hom (f_map_obj F x) (f_map_obj G x) &
     ∀ x y (f : Hom x y), ϑ y ◦ f_map_hom F f = f_map_hom G f ◦ ϑ x }.
 
@@ -1097,12 +1097,7 @@ Definition functor_SetC_C_Set2 C : functor (SetC_C C) SetCat :=
      f_comp_prop := functor_SetC_C_Set2_comp_prop;
      f_id_prop := functor_SetC_C_Set2_id_prop |}.
 
-(*
-The term "functor_SetC_C_Set2 C" has type
- "functor@{Top.4742 Top.4740} (SetC_C@{Top.4742 Top.4741 Top.4742 Top.4741} C) SetCat@{Top.4740 Top.4742}"
-while it is expected to have type
- "functor@{Top.4734 Top.4735} (SetC_C@{Top.4734 Top.4741 Top.4735 Top.4738} C) SetCat@{Top.4735 Top.4738}".
-*)
 Theorem Yoneda_natural {C} :
   natural_transformation (functor_SetC_C_Set1 C) (functor_SetC_C_Set2 C).
+Proof.
 ...
