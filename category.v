@@ -1005,26 +1005,14 @@ Definition functor_SetC_C_Set2_map_hom {C} (X Y : Obj (SetC_C C))
   Hom (functor_SetC_C_Set2_map_obj X) (functor_SetC_C_Set2_map_obj Y).
 Proof.
 cbn; intros η.
-destruct X as (F, X).
-destruct Y as (G, Y).
-move G before F; cbn in F, G, f, η |-*.
-destruct f as (η', f).
-move η after η'.
-assert (ϑ : ∀ x, Hom (f_map_obj (hom_functor Y) x) (f_map_obj G x)). {
-  intros A.
-  destruct η as (ϑ1, Hϑ1).
-  destruct η' as (ϑ2, Hϑ2).
-  move ϑ1 after ϑ2.
-  cbn in ϑ1, ϑ2; cbn.
-  intros g; move g before f; move A after X.
-  apply ϑ2, ϑ1.
-  eapply comp; [ apply f | apply g ].
-}
+set (ϑ := λ A g, projT1 (fst f) A (projT1 η A (g ◦ snd f))).
 exists ϑ.
 intros Z T g.
+(*
 destruct η as (ϑ1, Hϑ1).
 destruct η' as (ϑ2, Hϑ2).
-move ϑ1 after ϑ2.
+move ϑ2 before ϑ1.
+*)
 apply extensionality; intros h; cbn; cbn in h, ϑ.
 specialize (ϑ T (comp h g)) as H1.
 ...
