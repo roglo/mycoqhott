@@ -1037,26 +1037,6 @@ Theorem functor_SetC_C_Set2_comp_prop {C} (X Y Z : Obj (SetC_C C))
   functor_SetC_C_Set2_map_hom Y Z g ◦ functor_SetC_C_Set2_map_hom X Y f.
 Proof.
 apply extensionality; intros η.
-(* perhaps not required
-set (p :=
-  extensionality (Obj C) (λ X, Hom (snd Z) X → st_type (f_map_obj (fst Z) X))
-    (λ A (i : Hom (snd Z) A),
-     projT1 (fst g) A (projT1 (fst f) A (projT1 η A (i ◦ (snd g ◦ snd f)))))
-    (λ A (i : Hom (snd Z) A),
-     projT1 (fst g) A (projT1 (fst f) A (projT1 η A (i ◦ snd g ◦ snd f))))
-    (λ A,
-     extensionality (Hom (snd Z) A) (λ _, st_type (f_map_obj (fst Z) A))
-       (λ i,
-        projT1 (fst g) A
-          (projT1 (fst f) A (projT1 η A (i ◦ (snd g ◦ snd f)))))
-       (λ i,
-        projT1 (fst g) A
-          (projT1 (fst f) A (projT1 η A (i ◦ snd g ◦ snd f))))
-       (λ h,
-        f_equal (projT1 (fst g) A)
-          (f_equal (projT1 (fst f) A)
-             (f_equal (projT1 η A) (eq_sym (assoc (snd f) (snd g) h))))))).
-*)
 unfold functor_SetC_C_Set2_map_hom; cbn.
 apply eq_existT_uncurried.
 destruct f as (η', f).
@@ -1069,7 +1049,7 @@ move Y before X; move Z before Y; move g before f.
 move G before F; move H before G.
 cbn in *.
 unfold nt_hom.
-assert (ppp
+assert (p
   : (λ (A : Obj C) (g0 : Hom Z A),
        projT1 η'' A (projT1 η' A (projT1 η A (g0 ◦ (g ◦ f))))) =
     (λ (A : Obj C) (g0 : Hom Z A),
@@ -1079,18 +1059,20 @@ assert (ppp
   do 3 apply f_equal.
   symmetry; apply assoc.
 }
-exists ppp; cbn.
+exists p; cbn.
 apply extensionality; intros A.
 apply extensionality; intros B.
 apply extensionality; intros h.
 apply hott4cat.ex_3_1_6.
 intros i.
-...
+now destruct (f_map_obj H B).
+Qed.
 
 Definition functor_SetC_C_Set2 C : functor (SetC_C C) SetCat :=
   {| f_map_obj := functor_SetC_C_Set2_map_obj;
      f_map_hom := functor_SetC_C_Set2_map_hom;
-     f_comp_prop := functor_SetC_C_Set2_comp_prop |}.
+     f_comp_prop := functor_SetC_C_Set2_comp_prop;
+     f_id_prop := 42 |}.
 ...
 
 Theorem Yoneda_natural {C} (F : functor C SetCat) (A : Obj C) :
