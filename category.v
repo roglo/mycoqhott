@@ -1107,8 +1107,15 @@ assert (ϑ : ∀ F : functor C SetCat * Obj C,
   → natural_transformation (hom_functor (snd F)) (fst F)). {
   intros (F, A) T.
   cbn in T; cbn.
-...
+  unfold natural_transformation; cbn.
+  set (ϑ := λ X (f : Hom A X), f_map_hom F f T).
+  exists ϑ.
+  intros X Y f.
+  apply extensionality; intros g.
+  unfold ϑ.
+  now rewrite f_comp_prop.
 }
 exists ϑ.
 intros F G η.
 apply extensionality; intros T.
+...
