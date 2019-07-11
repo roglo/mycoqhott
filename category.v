@@ -749,6 +749,57 @@ Definition is_equiv_betw_cat_guetta {C D} (F : functor C D) :=
     are_isomorphic_functors (functor_comp F G) (functor_id C) &
     are_isomorphic_functors (functor_comp G F) (functor_id D) }.
 
+(* product of categories *)
+
+Definition pair_unit_l {C1 C2} (X Y : Obj C1 * Obj C2)
+     (f : Hom (fst X) (fst Y) * Hom (snd X) (snd Y)) :
+  (fst f ◦ fst (idc (fst X), idc (snd X)),
+   snd f ◦ snd (idc (fst X), idc (snd X))) = f.
+Proof.
+destruct f as (f1, f2); cbn.
+now do 2 rewrite unit_l.
+Qed.
+
+Definition pair_unit_r {C1 C2} (X Y : Obj C1 * Obj C2)
+     (f : Hom (fst X) (fst Y) * Hom (snd X) (snd Y)) :
+  (fst (idc (fst Y), idc (snd Y)) ◦ fst f,
+   snd (idc (fst Y), idc (snd Y)) ◦ snd f) = f.
+Proof.
+destruct f as (f1, f2); cbn.
+now do 2 rewrite unit_r.
+Qed.
+
+Definition pair_assoc {C1 C2} (X Y Z T : Obj C1 * Obj C2)
+  (f : Hom (fst X) (fst Y) * Hom (snd X) (snd Y))
+  (g : Hom (fst Y) (fst Z) * Hom (snd Y) (snd Z))
+  (h : Hom (fst Z) (fst T) * Hom (snd Z) (snd T)) :
+  (fst (fst h ◦ fst g, snd h ◦ snd g) ◦ fst f,
+   snd (fst h ◦ fst g, snd h ◦ snd g) ◦ snd f) =
+  (fst h ◦ fst (fst g ◦ fst f, snd g ◦ snd f),
+   snd h ◦ snd (fst g ◦ fst f, snd g ◦ snd f)).
+Proof.
+destruct f as (f1, f2).
+destruct g as (g1, g2).
+destruct h as (h1, h2); cbn.
+now do 2 rewrite assoc.
+Qed.
+
+Definition pair_isSet {C1 C2} (X Y : Obj C1 * Obj C2) :
+  isSet (Hom (fst X) (fst Y) * Hom (snd X) (snd Y)).
+Proof.
+apply hott4cat.ex_3_1_5; apply Hom_set.
+Qed.
+
+Definition category_product (C1 C2 : category) : category :=
+  {| Obj := Obj C1 * Obj C2;
+     Hom X Y := (Hom (fst X) (fst Y) * Hom (snd X) (snd Y))%type;
+     comp _ _ _ f g := (fst g ◦ fst f, snd g ◦ snd f);
+     idc X := (idc (fst X), idc (snd X));
+     unit_l := pair_unit_l;
+     unit_r := pair_unit_r;
+     assoc := pair_assoc;
+     Hom_set := pair_isSet |}.
+
 (* category of sets *)
 
 Definition Set_type := { A : Type & isSet A }.
@@ -807,8 +858,8 @@ apply extensionality; intros h; cbn.
 apply unit_r.
 Qed.
 
-Definition cov_Hom_functor {C} A : functor C SetCat :=
-  {| f_map_obj X := existT isSet (Hom A X) (Hom_set A X) : Obj SetCat;
+Definition cov_Hom_functor {C} (A : Obj C) : functor C SetCat :=
+  {| f_map_obj (X : Obj C) := existT isSet (Hom A X) (Hom_set A X) : Obj SetCat;
      f_map_hom _ _ F G := F ◦ G;
      f_comp_prop := cov_Hom_functor_comp_prop;
      f_id_prop := cov_Hom_functor_id_prop |}.
@@ -822,57 +873,37 @@ Definition cov_Hom_functor {C} A : functor C SetCat :=
         g ↦ g ∘ h for each g in Hom(Y, B).
 *)
 
-(*
-Theorem con_Hom_functor_comp_prop {C} {A : Obj C} :
-  ∀ (B B' B'' : Obj C) (f : Hom B B') (g : Hom B' B''),
-  (λ h, g ◦ f ◦ h) =
-  (@comp SetCat (existT isSet (Hom A B) (Hom_set A B))
-         (existT isSet (Hom A B') (Hom_set A B'))
-         (existT isSet (Hom A B'') (Hom_set A B''))
-         (λ h, f ◦ h) (λ h, g ◦ h)).
-Proof.
-intros.
-apply extensionality; intros h.
-apply assoc.
-Qed.
+Definition con_Hom_functor {C} (B : Obj C) : functor (op C) SetCat :=
+  @cov_Hom_functor (op C) B.
 
-Theorem con_Hom_functor_id_prop {C} {A : Obj C} :
-  ∀ B : Obj C,
-  (λ h, idc B ◦ h) = (@idc SetCat (existT isSet (Hom A B) (Hom_set A B))).
-Proof.
-intros.
-apply extensionality; intros h; cbn.
-apply unit_r.
-Qed.
+Print con_Hom_functor.
+
+(*
+Theorem glop {C} (A X Y Z : Obj (category_product (op C) C))
+    (f : @Hom (category_product (op C) C) X Y)
+    (g : @Hom (category_product (op C) C) Y Z) :
+  (λ g0 : st_type (existT isSet (Hom A X) (Hom_set A X)), (fst g0 ◦ fst (g ◦ f), snd (g ◦ f) ◦ snd g0)) =
+  (λ g0 : st_type (existT isSet (Hom A Y) (Hom_set A Y)), (fst g0 ◦ fst g, snd g ◦ snd g0))
+  ◦ (λ g : st_type (existT isSet (Hom A X) (Hom_set A X)), (fst g ◦ fst f, snd f ◦ snd g)).
 *)
 
-(*
-Definition glop {C} {B : Obj (op C)} (X Y : Obj (op C)) (H : @Hom (op C) X Y)
-  (G : st_type (existT isSet (@Hom (op C) X B) (@Hom_set (op C) X B))) :
-  st_type (existT isSet (@Hom (op C) Y B) (@Hom_set (op C) Y B)).
-Proof.
-eapply comp; [ | apply G ].
-cbn in H; cbn.
+Check category_product.
+
+Definition Hom_functor {C} (A B : Obj C) :
+  functor (category_product (op C) C) SetCat.
+unfold category_product.
+cbn.
 ...
-*)
 
-Definition glop {C} {B : Obj C} (X Y : Obj C) (H : Hom X Y)
-  (G : st_type (existT isSet (Hom X B) (Hom_set X B))) :
-  st_type (existT isSet (Hom Y B) (Hom_set Y B)).
-Proof.
-cbn in G; cbn.
-Abort. (*
-eapply comp; [ apply H | apply G ].
-Defined.
+Definition Hom_functor {C} A : functor (category_product (op C) C) SetCat :=
+  {| f_map_obj (X : Obj (category_product (op C) C)) :=
+       existT isSet (Hom A X) (Hom_set A X) : Obj SetCat;
+     f_map_hom X Y f g :=
+       (fst g ◦ @fst (@Hom C (fst Y) (fst X)) (@Hom C (snd X) (snd Y)) f,
+        snd f ◦ @snd (@Hom C (fst X) (fst A)) (@Hom C (snd A) (snd X)) g);
+     f_comp_prop X Y Z f g := 42
+ |}.
 *)
-
-Definition con_Hom_functor {C} (B : Obj C) : functor C SetCat :=
-  {| f_map_obj X := existT isSet (Hom X B) (Hom_set X B) : Obj SetCat;
-     f_map_hom X Y (H : Hom X Y) (G : Hom X B) := 42 |}. ;
-     f_map_hom X Y H G := glop X Y H G |}. ;
-     f_map_hom _ _ H G := G ◦ H |}. ;
-     f_comp_prop := con_Hom_functor_comp_prop;
-     f_id_prop := con_Hom_functor_id_prop |}.
 
 (* representable functors *)
 
@@ -945,57 +976,6 @@ split.
 -intros u; cbn.
  now rewrite f_id_prop; cbn.
 Qed.
-
-(* product of categories *)
-
-Definition pair_unit_l {C1 C2} (X Y : Obj C1 * Obj C2)
-     (f : Hom (fst X) (fst Y) * Hom (snd X) (snd Y)) :
-  (fst f ◦ fst (idc (fst X), idc (snd X)),
-   snd f ◦ snd (idc (fst X), idc (snd X))) = f.
-Proof.
-destruct f as (f1, f2); cbn.
-now do 2 rewrite unit_l.
-Qed.
-
-Definition pair_unit_r {C1 C2} (X Y : Obj C1 * Obj C2)
-     (f : Hom (fst X) (fst Y) * Hom (snd X) (snd Y)) :
-  (fst (idc (fst Y), idc (snd Y)) ◦ fst f,
-   snd (idc (fst Y), idc (snd Y)) ◦ snd f) = f.
-Proof.
-destruct f as (f1, f2); cbn.
-now do 2 rewrite unit_r.
-Qed.
-
-Definition pair_assoc {C1 C2} (X Y Z T : Obj C1 * Obj C2)
-  (f : Hom (fst X) (fst Y) * Hom (snd X) (snd Y))
-  (g : Hom (fst Y) (fst Z) * Hom (snd Y) (snd Z))
-  (h : Hom (fst Z) (fst T) * Hom (snd Z) (snd T)) :
-  (fst (fst h ◦ fst g, snd h ◦ snd g) ◦ fst f,
-   snd (fst h ◦ fst g, snd h ◦ snd g) ◦ snd f) =
-  (fst h ◦ fst (fst g ◦ fst f, snd g ◦ snd f),
-   snd h ◦ snd (fst g ◦ fst f, snd g ◦ snd f)).
-Proof.
-destruct f as (f1, f2).
-destruct g as (g1, g2).
-destruct h as (h1, h2); cbn.
-now do 2 rewrite assoc.
-Qed.
-
-Definition pair_isSet {C1 C2} (X Y : Obj C1 * Obj C2) :
-  isSet (Hom (fst X) (fst Y) * Hom (snd X) (snd Y)).
-Proof.
-apply hott4cat.ex_3_1_5; apply Hom_set.
-Qed.
-
-Definition category_product (C1 C2 : category) : category :=
-  {| Obj := Obj C1 * Obj C2;
-     Hom X Y := (Hom (fst X) (fst Y) * Hom (snd X) (snd Y))%type;
-     comp _ _ _ f g := (fst g ◦ fst f, snd g ◦ snd f);
-     idc X := (idc (fst X), idc (snd X));
-     unit_l := pair_unit_l;
-     unit_r := pair_unit_r;
-     assoc := pair_assoc;
-     Hom_set := pair_isSet |}.
 
 (*
   [...]
