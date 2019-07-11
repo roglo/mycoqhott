@@ -767,7 +767,7 @@ Qed.
 Definition SetCat :=
   {| Obj := Set_type;
      Hom A B := st_type A → st_type B;
-     comp A B C HAB HBC HA := HBC (HAB HA);
+     comp A B C f g x := g (f x);
      idc _ A := A;
      unit_l _ _ _ := eq_refl;
      unit_r _ _ _ := eq_refl;
@@ -846,13 +846,7 @@ apply unit_r.
 Qed.
 *)
 
-Definition glop {C} {B : Obj C} (X Y : Obj C) (F : Hom X Y)
-  (G : st_type (existT isSet (Hom X B) (Hom_set X B))) :
-  st_type (existT isSet (Hom Y B) (Hom_set Y B)).
-Proof.
-eapply comp; [ | apply G ].
-Abort.
-
+(*
 Definition glop {C} {B : Obj (op C)} (X Y : Obj (op C)) (H : @Hom (op C) X Y)
   (G : st_type (existT isSet (@Hom (op C) X B) (@Hom_set (op C) X B))) :
   st_type (existT isSet (@Hom (op C) Y B) (@Hom_set (op C) Y B)).
@@ -860,10 +854,22 @@ Proof.
 eapply comp; [ | apply G ].
 cbn in H; cbn.
 ...
+*)
 
-Definition con_Hom_functor {C} (B : Obj (op C)) : functor C SetCat :=
+Definition glop {C} {B : Obj C} (X Y : Obj C) (H : Hom X Y)
+  (G : st_type (existT isSet (Hom X B) (Hom_set X B))) :
+  st_type (existT isSet (Hom Y B) (Hom_set Y B)).
+Proof.
+cbn in G; cbn.
+Abort. (*
+eapply comp; [ apply H | apply G ].
+Defined.
+*)
+
+Definition con_Hom_functor {C} (B : Obj C) : functor C SetCat :=
   {| f_map_obj X := existT isSet (Hom X B) (Hom_set X B) : Obj SetCat;
-     f_map_hom X Y F G := 42 |}.
+     f_map_hom X Y (H : Hom X Y) (G : Hom X B) := 42 |}. ;
+     f_map_hom X Y H G := glop X Y H G |}. ;
      f_map_hom _ _ H G := G ◦ H |}. ;
      f_comp_prop := con_Hom_functor_comp_prop;
      f_id_prop := con_Hom_functor_id_prop |}.
