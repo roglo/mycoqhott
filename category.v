@@ -774,7 +774,7 @@ Definition SetCat :=
      assoc _ _ _ _ _ _ _ := eq_refl;
      Hom_set := SetCat_Hom_set |}.
 
-(* representable functors *)
+(* Hom functors *)
 
 (*
   Hom(A,–) : C → Set
@@ -785,7 +785,7 @@ Definition SetCat :=
         g ↦ f ∘ g for each g in Hom(A, X).
 *)
 
-Theorem hom_functor_comp_prop {C} {A : Obj C} :
+Theorem cov_Hom_functor_comp_prop {C} {A : Obj C} :
   ∀ (B B' B'' : Obj C) (f : Hom B B') (g : Hom B' B''),
   (λ h, g ◦ f ◦ h) =
   (@comp SetCat (existT isSet (Hom A B) (Hom_set A B))
@@ -798,7 +798,7 @@ apply extensionality; intros h.
 apply assoc.
 Qed.
 
-Theorem hom_functor_id_prop {C} {A : Obj C} :
+Theorem cov_Hom_functor_id_prop {C} {A : Obj C} :
   ∀ B : Obj C,
   (λ h, idc B ◦ h) = (@idc SetCat (existT isSet (Hom A B) (Hom_set A B))).
 Proof.
@@ -807,20 +807,69 @@ apply extensionality; intros h; cbn.
 apply unit_r.
 Qed.
 
-Definition hom_functor {C} A : functor C SetCat :=
+Definition cov_Hom_functor {C} A : functor C SetCat :=
   {| f_map_obj X := existT isSet (Hom A X) (Hom_set A X) : Obj SetCat;
      f_map_hom _ _ F G := F ◦ G;
-     f_comp_prop := hom_functor_comp_prop;
-     f_id_prop := hom_functor_id_prop |}.
+     f_comp_prop := cov_Hom_functor_comp_prop;
+     f_id_prop := cov_Hom_functor_id_prop |}.
+
+(*
+  Hom(-,B) : C → Set
+  This is a contravariant functor given by:
+    Hom(-,B) maps each object X in C to the set of morphisms, Hom(X, B)
+    Hom(-,B) maps each morphism h : X → Y to the function
+        Hom(h, B) : Hom(Y, B) → Hom(X, B) given by
+        g ↦ g ∘ h for each g in Hom(Y, B).
+*)
+
+(*
+Theorem con_Hom_functor_comp_prop {C} {A : Obj C} :
+  ∀ (B B' B'' : Obj C) (f : Hom B B') (g : Hom B' B''),
+  (λ h, g ◦ f ◦ h) =
+  (@comp SetCat (existT isSet (Hom A B) (Hom_set A B))
+         (existT isSet (Hom A B') (Hom_set A B'))
+         (existT isSet (Hom A B'') (Hom_set A B''))
+         (λ h, f ◦ h) (λ h, g ◦ h)).
+Proof.
+intros.
+apply extensionality; intros h.
+apply assoc.
+Qed.
+
+Theorem con_Hom_functor_id_prop {C} {A : Obj C} :
+  ∀ B : Obj C,
+  (λ h, idc B ◦ h) = (@idc SetCat (existT isSet (Hom A B) (Hom_set A B))).
+Proof.
+intros.
+apply extensionality; intros h; cbn.
+apply unit_r.
+Qed.
+*)
+
+Definition glop {C} {B : Obj C} (X Y : Obj C) (F : Hom X Y)
+  (G : st_type (existT isSet (Hom X B) (Hom_set X B))) :
+  st_type (existT isSet (Hom Y B) (Hom_set Y B)).
+Proof.
+eapply comp; [ | apply G ].
+...
+
+Definition con_Hom_functor {C} B : functor C SetCat :=
+  {| f_map_obj X := existT isSet (Hom X B) (Hom_set X B) : Obj SetCat;
+     f_map_hom := glop |}.
+     f_map_hom _ _ F G := F ◦ G |}. ;
+     f_comp_prop := con_Hom_functor_comp_prop;
+     f_id_prop := con_Hom_functor_id_prop |}.
+
+(* representable functors *)
 
 Definition is_representable_functor {C} (F : functor C SetCat) :=
-  { X : Obj C & are_isomorphic_functors F (hom_functor X) }.
+  { X : Obj C & are_isomorphic_functors F (cov_Hom_functor X) }.
 
 (* Yoneda lemma *)
 
 (*
   Let F be an arbitrary functor from C to SetCat. Then Yoneda's lemma
-  says that: (h^A being the hom_functor above)
+  says that: (h^A being the cov_Hom_functor above)
 
   For each object A of C, the natural transformations from h^A to F
   are in one-to-one correspondence with the elements of F(A). That is,
@@ -832,11 +881,11 @@ Definition is_representable_functor {C} (F : functor C SetCat) :=
 *)
 
 Definition Yoneda_NT_FA {C} (F : functor C SetCat) (A : Obj C) :
-  natural_transformation (hom_functor A) F → st_type (f_map_obj F A) :=
+  natural_transformation (cov_Hom_functor A) F → st_type (f_map_obj F A) :=
   λ Φ, nt_hom Φ A (idc A) : st_type (f_map_obj F A).
 
 Definition Yoneda_FA_NT {C} (F : functor C SetCat) (A : Obj C) :
-  st_type (f_map_obj F A) → natural_transformation (hom_functor A) F.
+  st_type (f_map_obj F A) → natural_transformation (cov_Hom_functor A) F.
 Proof.
 intros u.
 set (ϑ := λ (X : Obj C) (f : Hom A X), f_map_hom F f u).
@@ -853,7 +902,7 @@ apply (existT _ ϑ Hϑ).
 Defined.
 
 Lemma Yoneda {C} (F : functor C SetCat) (A : Obj C) :
-  let NT := natural_transformation (hom_functor A) F in
+  let NT := natural_transformation (cov_Hom_functor A) F in
   let FA := st_type (f_map_obj F A) in
   ∃ f : NT → FA, ∃ g : FA → NT,
   (∀ x : NT, g (f x) = x) ∧ (∀ y : FA, f (g y) = y).
@@ -996,7 +1045,7 @@ Definition functor_SetC_C_Set1 C : functor (SetC_C C) SetCat :=
 
 Definition functor_SetC_C_Set2_map_obj {C} (A : Obj (SetC_C C)) : Obj SetCat.
 Proof.
-exists (natural_transformation (hom_functor (snd A)) (fst A)).
+exists (natural_transformation (cov_Hom_functor (snd A)) (fst A)).
 apply FunCat_Hom_set.
 Defined.
 
@@ -1021,7 +1070,7 @@ move Z before Y; move T before Z.
 move g before f; move h before g.
 cbn in *.
 specialize @FunCat_comp_nt_commute as H2.
-specialize (H2 C SetCat (hom_functor X) F G η η' Z T h).
+specialize (H2 C SetCat (cov_Hom_functor X) F G η η' Z T h).
 cbn in H2.
 unfold nt_hom in H2.
 specialize (@hott4cat.happly _ _ _ _ H2 (g ◦ f)) as H3.
@@ -1106,7 +1155,7 @@ set (ϑ :=
   let (F, A) as p
     return
       (st_type (f_map_obj (fst p) (snd p))
-      → natural_transformation (hom_functor (snd p)) (fst p)) := F
+      → natural_transformation (cov_Hom_functor (snd p)) (fst p)) := F
   in
   λ T : st_type (f_map_obj F A),
   let ϑ := λ (X : Obj C) (f : Hom A X), f_map_hom F f T in
@@ -1161,14 +1210,18 @@ Definition are_adjoint {C D} (F : functor C D) (G : functor D C) :=
   (∀ x, g (f x) = x) ∧ (∀ y, f (g y) = y).
 
 Example glop {C D} (F : functor C D) (G : functor D C) : True.
-Check hom_functor.
+Check cov_Hom_functor.
+Print SetCat.
 Check (λ X, (λ Y, Hom X (f_map_obj G Y)) : Obj D → _).
+Print FunCat.
 ...
-Check (λ X, (λ Y, f_map_hom (hom_functor _) (Hom X (f_map_obj G Y))) : Obj D → _).
+cov_Hom_functor
+     : Obj D → functor D SetCat
+Check (λ X, (λ Y, f_map_hom (cov_Hom_functor _) (Hom X (f_map_obj G Y))) : Obj D → _).
 
 Check natural_transformation.
 
 Print are_adjoint.
 
 Search (_ → functor _ _).
-Check @hom_functor.
+Check @cov_Hom_functor.
