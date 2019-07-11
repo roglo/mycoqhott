@@ -860,7 +860,7 @@ Qed.
 
 Definition cov_Hom_functor {C} (A : Obj C) : functor C SetCat :=
   {| f_map_obj (X : Obj C) := existT isSet (Hom A X) (Hom_set A X) : Obj SetCat;
-     f_map_hom _ _ F G := F ◦ G;
+     f_map_hom X Y (F : Hom X Y) (G : Hom A X) := F ◦ G;
      f_comp_prop := cov_Hom_functor_comp_prop;
      f_id_prop := cov_Hom_functor_id_prop |}.
 
@@ -873,22 +873,14 @@ Definition cov_Hom_functor {C} (A : Obj C) : functor C SetCat :=
         g ↦ g ∘ h for each g in Hom(Y, B).
 *)
 
-Definition glop {C} {B : Obj C} (X Y : Obj C) (H : Hom X Y)
-  (G : st_type (existT isSet (Hom X B) (Hom_set X B))) :
-  st_type (existT isSet (Hom Y B) (Hom_set Y B)).
-Proof.
-cbn in G; cbn.
-Abort.
-
-Definition con_Hom_functor {C} (B : Obj C) : functor C SetCat :=
-  {| f_map_obj X := existT isSet (Hom X B) (Hom_set X B) : Obj SetCat;
-     f_map_hom X Y (H : Hom X Y) (G : Hom X B) := 42 |}. ;
-...
-
 Definition con_Hom_functor {C} (B : Obj C) : functor (op C) SetCat :=
-  @cov_Hom_functor (op C) B.
+  {| f_map_obj (X : Obj (op C)) :=
+       existT isSet (@Hom C X B) (@Hom_set C X B) : Obj SetCat;
+     f_map_hom (X Y : Obj C) (H : @Hom C Y X) (G : @Hom C X B) := G ◦ H;
+     f_comp_prop := @cov_Hom_functor_comp_prop (op C) B;
+     f_id_prop := @cov_Hom_functor_id_prop (op C) B |}.
 
-Print con_Hom_functor.
+...
 
 (*
 Theorem glop {C} (A X Y Z : Obj (category_product (op C) C))
