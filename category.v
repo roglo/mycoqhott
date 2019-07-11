@@ -825,7 +825,7 @@ Definition SetCat :=
      assoc _ _ _ _ _ _ _ := eq_refl;
      Hom_set := SetCat_Hom_set |}.
 
-(* Hom functors *)
+(* Hom functors covariant and contravariant *)
 
 (*
   Hom(A,–) : C → Set
@@ -884,11 +884,28 @@ Theorem con_Hom_functor_is_cov_Hom_functor_op {C} {A : Obj C} :
   con_Hom_functor A = @cov_Hom_functor (op C) A.
 Proof. easy. Qed.
 
-Definition Hom_functor {C} (A B : Obj C) :
-  functor (category_product (op C) C) SetCat.
+(* Hom functor *)
+
+Definition glop {C} (A B : Obj C) (X : Obj (category_product C (op C))) :
+  Obj SetCat.
 Proof.
-unfold category_product.
-cbn.
+destruct X as (X, Y); cbn in Y.
+specialize (f_map_obj (cov_Hom_functor A) X) as F.
+specialize (f_map_obj (con_Hom_functor B) Y) as G.
+cbn in F, G.
+apply
+  {| Obj := 42 : Obj SetCat |}.
+...
+
+Definition Hom_functor {C} (A B : Obj C) :
+  functor (category_product C (op C)) SetCat :=
+  {| f_map_obj X := glop A B X : Obj SetCat |}.
+  {| f_map_obj (X : Obj (category_product C (op C))) := glop X |}.
+
+Proof.
+set (F := cov_Hom_functor A).
+set (G := con_Hom_functor B).
+
 ...
 
 Definition Hom_functor {C} A : functor (category_product (op C) C) SetCat :=
@@ -899,7 +916,6 @@ Definition Hom_functor {C} A : functor (category_product (op C) C) SetCat :=
         snd f ◦ @snd (@Hom C (fst X) (fst A)) (@Hom C (snd A) (snd X)) g);
      f_comp_prop X Y Z f g := 42
  |}.
-*)
 
 (* representable functors *)
 
