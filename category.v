@@ -884,38 +884,19 @@ Theorem con_Hom_functor_is_cov_Hom_functor_op {C} {A : Obj C} :
   con_Hom_functor A = @cov_Hom_functor (op C) A.
 Proof. easy. Qed.
 
-(* Hom functor *)
+(* Hom functor: bifunctor of covariant and contravariant *)
 
-Definition glop {C} (A B : Obj C) (X : Obj (category_product C (op C))) :
-  Obj SetCat.
-Proof.
-destruct X as (X, Y); cbn in Y.
-specialize (f_map_obj (cov_Hom_functor A) X) as F.
-specialize (f_map_obj (con_Hom_functor B) Y) as G.
-cbn in F, G.
-apply
-  {| Obj := 42 : Obj SetCat |}.
-...
+Definition Hom_functor_map_obj {C} (A B : Obj C)
+    (X : Obj (category_product C (op C))) : Obj SetCat :=
+  (existT isSet (Hom A (fst X) * Hom (snd X) B)%type
+    (hott4cat.ex_3_1_5 (Hom_set A (fst X)) (Hom_set (snd X) B))).
 
 Definition Hom_functor {C} (A B : Obj C) :
   functor (category_product C (op C)) SetCat :=
-  {| f_map_obj X := glop A B X : Obj SetCat |}.
-  {| f_map_obj (X : Obj (category_product C (op C))) := glop X |}.
-
-Proof.
-set (F := cov_Hom_functor A).
-set (G := con_Hom_functor B).
+  {| f_map_obj := Hom_functor_map_obj A B;
+     f_map_hom := 42 |}.
 
 ...
-
-Definition Hom_functor {C} A : functor (category_product (op C) C) SetCat :=
-  {| f_map_obj (X : Obj (category_product (op C) C)) :=
-       existT isSet (Hom A X) (Hom_set A X) : Obj SetCat;
-     f_map_hom X Y f g :=
-       (fst g ◦ @fst (@Hom C (fst Y) (fst X)) (@Hom C (snd X) (snd Y)) f,
-        snd f ◦ @snd (@Hom C (fst X) (fst A)) (@Hom C (snd A) (snd X)) g);
-     f_comp_prop X Y Z f g := 42
- |}.
 
 (* representable functors *)
 
