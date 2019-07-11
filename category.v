@@ -901,13 +901,33 @@ split.
 -eapply comp; [ apply (snd f) | apply (snd g) ].
 Defined.
 
+Theorem Hom_functor_comp_prop {C} (A B : Obj C)
+  (X Y Z : Obj (cat_prod C (op C)))
+  (f : Hom X Y) (g : Hom Y Z) :
+  Hom_functor_map_hom A B X Z (g ◦ f) =
+  Hom_functor_map_hom A B Y Z g ◦ Hom_functor_map_hom A B X Y f.
+Proof.
+unfold Hom_functor_map_hom; cbn.
+apply extensionality; intros h; cbn in h; cbn.
+now do 2 rewrite assoc.
+Qed.
+
+Theorem Hom_functor_id_prop {C} (A B : Obj C)
+  (X : Obj (cat_prod C (op C))) :
+  Hom_functor_map_hom A B X X (idc X) = idc (Hom_functor_map_obj A B X).
+Proof.
+unfold Hom_functor_map_hom; cbn.
+apply extensionality; intros h; cbn in h; cbn.
+rewrite unit_l, unit_r.
+now destruct h.
+Qed.
+
 Definition Hom_functor {C} (A B : Obj C) :
     functor (cat_prod C (op C)) SetCat :=
   {| f_map_obj X := Hom_functor_map_obj A B X : Obj SetCat;
      f_map_hom := Hom_functor_map_hom A B;
-     f_comp_prop X Y Z f g := 42 |}.
-
-...
+     f_comp_prop := Hom_functor_comp_prop A B;
+     f_id_prop := Hom_functor_id_prop A B |}.
 
 (* representable functors *)
 
@@ -1208,18 +1228,4 @@ Definition are_adjoint {C D} (F : functor C D) (G : functor D C) :=
   (∀ x, g (f x) = x) ∧ (∀ y, f (g y) = y).
 
 Example glop {C D} (F : functor C D) (G : functor D C) : True.
-Check cov_Hom_functor.
-Print SetCat.
-Check (λ X, (λ Y, Hom X (f_map_obj G Y)) : Obj D → _).
-Print FunCat.
-...
-cov_Hom_functor
-     : Obj D → functor D SetCat
-Check (λ X, (λ Y, f_map_hom (cov_Hom_functor _) (Hom X (f_map_obj G Y))) : Obj D → _).
-
-Check natural_transformation.
-
-Print are_adjoint.
-
-Search (_ → functor _ _).
-Check @cov_Hom_functor.
+Check (@Hom_functor C).
