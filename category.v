@@ -856,7 +856,7 @@ eapply comp; [ | apply G ].
 Definition con_Hom_functor {C} B : functor C SetCat :=
   {| f_map_obj X := existT isSet (Hom X B) (Hom_set X B) : Obj SetCat;
      f_map_hom := glop |}.
-     f_map_hom _ _ F G := F ◦ G |}. ;
+     f_map_hom _ _ H G := G ◦ H |}. ;
      f_comp_prop := con_Hom_functor_comp_prop;
      f_id_prop := con_Hom_functor_id_prop |}.
 
