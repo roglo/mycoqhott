@@ -790,7 +790,7 @@ Proof.
 apply hott4cat.ex_3_1_5; apply Hom_set.
 Qed.
 
-Definition category_product (C1 C2 : category) : category :=
+Definition cat_prod (C1 C2 : category) : category :=
   {| Obj := Obj C1 * Obj C2;
      Hom X Y := (Hom (fst X) (fst Y) * Hom (snd X) (snd Y))%type;
      comp _ _ _ f g := (fst g ◦ fst f, snd g ◦ snd f);
@@ -887,12 +887,12 @@ Proof. easy. Qed.
 (* Hom functor: bifunctor of covariant and contravariant *)
 
 Definition Hom_functor_map_obj {C} (A B : Obj C)
-    (X : Obj (category_product C (op C))) : Obj SetCat :=
+    (X : Obj (cat_prod C (op C))) : Obj SetCat :=
   (existT isSet (Hom A (fst X) * Hom (snd X) B)%type
     (hott4cat.ex_3_1_5 (Hom_set A (fst X)) (Hom_set (snd X) B))).
 
 Definition Hom_functor {C} (A B : Obj C) :
-  functor (category_product C (op C)) SetCat :=
+    functor (cat_prod C (op C)) SetCat :=
   {| f_map_obj := Hom_functor_map_obj A B;
      f_map_hom := 42 |}.
 
@@ -980,7 +980,7 @@ Qed.
   denotes the category of functors from C to Set.)
 *)
 
-Definition SetC_C (C : category) := category_product (FunCat C SetCat) C.
+Definition SetC_C (C : category) := cat_prod (FunCat C SetCat) C.
 
 Definition functor_SetC_C_Set1_map_hom {C} (D := SetC_C C) (X Y : Obj D)
   (f : Hom X Y) : Hom (f_map_obj (fst X) (snd X)) (f_map_obj (fst Y) (snd Y)).
