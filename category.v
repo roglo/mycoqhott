@@ -887,29 +887,25 @@ Proof. easy. Qed.
 (* Hom functor: bifunctor of covariant and contravariant *)
 
 Definition Hom_functor_map_obj {C} (A B : Obj C)
-    (X : Obj (cat_prod C (op C))) : Obj SetCat :=
-  (existT isSet (Hom A (fst X) * Hom (snd X) B)%type
-    (hott4cat.ex_3_1_5 (Hom_set A (fst X)) (Hom_set (snd X) B))).
+  (X : Obj (cat_prod C (op C))) : Obj SetCat :=
+  existT isSet (Hom A (fst X) * @Hom C (snd X) B)%type
+    (hott4cat.ex_3_1_5 (Hom_set A (fst X)) (@Hom_set C (snd X) B)).
 
-Definition Hom_functor_map_hom {C} (A : Obj C) (B : Obj C)
-    (X Y : Obj (cat_prod C (op C))) (f : @Hom (cat_prod C (op C)) X Y) :
-  @Hom SetCat (@Hom_functor_map_obj C A B X) (@Hom_functor_map_obj C A B Y).
+Definition Hom_functor_map_hom {C} (A B : Obj C)
+  (X Y : Obj (cat_prod C (op C))) (f : Hom X Y) :
+  Hom (Hom_functor_map_obj A B X) (Hom_functor_map_obj A B Y).
 Proof.
 intros g.
 split.
 -eapply comp; [ apply (fst g) | apply (fst f) ].
--idtac.
-cbn in *.
-eapply comp; [ apply (snd g) | ].
-Abort.
-
-Set Printing Implicit.
+-eapply comp; [ apply (snd f) | apply (snd g) ].
+Defined.
 
 Definition Hom_functor {C} (A B : Obj C) :
     functor (cat_prod C (op C)) SetCat :=
   {| f_map_obj X := Hom_functor_map_obj A B X : Obj SetCat;
-     f_map_hom X Y f := 42 |}.
-     f_map_hom := Hom_functor_map_hom A B |}.
+     f_map_hom := Hom_functor_map_hom A B;
+     f_comp_prop X Y Z f g := 42 |}.
 
 ...
 
