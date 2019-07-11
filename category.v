@@ -851,11 +851,19 @@ Definition glop {C} {B : Obj C} (X Y : Obj C) (F : Hom X Y)
   st_type (existT isSet (Hom Y B) (Hom_set Y B)).
 Proof.
 eapply comp; [ | apply G ].
+Abort.
+
+Definition glop {C} {B : Obj (op C)} (X Y : Obj (op C)) (H : @Hom (op C) X Y)
+  (G : st_type (existT isSet (@Hom (op C) X B) (@Hom_set (op C) X B))) :
+  st_type (existT isSet (@Hom (op C) Y B) (@Hom_set (op C) Y B)).
+Proof.
+eapply comp; [ | apply G ].
+cbn in H; cbn.
 ...
 
-Definition con_Hom_functor {C} B : functor C SetCat :=
+Definition con_Hom_functor {C} (B : Obj (op C)) : functor C SetCat :=
   {| f_map_obj X := existT isSet (Hom X B) (Hom_set X B) : Obj SetCat;
-     f_map_hom := glop |}.
+     f_map_hom X Y F G := 42 |}.
      f_map_hom _ _ H G := G ◦ H |}. ;
      f_comp_prop := con_Hom_functor_comp_prop;
      f_id_prop := con_Hom_functor_id_prop |}.
