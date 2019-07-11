@@ -880,21 +880,13 @@ Definition con_Hom_functor {C} (B : Obj C) : functor (op C) SetCat :=
      f_comp_prop := @cov_Hom_functor_comp_prop (op C) B;
      f_id_prop := @cov_Hom_functor_id_prop (op C) B |}.
 
-...
-
-(*
-Theorem glop {C} (A X Y Z : Obj (category_product (op C) C))
-    (f : @Hom (category_product (op C) C) X Y)
-    (g : @Hom (category_product (op C) C) Y Z) :
-  (λ g0 : st_type (existT isSet (Hom A X) (Hom_set A X)), (fst g0 ◦ fst (g ◦ f), snd (g ◦ f) ◦ snd g0)) =
-  (λ g0 : st_type (existT isSet (Hom A Y) (Hom_set A Y)), (fst g0 ◦ fst g, snd g ◦ snd g0))
-  ◦ (λ g : st_type (existT isSet (Hom A X) (Hom_set A X)), (fst g ◦ fst f, snd f ◦ snd g)).
-*)
-
-Check category_product.
+Theorem con_Hom_functor_is_cov_Hom_functor_op {C} {A : Obj C} :
+  con_Hom_functor A = @cov_Hom_functor (op C) A.
+Proof. easy. Qed.
 
 Definition Hom_functor {C} (A B : Obj C) :
   functor (category_product (op C) C) SetCat.
+Proof.
 unfold category_product.
 cbn.
 ...
