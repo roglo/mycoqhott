@@ -873,6 +873,18 @@ Definition cov_Hom_functor {C} (A : Obj C) : functor C SetCat :=
         g ↦ g ∘ h for each g in Hom(Y, B).
 *)
 
+Definition glop {C} {B : Obj C} (X Y : Obj C) (H : Hom X Y)
+  (G : st_type (existT isSet (Hom X B) (Hom_set X B))) :
+  st_type (existT isSet (Hom Y B) (Hom_set Y B)).
+Proof.
+cbn in G; cbn.
+Abort.
+
+Definition con_Hom_functor {C} (B : Obj C) : functor C SetCat :=
+  {| f_map_obj X := existT isSet (Hom X B) (Hom_set X B) : Obj SetCat;
+     f_map_hom X Y (H : Hom X Y) (G : Hom X B) := 42 |}. ;
+...
+
 Definition con_Hom_functor {C} (B : Obj C) : functor (op C) SetCat :=
   @cov_Hom_functor (op C) B.
 
