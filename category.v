@@ -1259,16 +1259,15 @@ Check (λ X Y, Hom_functor (f_map_obj F Y) X).
 Check (λ X Y, Hom_functor Y (f_map_obj G X)).
 Check @is_natural_isomorphism.
 Check @nt_component.
-...
 Check (λ X, Hom_functor (f_map_obj F B) X).
 Check (λ Y, Hom_functor (f_map_obj F Y) A).
 Check (λ Y, Hom_functor Y (f_map_obj G A)).
 Check (λ X, Hom_functor B (f_map_obj G X)).
-...
+Abort.
 
-Definition pouet {C D} (F : functor D C) (G : functor C D)
-  (X : Obj C) (Y : Obj D) :=
-  natural_transformation
-    (Hom_functor (f_map_obj F Y) X)
-    (Hom_functor Y (f_map_obj G X)).
-...
+(* alternative definition of adjunction *)
+
+Definition are_adjoint2 {C D} (F : functor D C) (G : functor C D) :=
+  ∀ (η : @natural_transformation C C (functor_id C) (functor_comp G F))
+     (ε : @natural_transformation D D (functor_comp F G) (functor_id D)),
+  True.
