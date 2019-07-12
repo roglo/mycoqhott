@@ -470,7 +470,7 @@ Definition natural_transformation {C D} (F : functor C D) (G : functor C D) :=
   { ϑ : ∀ x, Hom (f_map_obj F x) (f_map_obj G x) &
     ∀ x y (f : Hom x y), ϑ y ◦ f_map_hom F f = f_map_hom G f ◦ ϑ x }.
 
-Definition nt_hom {C D} {F G : functor C D}
+Definition nt_component {C D} {F G : functor C D}
   (η : natural_transformation F G) := projT1 η.
 Definition nt_commute {C D} {F G : functor C D}
   (η : natural_transformation F G) := projT2 η.
@@ -480,8 +480,8 @@ Definition nt_commute {C D} {F G : functor C D}
 Theorem FunCat_comp_nt_commute {C D} {F G H : functor C D} :
   ∀ (η : natural_transformation F G) (η' : natural_transformation G H),
   ∀ (x y : Obj C) (f : Hom x y),
-  nt_hom η' y ◦ nt_hom η y ◦ f_map_hom F f =
-  f_map_hom H f ◦ (nt_hom η' x ◦ nt_hom η x).
+  nt_component η' y ◦ nt_component η y ◦ f_map_hom F f =
+  f_map_hom H f ◦ (nt_component η' x ◦ nt_component η x).
 Proof.
 intros.
 rewrite assoc, (nt_commute η).
@@ -493,7 +493,8 @@ Definition FunCat_comp {C D} (F G H : functor C D) :
     natural_transformation F G → natural_transformation G H →
     natural_transformation F H :=
   λ η η',
-  existT _ (λ x, nt_hom η' x ◦ nt_hom η x) (FunCat_comp_nt_commute η η').
+  existT _ (λ x, nt_component η' x ◦ nt_component η x)
+    (FunCat_comp_nt_commute η η').
 
 Definition FunCat_id {C D} (F : functor C D) : natural_transformation F F.
 Proof.
@@ -558,8 +559,8 @@ unfold FunCat_comp; cbn.
 apply eq_existT_uncurried.
 assert
  (p :
-    (λ x : Obj C, nt_hom η'' x ◦ nt_hom η' x ◦ nt_hom η x) =
-    (λ x : Obj C, nt_hom η'' x ◦ (nt_hom η' x ◦ nt_hom η x))). {
+    (λ x, nt_component η'' x ◦ nt_component η' x ◦ nt_component η x) =
+    (λ x, nt_component η'' x ◦ (nt_component η' x ◦ nt_component η x))). {
   apply extensionality; intros; apply assoc.
 }
 exists p.
@@ -951,7 +952,7 @@ Definition is_representable_functor {C} (F : functor C SetCat) :=
 
 Definition Yoneda_NT_FA {C} (F : functor C SetCat) (A : Obj C) :
   natural_transformation (cov_Hom_functor A) F → st_type (f_map_obj F A) :=
-  λ Φ, nt_hom Φ A (idc A) : st_type (f_map_obj F A).
+  λ Φ, nt_component Φ A (idc A) : st_type (f_map_obj F A).
 
 Definition Yoneda_FA_NT {C} (F : functor C SetCat) (A : Obj C) :
   st_type (f_map_obj F A) → natural_transformation (cov_Hom_functor A) F.
@@ -1090,7 +1091,7 @@ cbn in *.
 specialize @FunCat_comp_nt_commute as H2.
 specialize (H2 C SetCat (cov_Hom_functor X) F G η η' Z T h).
 cbn in H2.
-unfold nt_hom in H2.
+unfold nt_component in H2.
 specialize (@hott4cat.happly _ _ _ _ H2 (g ◦ f)) as H3.
 cbn in H3.
 etransitivity; [ | apply H3 ].
@@ -1115,7 +1116,7 @@ destruct Z as (H, Z).
 move Y before X; move Z before Y; move g before f.
 move G before F; move H before G.
 cbn in *.
-unfold nt_hom.
+unfold nt_component.
 assert (p
   : (λ (A : Obj C) (g0 : Hom Z A),
        projT1 η'' A (projT1 η' A (projT1 η A (g0 ◦ (g ◦ f))))) =
