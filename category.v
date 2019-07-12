@@ -1243,14 +1243,14 @@ Print are_adjoint.
 Check @Hom_functor.
 
 Example glop {C D} (F : functor D C) (G : functor C D)
-  (A X : Obj C) (B Y : Obj D) : True.
+  (A : Obj C) (B : Obj D) : True.
+Check (λ X Y, Hom_functor (f_map_obj F Y) X).
+Check (λ X Y, Hom_functor Y (f_map_obj G X)).
+...
 Check (λ X, Hom_functor (f_map_obj F B) X).
 Check (λ Y, Hom_functor (f_map_obj F Y) A).
 Check (λ Y, Hom_functor Y (f_map_obj G A)).
 Check (λ X, Hom_functor B (f_map_obj G X)).
-
-...
-
 ...
 
 Definition pouet {C D} (F : functor D C) (G : functor C D)
