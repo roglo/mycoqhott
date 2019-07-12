@@ -475,6 +475,20 @@ Definition nt_component {C D} {F G : functor C D}
 Definition nt_commute {C D} {F G : functor C D}
   (η : natural_transformation F G) := projT2 η.
 
+(* natural isomorphism *)
+
+(*
+  If, for every object X in C, the morphism ηX is an isomorphism in D,
+  then η is said to be a natural isomorphism (or sometimes natural
+  equivalence or isomorphism of functors). Two functors F and G are
+  called naturally isomorphic or simply isomorphic if there exists a
+  natural isomorphism from F to G.
+*)
+
+Definition is_natural_isomorphism {C D} {F G : functor C D}
+  (η : natural_transformation F G) :=
+  ∀ X, is_isomorphism (nt_component η X).
+
 (* category of functors *)
 
 Theorem FunCat_comp_nt_commute {C D} {F G H : functor C D} :
@@ -1247,8 +1261,7 @@ Example glop {C D} (F : functor D C) (G : functor C D)
   (A : Obj C) (B : Obj D) : True.
 Check (λ X Y, Hom_functor (f_map_obj F Y) X).
 Check (λ X Y, Hom_functor Y (f_map_obj G X)).
-(* voir la notion d'isomorphisme naturel; ne pas confondre avec
-   transformation naturelle, même si c'est lié *)
+Print is_natural_isomorphism.
 ...
 Check (λ X, Hom_functor (f_map_obj F B) X).
 Check (λ Y, Hom_functor (f_map_obj F Y) A).
