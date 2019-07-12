@@ -1249,13 +1249,9 @@ Qed.
 
 Definition are_adjoint {C D} (F : functor D C) (G : functor C D) :=
   ∀ X Y,
-  ∃ f : Hom (f_map_obj F Y) X → Hom Y (f_map_obj G X),
-  ∃ g : Hom Y (f_map_obj G X) → Hom (f_map_obj F Y) X,
-  (∀ x, g (f x) = x) ∧ (∀ y, f (g y) = y).
-
-Print are_adjoint.
-
-Check @Hom_functor.
+  { f : Hom (f_map_obj F Y) X → Hom Y (f_map_obj G X) &
+  { g : Hom Y (f_map_obj G X) → Hom (f_map_obj F Y) X &
+  (∀ x, g (f x) = x) ∧ (∀ y, f (g y) = y) } }.
 
 Example glop {C D} (F : functor D C) (G : functor C D)
   (A : Obj C) (B : Obj D) : True.
