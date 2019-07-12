@@ -1265,6 +1265,10 @@ Check (λ Y, Hom_functor Y (f_map_obj G A)).
 Check (λ X, Hom_functor B (f_map_obj G X)).
 Abort.
 
+(* whiskering *)
+
+...
+
 (* alternative definition of adjunction *)
 
 Example glop {C D} (F : functor C D) (G : functor D C) :
@@ -1281,5 +1285,4 @@ Abort.
 Definition are_adjoint2 {C D} (F : functor C D) (G : functor D C) :=
   ∀ (η : @natural_transformation C C (functor_id C) (functor_comp F G))
      (ε : @natural_transformation D D (functor_comp G F) (functor_id D)),
-  functor_comp (functor_comp G F) G = G ∧
-  functor_comp (functor_comp F G) F = F.
+  True.
