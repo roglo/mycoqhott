@@ -887,22 +887,22 @@ Proof. easy. Qed.
 (* Hom functor: bifunctor of covariant and contravariant *)
 
 Definition Hom_functor_map_obj {C} (A B : Obj C)
-  (X : Obj (cat_prod C (op C))) : Obj SetCat :=
-  existT isSet (Hom A (fst X) * @Hom C (snd X) B)%type
-    (hott4cat.ex_3_1_5 (Hom_set A (fst X)) (@Hom_set C (snd X) B)).
+  (X : Obj (cat_prod (op C) C)) : Obj SetCat :=
+  existT isSet (@Hom C A (snd X) * @Hom C (fst X) B)%type
+    (hott4cat.ex_3_1_5 (@Hom_set C A (snd X)) (@Hom_set C (fst X) B)).
 
 Definition Hom_functor_map_hom {C} (A B : Obj C)
-  (X Y : Obj (cat_prod C (op C))) (f : Hom X Y) :
+  (X Y : Obj (cat_prod (op C) C)) (f : Hom X Y) :
   Hom (Hom_functor_map_obj A B X) (Hom_functor_map_obj A B Y).
 Proof.
 intros g.
 split.
--eapply comp; [ apply (fst g) | apply (fst f) ].
--eapply comp; [ apply (snd f) | apply (snd g) ].
+-eapply comp; [ apply (fst g) | apply (snd f) ].
+-eapply comp; [ apply (fst f) | apply (snd g) ].
 Defined.
 
 Theorem Hom_functor_comp_prop {C} (A B : Obj C)
-  (X Y Z : Obj (cat_prod C (op C)))
+  (X Y Z : Obj (cat_prod (op C) C))
   (f : Hom X Y) (g : Hom Y Z) :
   Hom_functor_map_hom A B X Z (g ◦ f) =
   Hom_functor_map_hom A B Y Z g ◦ Hom_functor_map_hom A B X Y f.
@@ -923,7 +923,7 @@ now destruct h.
 Qed.
 
 Definition Hom_functor {C} (A B : Obj C) :
-    functor (cat_prod C (op C)) SetCat :=
+    functor (cat_prod (op C) C) SetCat :=
   {| f_map_obj X := Hom_functor_map_obj A B X : Obj SetCat;
      f_map_hom := Hom_functor_map_hom A B;
      f_comp_prop := Hom_functor_comp_prop A B;
@@ -1221,15 +1221,41 @@ Qed.
 
 (* adjunction *)
 
-Definition are_adjoint {C D} (F : functor C D) (G : functor D C) :=
+(*
+   By definition, an adjunction between categories C and D is
+   a pair of functors (assumed to be covariant)
+      F : D → C and G : C → D
+   and, for all objects X in C and Y in D a bijection between
+   the respective morphism sets
+      Hom_C (F Y, X) ≅ Hom_D (Y, G X)
+   such that this family of bijections is natural in X and Y.
+   (Wikipedia)
+*)
+
+Definition are_adjoint {C D} (F : functor D C) (G : functor C D) :=
   ∀ X Y,
   ∃ f : Hom (f_map_obj F Y) X → Hom Y (f_map_obj G X),
   ∃ g : Hom Y (f_map_obj G X) → Hom (f_map_obj F Y) X,
   (∀ x, g (f x) = x) ∧ (∀ y, f (g y) = y).
 
-Example glop {C D} (F : functor C D) (G : functor D C)
-  (A : Obj C) (B : Obj D) : True.
-Check (λ X, Hom_functor X (f_map_obj G B)).
-Check (λ X, Hom_functor (f_map_obj F X) B).
-Check (λ Y, Hom_functor A (f_map_obj G Y)).
-Check (λ Y, Hom_functor (f_map_obj F A) Y).
+Print are_adjoint.
+
+Check @Hom_functor.
+
+Example glop {C D} (F : functor D C) (G : functor C D)
+  (A X : Obj C) (B Y : Obj D) : True.
+Check (λ X, Hom_functor (f_map_obj F B) X).
+Check (λ Y, Hom_functor (f_map_obj F Y) A).
+Check (λ Y, Hom_functor Y (f_map_obj G A)).
+Check (λ X, Hom_functor B (f_map_obj G X)).
+
+...
+
+...
+
+Definition pouet {C D} (F : functor D C) (G : functor C D)
+  (X : Obj C) (Y : Obj D) :=
+  natural_transformation
+    (Hom_functor (f_map_obj F Y) X)
+    (Hom_functor Y (f_map_obj G X)).
+...
