@@ -1263,9 +1263,11 @@ Check (λ X, Hom_functor (f_map_obj F B) X).
 Check (λ Y, Hom_functor (f_map_obj F Y) A).
 Check (λ Y, Hom_functor Y (f_map_obj G A)).
 Check (λ X, Hom_functor B (f_map_obj G X)).
-Abort.
+
+...
 
 (* whiskering *)
+(* for preparing alternative definition of adjunction *)
 
 ...
 
@@ -1286,3 +1288,4 @@ Definition are_adjoint2 {C D} (F : functor C D) (G : functor D C) :=
   ∀ (η : @natural_transformation C C (functor_id C) (functor_comp F G))
      (ε : @natural_transformation D D (functor_comp G F) (functor_id D)),
   True.
+(* not simple *)
