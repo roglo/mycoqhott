@@ -1246,6 +1246,8 @@ Example glop {C D} (F : functor D C) (G : functor C D)
   (A : Obj C) (B : Obj D) : True.
 Check (λ X Y, Hom_functor (f_map_obj F Y) X).
 Check (λ X Y, Hom_functor Y (f_map_obj G X)).
+(* voir la notion d'isomorphisme naturel; ne pas confondre avec
+   transformation naturelle, même si c'est lié *)
 ...
 Check (λ X, Hom_functor (f_map_obj F B) X).
 Check (λ Y, Hom_functor (f_map_obj F Y) A).
