@@ -1261,7 +1261,8 @@ Example glop {C D} (F : functor D C) (G : functor C D)
   (A : Obj C) (B : Obj D) : True.
 Check (λ X Y, Hom_functor (f_map_obj F Y) X).
 Check (λ X Y, Hom_functor Y (f_map_obj G X)).
-Print is_natural_isomorphism.
+Check @is_natural_isomorphism.
+Check @nt_component.
 ...
 Check (λ X, Hom_functor (f_map_obj F B) X).
 Check (λ Y, Hom_functor (f_map_obj F Y) A).
