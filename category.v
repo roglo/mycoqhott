@@ -1267,7 +1267,19 @@ Abort.
 
 (* alternative definition of adjunction *)
 
-Definition are_adjoint2 {C D} (F : functor D C) (G : functor C D) :=
-  ∀ (η : @natural_transformation C C (functor_id C) (functor_comp G F))
-     (ε : @natural_transformation D D (functor_comp F G) (functor_id D)),
+Example glop {C D} (F : functor C D) (G : functor D C) :
+  ∀ (η : @natural_transformation C C (functor_id C) (functor_comp F G))
+     (ε : @natural_transformation D D (functor_comp G F) (functor_id D)),
   True.
+Proof.
+intros.
+destruct η as (η, Hη).
+destruct ε as (ε, Hε).
+cbn in *.
+Abort.
+
+Definition are_adjoint2 {C D} (F : functor C D) (G : functor D C) :=
+  ∀ (η : @natural_transformation C C (functor_id C) (functor_comp F G))
+     (ε : @natural_transformation D D (functor_comp G F) (functor_id D)),
+  functor_comp (functor_comp G F) G = G ∧
+  functor_comp (functor_comp F G) F = F.
