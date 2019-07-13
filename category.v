@@ -1279,13 +1279,13 @@ Abort.
 
 (* whiskering *)
 
-Definition left_whiskering {C D E} {F : functor C D} {G H : functor D E}
-    (α : natural_transformation G H) (X : Obj C) :
+Definition left_whiskering {C D E} {G H : functor D E}
+    (α : natural_transformation G H) (F : functor C D) (X : Obj C) :
   Hom (f_map_obj G (f_map_obj F X)) (f_map_obj H (f_map_obj F X)) :=
   nt_component α (f_map_obj F X).
 
-Definition right_whiskering {D E F} {G H : functor D E} {I : functor E F}
-    (α : natural_transformation G H) (Y : Obj D) :
+Definition right_whiskering {D E F} {G H : functor D E}
+    (I : functor E F) (α : natural_transformation G H) (Y : Obj D) :
   Hom (f_map_obj I (f_map_obj G Y)) (f_map_obj I (f_map_obj H Y)) :=
   f_map_hom I (nt_component α Y).
 
@@ -1294,8 +1294,9 @@ Definition right_whiskering {D E F} {G H : functor D E} {I : functor E F}
 Definition are_adjoint2 {C D} (L : functor C D) (R : functor D C)
   (η : natural_transformation (functor_id C) (functor_comp L R))
   (ε : natural_transformation (functor_comp R L) (functor_id D)) :=
-  (∀ Y, right_whiskering ε Y ◦ left_whiskering η Y = idc (f_map_obj R Y)) ∧
-  (∀ X, left_whiskering ε X ◦ right_whiskering η X = idc (f_map_obj L X)).
+  (∀ Y, right_whiskering R ε Y ◦ left_whiskering η R Y = idc (f_map_obj R Y))
+  ∧
+  (∀ X, left_whiskering ε L X ◦ right_whiskering L η X = idc (f_map_obj L X)).
 
 (* version without variables X and Y *)
 
@@ -1308,5 +1309,5 @@ Definition idf {A B} (F : functor A B) X := idc (f_map_obj F X).
 Definition are_adjoint3 {C D} (L : functor C D) (R : functor D C)
   (η : natural_transformation (functor_id C) (functor_comp L R))
   (ε : natural_transformation (functor_comp R L) (functor_id D)) :=
-  (dcomp (left_whiskering η) (right_whiskering ε) = idf R) ∧
-  (dcomp (right_whiskering η) (left_whiskering ε) = idf L).
+  (dcomp (left_whiskering η R) (right_whiskering R ε) = idf R) ∧
+  (dcomp (right_whiskering L η) (left_whiskering ε L) = idf L).
