@@ -1303,6 +1303,7 @@ set (B2 := left_whiskering ε X).
 cbn in A1, B1, A2, B2.
 set (K := natural_transformation G G).
 unfold natural_transformation in K.
+Check (f_map_obj G Y = f_map_obj G (f_map_obj F (f_map_obj G Y))).
 ...
 
 Definition are_adjoint2 {C D} (F : functor C D) (G : functor D C)
