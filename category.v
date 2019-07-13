@@ -1305,10 +1305,6 @@ set (B2 := left_whiskering ε X).
 cbn in A1, B1, A2, B2.
 Check (A1 ◦ B1).
 Check (B1 ◦ A1).
-assert (p : f_map_obj G Y = f_map_obj G (f_map_obj F (f_map_obj G Y))). {
-...
-set (K := natural_transformation G G).
-unfold natural_transformation in K.
 ...
 
 Definition are_adjoint2 {C D} (F : functor C D) (G : functor D C)
