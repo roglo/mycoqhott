@@ -1291,11 +1291,11 @@ Definition right_whiskering {D E F} {G H : functor D E} {I : functor E F}
 
 (* alternative definition of adjunction *)
 
-Definition are_adjoint2 {C D} (F : functor C D) (G : functor D C)
-  (η : natural_transformation (functor_id C) (functor_comp F G))
-  (ε : natural_transformation (functor_comp G F) (functor_id D)) :=
-  (∀ Y, right_whiskering ε Y ◦ left_whiskering η Y = idc (f_map_obj G Y)) ∧
-  (∀ X, left_whiskering ε X ◦ right_whiskering η X = idc (f_map_obj F X)).
+Definition are_adjoint2 {C D} (L : functor C D) (R : functor D C)
+  (η : natural_transformation (functor_id C) (functor_comp L R))
+  (ε : natural_transformation (functor_comp R L) (functor_id D)) :=
+  (∀ Y, right_whiskering ε Y ◦ left_whiskering η Y = idc (f_map_obj R Y)) ∧
+  (∀ X, left_whiskering ε X ◦ right_whiskering η X = idc (f_map_obj L X)).
 
 (* version without variables X and Y *)
 
@@ -1305,8 +1305,8 @@ Definition dcomp {T Q} {A B C : T → Obj Q}
 
 Definition idf {A B} (F : functor A B) X := idc (f_map_obj F X).
 
-Definition are_adjoint3 {C D} (F : functor C D) (G : functor D C)
-  (η : natural_transformation (functor_id C) (functor_comp F G))
-  (ε : natural_transformation (functor_comp G F) (functor_id D)) :=
-  (dcomp (left_whiskering η) (right_whiskering ε) = idf G) ∧
-  (dcomp (right_whiskering η) (left_whiskering ε) = idf F).
+Definition are_adjoint3 {C D} (L : functor C D) (R : functor D C)
+  (η : natural_transformation (functor_id C) (functor_comp L R))
+  (ε : natural_transformation (functor_comp R L) (functor_id D)) :=
+  (dcomp (left_whiskering η) (right_whiskering ε) = idf R) ∧
+  (dcomp (right_whiskering η) (left_whiskering ε) = idf L).
