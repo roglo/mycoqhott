@@ -1299,14 +1299,14 @@ Definition are_adjoint2 {C D} (F : functor C D) (G : functor D C)
 
 (* version without variables X and Y *)
 
-Definition komp {Q T} {A B C : T → Obj Q}
+Definition dcomp {T Q} {A B C : T → Obj Q}
   (F : ∀ t, Hom (A t) (B t)) (G : ∀ t, Hom (B t) (C t)) :=
   λ t, G t ◦ F t.
 
-Definition idk {A B} (F : functor A B) X := idc (f_map_obj F X).
+Definition idf {A B} (F : functor A B) X := idc (f_map_obj F X).
 
-Definition are_adjoint4 {C D} (F : functor C D) (G : functor D C)
+Definition are_adjoint3 {C D} (F : functor C D) (G : functor D C)
   (η : natural_transformation (functor_id C) (functor_comp F G))
   (ε : natural_transformation (functor_comp G F) (functor_id D)) :=
-  (komp (left_whiskering η) (right_whiskering ε) = idk G) ∧
-  (komp (right_whiskering η) (left_whiskering ε) = idk F).
+  (dcomp (left_whiskering η) (right_whiskering ε) = idf G) ∧
+  (dcomp (right_whiskering η) (left_whiskering ε) = idf F).
