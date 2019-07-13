@@ -1296,8 +1296,8 @@ Example glop {C D} (F : functor C D) (G : functor D C) :
   True.
 Proof.
 intros.
-set (A1 := right_whiskering ε Y).
-set (B1 := left_whiskering η Y).
+set (A1 := left_whiskering η Y).
+set (B1 := right_whiskering ε Y).
 set (A2 := right_whiskering η X).
 set (B2 := left_whiskering ε X).
 cbn in A1, B1, A2, B2.
