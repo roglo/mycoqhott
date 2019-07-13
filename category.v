@@ -1300,13 +1300,13 @@ destruct ε as (ε, Hε).
 cbn in *.
 Abort.
 
-...
-
-Definition are_adjoint2 {C D} (F : functor C D) (G : functor D C) :=
-  ∀ (η : @natural_transformation C C (functor_id C) (functor_comp F G))
-     (ε : @natural_transformation D D (functor_comp G F) (functor_id D)),
-∀ Y Z,
-    right_whiskering η Y = left_whiskering ε Z.
-    right_whiskering η Y.
+Definition are_adjoint2 {C D} (F : functor C D) (G : functor D C)
+  (η : @natural_transformation C C (functor_id C) (functor_comp F G))
+   (ε : @natural_transformation D D (functor_comp G F) (functor_id D)) :=
+λ X,
+    (right_whiskering η X,
+     left_whiskering ε X).
 
 Print are_adjoint2.
+
+(* bon, c'est chiant, faut que je comprenne... *)
