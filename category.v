@@ -1296,3 +1296,17 @@ Definition are_adjoint2 {C D} (F : functor C D) (G : functor D C)
   (ε : natural_transformation (functor_comp G F) (functor_id D)) :=
   (∀ Y, right_whiskering ε Y ◦ left_whiskering η Y = idc (f_map_obj G Y)) ∧
   (∀ X, left_whiskering ε X ◦ right_whiskering η X = idc (f_map_obj F X)).
+
+(* version without variables X and Y *)
+
+Definition komp {Q T} {A B C : T → Obj Q}
+  (F : ∀ t, Hom (A t) (B t)) (G : ∀ t, Hom (B t) (C t)) :=
+  λ t, G t ◦ F t.
+
+Definition idk {A B} (F : A → Obj B) X := idc (F X).
+
+Definition are_adjoint3 {C D} (F : functor C D) (G : functor D C)
+  (η : natural_transformation (functor_id C) (functor_comp F G))
+  (ε : natural_transformation (functor_comp G F) (functor_id D)) :=
+  (komp (left_whiskering η) (right_whiskering ε) = idk (f_map_obj G)) ∧
+  (komp (right_whiskering η) (left_whiskering ε) = idk (f_map_obj F)).
