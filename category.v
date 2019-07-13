@@ -1291,22 +1291,23 @@ Definition right_whiskering {D E F} {G H : functor D E} {I : functor E F}
 
 Example glop {C D} (F : functor C D) (G : functor D C) :
   ∀ (η : @natural_transformation C C (functor_id C) (functor_comp F G))
-     (ε : @natural_transformation D D (functor_comp G F) (functor_id D)),
+     (ε : @natural_transformation D D (functor_comp G F) (functor_id D))
+     (X : Obj C) (Y : Obj D),
   True.
 Proof.
 intros.
-destruct η as (η, Hη).
-destruct ε as (ε, Hε).
-cbn in *.
-Abort.
+set (A1 := right_whiskering ε Y).
+set (B1 := left_whiskering η Y).
+set (A2 := right_whiskering η X).
+set (B2 := left_whiskering ε X).
+cbn in A1, B1, A2, B2.
+...
 
 Definition are_adjoint2 {C D} (F : functor C D) (G : functor D C)
   (η : @natural_transformation C C (functor_id C) (functor_comp F G))
   (ε : @natural_transformation D D (functor_comp G F) (functor_id D)) :=
-λ X,
+  λ X,
     (right_whiskering η X,
      left_whiskering ε X).
 
 Print are_adjoint2.
-
-(* bon, c'est chiant, faut que je comprenne... *)
