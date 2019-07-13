@@ -1259,27 +1259,33 @@ Check (λ X Y, Hom_functor (f_map_obj F Y) X).
 (* : Obj C → Obj D → functor (cat_prod (op C) C) SetCat *)
 Check (λ X Y, Hom_functor Y (f_map_obj G X)).
 (* : Obj C → Obj D → functor (cat_prod (op D) D) SetCat *)
-...
+(*
 Check
   (λ X Y,
    natural_transformation
      (Hom_functor (f_map_obj F Y) X)
      (Hom_functor Y (f_map_obj G X))).
+*)
 Check (λ X Y, natural_transformation (Hom_functor (f_map_obj F Y) X)).
-
 Check @is_natural_isomorphism.
 Check @nt_component.
 Check (λ X, Hom_functor (f_map_obj F B) X).
 Check (λ Y, Hom_functor (f_map_obj F Y) A).
 Check (λ Y, Hom_functor Y (f_map_obj G A)).
 Check (λ X, Hom_functor B (f_map_obj G X)).
-
-...
+Abort.
 
 (* whiskering *)
-(* for preparing alternative definition of adjunction *)
 
-...
+Definition left_whiskering {C D E} {F : functor C D} {G H : functor D E}
+    (α : natural_transformation G H) (X : Obj C) :
+  Hom (f_map_obj G (f_map_obj F X)) (f_map_obj H (f_map_obj F X)) :=
+  nt_component α (f_map_obj F X).
+
+Definition right_whiskering {D E F} {G H : functor D E} {I : functor E F}
+    (α : natural_transformation G H) (Y : Obj D) :
+  Hom (f_map_obj I (f_map_obj G Y)) (f_map_obj I (f_map_obj H Y)) :=
+  f_map_hom I (nt_component α Y).
 
 (* alternative definition of adjunction *)
 
@@ -1294,8 +1300,13 @@ destruct ε as (ε, Hε).
 cbn in *.
 Abort.
 
+...
+
 Definition are_adjoint2 {C D} (F : functor C D) (G : functor D C) :=
   ∀ (η : @natural_transformation C C (functor_id C) (functor_comp F G))
      (ε : @natural_transformation D D (functor_comp G F) (functor_id D)),
-  True.
-(* not simple *)
+∀ Y Z,
+    right_whiskering η Y = left_whiskering ε Z.
+    right_whiskering η Y.
+
+Print are_adjoint2.
