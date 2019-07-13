@@ -1290,8 +1290,8 @@ Definition right_whiskering {D E F} {G H : functor D E} {I : functor E F}
 (* alternative definition of adjunction *)
 
 Example glop {C D} (F : functor C D) (G : functor D C) :
-  ∀ (η : @natural_transformation C C (functor_id C) (functor_comp F G))
-     (ε : @natural_transformation D D (functor_comp G F) (functor_id D))
+  ∀ (η : natural_transformation (functor_id C) (functor_comp F G))
+     (ε : natural_transformation (functor_comp G F) (functor_id D))
      (X : Obj C) (Y : Obj D),
   True.
 Proof.
@@ -1301,6 +1301,8 @@ set (B1 := right_whiskering ε Y).
 set (A2 := right_whiskering η X).
 set (B2 := left_whiskering ε X).
 cbn in A1, B1, A2, B2.
+set (K := natural_transformation G G).
+unfold natural_transformation in K.
 ...
 
 Definition are_adjoint2 {C D} (F : functor C D) (G : functor D C)
