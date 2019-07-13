@@ -1302,7 +1302,7 @@ Abort.
 
 Definition are_adjoint2 {C D} (F : functor C D) (G : functor D C)
   (η : @natural_transformation C C (functor_id C) (functor_comp F G))
-   (ε : @natural_transformation D D (functor_comp G F) (functor_id D)) :=
+  (ε : @natural_transformation D D (functor_comp G F) (functor_id D)) :=
 λ X,
     (right_whiskering η X,
      left_whiskering ε X).
