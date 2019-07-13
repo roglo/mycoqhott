@@ -1247,6 +1247,7 @@ Qed.
    (Wikipedia)
 *)
 
+(*
 Definition are_adjoint {C D} (F : functor D C) (G : functor C D) :=
   ∀ X Y,
   { f : Hom (f_map_obj F Y) X → Hom Y (f_map_obj G X) &
@@ -1274,6 +1275,7 @@ Check (λ Y, Hom_functor (f_map_obj F Y) A).
 Check (λ Y, Hom_functor Y (f_map_obj G A)).
 Check (λ X, Hom_functor B (f_map_obj G X)).
 Abort.
+*)
 
 (* whiskering *)
 
@@ -1301,6 +1303,8 @@ set (B1 := right_whiskering ε Y).
 set (A2 := right_whiskering η X).
 set (B2 := left_whiskering ε X).
 cbn in A1, B1, A2, B2.
+Check (A1 ◦ B1).
+Check (B1 ◦ A1).
 assert (p : f_map_obj G Y = f_map_obj G (f_map_obj F (f_map_obj G Y))). {
 ...
 set (K := natural_transformation G G).
