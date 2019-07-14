@@ -1292,29 +1292,11 @@ Definition right_whiskering {D E F} {G H : functor D E}
   Hom (f_map_obj I (f_map_obj G Y)) (f_map_obj I (f_map_obj H Y)) :=
   f_map_hom I (nt_component α Y).
 
-(* alternative definition of adjunction *)
-
-Definition are_adjoint2 {C D} (L : functor C D) (R : functor D C)
-  (η : natural_transformation (functor_id C) (functor_comp L R))
-  (ε : natural_transformation (functor_comp R L) (functor_id D)) :=
-  (∀ Y : Obj D,
-   right_whiskering R ε Y ◦ left_whiskering η R Y = idc (f_map_obj R Y)) ∧
-  (∀ X : Obj C,
-   left_whiskering ε L X ◦ right_whiskering L η X = idc (f_map_obj L X)).
-
-(* versions without variables X and Y *)
-
 Definition dcomp {T Q} {A B C : T → Obj Q}
   (f : ∀ t, Hom (A t) (B t)) (g : ∀ t, Hom (B t) (C t)) :=
   λ t, g t ◦ f t.
 
 Definition idf {A B} (F : functor A B) (X : Obj A) := idc (f_map_obj F X).
-
-Definition are_adjoint3 {C D} (L : functor C D) (R : functor D C)
-  (η : natural_transformation (functor_id C) (functor_comp L R))
-  (ε : natural_transformation (functor_comp R L) (functor_id D)) :=
-  dcomp (left_whiskering η R) (right_whiskering R ε) = idf R ∧
-  dcomp (right_whiskering L η) (left_whiskering ε L) = idf L.
 
 Definition adjoint {C D} (L : functor C D) (R : functor D C) :=
   ∃ η : natural_transformation (functor_id C) (functor_comp L R),
