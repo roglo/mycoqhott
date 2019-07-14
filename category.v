@@ -1237,11 +1237,57 @@ intros h.
 now destruct (f_map_obj G Y).
 Qed.
 
+(* whiskering *)
+
+Definition left_whiskering {C D E} {G H : functor D E}
+    (α : natural_transformation G H) (F : functor C D) (X : Obj C) :
+  Hom (f_map_obj G (f_map_obj F X)) (f_map_obj H (f_map_obj F X)) :=
+  nt_component α (f_map_obj F X).
+
+Definition right_whiskering {D E F} {G H : functor D E}
+    (I : functor E F) (α : natural_transformation G H) (Y : Obj D) :
+  Hom (f_map_obj I (f_map_obj G Y)) (f_map_obj I (f_map_obj H Y)) :=
+  f_map_hom I (nt_component α Y).
+
+Definition dcomp {T Q} {A B C : T → Obj Q}
+  (f : ∀ t, Hom (A t) (B t)) (g : ∀ t, Hom (B t) (C t)) :=
+  λ t, g t ◦ f t.
+
+Definition idf {A B} (F : functor A B) (X : Obj A) := idc (f_map_obj F X).
+
 (* adjunction *)
 
+Definition adjoint {C D} (L : functor C D) (R : functor D C) :=
+  ∃ η : natural_transformation (functor_id C) (functor_comp L R),
+  ∃ ε : natural_transformation (functor_comp R L) (functor_id D),
+  dcomp (left_whiskering η R) (right_whiskering R ε) = idf R ∧
+  dcomp (right_whiskering L η) (left_whiskering ε L) = idf L.
+
+Notation "L ⊣ R" := (adjoint L R) (at level 70).
+
+Example glop {𝒞 𝒟} : ∀ (L : functor 𝒞 𝒟) R, L ⊣ R → True.
+Proof.
+intros * H.
+destruct H as (η & ε & H1 & H2).
 (*
-   By definition, an adjunction between categories C and D is
-   a pair of functors (assumed to be covariant)
+  𝒞 : category
+  𝒟 : category
+  L : functor 𝒞 𝒟
+  R : functor 𝒟 𝒞
+  η : natural_transformation (functor_id 𝒞) (functor_comp L R)
+  ε : natural_transformation (functor_comp R L) (functor_id 𝒟)
+  H1 : dcomp (left_whiskering η R) (right_whiskering R ε) = idf R
+  H2 : dcomp (right_whiskering L η) (left_whiskering ε L) = idf L
+  ============================
+  True
+*)
+Abort.
+
+(*
+   Other definition.
+
+   An adjunction between categories C and D is a pair of functors
+   (assumed to be covariant)
       F : D → C and G : C → D
    and, for all objects X in C and Y in D a bijection between
    the respective morphism sets
@@ -1250,7 +1296,6 @@ Qed.
    (Wikipedia)
 *)
 
-(*
 Definition are_adjoint {C D} (F : functor D C) (G : functor C D) :=
   ∀ X Y,
   { f : Hom (f_map_obj F Y) X → Hom Y (f_map_obj G X) &
@@ -1277,49 +1322,4 @@ Check (λ X, Hom_functor (f_map_obj F B) X).
 Check (λ Y, Hom_functor (f_map_obj F Y) A).
 Check (λ Y, Hom_functor Y (f_map_obj G A)).
 Check (λ X, Hom_functor B (f_map_obj G X)).
-Abort.
-*)
-
-(* whiskering *)
-
-Definition left_whiskering {C D E} {G H : functor D E}
-    (α : natural_transformation G H) (F : functor C D) (X : Obj C) :
-  Hom (f_map_obj G (f_map_obj F X)) (f_map_obj H (f_map_obj F X)) :=
-  nt_component α (f_map_obj F X).
-
-Definition right_whiskering {D E F} {G H : functor D E}
-    (I : functor E F) (α : natural_transformation G H) (Y : Obj D) :
-  Hom (f_map_obj I (f_map_obj G Y)) (f_map_obj I (f_map_obj H Y)) :=
-  f_map_hom I (nt_component α Y).
-
-Definition dcomp {T Q} {A B C : T → Obj Q}
-  (f : ∀ t, Hom (A t) (B t)) (g : ∀ t, Hom (B t) (C t)) :=
-  λ t, g t ◦ f t.
-
-Definition idf {A B} (F : functor A B) (X : Obj A) := idc (f_map_obj F X).
-
-Definition adjoint {C D} (L : functor C D) (R : functor D C) :=
-  ∃ η : natural_transformation (functor_id C) (functor_comp L R),
-  ∃ ε : natural_transformation (functor_comp R L) (functor_id D),
-  dcomp (left_whiskering η R) (right_whiskering R ε) = idf R ∧
-  dcomp (right_whiskering L η) (left_whiskering ε L) = idf L.
-
-Notation "L ⊣ R" := (adjoint L R) (at level 70).
-
-Example glop {𝒞 𝒟} : ∀ (L : functor 𝒞 𝒟) R, L ⊣ R → True.
-Proof.
-intros * H.
-destruct H as (η & ε & H1 & H2).
-(*
-  𝒞 : category
-  𝒟 : category
-  L : functor 𝒞 𝒟
-  R : functor 𝒟 𝒞
-  η : natural_transformation (functor_id 𝒞) (functor_comp L R)
-  ε : natural_transformation (functor_comp R L) (functor_id 𝒟)
-  H1 : dcomp (left_whiskering η R) (right_whiskering R ε) = idf R
-  H2 : dcomp (right_whiskering L η) (left_whiskering ε L) = idf L
-  ============================
-  True
-*)
 ...
