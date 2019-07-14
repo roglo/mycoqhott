@@ -475,6 +475,15 @@ Definition nt_component {C D} {F G : functor C D}
 Definition nt_commute {C D} {F G : functor C D}
   (η : natural_transformation F G) := projT2 η.
 
+Definition nat_transf_id {C D} (F : functor C D) :
+  natural_transformation F F.
+exists (λ X, idc (f_map_obj F X)).
+intros X Y f.
+etransitivity.
+apply unit_r.
+symmetry; apply unit_l.
+Defined.
+
 (* natural isomorphism *)
 
 (*
@@ -641,16 +650,10 @@ Definition CatCat_comp (C C' C'' : category)
      f_comp_prop := CatCat_comp_prop;
      f_id_prop := CatCat_id_prop |}.
 
-Definition CatCat_idc (C : category) : functor C C :=
-  {| f_map_obj X := X;
-     f_map_hom _ _ f := f;
-     f_comp_prop _ _ _ _ _ := eq_refl;
-     f_id_prop _ := eq_refl |}.
-
 Theorem CatCat_unit_l (C C' : category) (F : functor C C') :
-  CatCat_comp C C C' (CatCat_idc C) F = F.
+  CatCat_comp C C C' (functor_id C) F = F.
 Proof.
-unfold CatCat_comp, CatCat_idc; cbn.
+unfold CatCat_comp, functor_id; cbn.
 destruct F; cbn in *.
 f_equal.
 -apply extensionality; intros X.
@@ -664,9 +667,9 @@ f_equal.
 Qed.
 
 Theorem CatCat_unit_r (C C' : category) (F : functor C C') :
-  CatCat_comp C C' C' F (CatCat_idc C') = F.
+  CatCat_comp C C' C' F (functor_id C') = F.
 Proof.
-unfold CatCat_comp, CatCat_idc; cbn.
+unfold CatCat_comp, functor_id; cbn.
 destruct F; cbn in *.
 f_equal.
 -apply extensionality; intros X.
@@ -1301,8 +1304,8 @@ Definition are_adjoint2 {C D} (L : functor C D) (R : functor D C)
 (* version without variables X and Y *)
 
 Definition dcomp {T Q} {A B C : T → Obj Q}
-  (F : ∀ t, Hom (A t) (B t)) (G : ∀ t, Hom (B t) (C t)) :=
-  λ t, G t ◦ F t.
+  (f : ∀ t, Hom (A t) (B t)) (g : ∀ t, Hom (B t) (C t)) :=
+  λ t, g t ◦ f t.
 
 Definition idf {A B} (F : functor A B) X := idc (f_map_obj F X).
 
