@@ -1307,7 +1307,7 @@ Definition dcomp {T Q} {A B C : T → Obj Q}
   (f : ∀ t, Hom (A t) (B t)) (g : ∀ t, Hom (B t) (C t)) :=
   λ t, g t ◦ f t.
 
-Definition idf {A B} (F : functor A B) X := idc (f_map_obj F X).
+Definition idf {A B} (F : functor A B) (X : Obj A) := idc (f_map_obj F X).
 
 Definition are_adjoint3 {C D} (L : functor C D) (R : functor D C)
   (η : natural_transformation (functor_id C) (functor_comp L R))
