@@ -1317,10 +1317,10 @@ Definition are_adjoint3 {C D} (L : functor C D) (R : functor D C)
   dcomp (right_whiskering L η) (left_whiskering ε L) = idf L.
 
 Definition adjoint {C D} (L : functor C D) (R : functor D C) :=
-  { η : natural_transformation (functor_id C) (functor_comp L R) &
-  { ε : natural_transformation (functor_comp R L) (functor_id D) &
-   dcomp (left_whiskering η R) (right_whiskering R ε) = idf R ∧
-   dcomp (right_whiskering L η) (left_whiskering ε L) = idf L } }.
+  ∃ η : natural_transformation (functor_id C) (functor_comp L R),
+  ∃ ε : natural_transformation (functor_comp R L) (functor_id D),
+  dcomp (left_whiskering η R) (right_whiskering R ε) = idf R ∧
+  dcomp (right_whiskering L η) (left_whiskering ε L) = idf L.
 
 Notation "L ⊣ R" := (adjoint L R) (at level 70).
 
@@ -1328,4 +1328,16 @@ Example glop {C D} : ∀ (L : functor C D) R, L ⊣ R → True.
 Proof.
 intros * H.
 destruct H as (η & ε & H1 & H2).
+(*
+  C : category
+  D : category
+  L : functor C D
+  R : functor D C
+  η : natural_transformation (functor_id C) (functor_comp L R)
+  ε : natural_transformation (functor_comp R L) (functor_id D)
+  H1 : dcomp (left_whiskering η R) (right_whiskering R ε) = idf R
+  H2 : dcomp (right_whiskering L η) (left_whiskering ε L) = idf L
+  ============================
+  True
+*)
 ...
