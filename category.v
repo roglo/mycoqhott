@@ -1297,9 +1297,10 @@ Definition right_whiskering {D E F} {G H : functor D E}
 Definition are_adjoint2 {C D} (L : functor C D) (R : functor D C)
   (η : natural_transformation (functor_id C) (functor_comp L R))
   (ε : natural_transformation (functor_comp R L) (functor_id D)) :=
-  (∀ Y, right_whiskering R ε Y ◦ left_whiskering η R Y = idc (f_map_obj R Y))
-  ∧
-  (∀ X, left_whiskering ε L X ◦ right_whiskering L η X = idc (f_map_obj L X)).
+  (∀ Y : Obj D,
+   right_whiskering R ε Y ◦ left_whiskering η R Y = idc (f_map_obj R Y)) ∧
+  (∀ X : Obj C,
+   left_whiskering ε L X ◦ right_whiskering L η X = idc (f_map_obj L X)).
 
 (* version without variables X and Y *)
 
