@@ -1323,3 +1323,9 @@ Definition adjoint {C D} (L : functor C D) (R : functor D C) :=
    dcomp (right_whiskering L η) (left_whiskering ε L) = idf L } }.
 
 Notation "L ⊣ R" := (adjoint L R) (at level 70).
+
+Example glop {C D} : ∀ (L : functor C D) R, L ⊣ R → True.
+Proof.
+intros * H.
+destruct H as (η & ε & H1 & H2).
+...
