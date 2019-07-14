@@ -1308,13 +1308,13 @@ Check (λ X Y, Hom_functor (f_map_obj F Y) X).
 (* : Obj C → Obj D → functor (cat_prod (op C) C) SetCat *)
 Check (λ X Y, Hom_functor Y (f_map_obj G X)).
 (* : Obj C → Obj D → functor (cat_prod (op D) D) SetCat *)
-(*
-Check
-  (λ X Y,
+set
+  (η := λ X X' Y Y',
    natural_transformation
      (Hom_functor (f_map_obj F Y) X)
-     (Hom_functor Y (f_map_obj G X))).
-*)
+     (Hom_functor (f_map_obj F Y') X')).
+cbn in η.
+...
 Check (λ X Y, natural_transformation (Hom_functor (f_map_obj F Y) X)).
 Check @is_natural_isomorphism.
 Check @nt_component.
@@ -1322,4 +1322,5 @@ Check (λ X, Hom_functor (f_map_obj F B) X).
 Check (λ Y, Hom_functor (f_map_obj F Y) A).
 Check (λ Y, Hom_functor Y (f_map_obj G A)).
 Check (λ X, Hom_functor B (f_map_obj G X)).
+Print natural_transformation.
 ...
