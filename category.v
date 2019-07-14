@@ -1313,6 +1313,7 @@ set
    natural_transformation
      (Hom_functor (f_map_obj F Y) X)
      (Hom_functor (f_map_obj F Y') X')).
+unfold natural_transformation in η.
 cbn in η.
 ...
 Check (λ X Y, natural_transformation (Hom_functor (f_map_obj F Y) X)).
