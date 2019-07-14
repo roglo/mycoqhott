@@ -1324,17 +1324,17 @@ Definition adjoint {C D} (L : functor C D) (R : functor D C) :=
 
 Notation "L ⊣ R" := (adjoint L R) (at level 70).
 
-Example glop {C D} : ∀ (L : functor C D) R, L ⊣ R → True.
+Example glop {𝒞 𝒟} : ∀ (L : functor 𝒞 𝒟) R, L ⊣ R → True.
 Proof.
 intros * H.
 destruct H as (η & ε & H1 & H2).
 (*
-  C : category
-  D : category
-  L : functor C D
-  R : functor D C
-  η : natural_transformation (functor_id C) (functor_comp L R)
-  ε : natural_transformation (functor_comp R L) (functor_id D)
+  𝒞 : category
+  𝒟 : category
+  L : functor 𝒞 𝒟
+  R : functor 𝒟 𝒞
+  η : natural_transformation (functor_id 𝒞) (functor_comp L R)
+  ε : natural_transformation (functor_comp R L) (functor_id 𝒟)
   H1 : dcomp (left_whiskering η R) (right_whiskering R ε) = idf R
   H2 : dcomp (right_whiskering L η) (left_whiskering ε L) = idf L
   ============================
