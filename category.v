@@ -620,6 +620,12 @@ Definition FunCat C D :=
      assoc := FunCat_assoc;
      Hom_set := FunCat_Hom_set |}.
 
+Declare Scope nat_transf_scope.
+Delimit Scope nat_transf_scope with NT.
+
+Notation "g '◦' f" := (FunCat_comp f g) (at level 40, left associativity) :
+  nat_transf_scope.
+
 (* category of categories *)
 
 Theorem CatCat_comp_prop {C C' C'' : category}
@@ -1285,10 +1291,10 @@ Definition right_whiskering {D E F} {G H : functor D E} :
 (* adjunction *)
 
 Definition adjunction {C D} (L : functor C D) (R : functor D C)
-  (η : natural_transformation (functor_id C) (functor_comp L R))
-  (ε : natural_transformation (functor_comp R L) (functor_id D)) :=
-  FunCat_comp (left_whiskering η R) (right_whiskering R ε) = nat_transf_id R ∧
-  FunCat_comp (right_whiskering L η) (left_whiskering ε L) = nat_transf_id L.
+    (η : natural_transformation (functor_id C) (functor_comp L R))
+    (ε : natural_transformation (functor_comp R L) (functor_id D)) :=
+  (right_whiskering R ε ◦ left_whiskering η R = nat_transf_id R)%NT ∧
+  (left_whiskering ε L ◦ right_whiskering L η = nat_transf_id L)%NT.
 
 Definition is_left_adjoint {C D} (L : functor C D) :=
   ∃ R η ε, adjunction L R η ε.
@@ -1300,8 +1306,6 @@ Definition are_adjoint {C D} (L : functor C D) (R : functor D C) :=
   ∃ η ε, adjunction L R η ε.
 
 Notation "L ⊣ R" := (are_adjoint L R) (at level 70).
-
-...
 
 Example glop {𝒞 𝒟} : ∀ (L : functor 𝒞 𝒟) R, L ⊣ R → True.
 Proof.
@@ -1320,6 +1324,8 @@ destruct H as (η & ε & H1 & H2).
   True
 *)
 Abort.
+
+...
 
 (*
    Other definition of adjunction.
