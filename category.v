@@ -1244,6 +1244,24 @@ Definition left_whiskering {C D E} {G H : functor D E}
   Hom (f_map_obj G (f_map_obj F X)) (f_map_obj H (f_map_obj F X)) :=
   nt_component α (f_map_obj F X).
 
+Check @left_whiskering.
+
+Print natural_transformation.
+
+...
+
+Theorem pouet :
+  left_whiskering...
+
+Definition glop {C D E} {G H : functor D E}
+    (α : natural_transformation G H) (F : functor C D) :
+  natural_transformation _ _ :=
+  existT _ (left_whiskering α F) 42.
+
+Check @glop.
+
+...
+
 Definition right_whiskering {D E F} {G H : functor D E}
     (I : functor E F) (α : natural_transformation G H) (Y : Obj D) :
   Hom (f_map_obj I (f_map_obj G Y)) (f_map_obj I (f_map_obj H Y)) :=
