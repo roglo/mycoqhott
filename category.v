@@ -1306,13 +1306,13 @@ Example glop {C D} (F : functor D C) (G : functor C D)
   (A : Obj C) (B : Obj D) : True.
 Check (λ (X X' : Obj (op C)) (Y Y' : Obj D),
        natural_transformation (Hom_functor X (f_map_obj F Y)) (Hom_functor X' (f_map_obj F Y'))).
-set (cp := λ (X X' : Obj (op C)) (Y Y' : Obj D)
-  (Φ : natural_transformation (Hom_functor X (f_map_obj F Y)) (Hom_functor X' (f_map_obj F Y'))),
-  nt_component Φ).
-set (cm := λ (X X' : Obj (op C)) (Y Y' : Obj D)
-  (Φ : natural_transformation (Hom_functor X (f_map_obj F Y)) (Hom_functor X' (f_map_obj F Y'))),
-          nt_commute Φ).
-cbn in cp, cm.
+set (Φ := λ (X X' : Obj (op C)) (Y Y' : Obj D)
+  (η : natural_transformation (Hom_functor X (f_map_obj F Y)) (Hom_functor X' (f_map_obj F Y'))),
+  nt_component η).
+set (Φ_comm := λ (X X' : Obj (op C)) (Y Y' : Obj D)
+  (η : natural_transformation (Hom_functor X (f_map_obj F Y)) (Hom_functor X' (f_map_obj F Y'))),
+          nt_commute η).
+cbn in Φ, Φ_comm.
 ...
 Check (λ X Y, Hom_functor (f_map_obj F Y) X).
 (* : Obj C → Obj D → functor (cat_prod (op C) C) SetCat *)
