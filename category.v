@@ -1328,11 +1328,15 @@ Definition are_adjoint2 {C D} (F : functor D C) (G : functor C D) :=
   { g : Hom Y (f_map_obj G X) → Hom (f_map_obj F Y) X &
   (∀ x, g (f x) = x) ∧ (∀ y, f (g y) = y) } }.
 
+(* functor product *)
+
 Definition functor_prod {C C' D D'} (F : functor C D) (F' : functor C' D') :
   functor (cat_prod C C') (cat_prod D D') :=
   {| f_map_obj (X : Obj (cat_prod C C')) :=
        (f_map_obj F (fst X), f_map_obj F' (snd X)) : Obj (cat_prod D D');
-     f_map_hom X Y f := 42 |}.
+     f_map_hom _ _ f :=
+       (f_map_hom F (fst f), f_map_hom F' (snd f));
+     f_comp_prop X Y Z f g := 42 |}.
 ...
 
 Example glop {C D} (F : functor D C) (G : functor C D)
