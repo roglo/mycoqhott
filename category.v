@@ -1304,6 +1304,7 @@ Definition are_adjoint {C D} (F : functor D C) (G : functor C D) :=
 
 Example glop {C D} (F : functor D C) (G : functor C D)
   (A : Obj C) (B : Obj D) : True.
+(*
 Check (λ (X X' : Obj (op C)) (Y Y' : Obj D),
        natural_transformation (Hom_functor X (f_map_obj F Y)) (Hom_functor X' (f_map_obj F Y'))).
 set (Φ := λ (X X' : Obj (op C)) (Y Y' : Obj D)
@@ -1313,6 +1314,7 @@ set (Φ_comm := λ (X X' : Obj (op C)) (Y Y' : Obj D)
   (η : natural_transformation (Hom_functor X (f_map_obj F Y)) (Hom_functor X' (f_map_obj F Y'))),
           nt_commute η).
 ...
+*)
 Check (λ X Y, Hom_functor (f_map_obj F Y) X).
 (* : Obj C → Obj D → functor (cat_prod (op C) C) SetCat *)
 Check (λ X Y, Hom_functor Y (f_map_obj G X)).
