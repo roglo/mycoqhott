@@ -1239,26 +1239,20 @@ Qed.
 
 (* whiskering *)
 
-Definition left_whiskering {C D E} {G H : functor D E}
+Definition old_left_whiskering {C D E} {G H : functor D E}
     (α : natural_transformation G H) (F : functor C D) (X : Obj C) :
   Hom (f_map_obj G (f_map_obj F X)) (f_map_obj H (f_map_obj F X)) :=
   nt_component α (f_map_obj F X).
 
-Check @left_whiskering.
-
-Print natural_transformation.
-
-...
-
-Theorem pouet :
-  left_whiskering...
-
-Definition glop {C D E} {G H : functor D E}
-    (α : natural_transformation G H) (F : functor C D) :
-  natural_transformation _ _ :=
-  existT _ (left_whiskering α F) 42.
-
-Check @glop.
+Definition left_whiskering {C D E} {G H : functor D E} :
+  natural_transformation G H → ∀ (F : functor C D),
+  natural_transformation (functor_comp F G) (functor_comp F H) :=
+  λ α F,
+  existT
+    (λ ϑ : ∀ x, Hom (f_map_obj (functor_comp F G) x) (f_map_obj (functor_comp F H) x),
+     ∀ x y f, ϑ y ◦ f_map_hom (functor_comp F G) f = f_map_hom (functor_comp F H) f ◦ ϑ x)
+    (λ X, nt_component α (f_map_obj F X))
+    (λ X Y (f : Hom X Y), nt_commute α (f_map_obj F X) (f_map_obj F Y) (f_map_hom F f)).
 
 ...
 
