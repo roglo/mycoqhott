@@ -484,6 +484,25 @@ apply unit_r.
 symmetry; apply unit_l.
 Defined.
 
+Theorem nat_transf_comp_nt_commute {C D} {F G H : functor C D} :
+  ∀ (η : natural_transformation F G) (η' : natural_transformation G H),
+  ∀ (x y : Obj C) (f : Hom x y),
+  nt_component η' y ◦ nt_component η y ◦ f_map_hom F f =
+  f_map_hom H f ◦ (nt_component η' x ◦ nt_component η x).
+Proof.
+intros.
+rewrite assoc, (nt_commute η).
+do 2 rewrite <- assoc.
+apply f_equal, (nt_commute η').
+Defined.
+
+Definition nat_transf_comp {C D} {F G H : functor C D} :
+    natural_transformation F G → natural_transformation G H →
+    natural_transformation F H :=
+  λ η η',
+  existT _ (λ x, nt_component η' x ◦ nt_component η x)
+    (nat_transf_comp_nt_commute η η').
+
 (* natural isomorphism *)
 
 (*
@@ -500,48 +519,16 @@ Definition is_natural_isomorphism {C D} {F G : functor C D}
 
 (* category of functors *)
 
-Theorem FunCat_comp_nt_commute {C D} {F G H : functor C D} :
-  ∀ (η : natural_transformation F G) (η' : natural_transformation G H),
-  ∀ (x y : Obj C) (f : Hom x y),
-  nt_component η' y ◦ nt_component η y ◦ f_map_hom F f =
-  f_map_hom H f ◦ (nt_component η' x ◦ nt_component η x).
-Proof.
-intros.
-rewrite assoc, (nt_commute η).
-do 2 rewrite <- assoc.
-apply f_equal, (nt_commute η').
-Defined.
-
-Definition FunCat_comp {C D} {F G H : functor C D} :
-    natural_transformation F G → natural_transformation G H →
-    natural_transformation F H :=
-  λ η η',
-  existT _ (λ x, nt_component η' x ◦ nt_component η x)
-    (FunCat_comp_nt_commute η η').
-
-Definition FunCat_id {C D} (F : functor C D) : natural_transformation F F.
-Proof.
-unfold natural_transformation.
-exists (λ z, f_map_hom F (idc z)).
-intros x y f.
-etransitivity; [ apply f_equal, f_id_prop | ].
-etransitivity; [ apply unit_r | ].
-symmetry.
-etransitivity; [ | apply unit_l ].
-now destruct (@f_id_prop C D F x).
-Defined.
-
 Theorem FunCat_unit_l {C D} (F G : functor C D) :
-  ∀ (f : natural_transformation F G), FunCat_comp (FunCat_id F) f = f.
+  ∀ (f : natural_transformation F G), nat_transf_comp (nat_transf_id F) f = f.
 Proof.
 intros.
 destruct f as (f, Hf).
-unfold FunCat_comp; cbn.
+unfold nat_transf_comp; cbn.
 apply eq_existT_uncurried.
-assert (p : (λ x : Obj C, f x ◦ f_map_hom F (idc x)) = f). {
+assert (p : (λ x : Obj C, f x ◦ idc (f_map_obj F x)) = f). {
   apply extensionality.
   intros c.
-  rewrite f_id_prop.
   apply unit_l.
 }
 exists p.
@@ -552,16 +539,15 @@ apply Hom_set.
 Qed.
 
 Theorem FunCat_unit_r {C D} (F G : functor C D) :
-  ∀ (f : natural_transformation F G), FunCat_comp f (FunCat_id G) = f.
+  ∀ (f : natural_transformation F G), nat_transf_comp f (nat_transf_id G) = f.
 Proof.
 intros.
 destruct f as (f, Hf).
-unfold FunCat_comp; cbn.
+unfold nat_transf_comp; cbn.
 apply eq_existT_uncurried.
-assert (p : (λ x : Obj C, f_map_hom G (idc x) ◦ f x) = f). {
+assert (p : (λ x : Obj C, idc (f_map_obj G x) ◦ f x) = f). {
   apply extensionality.
   intros c.
-  rewrite f_id_prop.
   apply unit_r.
 }
 exists p.
@@ -574,11 +560,11 @@ Qed.
 Theorem FunCat_assoc {C D} (F G H I : functor C D) :
   ∀ (η : natural_transformation F G) (η' : natural_transformation G H)
      (η'' : natural_transformation H I),
-  FunCat_comp η (FunCat_comp η' η'') =
-  FunCat_comp (FunCat_comp η η') η''.
+  nat_transf_comp η (nat_transf_comp η' η'') =
+  nat_transf_comp (nat_transf_comp η η') η''.
 Proof.
 intros.
-unfold FunCat_comp; cbn.
+unfold nat_transf_comp; cbn.
 apply eq_existT_uncurried.
 assert
  (p :
@@ -613,8 +599,8 @@ Qed.
 Definition FunCat C D :=
   {| Obj := functor C D;
      Hom := natural_transformation;
-     comp _ _ _ := FunCat_comp;
-     idc := FunCat_id;
+     comp _ _ _ := nat_transf_comp;
+     idc := nat_transf_id;
      unit_l := FunCat_unit_l;
      unit_r := FunCat_unit_r;
      assoc := FunCat_assoc;
@@ -623,7 +609,7 @@ Definition FunCat C D :=
 Declare Scope nat_transf_scope.
 Delimit Scope nat_transf_scope with NT.
 
-Notation "g '◦' f" := (FunCat_comp f g) (at level 40, left associativity) :
+Notation "g '◦' f" := (nat_transf_comp f g) (at level 40, left associativity) :
   nat_transf_scope.
 
 (* category of categories *)
@@ -758,8 +744,8 @@ Definition CatCat :=
 Definition is_iso_betw_fun {C D} {F G : functor C D}
   (α : natural_transformation F G) :=
   { β : natural_transformation G F &
-    FunCat_comp α β = FunCat_id F &
-    FunCat_comp β α = FunCat_id G }.
+    nat_transf_comp α β = nat_transf_id F &
+    nat_transf_comp β α = nat_transf_id G }.
 
 Definition are_isomorphic_functors {C D} (F G : functor C D) :=
   { α : natural_transformation F G & is_iso_betw_fun α }.
@@ -1111,7 +1097,7 @@ move η after η'.
 move Z before Y; move T before Z.
 move g before f; move h before g.
 cbn in *.
-specialize @FunCat_comp_nt_commute as H2.
+specialize @nat_transf_comp_nt_commute as H2.
 specialize (H2 C SetCat (cov_Hom_functor X) F G η η' Z T h).
 cbn in H2.
 unfold nt_component in H2.
@@ -1166,12 +1152,10 @@ apply extensionality; intros η; cbn.
 destruct η as (η, Hη); cbn in *.
 unfold functor_SetC_C_Set2_map_hom; cbn.
 apply eq_existT_uncurried; cbn.
-assert (p : (λ A g, f_map_hom (fst X) (idc A) (η A (g ◦ idc (snd X)))) = η). {
+assert (p : (λ (A : Obj C) (g : Hom (snd X) A), η A (g ◦ idc (snd X))) = η). {
   apply extensionality; intros A.
   apply extensionality; intros f.
-  rewrite unit_l.
-  destruct X as (F, X); cbn in *.
-  now rewrite f_id_prop.
+  now rewrite unit_l.
 }
 exists p; cbn.
 apply extensionality; intros Y.
@@ -1311,6 +1295,7 @@ Example glop {𝒞 𝒟} : ∀ (L : functor 𝒞 𝒟) R, L ⊣ R → True.
 Proof.
 intros * H.
 destruct H as (η & ε & H1 & H2).
+...
 (*
   𝒞 : category
   𝒟 : category
