@@ -512,7 +512,7 @@ do 2 rewrite <- assoc.
 apply f_equal, (nt_commute η').
 Defined.
 
-Definition FunCat_comp {C D} (F G H : functor C D) :
+Definition FunCat_comp {C D} {F G H : functor C D} :
     natural_transformation F G → natural_transformation G H →
     natural_transformation F H :=
   λ η η',
@@ -532,7 +532,7 @@ now destruct (@f_id_prop C D F x).
 Defined.
 
 Theorem FunCat_unit_l {C D} (F G : functor C D) :
-  ∀ (f : natural_transformation F G), FunCat_comp F F G (FunCat_id F) f = f.
+  ∀ (f : natural_transformation F G), FunCat_comp (FunCat_id F) f = f.
 Proof.
 intros.
 destruct f as (f, Hf).
@@ -552,7 +552,7 @@ apply Hom_set.
 Qed.
 
 Theorem FunCat_unit_r {C D} (F G : functor C D) :
-  ∀ (f : natural_transformation F G), FunCat_comp F G G f (FunCat_id G) = f.
+  ∀ (f : natural_transformation F G), FunCat_comp f (FunCat_id G) = f.
 Proof.
 intros.
 destruct f as (f, Hf).
@@ -574,8 +574,8 @@ Qed.
 Theorem FunCat_assoc {C D} (F G H I : functor C D) :
   ∀ (η : natural_transformation F G) (η' : natural_transformation G H)
      (η'' : natural_transformation H I),
-  FunCat_comp F G I η (FunCat_comp G H I η' η'') =
-  FunCat_comp F H I (FunCat_comp F G H η η') η''.
+  FunCat_comp η (FunCat_comp η' η'') =
+  FunCat_comp (FunCat_comp η η') η''.
 Proof.
 intros.
 unfold FunCat_comp; cbn.
@@ -613,7 +613,7 @@ Qed.
 Definition FunCat C D :=
   {| Obj := functor C D;
      Hom := natural_transformation;
-     comp := FunCat_comp;
+     comp _ _ _ := FunCat_comp;
      idc := FunCat_id;
      unit_l := FunCat_unit_l;
      unit_r := FunCat_unit_r;
@@ -752,8 +752,8 @@ Definition CatCat :=
 Definition is_iso_betw_fun {C D} {F G : functor C D}
   (α : natural_transformation F G) :=
   { β : natural_transformation G F &
-    FunCat_comp _ _ _ α β = FunCat_id F &
-    FunCat_comp _ _ _ β α = FunCat_id G }.
+    FunCat_comp α β = FunCat_id F &
+    FunCat_comp β α = FunCat_id G }.
 
 Definition are_isomorphic_functors {C D} (F G : functor C D) :=
   { α : natural_transformation F G & is_iso_betw_fun α }.
@@ -1237,45 +1237,69 @@ intros h.
 now destruct (f_map_obj G Y).
 Qed.
 
-(* whiskering *)
+(* left whiskering *)
 
-Definition old_left_whiskering {C D E} {G H : functor D E}
-    (α : natural_transformation G H) (F : functor C D) (X : Obj C) :
-  Hom (f_map_obj G (f_map_obj F X)) (f_map_obj H (f_map_obj F X)) :=
+Definition left_whiskering_nt_component {C D E} {G H : functor D E}
+  (α : natural_transformation G H) (F : functor C D) X :=
   nt_component α (f_map_obj F X).
+
+Definition left_whiskering_nt_commute {C D E} {G H : functor D E}
+  (α : natural_transformation G H) (F : functor C D) X Y f :=
+  nt_commute α (f_map_obj F X) (f_map_obj F Y) (f_map_hom F f).
 
 Definition left_whiskering {C D E} {G H : functor D E} :
   natural_transformation G H → ∀ (F : functor C D),
   natural_transformation (functor_comp F G) (functor_comp F H) :=
   λ α F,
-  existT
-    (λ ϑ : ∀ x, Hom (f_map_obj (functor_comp F G) x) (f_map_obj (functor_comp F H) x),
-     ∀ x y f, ϑ y ◦ f_map_hom (functor_comp F G) f = f_map_hom (functor_comp F H) f ◦ ϑ x)
-    (λ X, nt_component α (f_map_obj F X))
-    (λ X Y (f : Hom X Y), nt_commute α (f_map_obj F X) (f_map_obj F Y) (f_map_hom F f)).
+  existT _
+    (left_whiskering_nt_component α F)
+    (left_whiskering_nt_commute α F).
 
-...
+(* right whiskering *)
 
-Definition right_whiskering {D E F} {G H : functor D E}
-    (I : functor E F) (α : natural_transformation G H) (Y : Obj D) :
-  Hom (f_map_obj I (f_map_obj G Y)) (f_map_obj I (f_map_obj H Y)) :=
+Definition right_whiskering_nt_component {D E F} {G H : functor D E}
+  (I : functor E F) (α : natural_transformation G H) Y :=
   f_map_hom I (nt_component α Y).
 
-Definition dcomp {T Q} {A B C : T → Obj Q}
-  (f : ∀ t, Hom (A t) (B t)) (g : ∀ t, Hom (B t) (C t)) :=
-  λ t, g t ◦ f t.
+Definition right_whiskering_nt_commute {D E F} {G H : functor D E}
+  (I : functor E F) (α : natural_transformation G H) X Y f :
+  right_whiskering_nt_component I α Y ◦ f_map_hom (functor_comp G I) f =
+  f_map_hom (functor_comp H I) f ◦ right_whiskering_nt_component I α X.
+Proof.
+unfold right_whiskering_nt_component, nt_component; cbn.
+do 2 rewrite <- f_comp_prop.
+now destruct (nt_commute α X Y f).
+(* formula not symmetric with left_whiskering_nt_commute; is it normal? *)
+Defined.
 
-Definition idf {A B} (F : functor A B) (X : Obj A) := idc (f_map_obj F X).
+Definition right_whiskering {D E F} {G H : functor D E} :
+  ∀ (I : functor E F) (α : natural_transformation G H),
+  natural_transformation (functor_comp G I) (functor_comp H I) :=
+  λ I α,
+  existT _
+    (right_whiskering_nt_component I α)
+    (right_whiskering_nt_commute I α).
 
 (* adjunction *)
 
-Definition adjoint {C D} (L : functor C D) (R : functor D C) :=
-  ∃ η : natural_transformation (functor_id C) (functor_comp L R),
-  ∃ ε : natural_transformation (functor_comp R L) (functor_id D),
-  dcomp (left_whiskering η R) (right_whiskering R ε) = idf R ∧
-  dcomp (right_whiskering L η) (left_whiskering ε L) = idf L.
+Definition adjunction {C D} (L : functor C D) (R : functor D C)
+  (η : natural_transformation (functor_id C) (functor_comp L R))
+  (ε : natural_transformation (functor_comp R L) (functor_id D)) :=
+  FunCat_comp (left_whiskering η R) (right_whiskering R ε) = nat_transf_id R ∧
+  FunCat_comp (right_whiskering L η) (left_whiskering ε L) = nat_transf_id L.
 
-Notation "L ⊣ R" := (adjoint L R) (at level 70).
+Definition is_left_adjoint {C D} (L : functor C D) :=
+  ∃ R η ε, adjunction L R η ε.
+
+Definition is_right_adjoint {C D} (R : functor D C) :=
+  ∃ L η ε, adjunction L R η ε.
+
+Definition are_adjoint {C D} (L : functor C D) (R : functor D C) :=
+  ∃ η ε, adjunction L R η ε.
+
+Notation "L ⊣ R" := (are_adjoint L R) (at level 70).
+
+...
 
 Example glop {𝒞 𝒟} : ∀ (L : functor 𝒞 𝒟) R, L ⊣ R → True.
 Proof.
