@@ -1295,7 +1295,6 @@ Example glop {𝒞 𝒟} : ∀ (L : functor 𝒞 𝒟) R, L ⊣ R → True.
 Proof.
 intros * H.
 destruct H as (η & ε & H1 & H2).
-...
 (*
   𝒞 : category
   𝒟 : category
@@ -1310,8 +1309,6 @@ destruct H as (η & ε & H1 & H2).
 *)
 Abort.
 
-...
-
 (*
    Other definition of adjunction.
 
@@ -1325,11 +1322,18 @@ Abort.
    (Wikipedia)
 *)
 
-Definition are_adjoint {C D} (F : functor D C) (G : functor C D) :=
+Definition are_adjoint2 {C D} (F : functor D C) (G : functor C D) :=
   ∀ X Y,
   { f : Hom (f_map_obj F Y) X → Hom Y (f_map_obj G X) &
   { g : Hom Y (f_map_obj G X) → Hom (f_map_obj F Y) X &
   (∀ x, g (f x) = x) ∧ (∀ y, f (g y) = y) } }.
+
+Definition functor_prod {C C' D D'} (F : functor C D) (F' : functor C' D') :
+  functor (cat_prod C C') (cat_prod D D') :=
+  {| f_map_obj (X : Obj (cat_prod C C')) :=
+       (f_map_obj F (fst X), f_map_obj F' (snd X)) : Obj (cat_prod D D');
+     f_map_hom X Y f := 42 |}.
+...
 
 Example glop {C D} (F : functor D C) (G : functor C D)
   (A : Obj C) (B : Obj D) : True.
