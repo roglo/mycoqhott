@@ -1244,7 +1244,9 @@ Definition left_whiskering_nt_component {C D E} {G H : functor D E}
   nt_component α (f_map_obj F X).
 
 Definition left_whiskering_nt_commute {C D E} {G H : functor D E}
-  (α : natural_transformation G H) (F : functor C D) X Y f :=
+  (α : natural_transformation G H) (F : functor C D) X Y f :
+    left_whiskering_nt_component α F Y ◦ f_map_hom G (f_map_hom F f) =
+    f_map_hom H (f_map_hom F f) ◦ left_whiskering_nt_component α F X :=
   nt_commute α (f_map_obj F X) (f_map_obj F Y) (f_map_hom F f).
 
 Definition left_whiskering {C D E} {G H : functor D E} :
@@ -1263,8 +1265,8 @@ Definition right_whiskering_nt_component {D E F} {G H : functor D E}
 
 Definition right_whiskering_nt_commute {D E F} {G H : functor D E}
   (I : functor E F) (α : natural_transformation G H) X Y f :
-  right_whiskering_nt_component I α Y ◦ f_map_hom (functor_comp G I) f =
-  f_map_hom (functor_comp H I) f ◦ right_whiskering_nt_component I α X.
+    right_whiskering_nt_component I α Y ◦ f_map_hom (functor_comp G I) f =
+    f_map_hom (functor_comp H I) f ◦ right_whiskering_nt_component I α X.
 Proof.
 unfold right_whiskering_nt_component, nt_component; cbn.
 do 2 rewrite <- f_comp_prop.
