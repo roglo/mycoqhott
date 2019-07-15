@@ -1284,7 +1284,7 @@ destruct H as (η & ε & H1 & H2).
 Abort.
 
 (*
-   Other definition.
+   Other definition of adjunction.
 
    An adjunction between categories C and D is a pair of functors
    (assumed to be covariant)
