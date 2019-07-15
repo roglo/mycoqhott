@@ -1312,7 +1312,6 @@ set (Φ := λ (X X' : Obj (op C)) (Y Y' : Obj D)
 set (Φ_comm := λ (X X' : Obj (op C)) (Y Y' : Obj D)
   (η : natural_transformation (Hom_functor X (f_map_obj F Y)) (Hom_functor X' (f_map_obj F Y'))),
           nt_commute η).
-cbn in Φ, Φ_comm.
 ...
 Check (λ X Y, Hom_functor (f_map_obj F Y) X).
 (* : Obj C → Obj D → functor (cat_prod (op C) C) SetCat *)
