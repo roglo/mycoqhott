@@ -1346,33 +1346,15 @@ Definition are_adjoint {C D} (L : functor C D) (R : functor D C) :=
 
 Notation "L ⊣ R" := (are_adjoint L R) (at level 70).
 
-Example glop {𝒞 𝒟} : ∀ (L : functor 𝒞 𝒟) R, L ⊣ R → True.
-Proof.
-intros * H.
-destruct H as (η & ε & H1 & H2).
-(*
-  𝒞 : category
-  𝒟 : category
-  L : functor 𝒞 𝒟
-  R : functor 𝒟 𝒞
-  η : natural_transformation (functor_id 𝒞) (functor_comp L R)
-  ε : natural_transformation (functor_comp R L) (functor_id 𝒟)
-  H1 : dcomp (left_whiskering η R) (right_whiskering R ε) = idf R
-  H2 : dcomp (right_whiskering L η) (left_whiskering ε L) = idf L
-  ============================
-  True
-*)
-Abort.
-
 (*
    Other definition of adjunction.
 
    An adjunction between categories C and D is a pair of functors
    (assumed to be covariant)
-      F : D → C and G : C → D
+      R : D → C and L : C → D
    and, for all objects X in C and Y in D a bijection between
    the respective morphism sets
-      Hom_C (F Y, X) ≅ Hom_D (Y, G X)
+      Hom_C (R Y, X) ≅ Hom_D (Y, L X)
    such that this family of bijections is natural in X and Y.
    (Wikipedia)
 *)
@@ -1387,3 +1369,17 @@ Definition adjunction2 {C D} (L : functor C D) (R : functor D C) :=
          (Hom_functor (f_map_obj R Y) X ◦ (fop R × ¹ C))%Fun
          (Hom_functor Y (f_map_obj L X) ◦ (¹ op D × L))%Fun),
    is_natural_isomorphism η).
+
+Definition are_adjoint2 {C D} (L : functor C D) (R : functor D C) :=
+  adjunction2 L R.
+
+(* equivalence between the two definitions *)
+
+Theorem adjunction_adjunction2 {C D} (L : functor C D) (R : functor D C) :
+  are_adjoint L R ↔ are_adjoint2 L R.
+Proof.
+split.
+-intros (η & ε & H1 & H2) X Y.
+ split. {
+   assert (f : Hom (f_map_obj R Y) X → Hom Y (f_map_obj L X)). {
+     intros f.
