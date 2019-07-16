@@ -905,7 +905,7 @@ Definition SetCat :=
         g ↦ f ∘ g for each g in Hom(A, X).
 *)
 
-Theorem cov_Hom_functor_comp_prop {C} {A : Obj C} :
+Theorem cov_hom_functor_comp_prop {C} {A : Obj C} :
   ∀ (B B' B'' : Obj C) (f : Hom B B') (g : Hom B' B''),
   (λ h, g ◦ f ◦ h) =
   (@comp SetCat (existT isSet (Hom A B) (Hom_set A B))
@@ -918,7 +918,7 @@ apply extensionality; intros h.
 apply assoc.
 Qed.
 
-Theorem cov_Hom_functor_id_prop {C} {A : Obj C} :
+Theorem cov_hom_functor_id_prop {C} {A : Obj C} :
   ∀ B : Obj C,
   (λ h, idc B ◦ h) = (@idc SetCat (existT isSet (Hom A B) (Hom_set A B))).
 Proof.
@@ -927,11 +927,11 @@ apply extensionality; intros h; cbn.
 apply unit_r.
 Qed.
 
-Definition cov_Hom_functor {C} (A : Obj C) : functor C SetCat :=
+Definition cov_hom_functor {C} (A : Obj C) : functor C SetCat :=
   {| f_map_obj (X : Obj C) := existT isSet (Hom A X) (Hom_set A X) : Obj SetCat;
      f_map_hom X Y (F : Hom X Y) (G : Hom A X) := F ◦ G;
-     f_comp_prop := cov_Hom_functor_comp_prop;
-     f_id_prop := cov_Hom_functor_id_prop |}.
+     f_comp_prop := cov_hom_functor_comp_prop;
+     f_id_prop := cov_hom_functor_id_prop |}.
 
 (*
   Hom(-,B) : C → Set
@@ -942,27 +942,27 @@ Definition cov_Hom_functor {C} (A : Obj C) : functor C SetCat :=
         g ↦ g ∘ h for each g in Hom(Y, B).
 *)
 
-Definition con_Hom_functor {C} (B : Obj C) : functor (op C) SetCat :=
+Definition con_hom_functor {C} (B : Obj C) : functor (op C) SetCat :=
   {| f_map_obj (X : Obj (op C)) :=
        existT isSet (@Hom C X B) (@Hom_set C X B) : Obj SetCat;
      f_map_hom (X Y : Obj C) (H : @Hom C Y X) (G : @Hom C X B) := G ◦ H;
-     f_comp_prop := @cov_Hom_functor_comp_prop (op C) B;
-     f_id_prop := @cov_Hom_functor_id_prop (op C) B |}.
+     f_comp_prop := @cov_hom_functor_comp_prop (op C) B;
+     f_id_prop := @cov_hom_functor_id_prop (op C) B |}.
 
-Theorem con_Hom_functor_is_cov_Hom_functor_op {C} {A : Obj C} :
-  con_Hom_functor A = @cov_Hom_functor (op C) A.
+Theorem con_hom_functor_is_cov_hom_functor_op {C} {A : Obj C} :
+  con_hom_functor A = @cov_hom_functor (op C) A.
 Proof. easy. Qed.
 
 (* Hom functor: bifunctor of covariant and contravariant *)
 
-Definition Hom_functor_map_obj {C} (A B : Obj C)
+Definition hom_functor_map_obj {C} (A B : Obj C)
   (X : Obj (cat_prod (op C) C)) : Obj SetCat :=
   existT isSet (@Hom C A (snd X) * @Hom C (fst X) B)%type
     (hott4cat.ex_3_1_5 (@Hom_set C A (snd X)) (@Hom_set C (fst X) B)).
 
-Definition Hom_functor_map_hom {C} (A B : Obj C)
+Definition hom_functor_map_hom {C} (A B : Obj C)
   (X Y : Obj (cat_prod (op C) C)) (f : Hom X Y) :
-  Hom (Hom_functor_map_obj A B X) (Hom_functor_map_obj A B Y).
+  Hom (hom_functor_map_obj A B X) (hom_functor_map_obj A B Y).
 Proof.
 intros g.
 split.
@@ -970,44 +970,44 @@ split.
 -eapply comp; [ apply (fst f) | apply (snd g) ].
 Defined.
 
-Theorem Hom_functor_comp_prop {C} (A B : Obj C)
+Theorem hom_functor_comp_prop {C} (A B : Obj C)
   (X Y Z : Obj (cat_prod (op C) C))
   (f : Hom X Y) (g : Hom Y Z) :
-  Hom_functor_map_hom A B X Z (g ◦ f) =
-  Hom_functor_map_hom A B Y Z g ◦ Hom_functor_map_hom A B X Y f.
+  hom_functor_map_hom A B X Z (g ◦ f) =
+  hom_functor_map_hom A B Y Z g ◦ hom_functor_map_hom A B X Y f.
 Proof.
-unfold Hom_functor_map_hom; cbn.
+unfold hom_functor_map_hom; cbn.
 apply extensionality; intros h; cbn in h; cbn.
 now do 2 rewrite assoc.
 Qed.
 
-Theorem Hom_functor_id_prop {C} (A B : Obj C)
+Theorem hom_functor_id_prop {C} (A B : Obj C)
   (X : Obj (cat_prod C (op C))) :
-  Hom_functor_map_hom A B X X (idc X) = idc (Hom_functor_map_obj A B X).
+  hom_functor_map_hom A B X X (idc X) = idc (hom_functor_map_obj A B X).
 Proof.
-unfold Hom_functor_map_hom; cbn.
+unfold hom_functor_map_hom; cbn.
 apply extensionality; intros h; cbn in h; cbn.
 rewrite unit_l, unit_r.
 now destruct h.
 Qed.
 
-Definition Hom_functor {C} (A B : Obj C) :
+Definition hom_functor {C} (A B : Obj C) :
     functor (cat_prod (op C) C) SetCat :=
-  {| f_map_obj X := Hom_functor_map_obj A B X : Obj SetCat;
-     f_map_hom := Hom_functor_map_hom A B;
-     f_comp_prop := Hom_functor_comp_prop A B;
-     f_id_prop := Hom_functor_id_prop A B |}.
+  {| f_map_obj X := hom_functor_map_obj A B X : Obj SetCat;
+     f_map_hom := hom_functor_map_hom A B;
+     f_comp_prop := hom_functor_comp_prop A B;
+     f_id_prop := hom_functor_id_prop A B |}.
 
 (* representable functors *)
 
 Definition is_representable_functor {C} (F : functor C SetCat) :=
-  { X : Obj C & are_isomorphic_functors F (cov_Hom_functor X) }.
+  { X : Obj C & are_isomorphic_functors F (cov_hom_functor X) }.
 
 (* Yoneda lemma *)
 
 (*
   Let F be an arbitrary functor from C to SetCat. Then Yoneda's lemma
-  says that: (h^A being the cov_Hom_functor above)
+  says that: (h^A being the cov_hom_functor above)
 
   For each object A of C, the natural transformations from h^A to F
   are in one-to-one correspondence with the elements of F(A). That is,
@@ -1019,11 +1019,11 @@ Definition is_representable_functor {C} (F : functor C SetCat) :=
 *)
 
 Definition Yoneda_NT_FA {C} (F : functor C SetCat) (A : Obj C) :
-  natural_transformation (cov_Hom_functor A) F → st_type (f_map_obj F A) :=
+  natural_transformation (cov_hom_functor A) F → st_type (f_map_obj F A) :=
   λ Φ, nt_component Φ A (idc A) : st_type (f_map_obj F A).
 
 Definition Yoneda_FA_NT {C} (F : functor C SetCat) (A : Obj C) :
-  st_type (f_map_obj F A) → natural_transformation (cov_Hom_functor A) F.
+  st_type (f_map_obj F A) → natural_transformation (cov_hom_functor A) F.
 Proof.
 intros u.
 set (ϑ := λ (X : Obj C) (f : Hom A X), f_map_hom F f u).
@@ -1040,7 +1040,7 @@ apply (existT _ ϑ Hϑ).
 Defined.
 
 Lemma Yoneda {C} (F : functor C SetCat) (A : Obj C) :
-  let NT := natural_transformation (cov_Hom_functor A) F in
+  let NT := natural_transformation (cov_hom_functor A) F in
   let FA := st_type (f_map_obj F A) in
   ∃ f : NT → FA, ∃ g : FA → NT,
   (∀ x : NT, g (f x) = x) ∧ (∀ y : FA, f (g y) = y).
@@ -1132,7 +1132,7 @@ Definition functor_SetC_C_Set1 C : functor (SetC_C C) SetCat :=
 
 Definition functor_SetC_C_Set2_map_obj {C} (A : Obj (SetC_C C)) : Obj SetCat.
 Proof.
-exists (natural_transformation (cov_Hom_functor (snd A)) (fst A)).
+exists (natural_transformation (cov_hom_functor (snd A)) (fst A)).
 apply FunCat_Hom_set.
 Defined.
 
@@ -1157,7 +1157,7 @@ move Z before Y; move T before Z.
 move g before f; move h before g.
 cbn in *.
 specialize @nat_transf_comp_nt_commute as H2.
-specialize (H2 C SetCat (cov_Hom_functor X) F G η η' Z T h).
+specialize (H2 C SetCat (cov_hom_functor X) F G η η' Z T h).
 cbn in H2.
 unfold nt_component in H2.
 specialize (@hott4cat.happly _ _ _ _ H2 (g ◦ f)) as H3.
@@ -1240,7 +1240,7 @@ set (ϑ :=
   let (F, A) as p
     return
       (st_type (f_map_obj (fst p) (snd p))
-      → natural_transformation (cov_Hom_functor (snd p)) (fst p)) := F
+      → natural_transformation (cov_hom_functor (snd p)) (fst p)) := F
   in
   λ T : st_type (f_map_obj F A),
   let ϑ := λ (X : Obj C) (f : Hom A X), f_map_hom F f T in
@@ -1372,8 +1372,8 @@ Definition adjunction2 {C D} (L : functor C D) (R : functor D C) :=
    (∀ x, g (f x) = x) ∧ (∀ y, f (g y) = y)) ∧
   (∀ (η :
        natural_transformation
-         (Hom_functor (f_map_obj R Y) X ◦ (fop R × ¹ C))%Fun
-         (Hom_functor Y (f_map_obj L X) ◦ (¹ op D × L))%Fun),
+         (hom_functor (f_map_obj R Y) X ◦ (fop R × ¹ C))%Fun
+         (hom_functor Y (f_map_obj L X) ◦ (¹ op D × L))%Fun),
    is_natural_isomorphism η).
 
 Definition are_adjoint2 {C D} (L : functor C D) (R : functor D C) :=
@@ -1403,6 +1403,22 @@ Definition cone_image {J C D} {X : functor J C} (F : functor C D) :
      cn_fam := cone_image_fam F;
      cn_commute := cone_image_commute F |}.
 
+(* hom-functor preserves limits *)
+(* https://ncatlab.org/nlab/show/hom-functor+preserves+limits *)
+
+...
+Theorem hom_functor_preserves_limit {C} (A B : Obj C)
+    (F := hom_functor A B) :
+  ∀ J (X : functor J C) (cn : cone (fop X)) (cc := co_cone_of_cone_fop cn),
+  is_limit cn → is_limit (cone_image F cn).
+...
+
+Theorem hom_functor_preserves_limit {C} (A B : Obj C)
+    (F := hom_functor A B) :
+  ∀ J (X : functor J (op C × C)) (cn : cone X),
+  is_limit cn → is_limit (cone_image F cn).
+...
+
 (* RAPL : Right Adjoint Preserves Limit *)
 (* https://ncatlab.org/nlab/show/adjoints+preserve+%28co-%29limits *)
 
@@ -1418,9 +1434,10 @@ intros cn'; move cn' before cn.
 specialize (Hlim cn) as H1.
 destruct H1 as (cn1 & Hcn1).
 destruct HLR as (η & ε & H1 & H2).
-Check @Hom_functor.
+...
+Check @hom_functor.
 Print cone.
 
 Theorem lim_hom_fun {J C D} (E : functor J C) (F : functor C D) (X : Obj C) (j : Obj J) (cn : cone E) :
-  Hom_functor X (cn_fam cn j).
+  hom_functor X (cn_fam cn j).
 ...
