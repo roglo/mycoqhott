@@ -100,6 +100,14 @@ Definition functor_id C : functor C C :=
      f_comp_prop _ _ _ _ _ := eq_refl;
      f_id_prop _ := eq_refl |}.
 
+Declare Scope functor_scope.
+Delimit Scope functor_scope with F.
+
+Notation "g '◦' f" := (functor_comp f g) (at level 40, left associativity) :
+  functor_scope.
+
+(* *)
+
 Definition is_equiv_betw_cat {C D} (F : functor C D) :=
   { G : functor D C &
     functor_comp F G = functor_id C &
@@ -1370,7 +1378,20 @@ Check (λ X Y, Hom_functor (f_map_obj F Y) X).
 (* : Obj C → Obj D → functor (cat_prod (op C) C) SetCat *)
 Check (λ X Y, Hom_functor Y (f_map_obj G X)).
 (* : Obj C → Obj D → functor (cat_prod (op D) D) SetCat *)
-Check @functor_prod.
+Check
+  (λ X Y (H : functor (cat_prod (op D) C) _),
+   functor_comp H (Hom_functor (f_map_obj F Y) X)).
+(* : Obj C → Obj D
+     → functor (cat_prod (op D) C) (cat_prod (op C) C)
+     → functor (cat_prod (op D) C) SetCat
+*)
+Check
+  (λ X Y (H : functor (cat_prod (op D) C) _),
+   functor_comp H (Hom_functor Y (f_map_obj G X))).
+(* : Obj C → Obj D
+     → functor (cat_prod (op D) C) (cat_prod (op D) D)
+     → functor (cat_prod (op D) C) SetCat
+*)
 ...
 set
   (η := λ X X' Y Y',
