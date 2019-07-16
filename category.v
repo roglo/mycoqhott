@@ -1377,20 +1377,13 @@ Abort.
    (Wikipedia)
 *)
 
-Definition are_adjoint2 {C D} (F : functor D C) (G : functor C D) :=
+Definition adjunction2 {C D} (L : functor C D) (R : functor D C) :=
   ∀ X Y,
-  { f : Hom (f_map_obj F Y) X → Hom Y (f_map_obj G X) &
-  { g : Hom Y (f_map_obj G X) → Hom (f_map_obj F Y) X &
-  (∀ x, g (f x) = x) ∧ (∀ y, f (g y) = y) } }.
-
-Example glop {C D} (F : functor D C) (G : functor C D)
-  (A : Obj C) (B : Obj D) : True.
-Check (λ X Y, (Hom_functor (f_map_obj F Y) X ◦ (fop F × ¹ C))%Fun).
-(* : Obj C → Obj D → functor (op D × C) SetCat *)
-Check (λ X Y, (Hom_functor Y (f_map_obj G X) ◦ (¹ op D × G))%Fun).
-(* : Obj C → Obj D → functor (op D × C) SetCat *)
-Check (λ X Y,
-  natural_transformation
-    (Hom_functor (f_map_obj F Y) X ◦ (fop F × ¹ C))
-    (Hom_functor Y (f_map_obj G X) ◦ (¹ op D × G)))%Fun.
-...
+  (∃ f : Hom (f_map_obj R Y) X → Hom Y (f_map_obj L X),
+   ∃ g : Hom Y (f_map_obj L X) → Hom (f_map_obj R Y) X,
+   (∀ x, g (f x) = x) ∧ (∀ y, f (g y) = y)) ∧
+  (∀ (η :
+       natural_transformation
+         (Hom_functor (f_map_obj R Y) X ◦ (fop R × ¹ C))%Fun
+         (Hom_functor Y (f_map_obj L X) ◦ (¹ op D × L))%Fun),
+   is_natural_isomorphism η).
