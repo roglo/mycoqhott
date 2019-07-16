@@ -1404,6 +1404,7 @@ Definition cone_image {J C D} {X : functor J C} (F : functor C D) :
      cn_commute := cone_image_commute F |}.
 
 (* RAPL : Right Adjoint Preserves Limit *)
+(* https://ncatlab.org/nlab/show/adjoints+preserve+%28co-%29limits *)
 
 Theorem RAPL {C D} (L : functor C D) (R : functor D C) :
   L ⊣ R →
@@ -1416,4 +1417,5 @@ cbn in Hlim |-*.
 intros cn'; move cn' before cn.
 specialize (Hlim cn) as H1.
 destruct H1 as (cn1 & Hcn1).
+destruct HLR as (η & ε & H1 & H2).
 ...
