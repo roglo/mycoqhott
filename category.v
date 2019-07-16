@@ -824,7 +824,7 @@ Definition cat_prod (C1 C2 : category) : category :=
      assoc := pair_assoc;
      Hom_set := pair_isSet |}.
 
-Notation "C * D" := (cat_prod C D) : category_scope.
+Notation "C × D" := (cat_prod C D) (at level 40) : category_scope.
 
 (* product of functors *)
 
@@ -1387,18 +1387,18 @@ Check (λ X Y, Hom_functor (f_map_obj F Y) X).
 Check (λ X Y, Hom_functor Y (f_map_obj G X)).
 (* : Obj C → Obj D → functor (cat_prod (op D) D) SetCat *)
 Check
-  (λ X Y (H : functor (cat_prod (op D) C) _),
+  (λ X Y (H : functor (op D × C) _),
    functor_comp H (Hom_functor (f_map_obj F Y) X)).
 (* : Obj C → Obj D
-     → functor (cat_prod (op D) C) (cat_prod (op C) C)
-     → functor (cat_prod (op D) C) SetCat
+     → functor (op D × C) (op C × C)
+     → functor (op D × C) SetCat
 *)
 Check
   (λ X Y (H : functor (cat_prod (op D) C) _),
    functor_comp H (Hom_functor Y (f_map_obj G X))).
 (* : Obj C → Obj D
-     → functor (cat_prod (op D) C) (cat_prod (op D) D)
-     → functor (cat_prod (op D) C) SetCat
+    → functor (op D × C) (op D × D)
+    → functor (op D × C) SetCat
 *)
 ...
 set
