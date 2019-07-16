@@ -1357,6 +1357,8 @@ Notation "L ⊣ R" := (are_adjoint L R) (at level 70).
       Hom_C (R Y, X) ≅ Hom_D (Y, L X)
    such that this family of bijections is natural in X and Y.
    (Wikipedia)
+
+   (not sure my implementation is good)
 *)
 
 Definition adjunction2 {C D} (L : functor C D) (R : functor D C) :=
@@ -1372,14 +1374,3 @@ Definition adjunction2 {C D} (L : functor C D) (R : functor D C) :=
 
 Definition are_adjoint2 {C D} (L : functor C D) (R : functor D C) :=
   adjunction2 L R.
-
-(* equivalence between the two definitions *)
-
-Theorem adjunction_adjunction2 {C D} (L : functor C D) (R : functor D C) :
-  are_adjoint L R ↔ are_adjoint2 L R.
-Proof.
-split.
--intros (η & ε & H1 & H2) X Y.
- split. {
-   assert (f : Hom (f_map_obj R Y) X → Hom Y (f_map_obj L X)). {
-     intros f.
