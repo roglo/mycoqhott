@@ -1418,4 +1418,9 @@ intros cn'; move cn' before cn.
 specialize (Hlim cn) as H1.
 destruct H1 as (cn1 & Hcn1).
 destruct HLR as (η & ε & H1 & H2).
+Check @Hom_functor.
+Print cone.
+
+Theorem lim_hom_fun {J C D} (E : functor J C) (F : functor C D) (X : Obj C) (j : Obj J) (cn : cone E) :
+  Hom_functor X (cn_fam cn j).
 ...
