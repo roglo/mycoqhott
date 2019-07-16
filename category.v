@@ -142,6 +142,8 @@ Arguments cn_top [_] [_] [_].
 Arguments cn_fam [_] [_] [_].
 Arguments cc_top [_] [_] [_].
 Arguments cc_fam [_] [_] [_].
+Arguments cone _ _ D%Fun.
+Arguments co_cone _ _ D%Fun.
 
 (* category of cones & co-cones *)
 
@@ -1374,3 +1376,22 @@ Definition adjunction2 {C D} (L : functor C D) (R : functor D C) :=
 
 Definition are_adjoint2 {C D} (L : functor C D) (R : functor D C) :=
   adjunction2 L R.
+
+(* RAPL : Right Adjoint Preserves Limit *)
+
+Definition cone_image {J C D} {X : functor J C}
+    (cn : cone X) (F : functor C D) : cone (F ◦ X) :=
+  {| cn_top := f_map_obj F (cn_top cn);
+     cn_fam (j : Obj J) := 42 |}.
+...
+
+Theorem RAPL {C D} (L : functor C D) (R : functor D C) :
+  L ⊣ R →
+  ∀ J (X : functor J D) (cn : cone X),
+  is_limit cn → is_limit (cone_image cn R).
+Proof.
+intros HLR * Hlim.
+unfold is_limit, is_terminal in Hlim |-*.
+cbn in Hlim |-*.
+intros cn'.
+...
