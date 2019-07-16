@@ -1389,7 +1389,8 @@ Check (λ X Y, (Hom_functor (f_map_obj F Y) X ◦ (fop F × ¹ C))%Fun).
 (* : Obj C → Obj D → functor (op D × C) SetCat *)
 Check (λ X Y, (Hom_functor Y (f_map_obj G X) ◦ (¹ op D × G))%Fun).
 (* : Obj C → Obj D → functor (op D × C) SetCat *)
-Check (λ X Y, natural_transformation
-  (Hom_functor (f_map_obj F Y) X ◦ (fop F × ¹ C))
-  (Hom_functor Y (f_map_obj G X) ◦ (¹ op D × G)))%Fun.
+Check (λ X Y,
+  natural_transformation
+    (Hom_functor (f_map_obj F Y) X ◦ (fop F × ¹ C))
+    (Hom_functor Y (f_map_obj G X) ◦ (¹ op D × G)))%Fun.
 ...
