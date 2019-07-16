@@ -63,7 +63,7 @@ Class functor (C D : category) :=
     f_id_prop {a} : @f_map_hom a _ (idc a) = idc (f_map_obj a) }.
 
 Arguments functor C%Cat D%Cat.
-Arguments f_map_obj [_] [_] _.
+Arguments f_map_obj [_] [_] _%Fun.
 Arguments f_map_hom [_] [_] _ [_] [_].
 
 Definition fop {C D} : functor C D → functor (op C) (op D) :=
@@ -140,8 +140,10 @@ Record co_cone {J C} (D : functor J C) :=
 
 Arguments cn_top [_] [_] [_].
 Arguments cn_fam [_] [_] [_].
+Arguments cn_commute [_] [_] [_].
 Arguments cc_top [_] [_] [_].
 Arguments cc_fam [_] [_] [_].
+Arguments cc_commute [_] [_] [_].
 Arguments cone _ _ D%Fun.
 Arguments co_cone _ _ D%Fun.
 
@@ -376,14 +378,14 @@ Definition cone_fop_of_co_cone {J C} {D : functor J C} :
   λ cc,
   {| cn_top := cc_top cc : Obj (op C);
      cn_fam j := cc_fam cc j : @Hom (op C) (cc_top cc) (f_map_obj (fop D) j);
-     cn_commute i j := cc_commute D cc j i |}.
+     cn_commute i j := cc_commute cc j i |}.
 
 Definition co_cone_of_cone_fop {J C} {D : functor J C} :
     cone (fop D) → co_cone D :=
   λ cn,
   {| cc_top := cn_top cn : Obj C;
      cc_fam j := cn_fam cn j : @Hom (op C) (cn_top cn) (f_map_obj D j);
-     cc_commute i j := cn_commute (fop D) cn j i |}.
+     cc_commute i j := cn_commute cn j i |}.
 
 Definition F_CoConeCat_CoConeCat2_comp_prop {J C} {D : functor J C}
   {x y z : Obj (CoConeCat D)} :
@@ -1377,21 +1379,41 @@ Definition adjunction2 {C D} (L : functor C D) (R : functor D C) :=
 Definition are_adjoint2 {C D} (L : functor C D) (R : functor D C) :=
   adjunction2 L R.
 
-(* RAPL : Right Adjoint Preserves Limit *)
+(* cone image by a functor *)
 
-Definition cone_image {J C D} {X : functor J C}
-    (cn : cone X) (F : functor C D) : cone (F ◦ X) :=
+Definition cone_image_fam {J C D} {X : functor J C} {cn : cone X}
+    (F : functor C D) (j : Obj J) :
+    Hom (f_map_obj F (cn_top cn)) (f_map_obj (F ◦ X) j) :=
+  f_map_hom F (cn_fam cn j).
+
+Theorem cone_image_commute {J C D} {X : functor J C} (F : functor C D)
+    {cn : cone X} (i j : Obj J) (f : Hom i j) :
+  f_map_hom F (cn_fam cn j) =
+  f_map_hom (F ◦ X)%Fun f ◦ f_map_hom F (cn_fam cn i).
+Proof.
+cbn.
+rewrite (cn_commute cn i j f).
+apply f_comp_prop.
+Qed.
+
+Definition cone_image {J C D} {X : functor J C} (F : functor C D) :
+    cone X → cone (F ◦ X) :=
+  λ cn,
   {| cn_top := f_map_obj F (cn_top cn);
-     cn_fam (j : Obj J) := 42 |}.
-...
+     cn_fam := cone_image_fam F;
+     cn_commute := cone_image_commute F |}.
+
+(* RAPL : Right Adjoint Preserves Limit *)
 
 Theorem RAPL {C D} (L : functor C D) (R : functor D C) :
   L ⊣ R →
   ∀ J (X : functor J D) (cn : cone X),
-  is_limit cn → is_limit (cone_image cn R).
+  is_limit cn → is_limit (cone_image R cn).
 Proof.
 intros HLR * Hlim.
 unfold is_limit, is_terminal in Hlim |-*.
 cbn in Hlim |-*.
-intros cn'.
+intros cn'; move cn' before cn.
+specialize (Hlim cn) as H1.
+destruct H1 as (cn1 & Hcn1).
 ...
