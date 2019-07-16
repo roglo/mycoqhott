@@ -810,6 +810,42 @@ Definition cat_prod (C1 C2 : category) : category :=
      assoc := pair_assoc;
      Hom_set := pair_isSet |}.
 
+(* product of functors *)
+
+Theorem functor_prod_comp_prop {C C' D D'}
+    {F : functor C D} {F' : functor C' D'}
+    (X Y Z : Obj (cat_prod C C')) (f : Hom X Y) (g : Hom Y Z) :
+  (f_map_hom F (fst (g ◦ f)), f_map_hom F' (snd (g ◦ f))) =
+  @comp (cat_prod D D')
+        (f_map_obj F (fst X), f_map_obj F' (snd X))
+        (f_map_obj F (fst Y), f_map_obj F' (snd Y))
+        (f_map_obj F (fst Z), f_map_obj F' (snd Z))
+     (f_map_hom F (fst f), f_map_hom F' (snd f))
+     (f_map_hom F (fst g), f_map_hom F' (snd g)).
+Proof.
+now cbn; do 2 rewrite f_comp_prop.
+Defined.
+
+Theorem functor_prod_id_prop {C C' D D'}
+    {F : functor C D} {F' : functor C' D'}
+    (X : Obj (cat_prod C C')) :
+  (f_map_hom F (fst (idc X)), f_map_hom F' (snd (idc X))) =
+  @idc (cat_prod D D') (f_map_obj F (fst X), f_map_obj F' (snd X)).
+Proof.
+now cbn; do 2 rewrite f_id_prop.
+Defined.
+
+Definition functor_prod {C C' D D'} (F : functor C D) (F' : functor C' D') :
+  functor (cat_prod C C') (cat_prod D D') :=
+  {| f_map_obj (X : Obj (cat_prod C C')) :=
+       (f_map_obj F (fst X), f_map_obj F' (snd X)) : Obj (cat_prod D D');
+     f_map_hom _ _ f :=
+       (f_map_hom F (fst f), f_map_hom F' (snd f));
+     f_comp_prop :=
+       functor_prod_comp_prop;
+     f_id_prop :=
+       functor_prod_id_prop |}.
+
 (* category of sets *)
 
 Definition Set_type := { A : Type & isSet A }.
@@ -1328,48 +1364,14 @@ Definition are_adjoint2 {C D} (F : functor D C) (G : functor C D) :=
   { g : Hom Y (f_map_obj G X) → Hom (f_map_obj F Y) X &
   (∀ x, g (f x) = x) ∧ (∀ y, f (g y) = y) } }.
 
-(* functor product *)
-
-Theorem functor_prod_comp_prop {C C' D D'}
-    {F : functor C D} {F' : functor C' D'}
-    (X Y Z : Obj (cat_prod C C')) (f : Hom X Y) (g : Hom Y Z) :
-  (f_map_hom F (fst (g ◦ f)), f_map_hom F' (snd (g ◦ f))) =
-  @comp (cat_prod D D')
-        (f_map_obj F (fst X), f_map_obj F' (snd X))
-        (f_map_obj F (fst Y), f_map_obj F' (snd Y))
-        (f_map_obj F (fst Z), f_map_obj F' (snd Z))
-     (f_map_hom F (fst f), f_map_hom F' (snd f))
-     (f_map_hom F (fst g), f_map_hom F' (snd g)).
-Proof.
-now cbn; do 2 rewrite f_comp_prop.
-Defined.
-
-Definition functor_prod {C C' D D'} (F : functor C D) (F' : functor C' D') :
-  functor (cat_prod C C') (cat_prod D D') :=
-  {| f_map_obj (X : Obj (cat_prod C C')) :=
-       (f_map_obj F (fst X), f_map_obj F' (snd X)) : Obj (cat_prod D D');
-     f_map_hom _ _ f :=
-       (f_map_hom F (fst f), f_map_hom F' (snd f));
-     f_comp_prop := functor_prod_comp_prop |}.
-...
-
 Example glop {C D} (F : functor D C) (G : functor C D)
   (A : Obj C) (B : Obj D) : True.
-(*
-Check (λ (X X' : Obj (op C)) (Y Y' : Obj D),
-       natural_transformation (Hom_functor X (f_map_obj F Y)) (Hom_functor X' (f_map_obj F Y'))).
-set (Φ := λ (X X' : Obj (op C)) (Y Y' : Obj D)
-  (η : natural_transformation (Hom_functor X (f_map_obj F Y)) (Hom_functor X' (f_map_obj F Y'))),
-  nt_component η).
-set (Φ_comm := λ (X X' : Obj (op C)) (Y Y' : Obj D)
-  (η : natural_transformation (Hom_functor X (f_map_obj F Y)) (Hom_functor X' (f_map_obj F Y'))),
-          nt_commute η).
-...
-*)
 Check (λ X Y, Hom_functor (f_map_obj F Y) X).
 (* : Obj C → Obj D → functor (cat_prod (op C) C) SetCat *)
 Check (λ X Y, Hom_functor Y (f_map_obj G X)).
 (* : Obj C → Obj D → functor (cat_prod (op D) D) SetCat *)
+Check @functor_prod.
+...
 set
   (η := λ X X' Y Y',
    natural_transformation
