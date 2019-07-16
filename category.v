@@ -862,6 +862,9 @@ Definition functor_prod {C C' D D'} (F : functor C D) (F' : functor C' D') :
      f_id_prop :=
        functor_prod_id_prop |}.
 
+Arguments functor_prod _ _ _ _ F%Fun F'%Fun.
+Notation "C × D" := (functor_prod C D) (at level 40) : functor_scope.
+
 (* category of sets *)
 
 Definition Set_type := { A : Type & isSet A }.
@@ -1382,39 +1385,11 @@ Definition are_adjoint2 {C D} (F : functor D C) (G : functor C D) :=
 
 Example glop {C D} (F : functor D C) (G : functor C D)
   (A : Obj C) (B : Obj D) : True.
-Check (λ X Y, Hom_functor (f_map_obj F Y) X).
-(* : Obj C → Obj D → functor (cat_prod (op C) C) SetCat *)
-Check (λ X Y, Hom_functor Y (f_map_obj G X)).
-(* : Obj C → Obj D → functor (cat_prod (op D) D) SetCat *)
-Check
-  (λ X Y (H : functor (op D × C) _),
-   functor_comp H (Hom_functor (f_map_obj F Y) X)).
-(* : Obj C → Obj D
-     → functor (op D × C) (op C × C)
-     → functor (op D × C) SetCat
-*)
-Check
-  (λ X Y (H : functor (cat_prod (op D) C) _),
-   functor_comp H (Hom_functor Y (f_map_obj G X))).
-(* : Obj C → Obj D
-    → functor (op D × C) (op D × D)
-    → functor (op D × C) SetCat
-*)
-...
-set
-  (η := λ X X' Y Y',
-   natural_transformation
-     (Hom_functor (f_map_obj F Y) X)
-     (Hom_functor (f_map_obj F Y') X')).
-unfold natural_transformation in η.
-cbn in η.
-...
-Check (λ X Y, natural_transformation (Hom_functor (f_map_obj F Y) X)).
-Check @is_natural_isomorphism.
-Check @nt_component.
-Check (λ X, Hom_functor (f_map_obj F B) X).
-Check (λ Y, Hom_functor (f_map_obj F Y) A).
-Check (λ Y, Hom_functor Y (f_map_obj G A)).
-Check (λ X, Hom_functor B (f_map_obj G X)).
-Print natural_transformation.
+Check (λ X Y, (Hom_functor (f_map_obj F Y) X ◦ (fop F × ¹ C))%Fun).
+(* : Obj C → Obj D → functor (op D × C) SetCat *)
+Check (λ X Y, (Hom_functor Y (f_map_obj G X) ◦ (¹ op D × G))%Fun).
+(* : Obj C → Obj D → functor (op D × C) SetCat *)
+Check (λ X Y, natural_transformation
+  (Hom_functor (f_map_obj F Y) X ◦ (fop F × ¹ C))
+  (Hom_functor Y (f_map_obj G X) ◦ (¹ op D × G)))%Fun.
 ...
