@@ -10,6 +10,13 @@ Axiom extensionality : ∀ A B (f g : ∀ x : A, B x), (∀ x, f x = g x) → f 
 
 Definition isSet (A : Type) := ∀ (a b : A) (p q : a = b), p = q.
 
+Declare Scope category_scope.
+Declare Scope functor_scope.
+Declare Scope nat_transf_scope.
+Delimit Scope category_scope with Cat.
+Delimit Scope functor_scope with Fun.
+Delimit Scope nat_transf_scope with NT.
+
 Class category :=
   { Obj : Type;
     Hom : Obj → Obj → Type;
@@ -55,6 +62,7 @@ Class functor (C D : category) :=
       f_map_hom (g ◦ f) = f_map_hom g ◦ f_map_hom f;
     f_id_prop {a} : @f_map_hom a _ (idc a) = idc (f_map_obj a) }.
 
+Arguments functor C%Cat D%Cat.
 Arguments f_map_obj [_] [_] _.
 Arguments f_map_hom [_] [_] _ [_] [_].
 
@@ -99,9 +107,6 @@ Definition functor_id C : functor C C :=
      f_map_hom x y f := f;
      f_comp_prop _ _ _ _ _ := eq_refl;
      f_id_prop _ := eq_refl |}.
-
-Declare Scope functor_scope.
-Delimit Scope functor_scope with F.
 
 Notation "g '◦' f" := (functor_comp f g) (at level 40, left associativity) :
   functor_scope.
@@ -478,6 +483,8 @@ Definition natural_transformation {C D} (F : functor C D) (G : functor C D) :=
   { ϑ : ∀ x, Hom (f_map_obj F x) (f_map_obj G x) &
     ∀ x y (f : Hom x y), ϑ y ◦ f_map_hom F f = f_map_hom G f ◦ ϑ x }.
 
+Arguments natural_transformation _ _ F%Fun G%Fun.
+
 Definition nt_component {C D} {F G : functor C D}
   (η : natural_transformation F G) := projT1 η.
 Definition nt_commute {C D} {F G : functor C D}
@@ -613,9 +620,6 @@ Definition FunCat C D :=
      unit_r := FunCat_unit_r;
      assoc := FunCat_assoc;
      Hom_set := FunCat_Hom_set |}.
-
-Declare Scope nat_transf_scope.
-Delimit Scope nat_transf_scope with NT.
 
 Notation "g '◦' f" := (nat_transf_comp f g) (at level 40, left associativity) :
   nat_transf_scope.
@@ -817,6 +821,8 @@ Definition cat_prod (C1 C2 : category) : category :=
      unit_r := pair_unit_r;
      assoc := pair_assoc;
      Hom_set := pair_isSet |}.
+
+Notation "C * D" := (cat_prod C D) : category_scope.
 
 (* product of functors *)
 
@@ -1319,8 +1325,8 @@ Definition right_whiskering {D E F} {G H : functor D E} :
 (* adjunction *)
 
 Definition adjunction {C D} (L : functor C D) (R : functor D C)
-    (η : natural_transformation (functor_id C) (functor_comp L R))
-    (ε : natural_transformation (functor_comp R L) (functor_id D)) :=
+    (η : natural_transformation (functor_id C) (R ◦ L))
+    (ε : natural_transformation (L ◦ R) (functor_id D)) :=
   (right_whiskering R ε ◦ left_whiskering η R = nat_transf_id R)%NT ∧
   (left_whiskering ε L ◦ right_whiskering L η = nat_transf_id L)%NT.
 
