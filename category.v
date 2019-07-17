@@ -1424,6 +1424,7 @@ have type "natural_transformation ?F ?G".
 Check @is_natural_isomorphism.
 (* How a Hom can be naturally isomorphic to anything?
    Natural isomorphism is about functors, not morphisms *)
+Check @cov_hom_functor.
 ...
 
 Theorem hom_functor_preserves_limit {C} :
