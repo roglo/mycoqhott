@@ -1422,27 +1422,24 @@ Definition cone_image {J C D} {X : functor J C} (F : functor C D) :
 Check
   (λ J C (X_ : functor J C) (Y : Obj C) (c : cone X_) (p : is_limit c),
    hom_functor Y (cn_top c)).
+(* → functor (op C × C) SetCat *)
 (* ... to? *)
-(* lim_←i (Hom_𝒞(Y,Xi)) *)
-...
-Check cone_image.
-Check cn_fam.
 Check
-  (λ J C (X_ : functor J C) (Y : Obj C) (c : cone X_) (i : Obj J),
-   hom_functor Y (f_map_obj (cn_fam c i))).
+  (λ J C (X_ : functor J C) (Y : Obj C),
+   (cov_hom_functor Y ◦ X_)%Fun).
+(* → functor J SetCat *)
 
-   (cone_image X_ c)
-
-   hom_functor Y (cn_top c)).
+(* functors not of the same type! *)
 
 Check @is_natural_isomorphism.
-Check is_natural_isomorphism.
+
+...
 
 Theorem hom_functor_preserves_limit {C} :
   ∀ J (X_ : functor J C) (lim_i_Xi : cone X_),
   is_limit lim_i_Xi →
   ∀ (Y : Obj C) lim_i_Hom_C_Y_Xi,
-  is_natural_isomorphism
+  @is_natural_isomorphism _ _
     (hom_functor Y (cn_top lim_i_Xi))
     (cov_hom_functor Y ◦ X_)%Fun.
 ...
