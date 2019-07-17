@@ -29,7 +29,8 @@ Class category :=
     Hom_set x y : isSet (Hom x y) }.
 
 Arguments Obj : clear implicits.
-Arguments Hom [_].
+Arguments Obj C%Cat : rename.
+Arguments Hom [_%Cat].
 Notation "g '◦' f" := (comp f g) (at level 40, left associativity).
 
 Definition dom {C : category} {O1 O2 : Obj C} (f : Hom O1 O2) := O1.
@@ -1415,8 +1416,29 @@ Definition cone_image {J C D} {X : functor J C} (F : functor C D) :
         Hom_𝒞(Y,−) ∘ X : ℐ −(X)→ 𝒞 −(Hom_𝒞(Y,−))→ Set.
 *)
 
+Definition glop {C} (X Y : Obj C) (f : Hom X Y) : @Hom (op C) X Y.
+Proof.
+cbn.
+(* comment fait-on pour inverser une flèche? chuis mort *)
+...
+
+Definition functor_to_op {C} : functor C (op C) :=
+  {| f_map_obj (X : Obj C) := X : Obj (op C);
+     f_map_hom (X Y : Obj C) f := glop X Y f |}.
+...
+
+Definition glop {C} (X Y : Obj C) (f : Hom X Y) :
+  Hom ((X, X) : Obj (op C × C)) (Y, Y).
+Proof.
+Set Printing Implicit.
+cbn.
+split; [ | easy ].
+Check @fop.
+...
+
 Definition functor_to_prod_op {C} : functor C (op C × C) :=
-  {| f_map_obj (X : Obj C) := (X, X) : Obj (op C × C)%Cat |}.
+  {| f_map_obj (X : Obj C) := (X, X) : Obj (op C × C);
+     f_map_hom X Y f := 2 |}.
 ...
 
 Theorem hom_functor_preserves_limit {C} (A B : Obj C)
@@ -1435,7 +1457,8 @@ intros.
 (* I must transform X• into a functor from J to C^op × C *)
 Check (λ G : functor C (op C × C), (G ◦ X_)%Fun).
 (* : functor C (op C × C) → functor J (op C × C) *)
-(* ok, I must build this G; there must be a canonical way to do that *)
+(* ok, I must build this G of type functor C (op C × C);
+   there must be a canonical way to do that *)
 Check (λ G : functor C (op C × C), (F ◦ G ◦ X_)%Fun).
 (* so I have a functor from J to Set, a diagram
    so I can make a cone in Set *)
