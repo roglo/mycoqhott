@@ -1417,8 +1417,7 @@ Definition cone_image {J C D} {X : functor J C} (F : functor C D) :
         Hom_𝒞(Y,−) ∘ X : ℐ −(X)→ 𝒞 −(Hom_𝒞(Y,−))→ Set.
 *)
 
-Theorem hom_functor_preserves_limit {C} (A B : Obj C)
-    (F := hom_functor A B) :
+Theorem hom_functor_preserves_limit {C} :
   ∀ J (X_ : functor J C) (cn : cone X_),
   is_limit cn →
   ∀ Y (cn' : cone (cov_hom_functor Y ◦ X_)), is_limit cn'.
