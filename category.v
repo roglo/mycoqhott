@@ -1415,7 +1415,9 @@ Definition cone_image {J C D} {X : functor J C} (F : functor C D) :
         Hom_𝒞(Y,−) ∘ X : ℐ −(X)→ 𝒞 −(Hom_𝒞(Y,−))→ Set.
 *)
 
-Check @hom_functor.
+Definition functor_to_prod_op {C} : functor C (op C × C) :=
+  {| f_map_obj (X : Obj C) := (X, X) : Obj (op C × C)%Cat |}.
+...
 
 Theorem hom_functor_preserves_limit {C} (A B : Obj C)
     (F := hom_functor A B) :
