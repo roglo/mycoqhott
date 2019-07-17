@@ -1420,6 +1420,7 @@ Definition glop {C} (X Y : Obj C) (f : Hom X Y) : @Hom (op C) X Y.
 Proof.
 cbn.
 (* comment fait-on pour inverser une flèche? chuis mort *)
+Check (@fop (op C) C).
 ...
 
 Definition functor_to_op {C} : functor C (op C) :=
