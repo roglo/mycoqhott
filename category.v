@@ -1404,26 +1404,6 @@ Definition cone_image {J C D} {X : functor J C} (F : functor C D) :
      cn_fam := cone_image_fam F;
      cn_commute := cone_image_commute F |}.
 
-Definition functor_to_op {C} (A : Obj C) : functor C (op C) :=
-  {| f_map_obj X := A : Obj (op C);
-     f_map_hom X Y f := idc A;
-     f_comp_prop X Y Z f g := eq_sym (unit_l (idc A));
-     f_id_prop X := eq_refl |}.
-
-Definition functor_to_prod_op_comp_prop {C} (A X Y Z : Obj C)
-    (f : Hom X Y) (g : Hom Y Z) :
-  (idc A, g ◦ f) =
-  @comp (cat_prod _ _) (A, X) (A, Y) (A, Z) (idc A, f) (idc A, g).
-Proof.
-now cbn; rewrite unit_l.
-Defined.
-
-Definition functor_to_prod_op {C} (A : Obj C) : functor C (op C × C) :=
-  {| f_map_obj (X : Obj C) := (A, X) : Obj (op C × C);
-     f_map_hom X Y f := (idc A, f);
-     f_comp_prop := functor_to_prod_op_comp_prop A;
-     f_id_prop X := eq_refl |}.
-
 (* hom-functor preserves limits *)
 (* https://ncatlab.org/nlab/show/hom-functor+preserves+limits *)
 
@@ -1440,11 +1420,10 @@ Definition functor_to_prod_op {C} (A : Obj C) : functor C (op C × C) :=
 Theorem hom_functor_preserves_limit {C} (A B : Obj C)
     (F := hom_functor A B) :
   ∀ J (X_ : functor J C) (cn : cone X_),
-  is_limit cn → ∀ Y : Obj C, False. (*is_limit (cone_image F cn).*)
+  is_limit cn →
+  ∀ Y (cn' : cone (cov_hom_functor Y ◦ X_)), is_limit cn'.
 Proof.
-intros.
-Check (functor_to_prod_op Y).
-Check (cone (F ◦ functor_to_prod_op Y ◦ X_)%Fun).
+intros * Hlim *.
 (* is it the good cone? *)
 ...
 
