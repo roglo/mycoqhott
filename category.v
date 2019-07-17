@@ -1422,16 +1422,19 @@ The term "Hom Y (cn_top lim_i_Xi)" has type "Type" while it is expected to
 have type "natural_transformation ?F ?G".
 *)
 Check @is_natural_isomorphism.
+Check is_natural_isomorphism.
 (* How a Hom can be naturally isomorphic to anything?
-   Natural isomorphism is about functors, not morphisms *)
-Check @cov_hom_functor.
+   Natural isomorphism is about functors and natural transformations,
+   not morphisms *)
 ...
 
 Theorem hom_functor_preserves_limit {C} :
   ∀ J (X_ : functor J C) (lim_i_Xi : cone X_),
   is_limit lim_i_Xi →
   ∀ (Y : Obj C) lim_i_Hom_C_Y_Xi,
-  is_natural_isomorphism (@Hom C Y (cn_top lim_i_Xi)) lim_i_Hom_C_Y_Xi.
+  is_natural_isomorphism
+    (@Hom C Y (cn_top lim_i_Xi))
+    (cov_hom_functor Y ◦ X_)%Fun.
 ...
   ∀ Y (cn' : cone (cov_hom_functor Y ◦ X_)), is_limit cn'.
 Proof.
