@@ -1415,14 +1415,31 @@ Definition cone_image {J C D} {X : functor J C} (F : functor C D) :
         Hom_𝒞(Y,−) ∘ X : ℐ −(X)→ 𝒞 −(Hom_𝒞(Y,−))→ Set.
 *)
 
-...
+Check @hom_functor.
 
 Theorem hom_functor_preserves_limit {C} (A B : Obj C)
     (F := hom_functor A B) :
-  ∀ J (X : functor J C) (cn : cone X),
-  is_limit cn → ∀ Y : Obj C, is_limit (cone_image F cn).
+  ∀ J (X_ : functor J C) (cn : cone X_),
+  is_limit cn → ∀ Y : Obj C, False. (*is_limit (cone_image F cn).*)
+Proof.
+intros.
+(* Hom_𝒞(Y,−) is a type, and X is a functor; how can they be composed? *)
+(* How Hom_𝒞(Y,−) can be composed with anything? it is a type! *)
+(* perhaps I should understand Hom_𝒞(Y,−) as an object of Set built by
+   the hom-functor? but it is still an object, not an arrow *)
+(* X is a functor from J to C *)
+(* Hom_𝒞(Y,−) must be seen as a functor from C to Set *)
+(* F is a functor from C^op × C to Set *)
+(* I must transform X• into a functor from J to C^op × C *)
+Check (λ G : functor C (op C × C), (G ◦ X_)%Fun).
+(* : functor C (op C × C) → functor J (op C × C) *)
+(* ok, I must build this G; there must be a canonical way to do that *)
+Check (λ G : functor C (op C × C), (F ◦ G ◦ X_)%Fun).
+(* so I have a functor from J to Set, a diagram
+   so I can make a cone in Set *)
+Check (λ G : functor C (op C × C), cone (F ◦ G ◦ X_)%Fun).
+...
 Hom Y (cn_top cn) ≅
-
 ...
 
 Theorem hom_functor_preserves_limit {C} (A B : Obj C)
