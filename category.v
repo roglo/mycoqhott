@@ -1405,12 +1405,24 @@ Definition cone_image {J C D} {X : functor J C} (F : functor C D) :
 
 (* hom-functor preserves limits *)
 (* https://ncatlab.org/nlab/show/hom-functor+preserves+limits *)
+(*
+   let X• : ℐ⟶𝒞 be a diagram. Then:
+   1. If the limit lim_←i Xi exists in 𝒞 then for all Y ∈ 𝒞
+      there is a natural isomorphism
+        Hom_𝒞(Y,lim_←i Xi) ≃ lim_←i (Hom_𝒞(Y,Xi)),
+      where on the right we have the limit over the diagram of
+      hom-sets given by
+        Hom_𝒞(Y,−) ∘ X : ℐ −(X)→ 𝒞 −(Hom_𝒞(Y,−))→ Set.
+*)
 
 ...
+
 Theorem hom_functor_preserves_limit {C} (A B : Obj C)
     (F := hom_functor A B) :
-  ∀ J (X : functor J C) (cn : cone (fop X)) (cc := co_cone_of_cone_fop cn),
-  is_limit cn → is_limit (cone_image F cn).
+  ∀ J (X : functor J C) (cn : cone X),
+  is_limit cn → ∀ Y : Obj C, is_limit (cone_image F cn).
+Hom Y (cn_top cn) ≅
+
 ...
 
 Theorem hom_functor_preserves_limit {C} (A B : Obj C)
