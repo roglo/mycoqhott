@@ -1416,33 +1416,25 @@ Definition cone_image {J C D} {X : functor J C} (F : functor C D) :
         Hom_𝒞(Y,−) ∘ X : ℐ −(X)→ 𝒞 −(Hom_𝒞(Y,−))→ Set.
 *)
 
-(*
-Definition glop {C} (X Y : Obj C) (f : Hom X Y) : @Hom (op C) X Y.
+Definition functor_to_op {C} (A : Obj C) : functor C (op C) :=
+  {| f_map_obj X := A : Obj (op C);
+     f_map_hom X Y f := idc A;
+     f_comp_prop X Y Z f g := eq_sym (unit_l (idc A));
+     f_id_prop X := eq_refl |}.
+
+Definition functor_to_prod_op_comp_prop {C} (A X Y Z : Obj C)
+    (f : Hom X Y) (g : Hom Y Z) :
+  (idc A, g ◦ f) =
+  @comp (cat_prod _ _) (A, X) (A, Y) (A, Z) (idc A, f) (idc A, g).
 Proof.
-cbn.
-(* comment fait-on pour inverser une flèche? chuis mort *)
-Check (@fop (op C) C).
-...
+now cbn; rewrite unit_l.
+Defined.
 
-Definition functor_to_op {C} : functor C (op C) :=
-  {| f_map_obj (X : Obj C) := X : Obj (op C);
-     f_map_hom (X Y : Obj C) f := glop X Y f |}.
-...
-
-Definition glop {C} (X Y : Obj C) (f : Hom X Y) :
-  Hom ((X, X) : Obj (op C × C)) (Y, Y).
-Proof.
-Set Printing Implicit.
-cbn.
-split; [ | easy ].
-Check @fop.
-...
-
-Definition functor_to_prod_op {C} : functor C (op C × C) :=
-  {| f_map_obj (X : Obj C) := (X, X) : Obj (op C × C);
-     f_map_hom X Y f := 2 |}.
-...
-*)
+Definition functor_to_prod_op {C} (A : Obj C) : functor C (op C × C) :=
+  {| f_map_obj (X : Obj C) := (A, X) : Obj (op C × C);
+     f_map_hom X Y f := (idc A, f);
+     f_comp_prop := functor_to_prod_op_comp_prop A;
+     f_id_prop X := eq_refl |}.
 
 Theorem hom_functor_preserves_limit {C} (A B : Obj C)
     (F := hom_functor A B) :
@@ -1466,9 +1458,8 @@ Check (λ G : functor C (op C × C), (F ◦ G ◦ X_)%Fun).
 (* so I have a functor from J to Set, a diagram
    so I can make a cone in Set *)
 Check (λ G : functor C (op C × C), cone (F ◦ G ◦ X_)%Fun).
-(* well, let's see for G: how do I build it? *)
-(* I failed, above (now commented), to build a functor from C to C^op:
-   I don't know how to invert the arrows *)
+Check (functor_to_prod_op A).
+Check (cone (F ◦ functor_to_prod_op A ◦ X_)%Fun).
 ...
 Hom Y (cn_top cn) ≅
 ...
