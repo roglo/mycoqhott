@@ -1423,7 +1423,7 @@ have type "natural_transformation ?F ?G".
 *)
 Check @is_natural_isomorphism.
 Check is_natural_isomorphism.
-(* How a Hom can be naturally isomorphic to anything?
+(* How a morphism (Hom) can be naturally isomorphic to anything?
    Natural isomorphism is about functors and natural transformations,
    not morphisms *)
 ...
