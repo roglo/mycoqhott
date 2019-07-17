@@ -1424,7 +1424,12 @@ Theorem hom_functor_preserves_limit {C} (A B : Obj C)
   ∀ Y (cn' : cone (cov_hom_functor Y ◦ X_)), is_limit cn'.
 Proof.
 intros * Hlim *.
-(* is it the good cone? *)
+(* "First observe that, by the very definition of limiting cones,
+    maps out of some Y into them are in natural bijection with
+    the set Cones(Y,X•) of cones over the diagram X• with tip Y:
+       Hom(Y,lim⟵i Xi)≃Cones(Y,X•).
+   " *)
+(* ah bon *)
 ...
 
 Theorem hom_functor_preserves_limit {C} (A B : Obj C)
