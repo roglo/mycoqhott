@@ -1541,7 +1541,7 @@ Proof.
 cbn.
 assert (P : sstype A * sstype A). {
   split.
-  -destruct A as (Af & Ap & As); cbn.
+  -destruct A as (A & Ap & As); cbn.
 (* marche pô *)
 ...
 
