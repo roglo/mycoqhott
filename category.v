@@ -1536,10 +1536,8 @@ assert (P : sstype (subset_pair A C) → bool). {
   destruct f as (fp & Hf).
   destruct g as (gp & Hg).
   intros (HA, HC).
-Check (@sselem B).
-...
-  assert (H : { HB : sstype B & (fp (HA, HB) * gp (HB, HC))%type }). {
-    cbn.
+  destruct Hf as (Ha & Hb).
+  destruct Hg as (Hb' & Hc).
 ...
 
 Definition RelCat :=
