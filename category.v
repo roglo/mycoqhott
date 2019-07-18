@@ -1541,6 +1541,8 @@ Proof.
 exists (λ _, sstype A); cbn.
 destruct A as (A & Ap & As); cbn.
 split.
+set (x := λ A B P, sstype (sub_subset_pair A B P)).
+cbn in x.
 ...
 
 Definition RelCat :=
