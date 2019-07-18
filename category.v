@@ -1407,6 +1407,8 @@ Definition cone_image {J C D} {X : functor J C} (F : functor C D) :
 (* hom-functor preserves limits *)
 (* https://ncatlab.org/nlab/show/hom-functor+preserves+limits *)
 
+(* failed to understand and prove id
+
 (*
    let X• : ℐ⟶𝒞 be a diagram. Then:
    1. If the limit lim_←i Xi exists in 𝒞 then for all Y ∈ 𝒞
@@ -1432,8 +1434,6 @@ Check
 (* functors not of the same type! *)
 
 Check @is_natural_isomorphism.
-
-...
 
 Theorem hom_functor_preserves_limit {C} :
   ∀ J (X_ : functor J C) (lim_i_Xi : cone X_),
@@ -1482,3 +1482,19 @@ Print cone.
 Theorem lim_hom_fun {J C D} (E : functor J C) (F : functor C D) (X : Obj C) (j : Obj J) (cn : cone E) :
   hom_functor X (cn_fam cn j).
 ...
+*)
+
+(* category Rel *)
+
+(* http://angg.twu.net/tmp/2016-optativa/awodey__category_theory.pdf *)
+(* The objects of Rel are sets, and an arrow f : A → B is a relation from A
+   to B, that is, f ⊆ A × B. The identity relation {<a,a> ∈ A × A| a ∈ A}
+   is the identity arrow on a set A. Composition in Rel is to be given by
+      g ◦ f = {<a,c> ∈ A × C | ∃b (<a,b> ∈ f & <b,c> ∈ g)}
+   for f ⊆ A × B and g ⊆ B × C.
+*)
+
+Definition RelCat :=
+  {| Obj := Set_type;
+     Hom A B := st_type A → st_type B → bool;
+     comp A B C f g := 42 |}.
