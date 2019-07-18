@@ -1494,7 +1494,7 @@ Theorem lim_hom_fun {J C D} (E : functor J C) (F : functor C D) (X : Obj C) (j :
    for f ⊆ A × B and g ⊆ B × C.
 *)
 
-Definition subset_type := {A : Type & {P : A → Prop & isSet A}}.
+Definition subset_type := {A : Type & {P : A → bool & isSet A}}.
 
 Definition sstype (A : subset_type) := projT1 A.
 Definition sselem {A : subset_type} := projT1 (projT2 A).
@@ -1503,9 +1503,9 @@ Notation "a ∈ E" := (@sselem E a) (at level 60).
 Notation "a ∉ E" := (¬ @sselem E a) (at level 60).
 
 Definition sselem_pair (A B : subset_type) :
-  {P : sstype A * sstype B → Prop & isSet (sstype A * sstype B)}.
+  {P : sstype A * sstype B → bool & isSet (sstype A * sstype B)}.
 Proof.
-exists (λ X, fst X ∈ A ∧ snd X ∈ B).
+exists (λ X, andb (fst X ∈ A) (snd X ∈ B)).
 apply hott4cat.ex_3_1_5.
 -apply (projT2 (projT2 A)).
 -apply (projT2 (projT2 B)).
@@ -1521,22 +1521,24 @@ apply hott4cat.ex_3_1_5.
 -apply (projT2 (projT2 B)).
 Qed.
 
-Definition sub_subset_pair A B (P : sstype (subset_pair A B) → Prop) :
+Definition sub_subset_pair A B (P : sstype (subset_pair A B) → bool) :
   subset_type :=
     existT _ (sstype (subset_pair A B))
       (existT _ P (sub_subset_pair_isSet A B)).
 
 Definition Rel_comp (A B C : subset_type)
-  (f : {P : sstype (subset_pair A B) → Prop & sstype (sub_subset_pair A B P)})
-  (g : {P : sstype (subset_pair B C) → Prop & sstype (sub_subset_pair B C P)})
-  : {P : sstype (subset_pair A C) → Prop & sstype (sub_subset_pair A C P)}.
+  (f : {P : sstype (subset_pair A B) → bool & sstype (sub_subset_pair A B P)})
+  (g : {P : sstype (subset_pair B C) → bool & sstype (sub_subset_pair B C P)})
+  : {P : sstype (subset_pair A C) → bool & sstype (sub_subset_pair A C P)}.
 Proof.
-assert (P : sstype (subset_pair A C) → Prop). {
+assert (P : sstype (subset_pair A C) → bool). {
   cbn in f, g; cbn.
   destruct f as (fp & Hf).
   destruct g as (gp & Hg).
   intros (HA, HC).
-  assert (H : ∃ HB : sstype B, fp (HA, HB) ∧ gp (HB, HC)). {
+Check (@sselem B).
+...
+  assert (H : { HB : sstype B & (fp (HA, HB) * gp (HB, HC))%type }). {
     cbn.
 ...
 
