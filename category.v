@@ -1541,7 +1541,6 @@ Proof.
 exists (λ _, sstype A); cbn.
 destruct A as (A & Ap & As); cbn.
 split.
-(* blocked *)
 ...
 
 Definition RelCat :=
