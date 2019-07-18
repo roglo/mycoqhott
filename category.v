@@ -1496,7 +1496,12 @@ Theorem lim_hom_fun {J C D} (E : functor J C) (F : functor C D) (X : Obj C) (j :
 
 Definition subset_type := {A : Type & {P : A → Type & isSet A}}.
 (* if P : A → False, then it is an empty type, therefore an empty set *)
-(* but it must be decidable... this is a problem *)
+(* but it must be decidable... this is a problem
+   I could put bool instead of Type, i.e. A → bool, it is decidable
+   but if false, the type is not empty: it could represent a Hom
+   not empty whose type is not empty *)
+(* BTW, what is {A : Type & A → False} ? It is an empty type but it
+   is not False *)
 
 Definition sstype (A : subset_type) := projT1 A.
 Definition sselem {A : subset_type} := projT1 (projT2 A).
