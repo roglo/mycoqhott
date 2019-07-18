@@ -1494,9 +1494,15 @@ Theorem lim_hom_fun {J C D} (E : functor J C) (F : functor C D) (X : Obj C) (j :
    for f ⊆ A × B and g ⊆ B × C.
 *)
 
-Print Set_type.
+Definition subset_type := {A : Type & {P : A → Prop & isSet A}}.
 
-Definition subset_type : ...
+Definition RelCat :=
+  {| Obj := subset_type;
+     Hom A B := projT1 A → projT1 B → bool |}.
+
+(* ouais, chais pas bien *)
+
+...
 
 Definition Rel_comp (A B C : Set_type) (f : st_type A → st_type B → bool)
   (g : st_type B → st_type C → bool) :
