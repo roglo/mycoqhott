@@ -1496,24 +1496,24 @@ Theorem lim_hom_fun {J C D} (E : functor J C) (F : functor C D) (X : Obj C) (j :
 
 Definition subset_type := {A : Type & {P : A → Prop & isSet A}}.
 
+Definition sstype (A : subset_type) := projT1 A.
+Definition sselem {A : subset_type} := projT1 (projT2 A).
+
+Definition Rel_comp (A B C : subset_type)
+  (f : ∀ (a : sstype A) (b : sstype B), sselem a → sselem b → bool)
+  (g : ∀ (a : sstype B) (c : sstype C), sselem a → sselem c → bool) :
+  ∀ (a : sstype A) (c : sstype C), sselem a → sselem c → bool.
+Proof.
+intros * Ha Hc.
+eapply g; [ | apply Hc ].
+(* il faut dire qu'il existe un b ; c'est là où le bât blesse *)
+(* faut que le prédicat dans subset_type soit décidable, non ? *)
+(* ou même carrément l'axiome du choix ; putain la vache *)
+...
+
 Definition RelCat :=
   {| Obj := subset_type;
-     Hom A B := projT1 A → projT1 B → bool |}.
-
-(* ouais, chais pas bien *)
-
-...
-
-Definition Rel_comp (A B C : Set_type) (f : st_type A → st_type B → bool)
-  (g : st_type B → st_type C → bool) :
-  st_type A → st_type C → bool.
-Proof.
-intros a c.
-apply g; [ | apply c ].
-...
-
-Definition RelCat :=
-  {| Obj := Set_type;
-     Hom A B := st_type A → st_type B → bool;
+     Hom A B :=
+       ∀ (a : sstype A) (b : sstype B),
+          sselem a → sselem b → bool;
      comp := Rel_comp |}.
-...
