@@ -1494,7 +1494,15 @@ Theorem lim_hom_fun {J C D} (E : functor J C) (F : functor C D) (X : Obj C) (j :
    for f ⊆ A × B and g ⊆ B × C.
 *)
 
+Definition Rel_comp (A B C : Set_type) (f : st_type A → st_type B → bool)
+  (g : st_type B → st_type C → bool) :
+  st_type A → st_type C → bool.
+Proof.
+intros a c.
+apply g; [ | apply c ].
+...
+
 Definition RelCat :=
   {| Obj := Set_type;
      Hom A B := st_type A → st_type B → bool;
-     comp A B C f g := 42 |}.
+     comp := Rel_comp |}.
