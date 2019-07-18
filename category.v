@@ -1495,13 +1495,6 @@ Theorem lim_hom_fun {J C D} (E : functor J C) (F : functor C D) (X : Obj C) (j :
 *)
 
 Definition subset_type := {A : Type & {P : A → Type & isSet A}}.
-(* if P : A → False, then it is an empty type, therefore an empty set *)
-(* but it must be decidable... this is a problem
-   I could put bool instead of Type, i.e. A → bool, it is decidable
-   but if false, the type is not empty: it could represent a Hom
-   not empty whose type is not empty *)
-(* BTW, what is {A : Type & A → False} ? It is an empty type but it
-   is not False *)
 
 Definition sstype (A : subset_type) := projT1 A.
 Definition sselem {A : subset_type} := projT1 (projT2 A).
@@ -1538,23 +1531,25 @@ Definition Rel_comp (A B C : subset_type)
   (g : {P : sstype (subset_pair B C) → Type & sstype (sub_subset_pair B C P)})
   : {P : sstype (subset_pair A C) → Type & sstype (sub_subset_pair A C P)}.
 Proof.
-destruct f as (fp & Hf).
-destruct g as (gp & Hg).
-cbn in *.
-...
-assert (P : sstype (subset_pair A C) → Type). {
-  cbn in f, g; cbn.
-  destruct f as (fp & Hf).
-  destruct g as (gp & Hg).
-  intros (HA, HC).
-  destruct Hf as (Ha & Hb).
-  destruct Hg as (Hb' & Hc).
+exists (λ _, projT1 f (projT2 f) * projT1 g (projT2 g))%type.
+split; [ apply (projT2 f) | apply (projT2 g) ].
+Defined.
+
+Definition Rel_idc (A : subset_type) :
+  {P : sstype (subset_pair A A) → Type & sstype (sub_subset_pair A A P)}.
+Proof.
+cbn.
+assert (P : sstype A * sstype A). {
+  split.
+  -destruct A as (Af & Ap & As); cbn.
+(* marche pô *)
 ...
 
 Definition RelCat :=
   {| Obj := subset_type;
      Hom A B := { P & sstype (sub_subset_pair A B P) };
-     comp := Rel_comp |}.
+     comp := Rel_comp;
+     idc := Rel_idc |}.
 
 ...
 
