@@ -1499,6 +1499,54 @@ Definition subset_type := {A : Type & {P : A → Prop & isSet A}}.
 Definition sstype (A : subset_type) := projT1 A.
 Definition sselem {A : subset_type} := projT1 (projT2 A).
 
+Notation "a ∈ E" := (@sselem E a) (at level 60).
+Notation "a ∉ E" := (¬ @sselem E a) (at level 60).
+
+Definition sselem_pair (A B : subset_type) :
+  {P : sstype A * sstype B → Prop & isSet (sstype A * sstype B)}.
+Proof.
+exists (λ X, fst X ∈ A ∧ snd X ∈ B).
+apply hott4cat.ex_3_1_5.
+-apply (projT2 (projT2 A)).
+-apply (projT2 (projT2 B)).
+Defined.
+
+Definition subset_pair (A B : subset_type) : subset_type :=
+  existT _ (sstype A * sstype B)%type (sselem_pair A B).
+
+Definition sub_subset_pair_isSet A B : isSet (sstype (subset_pair A B)).
+Proof.
+apply hott4cat.ex_3_1_5.
+-apply (projT2 (projT2 A)).
+-apply (projT2 (projT2 B)).
+Qed.
+
+Definition sub_subset_pair A B (P : sstype (subset_pair A B) → Prop) :
+  subset_type :=
+    existT _ (sstype (subset_pair A B))
+      (existT _ P (sub_subset_pair_isSet A B)).
+
+Definition Rel_comp (A B C : subset_type)
+  (f : {P : sstype (subset_pair A B) → Prop & sstype (sub_subset_pair A B P)})
+  (g : {P : sstype (subset_pair B C) → Prop & sstype (sub_subset_pair B C P)})
+  : {P : sstype (subset_pair A C) → Prop & sstype (sub_subset_pair A C P)}.
+Proof.
+assert (P : sstype (subset_pair A C) → Prop). {
+  cbn in f, g; cbn.
+  destruct f as (fp & Hf).
+  destruct g as (gp & Hg).
+  intros (HA, HC).
+  assert (H : ∃ HB : sstype B, fp (HA, HB) ∧ gp (HB, HC)). {
+    cbn.
+...
+
+Definition RelCat :=
+  {| Obj := subset_type;
+     Hom A B := { P & sstype (sub_subset_pair A B P) };
+     comp := Rel_comp |}.
+
+...
+
 Definition Rel_comp (A B C : subset_type)
   (f : ∀ (a : sstype A) (b : sstype B), sselem a → sselem b → bool)
   (g : ∀ (a : sstype B) (c : sstype C), sselem a → sselem c → bool) :
@@ -1517,3 +1565,5 @@ Definition RelCat :=
        ∀ (a : sstype A) (b : sstype B),
           sselem a → sselem b → bool;
      comp := Rel_comp |}.
+
+...
