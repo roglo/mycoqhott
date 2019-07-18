@@ -1541,9 +1541,7 @@ Proof.
 exists (λ _, sstype A); cbn.
 destruct A as (A & Ap & As); cbn.
 split.
-(* if A is "empty", then Ap contradicts
-   if A is not empty, trivial.
-   it must be decidable *)
+(* blocked *)
 ...
 
 Definition RelCat :=
