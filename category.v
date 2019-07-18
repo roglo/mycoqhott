@@ -1538,11 +1538,12 @@ Defined.
 Definition Rel_idc (A : subset_type) :
   {P : sstype (subset_pair A A) → Type & sstype (sub_subset_pair A A P)}.
 Proof.
-cbn.
-assert (P : sstype A * sstype A). {
-  split.
-  -destruct A as (A & Ap & As); cbn.
-(* marche pô *)
+exists (λ _, sstype A); cbn.
+destruct A as (A & Ap & As); cbn.
+split.
+(* if A is "empty", then Ap contradicts
+   if A is not empty, trivial.
+   it must be decidable *)
 ...
 
 Definition RelCat :=
