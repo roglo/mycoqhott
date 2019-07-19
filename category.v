@@ -1494,45 +1494,44 @@ Theorem lim_hom_fun {J C D} (E : functor J C) (F : functor C D) (X : Obj C) (j :
    for f ⊆ A × B and g ⊆ B × C.
 *)
 
-Definition hProp := { A : Type | hott4cat.isProp A }.
+Definition hProp := { A : Type & hott4cat.isProp A }.
 
 Definition Rel_comp (A B C : Set_type)
-  (f : st_type A → st_type B → hProp)
-  (g : st_type B → st_type C → hProp) :
+  (f : st_type A → st_type B → hProp) (g : st_type B → st_type C → hProp) :
   st_type A → st_type C → hProp.
 Proof.
 intros a c.
-destruct A as (A & As).
-destruct B as (B & Bs).
-destruct C as (C & Cs).
-move B before A; move C before B.
-cbn in *.
-(* use truncation (chap3.v)
-   apply // ∃ b, (f a b * g b c) //
-   to make an hProp, where (f a b * g b c) is hProp
-*)
-...
-exists (A * C)%type.
-specialize (hott4cat.isnType_isnType_sigT A 0 (λ _, C)) as H1.
-cbn in H1.
-assert (H2 : A → hott4cat.isProp C). {
-  intros a'.
-...
-apply hott4cat.ex_3_1_5.
-exists B.
-intros b b'.
-specialize (f a b) as Ha.
-specialize (f a b') as Ha'.
-specialize (g b c) as Hc.
-specialize (g b' c) as Hc'.
+exists (hott4cat.PT { b & (projT1 (f a b) * projT1 (g b c))%type}).
+apply hott4cat.PT_eq.
+Defined.
 
-unfold hProp in Ha, Ha', Hc, Hc'.
+Definition Rel_id (A : Set_type) : st_type A → st_type A → hProp.
+Proof.
+intros a1 a2.
+exists (hott4cat.PT (st_type A)).
+apply hott4cat.PT_eq.
+Defined.
+
+Theorem Rel_unit_l (A B : Set_type) (f : st_type A → st_type B → hProp) :
+  Rel_comp A A B (Rel_id A) f = f.
+Proof.
+apply extensionality; intros a.
+apply extensionality; intros b.
+remember (f a b) as p eqn:Hp.
+destruct p as (C & HC).
+unfold Rel_comp.
+apply eq_existT_uncurried.
+assert (p :
+  hott4cat.PT {a' & (projT1 (Rel_id A a a') * projT1 (f a' b))%type} = C). {
+  cbn.
 ...
 
 Definition RelCat :=
   {| Obj := Set_type;
      Hom A B := st_type A → st_type B → hProp;
-     comp := Rel_comp |}.
+     comp := Rel_comp;
+     idc := Rel_id;
+     unit_l := Rel_unit_l |}.
 ...
      unit_l _ _ _ := eq_refl;
      unit_r _ _ _ := eq_refl;

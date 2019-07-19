@@ -492,3 +492,41 @@ apply funext in Hx.
 rewrite Hp, Hq, Hx.
 reflexivity.
 Defined.
+
+Notation "⊥" := False.
+
+Definition Σ_pr₁ {A B} (x : { y : A & B y }) : A :=
+  match x with existT _ a _ => a end.
+Definition Σ_pr₂ {A B} (x : { y : A & B y }) : B (Σ_pr₁ x) :=
+  match x with existT _ _ b => b end.
+
+Module Σ_type.
+
+Definition pr₁ {A B} := @Σ_pr₁ A B.
+Definition pr₂ {A B} := @Σ_pr₂ A B.
+
+End Σ_type.
+
+(* "3.7 Propositional truncation" *)
+
+Axiom PT : Type → Type.
+Arguments PT _%type.
+Notation "∥ A ∥" := (PT A) (A at level 0, format "∥ A ∥") : type_scope.
+
+Axiom PT_intro : ∀ A, A → ∥A∥.
+Arguments PT_intro [A] x.
+Notation "╎ A ╎" := (PT_intro A) (A at level 0, format "╎ A ╎") : type_scope.
+
+Axiom PT_eq : ∀ A, isProp ∥A∥.
+(* Arguments PT_eq [A] x y. *)
+
+(* "If B is a mere proposition and we have f : A → B, then there is an
+    induced g : ∥A∥ → B such that g(|a|) ≡ f(a) for all a : A." *)
+
+Axiom PT_rec : ∀ A B (f : A → B), isProp B →
+  Σ (g : ∥A∥ → B), ∀ a, g (PT_intro a) = f a.
+
+Definition PT_elim {A} : isProp A → ∥A∥ → A :=
+  λ PA, Σ_type.pr₁ (PT_rec A A mid PA).
+Definition PT_intro_not {A} : notT A → notT ∥A∥ :=
+  λ f, Σ_type.pr₁ (PT_rec A ⊥ f (λ x y : ⊥, match x with end)).
