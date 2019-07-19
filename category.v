@@ -1494,43 +1494,50 @@ Theorem lim_hom_fun {J C D} (E : functor J C) (F : functor C D) (X : Obj C) (j :
    for f ⊆ A × B and g ⊆ B × C.
 *)
 
-Definition subset_type :=
-  {A : Type & (isSet A * (A + (A → False)))%type}.
+Definition hProp := { A : Type | hott4cat.isProp A }.
 
-Definition sstype (A : subset_type) : Type := projT1 A.
-Definition ssempty (A : subset_type) := snd (projT2 A).
-
-Definition Rel_comp (A B C : subset_type)
-  (f : sstype A → sstype B → Type)
-  (g : sstype B → sstype C → Type) :
-  sstype A → sstype C → Type.
+Definition Rel_comp (A B C : Set_type)
+  (f : st_type A → st_type B → hProp)
+  (g : st_type B → st_type C → hProp) :
+  st_type A → st_type C → hProp.
 Proof.
 intros a c.
-apply g; [ | apply c ].
-destruct A as (A & As & Ad).
-destruct B as (B & Bs & Bd).
-destruct C as (C & Cs & Cd).
+destruct A as (A & As).
+destruct B as (B & Bs).
+destruct C as (C & Cs).
 move B before A; move C before B.
 cbn in *.
-destruct Bd as [b| Hb]. {
-  specialize (f a b) as H1.
-  specialize (g b c) as H2.
-  admit.
-}
+(* use truncation (chap3.v)
+   apply // ∃ b, (f a b * g b c) //
+   to make an hProp, where (f a b * g b c) is hProp
+*)
+...
+exists (A * C)%type.
+specialize (hott4cat.isnType_isnType_sigT A 0 (λ _, C)) as H1.
+cbn in H1.
+assert (H2 : A → hott4cat.isProp C). {
+  intros a'.
+...
+apply hott4cat.ex_3_1_5.
+exists B.
+intros b b'.
+specialize (f a b) as Ha.
+specialize (f a b') as Ha'.
+specialize (g b c) as Hc.
+specialize (g b' c) as Hc'.
+
+unfold hProp in Ha, Ha', Hc, Hc'.
 ...
 
 Definition RelCat :=
-  {| Obj := subset_type;
-     Hom A B := sstype A → sstype B → Type;
+  {| Obj := Set_type;
+     Hom A B := st_type A → st_type B → hProp;
      comp := Rel_comp |}.
 ...
      unit_l _ _ _ := eq_refl;
      unit_r _ _ _ := eq_refl;
      assoc _ _ _ _ _ _ _ := eq_refl;
      Hom_set := SetCat_Hom_set |}.
-
-...
-
 ...
 
 Definition st_type (st : Set_type) := projT1 st.
