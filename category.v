@@ -1495,14 +1495,10 @@ Theorem lim_hom_fun {J C D} (E : functor J C) (F : functor C D) (X : Obj C) (j :
 *)
 
 Definition subset_type :=
-  {A : Type & (isSet A * {P : A → Type & ∀ x, P x + (P x → False)})%type}.
+  {A : Type & (isSet A * (A + (A → False)))%type}.
 
 Definition sstype (A : subset_type) : Type := projT1 A.
-Definition sselem (A : subset_type) := projT1 (snd (projT2 A)).
-Definition ssempty (A : subset_type) := projT2 (snd (projT2 A)).
-
-Notation "a ∈ E" := (@sselem E a) (at level 60).
-Notation "a ∉ E" := (¬ @sselem E a) (at level 60).
+Definition ssempty (A : subset_type) := snd (projT2 A).
 
 Definition Rel_comp (A B C : subset_type)
   (f : sstype A → sstype B → Type)
@@ -1511,22 +1507,22 @@ Definition Rel_comp (A B C : subset_type)
 Proof.
 intros a c.
 apply g; [ | apply c ].
-specialize (f a) as H1.
-set (H2 := λ b, g b c).
-destruct A as (A & As & Ap & Ad).
-destruct B as (B & Bs & Bp & Bd).
-destruct C as (C & Cs & Cp & Cd).
+destruct A as (A & As & Ad).
+destruct B as (B & Bs & Bd).
+destruct C as (C & Cs & Cd).
 move B before A; move C before B.
-move Bs before As; move Cs before Bs.
-move Bp before Ap; move Cp before Bp.
 cbn in *.
-(* I can test if b ∈ B, but I cannot test b:B ! *)
+destruct Bd as [b| Hb]. {
+  specialize (f a b) as H1.
+  specialize (g b c) as H2.
+  admit.
+}
 ...
 
 Definition RelCat :=
   {| Obj := subset_type;
      Hom A B := sstype A → sstype B → Type;
-     comp := 42 |}.
+     comp := Rel_comp |}.
 ...
      unit_l _ _ _ := eq_refl;
      unit_r _ _ _ := eq_refl;
