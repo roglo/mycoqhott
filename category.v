@@ -1525,6 +1525,14 @@ assert (p :
   hott4cat.PT {a' & (projT1 (Rel_id A a a') * projT1 (f a' b))%type} = C). {
   cbn.
 ...
+Check hott4cat.PT_eq.
+Search hott4cat.PT.
+Check hott4cat.PT.
+Check @hott4cat.PT_elim.
+...
+}
+exists p.
+...
 
 Definition RelCat :=
   {| Obj := Set_type;
