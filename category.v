@@ -1529,6 +1529,13 @@ Definition hott_3_3_3_tac P Q :
   isProp P → isProp Q → (P → Q) → (Q → P) → P ≃ Q.
 *)
 (* but "P → Q" is not provable here *)
+assert (p :
+  hott4cat.PT
+    {a' : st_type A & (hott4cat.PT (st_type A) * projT1 (f a' b))%type}
+  → C). {
+  intros H1.
+  apply hott4cat.PT_elim in H1. {
+    destruct H1 as (a' & Ha1 & Ha2).
 ...
 Search hott4cat.PT.
 Check hott4cat.PT_eq.
