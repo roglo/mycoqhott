@@ -1510,18 +1510,11 @@ move B before A; move C before B.
 cbn in *.
 ...
 
-Definition Rel_idc (A : Set_type) : st_type A → st_type A → Type.
-Proof.
-intros a a'.
-destruct A as (A & As).
-cbn in *.
-...
-
 Definition RelCat :=
   {| Obj := Set_type;
      Hom A B := st_type A → st_type B → Type;
      comp := Rel_comp;
-     idc := Rel_idc |}.
+     idc A _ _ := st_type A |}.
 ...
      unit_l _ _ _ := eq_refl;
      unit_r _ _ _ := eq_refl;
