@@ -1494,6 +1494,54 @@ Theorem lim_hom_fun {J C D} (E : functor J C) (F : functor C D) (X : Obj C) (j :
    for f ⊆ A × B and g ⊆ B × C.
 *)
 
+Definition subset_type :=
+  {A : Type & (isSet A * {P : A → Type & ∀ x, P x + (P x → False)})%type}.
+
+Definition sstype (A : subset_type) : Type := projT1 A.
+Definition sselem (A : subset_type) := projT1 (snd (projT2 A)).
+Definition ssempty (A : subset_type) := projT2 (snd (projT2 A)).
+
+Notation "a ∈ E" := (@sselem E a) (at level 60).
+Notation "a ∉ E" := (¬ @sselem E a) (at level 60).
+
+Definition Rel_comp (A B C : subset_type)
+  (f : sstype A → sstype B → Type)
+  (g : sstype B → sstype C → Type) :
+  sstype A → sstype C → Type.
+Proof.
+intros a c.
+apply g; [ | apply c ].
+specialize (f a) as H1.
+set (H2 := λ b, g b c).
+destruct A as (A & As & Ap & Ad).
+destruct B as (B & Bs & Bp & Bd).
+destruct C as (C & Cs & Cp & Cd).
+move B before A; move C before B.
+move Bs before As; move Cs before Bs.
+move Bp before Ap; move Cp before Bp.
+cbn in *.
+(* I can test if b ∈ B, but I cannot test b:B ! *)
+...
+
+Definition RelCat :=
+  {| Obj := subset_type;
+     Hom A B := sstype A → sstype B → Type;
+     comp := 42 |}.
+...
+     unit_l _ _ _ := eq_refl;
+     unit_r _ _ _ := eq_refl;
+     assoc _ _ _ _ _ _ _ := eq_refl;
+     Hom_set := SetCat_Hom_set |}.
+
+...
+
+...
+
+Definition st_type (st : Set_type) := projT1 st.
+Definition st_is_set (st : Set_type) := projT2 st.
+
+...
+
 Definition Rel_comp (A B C : Set_type)
   (f : st_type A → st_type B → Type)
   (g : st_type B → st_type C → Type) :
@@ -1508,19 +1556,6 @@ destruct B as (B & Bs).
 destruct C as (C & Cs).
 move B before A; move C before B.
 cbn in *.
-...
-
-Definition RelCat :=
-  {| Obj := Set_type;
-     Hom A B := st_type A → st_type B → Type;
-     comp := Rel_comp;
-     idc A _ _ := st_type A |}.
-...
-     unit_l _ _ _ := eq_refl;
-     unit_r _ _ _ := eq_refl;
-     assoc _ _ _ _ _ _ _ := eq_refl;
-     Hom_set := SetCat_Hom_set |}.
-
 ...
 
 Definition subset_type := {A : Type & {P : A → Type & isSet A}}.
