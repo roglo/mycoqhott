@@ -1524,9 +1524,14 @@ apply eq_existT_uncurried.
 assert (p :
   hott4cat.PT {a' & (projT1 (Rel_id A a a') * projT1 (f a' b))%type} = C). {
   cbn.
+(*
+Definition hott_3_3_3_tac P Q :
+  isProp P → isProp Q → (P → Q) → (Q → P) → P ≃ Q.
+*)
+(* but "P → Q" is not provable here *)
 ...
-Check hott4cat.PT_eq.
 Search hott4cat.PT.
+Check hott4cat.PT_eq.
 Check hott4cat.PT.
 Check @hott4cat.PT_elim.
 ...
