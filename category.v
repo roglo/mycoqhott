@@ -1494,6 +1494,42 @@ Theorem lim_hom_fun {J C D} (E : functor J C) (F : functor C D) (X : Obj C) (j :
    for f ⊆ A × B and g ⊆ B × C.
 *)
 
+Definition Rel_comp (A B C : Set_type)
+  (f : st_type A → st_type B → Type)
+  (g : st_type B → st_type C → Type) :
+  st_type A → st_type C → Type.
+Proof.
+intros a c.
+apply g; [ | apply c ].
+specialize (f a) as H1.
+set (H2 := λ b, g b c).
+destruct A as (A & As).
+destruct B as (B & Bs).
+destruct C as (C & Cs).
+move B before A; move C before B.
+cbn in *.
+...
+
+Definition Rel_idc (A : Set_type) : st_type A → st_type A → Type.
+Proof.
+intros a a'.
+destruct A as (A & As).
+cbn in *.
+...
+
+Definition RelCat :=
+  {| Obj := Set_type;
+     Hom A B := st_type A → st_type B → Type;
+     comp := Rel_comp;
+     idc := Rel_idc |}.
+...
+     unit_l _ _ _ := eq_refl;
+     unit_r _ _ _ := eq_refl;
+     assoc _ _ _ _ _ _ _ := eq_refl;
+     Hom_set := SetCat_Hom_set |}.
+
+...
+
 Definition subset_type := {A : Type & {P : A → Type & isSet A}}.
 
 Definition sstype (A : subset_type) := projT1 A.
