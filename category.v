@@ -541,7 +541,7 @@ Definition is_natural_isomorphism {C D} {F G : functor C D}
 
 (* category of functors *)
 
-Theorem FunCat_unit_l {C D} (F G : functor C D) :
+Theorem Fun_unit_l {C D} (F G : functor C D) :
   ∀ (f : natural_transformation F G), nat_transf_comp (nat_transf_id F) f = f.
 Proof.
 intros.
@@ -560,7 +560,7 @@ apply extensionality; intros g.
 apply Hom_set.
 Qed.
 
-Theorem FunCat_unit_r {C D} (F G : functor C D) :
+Theorem Fun_unit_r {C D} (F G : functor C D) :
   ∀ (f : natural_transformation F G), nat_transf_comp f (nat_transf_id G) = f.
 Proof.
 intros.
@@ -579,7 +579,7 @@ apply extensionality; intros g.
 apply Hom_set.
 Qed.
 
-Theorem FunCat_assoc {C D} (F G H I : functor C D) :
+Theorem Fun_assoc {C D} (F G H I : functor C D) :
   ∀ (η : natural_transformation F G) (η' : natural_transformation G H)
      (η'' : natural_transformation H I),
   nat_transf_comp η (nat_transf_comp η' η'') =
@@ -601,7 +601,7 @@ apply extensionality; intros z.
 apply Hom_set.
 Qed.
 
-Theorem FunCat_Hom_set {C D} : ∀ F G : functor C D,
+Theorem Fun_Hom_set {C D} : ∀ F G : functor C D,
   isSet (natural_transformation F G).
 Proof.
 intros.
@@ -623,10 +623,10 @@ Definition FunCat C D :=
      Hom := natural_transformation;
      comp _ _ _ := nat_transf_comp;
      idc := nat_transf_id;
-     unit_l := FunCat_unit_l;
-     unit_r := FunCat_unit_r;
-     assoc := FunCat_assoc;
-     Hom_set := FunCat_Hom_set |}.
+     unit_l := Fun_unit_l;
+     unit_r := Fun_unit_r;
+     assoc := Fun_assoc;
+     Hom_set := Fun_Hom_set |}.
 
 Notation "g '◦' f" := (nat_transf_comp f g) (at level 40, left associativity) :
   nat_transf_scope.
@@ -1134,7 +1134,7 @@ Definition functor_SetC_C_Set1 C : functor (SetC_C C) SetCat :=
 Definition functor_SetC_C_Set2_map_obj {C} (A : Obj (SetC_C C)) : Obj SetCat.
 Proof.
 exists (natural_transformation (cov_hom_functor (snd A)) (fst A)).
-apply FunCat_Hom_set.
+apply Fun_Hom_set.
 Defined.
 
 Definition functor_SetC_C_Set2_map_hom {C} (X Y : Obj (SetC_C C))
