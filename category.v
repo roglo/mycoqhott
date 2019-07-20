@@ -1629,14 +1629,20 @@ Definition FinSetCat :=
 (* category of partially ordered sets (posets) *)
 
 Record Poset_type :=
-  { pt_type : Type;
-    pt_le : pt_type → pt_type → Type;
-    pt_refl : ∀ a : pt_type, pt_le a a;
-    pt_trans : ∀ a b c, pt_le a b → pt_le b c → pt_le a c;
-    pt_antisym : ∀ a b, pt_le a b → pt_le b a → a = b }.
+  { ps_type : Type;
+    ps_le : ps_type → ps_type → Type;
+    ps_refl : ∀ a : ps_type, ps_le a a;
+    ps_trans : ∀ a b c, ps_le a b → ps_le b c → ps_le a c;
+    ps_antisym : ∀ a b, ps_le a b → ps_le b a → a = b }.
 
-Arguments pt_le {_}.
+Arguments ps_le {_}.
+
+Definition is_monotone {A B} (f : ps_type A → ps_type B) :=
+  ∀ a a' : ps_type A, ps_le a a' → ps_le (f a) (f a').
+
+Definition Poset_Hom A B := { f : ps_type A → ps_type B & is_monotone f }.
 
 Definition PosetCat :=
   {| Obj := Poset_type;
-     Hom A B := 42 |}.
+     Hom := Poset_Hom;
+     comp := 42 |}.
