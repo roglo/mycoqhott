@@ -1629,11 +1629,11 @@ Definition FinSetCat :=
 
 (* category of partially ordered sets (posets) *)
 
-Record Poset_type :=
+Record Pos_type :=
   { ps_type : Set_type;
     ps_le : st_type ps_type → st_type ps_type → Type;
 (*
-    These properties are not needed in Poset category:
+    These properties are not needed in Pos category:
     ps_refl : ∀ a : st_type ps_type, ps_le a a;
     ps_trans : ∀ a b c, ps_le a b → ps_le b c → ps_le a c;
     ps_antisym : ∀ a b, ps_le a b → ps_le b a → a = b;
@@ -1647,25 +1647,25 @@ Definition ps_stype A := st_type (ps_type A).
 Definition is_monotone {A B} (f : ps_stype A → ps_stype B) :=
   ∀ a a' : ps_stype A, ps_le a a' → ps_le (f a) (f a').
 
-Definition Poset_Hom A B := { f : ps_stype A → ps_stype B & is_monotone f }.
+Definition Pos_Hom A B := { f : ps_stype A → ps_stype B & is_monotone f }.
 
-Definition Poset_comp A B C (f : Poset_Hom A B) (g : Poset_Hom B C) :
-  Poset_Hom A C.
+Definition Pos_comp A B C (f : Pos_Hom A B) (g : Pos_Hom B C) :
+  Pos_Hom A C.
 Proof.
 exists (λ a, projT1 g (projT1 f a)).
 intros a a' Hle.
 now apply (projT2 g), (projT2 f).
 Defined.
 
-Definition Poset_id A : Poset_Hom A A.
+Definition Pos_id A : Pos_Hom A A.
 Proof.
 now exists (λ a, a).
 Defined.
 
-Theorem Poset_unit_l A B (f : Poset_Hom A B) :
-  Poset_comp A A B (Poset_id A) f = f.
+Theorem Pos_unit_l A B (f : Pos_Hom A B) :
+  Pos_comp A A B (Pos_id A) f = f.
 Proof.
-unfold Poset_comp, Poset_id; cbn.
+unfold Pos_comp, Pos_id; cbn.
 destruct f as (f & Hf); cbn.
 apply eq_existT_uncurried.
 assert (p : (λ a, f a) = f). {
@@ -1679,9 +1679,9 @@ apply extensionality; intros g.
 apply ps_prop.
 Qed.
 
-Theorem Poset_unit_r A B (f : Poset_Hom A B) :
- Poset_comp A B B f (Poset_id B) = f.
-unfold Poset_comp, Poset_id; cbn.
+Theorem Pos_unit_r A B (f : Pos_Hom A B) :
+ Pos_comp A B B f (Pos_id B) = f.
+unfold Pos_comp, Pos_id; cbn.
 destruct f as (f & Hf); cbn.
 apply eq_existT_uncurried.
 assert (p : (λ a, f a) = f). {
@@ -1695,16 +1695,16 @@ apply extensionality; intros g.
 apply ps_prop.
 Qed.
 
-Theorem Poset_assoc A B C D (f : Poset_Hom A B) (g : Poset_Hom B C)
-  (h : Poset_Hom C D) :
-  Poset_comp A B D f (Poset_comp B C D g h) =
-  Poset_comp A C D (Poset_comp A B C f g) h.
+Theorem Pos_assoc A B C D (f : Pos_Hom A B) (g : Pos_Hom B C)
+  (h : Pos_Hom C D) :
+  Pos_comp A B D f (Pos_comp B C D g h) =
+  Pos_comp A C D (Pos_comp A B C f g) h.
 Proof.
 apply eq_existT_uncurried.
 now exists eq_refl.
 Defined.
 
-Theorem Poset_Hom_set A B : isSet (Poset_Hom A B).
+Theorem Pos_Hom_set A B : isSet (Pos_Hom A B).
 Proof.
 apply hott4cat.is_set_is_set_sigT. {
   intros f.
@@ -1721,12 +1721,12 @@ unfold ps_stype; cbn.
 apply st_is_set.
 Defined.
 
-Definition PosetCat :=
-  {| Obj := Poset_type;
-     Hom := Poset_Hom;
-     comp := Poset_comp;
-     idc := Poset_id;
-     unit_l := Poset_unit_l;
-     unit_r := Poset_unit_r;
-     assoc := Poset_assoc;
-     Hom_set := Poset_Hom_set |}.
+Definition PosCat :=
+  {| Obj := Pos_type;
+     Hom := Pos_Hom;
+     comp := Pos_comp;
+     idc := Pos_id;
+     unit_l := Pos_unit_l;
+     unit_r := Pos_unit_r;
+     assoc := Pos_assoc;
+     Hom_set := Pos_Hom_set |}.
