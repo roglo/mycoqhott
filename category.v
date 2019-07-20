@@ -8,7 +8,8 @@ Set Nested Proofs Allowed.
 
 Axiom extensionality : ∀ A B (f g : ∀ x : A, B x), (∀ x, f x = g x) → f = g.
 
-Definition isSet (A : Type) := ∀ (a b : A) (p q : a = b), p = q.
+Definition isSet := hott4cat.isSet.
+Definition isProp := hott4cat.isProp.
 
 Declare Scope category_scope.
 Declare Scope functor_scope.
@@ -1494,7 +1495,7 @@ Theorem lim_hom_fun {J C D} (E : functor J C) (F : functor C D) (X : Obj C) (j :
    for f ⊆ A × B and g ⊆ B × C.
 *)
 
-Definition hProp := { A : Type & hott4cat.isProp A }.
+Definition hProp := { A : Type & isProp A }.
 
 Definition Rel_comp (A B C : Set_type)
   (f : st_type A → st_type B → hProp) (g : st_type B → st_type C → hProp) :
@@ -1637,7 +1638,7 @@ Record Poset_type :=
     ps_trans : ∀ a b c, ps_le a b → ps_le b c → ps_le a c;
     ps_antisym : ∀ a b, ps_le a b → ps_le b a → a = b;
 *)
-    ps_prop : ∀ a b, hott4cat.isProp (ps_le a b) }.
+    ps_prop : ∀ a b, isProp (ps_le a b) }.
 
 Arguments ps_le {_}.
 
