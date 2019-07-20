@@ -1642,7 +1642,16 @@ Definition is_monotone {A B} (f : ps_type A → ps_type B) :=
 
 Definition Poset_Hom A B := { f : ps_type A → ps_type B & is_monotone f }.
 
+Definition Poset_comp A B C (f : Poset_Hom A B) (g : Poset_Hom B C) :
+  Poset_Hom A C.
+Proof.
+exists (λ a, projT1 g (projT1 f a)).
+intros a a' Hle.
+now apply (projT2 g), (projT2 f).
+Defined.
+
 Definition PosetCat :=
   {| Obj := Poset_type;
      Hom := Poset_Hom;
-     comp := 42 |}.
+     comp := Poset_comp;
+     idc A := 42 |}.
