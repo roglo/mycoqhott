@@ -1631,9 +1631,12 @@ Definition FinSetCat :=
 Record Poset_type :=
   { ps_type : Set_type;
     ps_le : st_type ps_type → st_type ps_type → Type;
+(*
+    These properties are not needed in Poset category:
     ps_refl : ∀ a : st_type ps_type, ps_le a a;
     ps_trans : ∀ a b c, ps_le a b → ps_le b c → ps_le a c;
     ps_antisym : ∀ a b, ps_le a b → ps_le b a → a = b;
+*)
     ps_prop : ∀ a b, hott4cat.isProp (ps_le a b) }.
 
 Arguments ps_le {_}.
