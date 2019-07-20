@@ -1600,7 +1600,10 @@ Definition RelCat :=
 
 (* category of finite sets *)
 
-Definition FinSet_type := { S : Type & (isSet S * (S → nat))%type }.
+Definition isInj {A B} (f : A → B) := ∀ x y : A, f x = f y → x = y.
+Definition isFin T := { f : T → nat & isInj f }.
+
+Definition FinSet_type := { S : Type & (isSet S * isFin S)%type }.
 
 Definition fs_type (FS : FinSet_type) := projT1 FS.
 Definition fs_is_set (FS : FinSet_type) := fst (projT2 FS).
