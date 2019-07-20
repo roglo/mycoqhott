@@ -1625,3 +1625,16 @@ Definition FinSetCat :=
      unit_r _ _ _ := eq_refl;
      assoc _ _ _ _ _ _ _ := eq_refl;
      Hom_set := FinSet_Hom_set |}.
+
+(* category of partially ordered sets (posets) *)
+
+Record Poset_type :=
+  { pt_type : Type;
+    pt_le : pt_type → pt_type → Type;
+    pt_refl : ∀ a : pt_type, pt_le a a;
+    pt_trans : ∀ a b c, pt_le a b → pt_le b c → pt_le a c;
+    pt_antisym : ∀ a b, pt_le a b → pt_le b a → a = b }.
+
+Definition PosetCat :=
+  {| Obj := Poset_type;
+     Hom A B := 42 |}.
