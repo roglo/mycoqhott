@@ -1629,19 +1629,21 @@ Definition FinSetCat :=
 (* category of partially ordered sets (posets) *)
 
 Record Poset_type :=
-  { ps_type : Type;
-    ps_le : ps_type → ps_type → Type;
-    ps_refl : ∀ a : ps_type, ps_le a a;
+  { ps_type : Set_type;
+    ps_le : st_type ps_type → st_type ps_type → Type;
+    ps_refl : ∀ a : st_type ps_type, ps_le a a;
     ps_trans : ∀ a b c, ps_le a b → ps_le b c → ps_le a c;
     ps_antisym : ∀ a b, ps_le a b → ps_le b a → a = b;
     ps_prop : ∀ a b, hott4cat.isProp (ps_le a b) }.
 
 Arguments ps_le {_}.
 
-Definition is_monotone {A B} (f : ps_type A → ps_type B) :=
-  ∀ a a' : ps_type A, ps_le a a' → ps_le (f a) (f a').
+Definition ps_stype A := st_type (ps_type A).
 
-Definition Poset_Hom A B := { f : ps_type A → ps_type B & is_monotone f }.
+Definition is_monotone {A B} (f : ps_stype A → ps_stype B) :=
+  ∀ a a' : ps_stype A, ps_le a a' → ps_le (f a) (f a').
+
+Definition Poset_Hom A B := { f : ps_stype A → ps_stype B & is_monotone f }.
 
 Definition Poset_comp A B C (f : Poset_Hom A B) (g : Poset_Hom B C) :
   Poset_Hom A C.
@@ -1711,9 +1713,9 @@ apply hott4cat.is_set_is_set_sigT. {
 }
 apply hott4cat.ex_3_1_6.
 intros a.
-Print Poset_type.
-(* needs ps_type to be Set_type, not just Type *)
-...
+unfold ps_stype; cbn.
+apply st_is_set.
+Defined.
 
 Definition PosetCat :=
   {| Obj := Poset_type;
