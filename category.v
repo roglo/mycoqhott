@@ -1707,6 +1707,12 @@ apply hott4cat.is_set_is_set_sigT. {
   apply extensionality; intros a.
   apply extensionality; intros a'.
   apply extensionality; intros p.
+  apply ps_prop.
+}
+apply hott4cat.ex_3_1_6.
+intros a.
+Print Poset_type.
+(* needs ps_type to be Set_type, not just Type *)
 ...
 
 Definition PosetCat :=
