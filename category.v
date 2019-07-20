@@ -877,7 +877,7 @@ Definition Set_type := { A : Type & isSet A }.
 Definition st_type (st : Set_type) := projT1 st.
 Definition st_is_set (st : Set_type) := projT2 st.
 
-Theorem SetCat_Hom_set : ∀ x y : Set_type, isSet (st_type x → st_type y).
+Theorem Set_Hom_set : ∀ x y : Set_type, isSet (st_type x → st_type y).
 Proof.
 intros (A, HA) (B, HB).
 move B before A; cbn.
@@ -893,7 +893,7 @@ Definition SetCat :=
      unit_l _ _ _ := eq_refl;
      unit_r _ _ _ := eq_refl;
      assoc _ _ _ _ _ _ _ := eq_refl;
-     Hom_set := SetCat_Hom_set |}.
+     Hom_set := Set_Hom_set |}.
 
 (* Hom functors covariant and contravariant *)
 
@@ -1546,6 +1546,8 @@ assert (p :
       move D before C; move HD before HC; move Hq before Hp.
       move a' before a.
       cbn in d.
+Abort. (* doesn't work; and even if it works, it would require univalence *)
+(*
 ...
 (*
 Definition hott_3_3_3_tac P Q :
@@ -1565,6 +1567,7 @@ Check hott4cat.PT_eq.
 Check hott4cat.PT.
 Check @hott4cat.PT_elim.
 ...
+*)
 
 (*
 Theorem Rel_unit_r (A B : Set_type) (f : st_type A → st_type B → hProp) :
@@ -1584,6 +1587,7 @@ assert (p :
 ...
 *)
 
+(*
 Definition RelCat :=
   {| Obj := Set_type;
      Hom A B := st_type A → st_type B → hProp;
@@ -1592,8 +1596,4 @@ Definition RelCat :=
      unit_l := Rel_unit_l |}.
      unit_r := Rel_unit_r |}.
 ...
-     unit_l _ _ _ := eq_refl;
-     unit_r _ _ _ := eq_refl;
-     assoc _ _ _ _ _ _ _ := eq_refl;
-     Hom_set := SetCat_Hom_set |}.
-...
+*)
