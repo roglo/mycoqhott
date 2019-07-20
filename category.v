@@ -1633,7 +1633,8 @@ Record Poset_type :=
     ps_le : ps_type → ps_type → Type;
     ps_refl : ∀ a : ps_type, ps_le a a;
     ps_trans : ∀ a b c, ps_le a b → ps_le b c → ps_le a c;
-    ps_antisym : ∀ a b, ps_le a b → ps_le b a → a = b }.
+    ps_antisym : ∀ a b, ps_le a b → ps_le b a → a = b;
+    ps_prop : ∀ a b, hott4cat.isProp (ps_le a b) }.
 
 Arguments ps_le {_}.
 
@@ -1650,8 +1651,32 @@ intros a a' Hle.
 now apply (projT2 g), (projT2 f).
 Defined.
 
+Definition Poset_id A : Poset_Hom A A.
+Proof.
+now exists (λ a, a).
+Defined.
+
+Theorem Poset_unit_l A B (f : Poset_Hom A B) :
+  Poset_comp A A B (Poset_id A) f = f.
+Proof.
+unfold Poset_comp, Poset_id; cbn.
+destruct f as (f & Hf); cbn.
+apply eq_existT_uncurried.
+assert (p : (λ a, f a) = f). {
+  apply extensionality.
+  now intros.
+}
+exists p; cbn.
+apply extensionality; intros a.
+apply extensionality; intros a'.
+apply extensionality; intros g.
+apply ps_prop.
+Qed.
+
 Definition PosetCat :=
   {| Obj := Poset_type;
      Hom := Poset_Hom;
      comp := Poset_comp;
-     idc A := 42 |}.
+     idc := Poset_id;
+     unit_l := Poset_unit_l;
+     unit_r := 42 |}.
