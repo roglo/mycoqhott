@@ -1635,6 +1635,8 @@ Record Poset_type :=
     pt_trans : ∀ a b c, pt_le a b → pt_le b c → pt_le a c;
     pt_antisym : ∀ a b, pt_le a b → pt_le b a → a = b }.
 
+Arguments pt_le {_}.
+
 Definition PosetCat :=
   {| Obj := Poset_type;
      Hom A B := 42 |}.
