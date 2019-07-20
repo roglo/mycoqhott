@@ -1673,10 +1673,48 @@ apply extensionality; intros g.
 apply ps_prop.
 Qed.
 
+Theorem Poset_unit_r A B (f : Poset_Hom A B) :
+ Poset_comp A B B f (Poset_id B) = f.
+unfold Poset_comp, Poset_id; cbn.
+destruct f as (f & Hf); cbn.
+apply eq_existT_uncurried.
+assert (p : (λ a, f a) = f). {
+  apply extensionality.
+  now intros.
+}
+exists p; cbn.
+apply extensionality; intros a.
+apply extensionality; intros a'.
+apply extensionality; intros g.
+apply ps_prop.
+Qed.
+
+Theorem Poset_assoc A B C D (f : Poset_Hom A B) (g : Poset_Hom B C)
+  (h : Poset_Hom C D) :
+  Poset_comp A B D f (Poset_comp B C D g h) =
+  Poset_comp A C D (Poset_comp A B C f g) h.
+Proof.
+apply eq_existT_uncurried.
+now exists eq_refl.
+Defined.
+
+Theorem Poset_Hom_set A B : isSet (Poset_Hom A B).
+Proof.
+apply hott4cat.is_set_is_set_sigT. {
+  intros f.
+  unfold is_monotone.
+  intros g h.
+  apply extensionality; intros a.
+  apply extensionality; intros a'.
+  apply extensionality; intros p.
+...
+
 Definition PosetCat :=
   {| Obj := Poset_type;
      Hom := Poset_Hom;
      comp := Poset_comp;
      idc := Poset_id;
      unit_l := Poset_unit_l;
-     unit_r := 42 |}.
+     unit_r := Poset_unit_r;
+     assoc := Poset_assoc;
+     Hom_set := Poset_Hom_set |}.
