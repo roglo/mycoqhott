@@ -1524,11 +1524,33 @@ apply eq_existT_uncurried.
 assert (p :
   hott4cat.PT {a' & (projT1 (Rel_id A a a') * projT1 (f a' b))%type} = C). {
   cbn.
+  assert (ch :
+    C →
+    hott4cat.PT
+      {a' : st_type A & (hott4cat.PT (st_type A) * projT1 (f a' b))%type}). {
+    intros c.
+    apply hott4cat.PT_intro.
+    exists a.
+    split; [ now apply hott4cat.PT_intro | ].
+    now rewrite <- Hp; cbn.
+  }
+  assert (hc :
+    hott4cat.PT
+      {a' : st_type A & (hott4cat.PT (st_type A) * projT1 (f a' b))%type}
+      → C). {
+    intros c.
+    apply hott4cat.PT_elim in c. {
+      destruct c as (a' & Ha1 & d).
+      remember (f a' b) as q eqn:Hq.
+      destruct q as (D & HD).
+      move D before C; move HD before HC; move Hq before Hp.
+      move a' before a.
+      cbn in d.
+...
 (*
 Definition hott_3_3_3_tac P Q :
   isProp P → isProp Q → (P → Q) → (Q → P) → P ≃ Q.
 *)
-(* but "P → Q" is not provable here *)
 ...
 }
 exists p.
