@@ -1566,12 +1566,31 @@ Check hott4cat.PT.
 Check @hott4cat.PT_elim.
 ...
 
+(*
+Theorem Rel_unit_r (A B : Set_type) (f : st_type A → st_type B → hProp) :
+  Rel_comp A B B f (Rel_id B) = f.
+Proof.
+apply extensionality; intros a.
+apply extensionality; intros b.
+remember (f a b) as p eqn:Hp.
+destruct p as (C & HC).
+unfold Rel_comp.
+apply eq_existT_uncurried.
+assert (p :
+  hott4cat.PT
+    {b' : st_type B & (projT1 (f a b') * projT1 (Rel_id B b' b))%type}
+  = C). {
+  cbn.
+...
+*)
+
 Definition RelCat :=
   {| Obj := Set_type;
      Hom A B := st_type A → st_type B → hProp;
      comp := Rel_comp;
      idc := Rel_id;
      unit_l := Rel_unit_l |}.
+     unit_r := Rel_unit_r |}.
 ...
      unit_l _ _ _ := eq_refl;
      unit_r _ _ _ := eq_refl;
