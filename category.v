@@ -1827,3 +1827,15 @@ Definition Cat_2 :=
      unit_r := Cat_2_unit_r;
      assoc := Cat_2_assoc;
      Hom_set := Cat_2_Hom_set |}.
+
+(* category 0 *)
+
+Definition Cat_0 :=
+  {| Obj := False;
+     Hom _ _ := False;
+     comp _ _ _ f _ := f;
+     idc x := x;
+     unit_l A := match A with end;
+     unit_r A := match A with end;
+     assoc A _ _ _ _ := match A with end;
+     Hom_set A := match A with end |}.
