@@ -1819,36 +1819,3 @@ Definition Cat_2 :=
      unit_r := Cat_2_unit_r;
      assoc := Cat_2_assoc;
      Hom_set a b := 42 |}.
-
-...
-
-(* c'est pas le truc ci-dessous, car normalement, il n'y a qu'une seule flèche,
-   mettons de false vers true
-Theorem Cat_2_unit (a b : bool) (f : bool → bool) : (λ x : bool, f x) = f.
-Proof.
-now apply extensionality.
-Qed.
-
-Theorem Cat_2_Hom_set (a b : bool) : isSet (bool → bool).
-Proof.
-apply hott4cat.isSet_forall; intros x.
-intros y z p q.
-destruct y, z; [ | easy | easy | ].
--refine (match p with eq_refl _ => _ end).
- refine (match q with eq_refl _ => _ end).
- easy.
--refine (match p with eq_refl _ => _ end).
- refine (match q with eq_refl _ => _ end).
- easy.
-Qed.
-
-Definition Cat_2 :=
-  {| Obj := bool;
-     Hom _ _ := bool → bool;
-     comp a b c f g x := g (f x);
-     idc _ a := a;
-     unit_l := Cat_2_unit;
-     unit_r := Cat_2_unit;
-     assoc _ _ _ _ _ _ _ := eq_refl;
-     Hom_set := Cat_2_Hom_set |}.
-*)
