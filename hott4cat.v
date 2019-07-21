@@ -461,7 +461,7 @@ exists g; split.
  destruct p, x; reflexivity.
 Qed.
 
-Definition ex_3_1_5 {A B} : isSet A → isSet B → isSet (A * B).
+Definition isSet_pair {A B} : isSet A → isSet B → isSet (A * B).
 Proof.
 intros r s x y p q.
 pose proof hott_2_6_2 x y as e.
@@ -481,7 +481,8 @@ unfold mid in Hhp, Hhq.
 destruct Hhp; assumption.
 Defined.
 
-Definition ex_3_1_6 A B : (Π (a : A), isSet (B a)) → isSet (Π (a : A), B a).
+Definition isSet_forall A B :
+  (Π (a : A), isSet (B a)) → isSet (Π (a : A), B a).
 Proof.
 intros r f g p q.
 unfold isSet in r.

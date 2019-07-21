@@ -614,7 +614,7 @@ apply hott4cat.is_set_is_set_sigT. {
   apply extensionality; intros h.
   apply Hom_set.
 }
-apply hott4cat.ex_3_1_6.
+apply hott4cat.isSet_forall.
 intros x.
 apply Hom_set.
 Qed.
@@ -817,7 +817,7 @@ Qed.
 Definition pair_isSet {C1 C2} (X Y : Obj C1 * Obj C2) :
   isSet (Hom (fst X) (fst Y) * Hom (snd X) (snd Y)).
 Proof.
-apply hott4cat.ex_3_1_5; apply Hom_set.
+apply hott4cat.isSet_pair; apply Hom_set.
 Qed.
 
 Definition cat_prod (C1 C2 : category) : category :=
@@ -882,7 +882,7 @@ Theorem Set_Hom_set : ∀ x y : Set_type, isSet (st_type x → st_type y).
 Proof.
 intros (A, HA) (B, HB).
 move B before A; cbn.
-apply hott4cat.ex_3_1_6.
+apply hott4cat.isSet_forall.
 now intros a.
 Qed.
 
@@ -960,7 +960,7 @@ Proof. easy. Qed.
 Definition hom_functor_map_obj {C} (A B : Obj C)
   (X : Obj (cat_prod (op C) C)) : Obj SetCat :=
   existT isSet (@Hom C A (snd X) * @Hom C (fst X) B)%type
-    (hott4cat.ex_3_1_5 (@Hom_set C A (snd X)) (@Hom_set C (fst X) B)).
+    (hott4cat.isSet_pair (@Hom_set C A (snd X)) (@Hom_set C (fst X) B)).
 
 Definition hom_functor_map_hom {C} (A B : Obj C)
   (X Y : Obj (cat_prod (op C) C)) (f : Hom X Y) :
@@ -1065,7 +1065,7 @@ split.
  apply extensionality; intros X.
  apply extensionality; intros Y.
  apply extensionality; intros f.
- apply hott4cat.ex_3_1_6.
+ apply hott4cat.isSet_forall.
  intros g.
  apply st_is_set.
 -intros u; cbn.
@@ -1201,7 +1201,7 @@ exists p; cbn.
 apply extensionality; intros A.
 apply extensionality; intros B.
 apply extensionality; intros h.
-apply hott4cat.ex_3_1_6.
+apply hott4cat.isSet_forall.
 intros i.
 now destruct (f_map_obj H B).
 Qed.
@@ -1222,7 +1222,7 @@ exists p; cbn.
 apply extensionality; intros Y.
 apply extensionality; intros Z.
 apply extensionality; intros f.
-apply hott4cat.ex_3_1_6.
+apply hott4cat.isSet_forall.
 intros i.
 now destruct (f_map_obj (fst X) Z).
 Qed.
@@ -1283,7 +1283,7 @@ cbn.
 apply extensionality; intros X.
 apply extensionality; intros Y.
 apply extensionality; intros g.
-apply hott4cat.ex_3_1_6.
+apply hott4cat.isSet_forall.
 intros h.
 now destruct (f_map_obj G Y).
 Qed.
@@ -1627,7 +1627,7 @@ Definition fs_finite (FS : FinSet_type) := snd (projT2 FS).
 
 Definition FinSet_Hom_set (A B : FinSet_type) : isSet (fs_type A → fs_type B).
 Proof.
-apply hott4cat.ex_3_1_6.
+apply hott4cat.isSet_forall.
 intros a.
 apply fs_is_set.
 Qed.
@@ -1730,7 +1730,7 @@ apply hott4cat.is_set_is_set_sigT. {
   apply extensionality; intros p.
   apply ps_prop.
 }
-apply hott4cat.ex_3_1_6.
+apply hott4cat.isSet_forall.
 intros a.
 unfold ps_stype; cbn.
 apply st_is_set.
