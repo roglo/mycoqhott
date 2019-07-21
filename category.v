@@ -1746,7 +1746,7 @@ Definition PosCat :=
      assoc := Pos_assoc;
      Hom_set := Pos_Hom_set |}.
 
-(* 1 *)
+(* category 1 *)
 
 Theorem Cat_1_unit (A B : unit) (f : unit → unit) : (λ x : unit, x) = f.
 Proof.
@@ -1754,11 +1754,11 @@ apply extensionality; intros x.
 now destruct x, (f tt).
 Defined.
 
-Theorem Cat_1_Hom_set (A B : unit) : isSet (unit → unit).
+Theorem Cat_1_Hom_set (a b : unit) : isSet (unit → unit).
 Proof.
-apply hott4cat.isSet_forall; intros a.
-apply hott4cat.isProp_isSet; intros b c.
-now destruct b, c.
+apply hott4cat.isSet_forall; intros x.
+apply hott4cat.isProp_isSet; intros y z.
+now destruct y, z.
 Qed.
 
 Definition Cat_1 :=
@@ -1770,3 +1770,85 @@ Definition Cat_1 :=
      unit_r := Cat_1_unit;
      assoc _ _ _ _ _ _ _ := eq_refl;
      Hom_set := Cat_1_Hom_set |}.
+
+(* category 2 *)
+
+Definition Cat_2_comp a b c
+  (f : ((if (a && negb b)%bool then False else True) : Type))
+  (g : ((if (b && negb c)%bool then False else True) : Type)) :
+  ((if (a && negb c)%bool then False else True) : Type).
+Proof.
+now destruct a, b.
+Defined.
+
+Definition Cat_2_id a : ((if (a && negb a)%bool then False else True) : Type).
+Proof.
+now destruct a.
+Defined.
+
+Theorem Cat_2_unit_l a b
+  (f : ((if (a && negb b)%bool then False else True) : Type)) :
+  Cat_2_comp a a b (Cat_2_id a) f = f.
+Proof.
+now destruct a.
+Defined.
+
+Theorem Cat_2_unit_r a b
+  (f : ((if (a && negb b)%bool then False else True) : Type)) :
+  Cat_2_comp a b b f (Cat_2_id b) = f.
+Proof.
+now destruct a, b, f.
+Defined.
+
+Theorem Cat_2_assoc a b c d
+  (f : ((if (a && negb b)%bool then False else True) : Type))
+  (g : ((if (b && negb c)%bool then False else True) : Type))
+  (h : ((if (c && negb d)%bool then False else True) : Type)) :
+  Cat_2_comp a b d f (Cat_2_comp b c d g h) =
+  Cat_2_comp a c d (Cat_2_comp a b c f g) h.
+Proof.
+now destruct a, b, c; cbn in *.
+Defined.
+
+Definition Cat_2 :=
+  {| Obj := bool;
+     Hom a b := if (a && negb b)%bool then False else True;
+     comp := Cat_2_comp;
+     idc := Cat_2_id;
+     unit_l := Cat_2_unit_l;
+     unit_r := Cat_2_unit_r;
+     assoc := Cat_2_assoc;
+     Hom_set a b := 42 |}.
+
+...
+
+(* c'est pas le truc ci-dessous, car normalement, il n'y a qu'une seule flèche,
+   mettons de false vers true
+Theorem Cat_2_unit (a b : bool) (f : bool → bool) : (λ x : bool, f x) = f.
+Proof.
+now apply extensionality.
+Qed.
+
+Theorem Cat_2_Hom_set (a b : bool) : isSet (bool → bool).
+Proof.
+apply hott4cat.isSet_forall; intros x.
+intros y z p q.
+destruct y, z; [ | easy | easy | ].
+-refine (match p with eq_refl _ => _ end).
+ refine (match q with eq_refl _ => _ end).
+ easy.
+-refine (match p with eq_refl _ => _ end).
+ refine (match q with eq_refl _ => _ end).
+ easy.
+Qed.
+
+Definition Cat_2 :=
+  {| Obj := bool;
+     Hom _ _ := bool → bool;
+     comp a b c f g x := g (f x);
+     idc _ a := a;
+     unit_l := Cat_2_unit;
+     unit_r := Cat_2_unit;
+     assoc _ _ _ _ _ _ _ := eq_refl;
+     Hom_set := Cat_2_Hom_set |}.
+*)
