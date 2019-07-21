@@ -1745,3 +1745,28 @@ Definition PosCat :=
      unit_r := Pos_unit_r;
      assoc := Pos_assoc;
      Hom_set := Pos_Hom_set |}.
+
+(* 1 *)
+
+Theorem Cat_1_unit (A B : unit) (f : unit → unit) : (λ x : unit, x) = f.
+Proof.
+apply extensionality; intros x.
+now destruct x, (f tt).
+Defined.
+
+Theorem Cat_1_Hom_set (A B : unit) : isSet (unit → unit).
+Proof.
+apply hott4cat.isSet_forall; intros a.
+apply hott4cat.isProp_isSet; intros b c.
+now destruct b, c.
+Qed.
+
+Definition Cat_1 :=
+  {| Obj := unit;
+     Hom _ _ := unit → unit;
+     comp _ _ _ _ _ := λ x, x;
+     idc _ x := x;
+     unit_l := Cat_1_unit;
+     unit_r := Cat_1_unit;
+     assoc _ _ _ _ _ _ _ := eq_refl;
+     Hom_set := Cat_1_Hom_set |}.
