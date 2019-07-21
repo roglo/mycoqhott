@@ -1810,6 +1810,14 @@ Proof.
 now destruct a, b, c; cbn in *.
 Defined.
 
+Theorem Cat_2_Hom_set a b :
+  isSet (if (a && negb b)%bool then False else True).
+Proof.
+destruct (a && negb b)%bool.
+-apply hott4cat.isSet_False.
+-apply hott4cat.isSet_True.
+Defined.
+
 Definition Cat_2 :=
   {| Obj := bool;
      Hom a b := if (a && negb b)%bool then False else True;
@@ -1818,4 +1826,4 @@ Definition Cat_2 :=
      unit_l := Cat_2_unit_l;
      unit_r := Cat_2_unit_r;
      assoc := Cat_2_assoc;
-     Hom_set a b := 42 |}.
+     Hom_set := Cat_2_Hom_set |}.

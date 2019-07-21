@@ -531,3 +531,15 @@ Definition PT_elim {A} : isProp A → ∥A∥ → A :=
   λ PA, Σ_type.pr₁ (PT_rec A A mid PA).
 Definition PT_intro_not {A} : notT A → notT ∥A∥ :=
   λ f, Σ_type.pr₁ (PT_rec A ⊥ f (λ x y : ⊥, match x with end)).
+
+Theorem isSet_True : isSet True.
+Proof.
+apply isProp_isSet.
+now intros x y; destruct x, y.
+Qed.
+
+Theorem isSet_False : isSet False.
+Proof.
+apply isProp_isSet.
+now intros x y; destruct x, y.
+Qed.
