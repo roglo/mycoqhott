@@ -57,6 +57,8 @@ Definition is_initial {C : category} (c : Obj C) :=
 Definition is_terminal {C : category} (c : Obj C) :=
   ∀ d, ∃ f : Hom d c, ∀ g : Hom d c, f = g.
 
+(* functors *)
+
 Class functor (C D : category) :=
   { f_map_obj : Obj C → Obj D;
     f_map_hom {a b} : Hom a b → Hom (f_map_obj a) (f_map_obj b);
