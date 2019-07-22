@@ -12,7 +12,7 @@ Definition isProp := hott4cat.isProp.
 Definition hProp := { A : Type & isProp A }.
 
 Axiom fun_ext : ∀ A B (f g : ∀ x : A, B x), (∀ x, f x = g x) → f = g.
-Axiom prop_ext : ∀ A B, isProp A → isProp B → (A → B) → (B → A) → A = B.
+Axiom prop_ext : ∀ A B, (A ↔ B) → A = B.
 
 Declare Scope category_scope.
 Declare Scope functor_scope.
@@ -1795,212 +1795,37 @@ Definition PosCat :=
    for f ⊆ A × B and g ⊆ B × C.
 *)
 
-(*
-Definition Rel_Hom A B :=
-  { f : st_type A → st_type B → Type & ∀ a b, isProp (f a b) }.
-
-Definition Rel_comp {A B C} (f : Rel_Hom A B) (g : Rel_Hom B C) :
-  Rel_Hom A C.
-Proof.
-unfold Rel_Hom.
-destruct f as (f & Hf).
-destruct g as (g & Hg).
-exists (λ a c, hott4cat.PT {b : st_type B & (f a b * g b c)%type}).
-intros a c.
-apply hott4cat.PT_eq.
-Defined.
-
-Definition Rel_id A : Rel_Hom A A.
-Proof.
-unfold Rel_Hom.
-exists (λ a a', hott4cat.PT (st_type A)).
-intros a a'.
-apply hott4cat.PT_eq.
-Defined.
-
-Theorem Rel_unit_l A B (f : Rel_Hom A B) : Rel_comp (Rel_id A) f = f.
-Proof.
-unfold Rel_comp, Rel_id; cbn.
-destruct f as (f & Hf).
-apply eq_existT_uncurried.
-assert (p
-  : (λ (_ : st_type A) (c : st_type B),
-    hott4cat.PT {b & (hott4cat.PT (st_type A) * f b c)%type}) = f). {
-  apply fun_ext; intros a.
-  apply fun_ext; intros b.
-  specialize (Hf a b) as H1.
-  unfold isProp, hott4cat.isProp in H1.
-  specialize (hott4cat.PT_rec (st_type A) (st_type B → Type)) as H1.
-  specialize (H1 f).
-  assert (H : hott4cat.isProp (st_type B → Type)). {
-    admit. (*
-    apply hott4cat.isProp_forall.
-*)
-  }
-  specialize (H1 H); clear H.
-  destruct H1 as (g & Hg).
-...
-1 subgoal (ID 3339)
-
-  A : Set_type
-  B : Set_type
-  f : st_type A → st_type B → Type
-  Hf : ∀ (a : st_type A) (b : st_type B), isProp (f a b)
-  a : st_type A
-  c : st_type B
-  ============================
-  hott4cat.PT {b : st_type A & hott4cat.PT (st_type A) * f b c} = f a c
-
-Definition RelCat :=
-  {| Obj := Set_type;
-     Hom := Rel_Hom;
-     comp _ _ _ := Rel_comp;
-     idc := Rel_id;
-     unit_l A B f := 42 |}.
-     unit_l := Rel_unit_l |}.
-     unit_r := Rel_unit_r |}.
-...
-
-*)
-
-Definition Rel_Hom A B := st_type A → st_type B → hProp.
+Definition Rel_Hom A B := st_type A → st_type B → Prop.
 
 Definition Rel_comp {A B C} (f : Rel_Hom A B) (g : Rel_Hom B C) :
   Rel_Hom A C.
 Proof.
 intros a c.
-exists (hott4cat.PT { b & (projT1 (f a b) * projT1 (g b c))%type}).
-apply hott4cat.PT_eq.
+apply (∃ b, f a b ∧ g b c).
 Defined.
 
 Definition Rel_id (A : Set_type) : Rel_Hom A A.
 Proof.
 intros a1 a2.
-exists (hott4cat.PT (a1 = a2)).
-apply hott4cat.PT_eq.
+apply (a1 = a2).
 Defined.
 
 Theorem Rel_unit_l A B (f : Rel_Hom A B) : Rel_comp (Rel_id A) f = f.
 Proof.
 apply fun_ext; intros a.
 apply fun_ext; intros b.
-unfold Rel_comp, Rel_id; cbn.
-remember (f a b) as p eqn:Hp.
-destruct p as (C & HC).
-apply eq_existT_uncurried.
-assert (p : hott4cat.PT {b0 : st_type A & (hott4cat.PT (a = b0) * projT1 (f b0 b))%type} = C). {
-  apply prop_ext.
-  -apply hott4cat.PT_eq.
-  -easy.
-  -intros.
-   specialize (hott4cat.PT_rec) as H1.
-   specialize (H1 {b0 : st_type A & (hott4cat.PT (a = b0) * projT1 (f b0 b))%type}).
-   specialize (H1 C).
-   assert (p : {b0 : st_type A & (hott4cat.PT (a = b0) * projT1 (f b0 b))%type} → C). {
-     intros (a' & Ha & Ha2).
-     apply hott4cat.PT_elim in Ha.
-     -subst a'.
-      now rewrite <- Hp in Ha2; cbn in Ha2.
-     -unfold Set_type in A, B.
-      intros p q.
-      apply (projT2 A).
-   }
-   specialize (H1 p).
-...
-Check hott4cat.PT_eq.
-Search hott4cat.PT.
-     specialize (hott4cat.PT_rec) as H2.
-...
-   specialize (hott4cat.PT_rec X C) as H1.
-...
-remember (f a b)
-Check (f a b).
 apply prop_ext.
-assert (ef : (∃ b0 : st_type A, a = b0 ∧ f b0 b) ↔ f a b). {
-  firstorder.
-  now subst a.
-}
-now apply prop_ext.
+unfold Rel_comp, Rel_id; cbn.
+split; intros H.
+-destruct H as (a' & Ha & Hf).
+ now subst a'.
+-now exists a.
 Defined.
-...
-remember (f a b) as p eqn:Hp.
-destruct p as (C & HC).
-apply eq_existT_uncurried.
-assert (p :
-  hott4cat.PT {a' & (projT1 (Rel_id A a a') * projT1 (f a' b))%type} = C). {
-  cbn.
-  assert (ch :
-    C →
-    hott4cat.PT
-      {a' : st_type A & (hott4cat.PT (st_type A) * projT1 (f a' b))%type}). {
-    intros c.
-    apply hott4cat.PT_intro.
-    exists a.
-    split; [ now apply hott4cat.PT_intro | ].
-    now rewrite <- Hp; cbn.
-  }
-  assert (hc :
-    hott4cat.PT
-      {a' : st_type A & (hott4cat.PT (st_type A) * projT1 (f a' b))%type}
-      → C). {
-    intros c.
-unfold Rel_Hom in f.
-...
-    apply hott4cat.PT_elim in c. {
-      destruct c as (a' & Ha1 & d).
-      remember (f a' b) as q eqn:Hq.
-      destruct q as (D & HD).
-      move D before C; move HD before HC; move Hq before Hp.
-      move a' before a.
-      cbn in d.
-...
-Abort. (* doesn't work; and even if it works, it would require univalence *)
-(*
-...
-(*
-Definition hott_3_3_3_tac P Q :
-  isProp P → isProp Q → (P → Q) → (Q → P) → P ≃ Q.
-*)
-...
-}
-exists p.
-cbn.
-unfold eq_rect; cbn.
-destruct p.
-cbn in *.
-Check hott4cat.PT_eq.
-...
-Search hott4cat.PT.
-Check hott4cat.PT_eq.
-Check hott4cat.PT.
-Check @hott4cat.PT_elim.
-...
-
-(*
-Theorem Rel_unit_r (A B : Set_type) (f : st_type A → st_type B → hProp) :
-  Rel_comp f (Rel_id B) = f.
-Proof.
-apply fun_ext; intros a.
-apply fun_ext; intros b.
-remember (f a b) as p eqn:Hp.
-destruct p as (C & HC).
-unfold Rel_comp.
-apply eq_existT_uncurried.
-assert (p :
-  hott4cat.PT
-    {b' : st_type B & (projT1 (f a b') * projT1 (Rel_id B b' b))%type}
-  = C). {
-  cbn.
-...
-*)
-*)
 
 Definition RelCat :=
   {| Obj := Set_type;
      Hom := Rel_Hom;
      comp _ _ _ := Rel_comp;
      idc := Rel_id;
-     unit_l A B f := 42 |}.
-     unit_l := Rel_unit_l |}.
-     unit_r := Rel_unit_r |}.
-...
+     unit_l := Rel_unit_l;
+     unit_r := 42 |}.
