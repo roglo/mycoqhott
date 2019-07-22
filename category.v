@@ -1502,120 +1502,6 @@ Theorem lim_hom_fun {J C D} (E : functor J C) (F : functor C D) (X : Obj C) (j :
 ...
 *)
 
-(* category Rel *)
-
-(* http://angg.twu.net/tmp/2016-optativa/awodey__category_theory.pdf *)
-(* The objects of Rel are sets, and an arrow f : A → B is a relation from A
-   to B, that is, f ⊆ A × B. The identity relation {<a,a> ∈ A × A| a ∈ A}
-   is the identity arrow on a set A. Composition in Rel is to be given by
-      g ◦ f = {<a,c> ∈ A × C | ∃b (<a,b> ∈ f & <b,c> ∈ g)}
-   for f ⊆ A × B and g ⊆ B × C.
-*)
-
-Definition hProp := { A : Type & isProp A }.
-
-Definition Rel_comp (A B C : Set_type)
-  (f : st_type A → st_type B → hProp) (g : st_type B → st_type C → hProp) :
-  st_type A → st_type C → hProp.
-Proof.
-intros a c.
-exists (hott4cat.PT { b & (projT1 (f a b) * projT1 (g b c))%type}).
-apply hott4cat.PT_eq.
-Defined.
-
-Definition Rel_id (A : Set_type) : st_type A → st_type A → hProp.
-Proof.
-intros a1 a2.
-exists (hott4cat.PT (st_type A)).
-apply hott4cat.PT_eq.
-Defined.
-
-Theorem Rel_unit_l (A B : Set_type) (f : st_type A → st_type B → hProp) :
-  Rel_comp A A B (Rel_id A) f = f.
-Proof.
-apply extensionality; intros a.
-apply extensionality; intros b.
-remember (f a b) as p eqn:Hp.
-destruct p as (C & HC).
-unfold Rel_comp.
-apply eq_existT_uncurried.
-assert (p :
-  hott4cat.PT {a' & (projT1 (Rel_id A a a') * projT1 (f a' b))%type} = C). {
-  cbn.
-  assert (ch :
-    C →
-    hott4cat.PT
-      {a' : st_type A & (hott4cat.PT (st_type A) * projT1 (f a' b))%type}). {
-    intros c.
-    apply hott4cat.PT_intro.
-    exists a.
-    split; [ now apply hott4cat.PT_intro | ].
-    now rewrite <- Hp; cbn.
-  }
-  assert (hc :
-    hott4cat.PT
-      {a' : st_type A & (hott4cat.PT (st_type A) * projT1 (f a' b))%type}
-      → C). {
-    intros c.
-    apply hott4cat.PT_elim in c. {
-      destruct c as (a' & Ha1 & d).
-      remember (f a' b) as q eqn:Hq.
-      destruct q as (D & HD).
-      move D before C; move HD before HC; move Hq before Hp.
-      move a' before a.
-      cbn in d.
-Abort. (* doesn't work; and even if it works, it would require univalence *)
-(*
-...
-(*
-Definition hott_3_3_3_tac P Q :
-  isProp P → isProp Q → (P → Q) → (Q → P) → P ≃ Q.
-*)
-...
-}
-exists p.
-cbn.
-unfold eq_rect; cbn.
-destruct p.
-cbn in *.
-Check hott4cat.PT_eq.
-...
-Search hott4cat.PT.
-Check hott4cat.PT_eq.
-Check hott4cat.PT.
-Check @hott4cat.PT_elim.
-...
-*)
-
-(*
-Theorem Rel_unit_r (A B : Set_type) (f : st_type A → st_type B → hProp) :
-  Rel_comp A B B f (Rel_id B) = f.
-Proof.
-apply extensionality; intros a.
-apply extensionality; intros b.
-remember (f a b) as p eqn:Hp.
-destruct p as (C & HC).
-unfold Rel_comp.
-apply eq_existT_uncurried.
-assert (p :
-  hott4cat.PT
-    {b' : st_type B & (projT1 (f a b') * projT1 (Rel_id B b' b))%type}
-  = C). {
-  cbn.
-...
-*)
-
-(*
-Definition RelCat :=
-  {| Obj := Set_type;
-     Hom A B := st_type A → st_type B → hProp;
-     comp := Rel_comp;
-     idc := Rel_id;
-     unit_l := Rel_unit_l |}.
-     unit_r := Rel_unit_r |}.
-...
-*)
-
 (* category of finite sets *)
 
 Definition isInj {A B} (f : A → B) := ∀ x y : A, f x = f y → x = y.
@@ -1643,110 +1529,6 @@ Definition FinSetCat :=
      unit_r _ _ _ := eq_refl;
      assoc _ _ _ _ _ _ _ := eq_refl;
      Hom_set := FinSet_Hom_set |}.
-
-(* category of partially ordered sets (posets) *)
-
-Record Pos_type :=
-  { ps_type : Set_type;
-    ps_le : st_type ps_type → st_type ps_type → Type;
-(*
-    These properties are not needed in Pos category:
-    ps_refl : ∀ a : st_type ps_type, ps_le a a;
-    ps_trans : ∀ a b c, ps_le a b → ps_le b c → ps_le a c;
-    ps_antisym : ∀ a b, ps_le a b → ps_le b a → a = b;
-*)
-    ps_prop : ∀ a b, isProp (ps_le a b) }.
-
-Arguments ps_le {_}.
-
-Definition ps_stype A := st_type (ps_type A).
-
-Definition is_monotone {A B} (f : ps_stype A → ps_stype B) :=
-  ∀ a a' : ps_stype A, ps_le a a' → ps_le (f a) (f a').
-
-Definition Pos_Hom A B := { f : ps_stype A → ps_stype B & is_monotone f }.
-
-Definition Pos_comp A B C (f : Pos_Hom A B) (g : Pos_Hom B C) :
-  Pos_Hom A C.
-Proof.
-exists (λ a, projT1 g (projT1 f a)).
-intros a a' Hle.
-now apply (projT2 g), (projT2 f).
-Defined.
-
-Definition Pos_id A : Pos_Hom A A.
-Proof.
-now exists (λ a, a).
-Defined.
-
-Theorem Pos_unit_l A B (f : Pos_Hom A B) :
-  Pos_comp A A B (Pos_id A) f = f.
-Proof.
-unfold Pos_comp, Pos_id; cbn.
-destruct f as (f & Hf); cbn.
-apply eq_existT_uncurried.
-assert (p : (λ a, f a) = f). {
-  apply extensionality.
-  now intros.
-}
-exists p; cbn.
-apply extensionality; intros a.
-apply extensionality; intros a'.
-apply extensionality; intros g.
-apply ps_prop.
-Qed.
-
-Theorem Pos_unit_r A B (f : Pos_Hom A B) :
- Pos_comp A B B f (Pos_id B) = f.
-unfold Pos_comp, Pos_id; cbn.
-destruct f as (f & Hf); cbn.
-apply eq_existT_uncurried.
-assert (p : (λ a, f a) = f). {
-  apply extensionality.
-  now intros.
-}
-exists p; cbn.
-apply extensionality; intros a.
-apply extensionality; intros a'.
-apply extensionality; intros g.
-apply ps_prop.
-Qed.
-
-Theorem Pos_assoc A B C D (f : Pos_Hom A B) (g : Pos_Hom B C)
-  (h : Pos_Hom C D) :
-  Pos_comp A B D f (Pos_comp B C D g h) =
-  Pos_comp A C D (Pos_comp A B C f g) h.
-Proof.
-apply eq_existT_uncurried.
-now exists eq_refl.
-Defined.
-
-Theorem Pos_Hom_set A B : isSet (Pos_Hom A B).
-Proof.
-apply hott4cat.is_set_is_set_sigT. {
-  intros f.
-  unfold is_monotone.
-  intros g h.
-  apply extensionality; intros a.
-  apply extensionality; intros a'.
-  apply extensionality; intros p.
-  apply ps_prop.
-}
-apply hott4cat.isSet_forall.
-intros a.
-unfold ps_stype; cbn.
-apply st_is_set.
-Defined.
-
-Definition PosCat :=
-  {| Obj := Pos_type;
-     Hom := Pos_Hom;
-     comp := Pos_comp;
-     idc := Pos_id;
-     unit_l := Pos_unit_l;
-     unit_r := Pos_unit_r;
-     assoc := Pos_assoc;
-     Hom_set := Pos_Hom_set |}.
 
 (* category 1 *)
 
@@ -1904,3 +1686,221 @@ Definition Cat_0 :=
      unit_r A := match A with end;
      assoc A _ _ _ _ := match A with end;
      Hom_set A := match A with end |}.
+
+(* category Pos of partially ordered sets (posets) *)
+
+Record Pos_type :=
+  { ps_type : Set_type;
+    ps_le : st_type ps_type → st_type ps_type → Type;
+(*
+    These properties are not needed in Pos category:
+    ps_refl : ∀ a : st_type ps_type, ps_le a a;
+    ps_trans : ∀ a b c, ps_le a b → ps_le b c → ps_le a c;
+    ps_antisym : ∀ a b, ps_le a b → ps_le b a → a = b;
+*)
+    ps_prop : ∀ a b, isProp (ps_le a b) }.
+
+Arguments ps_le {_}.
+
+Definition ps_stype A := st_type (ps_type A).
+
+Definition is_monotone {A B} (f : ps_stype A → ps_stype B) :=
+  ∀ a a' : ps_stype A, ps_le a a' → ps_le (f a) (f a').
+
+Definition Pos_Hom A B := { f : ps_stype A → ps_stype B & is_monotone f }.
+
+Definition Pos_comp A B C (f : Pos_Hom A B) (g : Pos_Hom B C) :
+  Pos_Hom A C.
+Proof.
+exists (λ a, projT1 g (projT1 f a)).
+intros a a' Hle.
+now apply (projT2 g), (projT2 f).
+Defined.
+
+Definition Pos_id A : Pos_Hom A A.
+Proof.
+now exists (λ a, a).
+Defined.
+
+Theorem Pos_unit_l A B (f : Pos_Hom A B) :
+  Pos_comp A A B (Pos_id A) f = f.
+Proof.
+unfold Pos_comp, Pos_id; cbn.
+destruct f as (f & Hf); cbn.
+apply eq_existT_uncurried.
+assert (p : (λ a, f a) = f). {
+  apply extensionality.
+  now intros.
+}
+exists p; cbn.
+apply extensionality; intros a.
+apply extensionality; intros a'.
+apply extensionality; intros g.
+apply ps_prop.
+Qed.
+
+Theorem Pos_unit_r A B (f : Pos_Hom A B) :
+ Pos_comp A B B f (Pos_id B) = f.
+unfold Pos_comp, Pos_id; cbn.
+destruct f as (f & Hf); cbn.
+apply eq_existT_uncurried.
+assert (p : (λ a, f a) = f). {
+  apply extensionality.
+  now intros.
+}
+exists p; cbn.
+apply extensionality; intros a.
+apply extensionality; intros a'.
+apply extensionality; intros g.
+apply ps_prop.
+Qed.
+
+Theorem Pos_assoc A B C D (f : Pos_Hom A B) (g : Pos_Hom B C)
+  (h : Pos_Hom C D) :
+  Pos_comp A B D f (Pos_comp B C D g h) =
+  Pos_comp A C D (Pos_comp A B C f g) h.
+Proof.
+apply eq_existT_uncurried.
+now exists eq_refl.
+Defined.
+
+Theorem Pos_Hom_set A B : isSet (Pos_Hom A B).
+Proof.
+apply hott4cat.is_set_is_set_sigT. {
+  intros f.
+  unfold is_monotone.
+  intros g h.
+  apply extensionality; intros a.
+  apply extensionality; intros a'.
+  apply extensionality; intros p.
+  apply ps_prop.
+}
+apply hott4cat.isSet_forall.
+intros a.
+unfold ps_stype; cbn.
+apply st_is_set.
+Defined.
+
+Definition PosCat :=
+  {| Obj := Pos_type;
+     Hom := Pos_Hom;
+     comp := Pos_comp;
+     idc := Pos_id;
+     unit_l := Pos_unit_l;
+     unit_r := Pos_unit_r;
+     assoc := Pos_assoc;
+     Hom_set := Pos_Hom_set |}.
+
+(* category Rel *)
+
+(* http://angg.twu.net/tmp/2016-optativa/awodey__category_theory.pdf *)
+(* The objects of Rel are sets, and an arrow f : A → B is a relation from A
+   to B, that is, f ⊆ A × B. The identity relation {<a,a> ∈ A × A| a ∈ A}
+   is the identity arrow on a set A. Composition in Rel is to be given by
+      g ◦ f = {<a,c> ∈ A × C | ∃b (<a,b> ∈ f & <b,c> ∈ g)}
+   for f ⊆ A × B and g ⊆ B × C.
+*)
+
+Definition hProp := { A : Type & isProp A }.
+
+Definition Rel_Hom A B := st_type A → st_type B → hProp.
+
+Definition Rel_comp {A B C} (f : Rel_Hom A B) (g : Rel_Hom B C) :
+  Rel_Hom A C.
+Proof.
+intros a c.
+exists (hott4cat.PT { b & (projT1 (f a b) * projT1 (g b c))%type}).
+apply hott4cat.PT_eq.
+Defined.
+
+Definition Rel_id (A : Set_type) : Rel_Hom A A.
+Proof.
+intros a1 a2.
+exists (hott4cat.PT (st_type A)).
+apply hott4cat.PT_eq.
+Defined.
+
+Theorem Rel_unit_l A B (f : Rel_Hom A B) : Rel_comp (Rel_id A) f = f.
+Proof.
+apply extensionality; intros a.
+apply extensionality; intros b.
+remember (f a b) as p eqn:Hp.
+destruct p as (C & HC).
+unfold Rel_comp.
+apply eq_existT_uncurried.
+assert (p :
+  hott4cat.PT {a' & (projT1 (Rel_id A a a') * projT1 (f a' b))%type} = C). {
+  cbn.
+  assert (ch :
+    C →
+    hott4cat.PT
+      {a' : st_type A & (hott4cat.PT (st_type A) * projT1 (f a' b))%type}). {
+    intros c.
+    apply hott4cat.PT_intro.
+    exists a.
+    split; [ now apply hott4cat.PT_intro | ].
+    now rewrite <- Hp; cbn.
+  }
+  assert (hc :
+    hott4cat.PT
+      {a' : st_type A & (hott4cat.PT (st_type A) * projT1 (f a' b))%type}
+      → C). {
+    intros c.
+    apply hott4cat.PT_elim in c. {
+      destruct c as (a' & Ha1 & d).
+      remember (f a' b) as q eqn:Hq.
+      destruct q as (D & HD).
+      move D before C; move HD before HC; move Hq before Hp.
+      move a' before a.
+      cbn in d.
+...
+Abort. (* doesn't work; and even if it works, it would require univalence *)
+(*
+...
+(*
+Definition hott_3_3_3_tac P Q :
+  isProp P → isProp Q → (P → Q) → (Q → P) → P ≃ Q.
+*)
+...
+}
+exists p.
+cbn.
+unfold eq_rect; cbn.
+destruct p.
+cbn in *.
+Check hott4cat.PT_eq.
+...
+Search hott4cat.PT.
+Check hott4cat.PT_eq.
+Check hott4cat.PT.
+Check @hott4cat.PT_elim.
+...
+
+(*
+Theorem Rel_unit_r (A B : Set_type) (f : st_type A → st_type B → hProp) :
+  Rel_comp A B B f (Rel_id B) = f.
+Proof.
+apply extensionality; intros a.
+apply extensionality; intros b.
+remember (f a b) as p eqn:Hp.
+destruct p as (C & HC).
+unfold Rel_comp.
+apply eq_existT_uncurried.
+assert (p :
+  hott4cat.PT
+    {b' : st_type B & (projT1 (f a b') * projT1 (Rel_id B b' b))%type}
+  = C). {
+  cbn.
+...
+*)
+*)
+
+Definition RelCat :=
+  {| Obj := Set_type;
+     Hom := Rel_Hom;
+     comp _ _ _ := Rel_comp;
+     idc := Rel_id;
+     unit_l A B f := 42 |}.
+     unit_l := Rel_unit_l |}.
+     unit_r := Rel_unit_r |}.
+...
