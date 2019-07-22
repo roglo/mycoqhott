@@ -1827,6 +1827,59 @@ Definition Cat_2 :=
      assoc := Cat_2_assoc;
      Hom_set := Cat_2_Hom_set |}.
 
+(* category 3 *)
+
+Inductive Cat_3_type := C1 | C2 | C3.
+
+Definition Cat_3_Hom A B : Type :=
+  match A with
+  | C1 => True
+  | C2 =>
+      match B with
+      | C1 => False
+      | _ => True
+      end
+  | C3 =>
+      match B with
+      | C3 => True
+      | _ => False
+      end
+  end.
+
+(* but actually Hom C1 C3 must be equal to Hom C2 C3 ◦ Hom C1 C2,
+   by definition; they are supposed to be different arrows *)
+(* but if I refute Hom C1 C3, then it will be not
+    considered as an arrow *)
+
+Definition Cat_3_comp {a b c} (f : Cat_3_Hom a b) (g : Cat_3_Hom b c) :
+  Cat_3_Hom a c.
+Proof.
+now destruct a, b, c.
+Defined.
+
+Theorem glop : ∀ (f : Cat_3_Hom C1 C3) (g : Cat_3_Hom C1 C2)
+  (h : Cat_3_Hom C2 C3), f = Cat_3_comp g h.
+Proof.
+intros.
+now destruct f, g, h.
+(* good; they are equal; but how would I do if I wanted them to be
+   different? *)
+(* answer: perhaps making some of them being e.g. "bool" instead of
+   "True" or "False" *)
+...
+
+Definition Cat_3 :=
+  {| Obj := Cat_3_type;
+     Hom := Cat_3_Hom;
+     comp := Cat_3_comp |}.
+
+     idc := Cat_2_id;
+     unit_l := Cat_2_unit_l;
+     unit_r := Cat_2_unit_r;
+     assoc := Cat_2_assoc;
+     Hom_set := Cat_2_Hom_set |}.
+...
+
 (* category 0 *)
 
 Definition Cat_0 :=
