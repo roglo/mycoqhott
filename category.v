@@ -1778,6 +1778,13 @@ Definition Cat_1 :=
 Definition Cat_2_Hom A B : Type :=
   if (A && negb B)%bool then False else True.
 
+(* I have a problem with this definition; it means that all arrows that
+   are True are equal. They must be indexed *)
+
+(* to be changed *)
+
+...
+
 Definition Cat_2_comp a b c (f : Cat_2_Hom a b) (g : Cat_2_Hom b c) :
   Cat_2_Hom a c.
 Proof.
@@ -1857,15 +1864,6 @@ Proof.
 now destruct a, b, c.
 Defined.
 
-Theorem glop : ∀ (f : Cat_3_Hom C1 C3) (g : Cat_3_Hom C1 C2)
-  (h : Cat_3_Hom C2 C3), f = Cat_3_comp g h.
-Proof.
-intros.
-now destruct f, g, h.
-(* good; they are equal; but how would I do if I wanted them to be
-   different? *)
-(* answer: perhaps making some of them being e.g. "bool" instead of
-   "True" or "False" *)
 ...
 
 Definition Cat_3 :=
