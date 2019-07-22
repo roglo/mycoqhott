@@ -168,7 +168,7 @@ Definition cch_hom {J C} {D : functor J C} {cc cc'}
 Definition cch_commute {J C} {D : functor J C} {cc cc'}
   (cch : CoCone_Hom cc cc') := projT2 cch.
 
-Definition Cone_comp {J C} {D : functor J C} (c c' c'' : cone D)
+Definition Cone_comp {J C} {D : functor J C} {c c' c'' : cone D}
   (f : Cone_Hom c c') (g : Cone_Hom c' c'') : Cone_Hom c c''.
 Proof.
 exists (cnh_hom g ◦ cnh_hom f).
@@ -180,7 +180,7 @@ etransitivity.
  apply (cnh_commute g j).
 Defined.
 
-Definition CoCone_comp {J C} {D : functor J C} (c c' c'' : co_cone D)
+Definition CoCone_comp {J C} {D : functor J C} {c c' c'' : co_cone D}
   (f : CoCone_Hom c c') (g : CoCone_Hom c' c'') : CoCone_Hom c c''.
 Proof.
 exists (cch_hom g ◦ cch_hom f).
@@ -202,7 +202,7 @@ Definition CoCone_id {J C} {D : functor J C} (c : co_cone D) : CoCone_Hom c c :=
 
 Theorem Cone_unit_l {J C} {D : functor J C} :
   ∀ (c c' : cone D) (f : Cone_Hom c c'),
-  Cone_comp c c c' (Cone_id c) f = f.
+  Cone_comp (Cone_id c) f = f.
 Proof.
 intros.
 unfold Cone_comp; cbn.
@@ -216,7 +216,7 @@ Defined.
 
 Theorem CoCone_unit_l {J C} {D : functor J C} :
   ∀ (c c' : co_cone D) (f : CoCone_Hom c c'),
-  CoCone_comp c c c' (CoCone_id c) f = f.
+  CoCone_comp (CoCone_id c) f = f.
 Proof.
 intros.
 unfold CoCone_comp; cbn.
@@ -230,7 +230,7 @@ Defined.
 
 Theorem Cone_unit_r {J C} {D : functor J C} :
   ∀ (c c' : cone D) (f : Cone_Hom c c'),
-  Cone_comp c c' c' f (Cone_id c') = f.
+  Cone_comp f (Cone_id c') = f.
 Proof.
 intros.
 unfold Cone_comp; cbn.
@@ -244,7 +244,7 @@ Defined.
 
 Theorem CoCone_unit_r {J C} {D : functor J C} :
   ∀ (c c' : co_cone D) (f : CoCone_Hom c c'),
-  CoCone_comp c c' c' f (CoCone_id c') = f.
+  CoCone_comp f (CoCone_id c') = f.
 Proof.
 intros.
 destruct f as (f & Hf); cbn.
@@ -258,8 +258,7 @@ Defined.
 Theorem Cone_assoc {J C} {D : functor J C} :
   ∀ (c c' c'' c''' : cone D) (f : Cone_Hom c c') (g : Cone_Hom c' c'')
     (h : Cone_Hom c'' c'''),
-    Cone_comp c c' c''' f (Cone_comp c' c'' c''' g h) =
-    Cone_comp c c'' c''' (Cone_comp c c' c'' f g) h.
+    Cone_comp f (Cone_comp g h) = Cone_comp (Cone_comp f g) h.
 Proof.
 intros.
 unfold Cone_comp; cbn.
@@ -273,8 +272,7 @@ Defined.
 Theorem CoCone_assoc {J C} {D : functor J C} :
   ∀ (c c' c'' c''' : co_cone D) (f : CoCone_Hom c c') (g : CoCone_Hom c' c'')
     (h : CoCone_Hom c'' c'''),
-    CoCone_comp c c' c''' f (CoCone_comp c' c'' c''' g h) =
-    CoCone_comp c c'' c''' (CoCone_comp c c' c'' f g) h.
+    CoCone_comp f (CoCone_comp g h) = CoCone_comp (CoCone_comp f g) h.
 Proof.
 intros.
 apply eq_existT_uncurried.
@@ -313,7 +311,7 @@ Qed.
 Definition ConeCat {J C} (D : functor J C) :=
   {| Obj := cone D;
      Hom := Cone_Hom;
-     comp := Cone_comp;
+     comp _ _ _ := Cone_comp;
      idc := Cone_id;
      unit_l := Cone_unit_l;
      unit_r := Cone_unit_r;
@@ -323,7 +321,7 @@ Definition ConeCat {J C} (D : functor J C) :=
 Definition CoConeCat {J C} (D : functor J C) :=
   {| Obj := co_cone D;
      Hom := CoCone_Hom;
-     comp := CoCone_comp;
+     comp _ _ _ := CoCone_comp;
      idc := CoCone_id;
      unit_l := CoCone_unit_l;
      unit_r := CoCone_unit_r;
@@ -657,7 +655,7 @@ etransitivity; [ | apply f_id_prop ].
 apply f_equal, f_id_prop.
 Defined.
 
-Definition CatCat_comp (C C' C'' : category)
+Definition CatCat_comp {C C' C'' : category}
   (F : functor C C') (G : functor C' C'') : functor C C'' :=
   {| f_map_obj X := f_map_obj G (f_map_obj F X);
      f_map_hom X Y f := f_map_hom G (f_map_hom F f);
@@ -665,7 +663,7 @@ Definition CatCat_comp (C C' C'' : category)
      f_id_prop := CatCat_id_prop |}.
 
 Theorem CatCat_unit_l (C C' : category) (F : functor C C') :
-  CatCat_comp C C C' (functor_id C) F = F.
+  CatCat_comp (functor_id C) F = F.
 Proof.
 unfold CatCat_comp, functor_id; cbn.
 destruct F; cbn in *.
@@ -681,7 +679,7 @@ f_equal.
 Qed.
 
 Theorem CatCat_unit_r (C C' : category) (F : functor C C') :
-  CatCat_comp C C' C' F (functor_id C') = F.
+  CatCat_comp F (functor_id C') = F.
 Proof.
 unfold CatCat_comp, functor_id; cbn.
 destruct F; cbn in *.
@@ -698,8 +696,7 @@ Qed.
 
 Theorem CatCat_assoc C C' C'' C'''
   (F : functor C C') (G : functor C' C'') (H : functor C'' C''') :
-  CatCat_comp C C' C''' F (CatCat_comp C' C'' C''' G H) =
-  CatCat_comp C C'' C''' (CatCat_comp C C' C'' F G) H.
+  CatCat_comp F (CatCat_comp G H) = CatCat_comp (CatCat_comp F G) H.
 Proof.
 unfold CatCat_comp; cbn.
 f_equal.
@@ -753,7 +750,7 @@ Hom_set does not work: perhaps false or not
 Definition CatCat :=
   {| Obj := category;
      Hom := functor;
-     comp := CatCat_comp;
+     comp _ _ := CatCat_comp;
      idc := CatCat_idc;
      unit_l := CatCat_unit_l;
      unit_r := CatCat_unit_r;
@@ -1560,7 +1557,7 @@ Definition Cat_1 :=
 Definition Cat_2_Hom A B : Type :=
   if (A && negb B)%bool then False else True.
 
-Definition Cat_2_comp a b c (f : Cat_2_Hom a b) (g : Cat_2_Hom b c) :
+Definition Cat_2_comp {a b c} (f : Cat_2_Hom a b) (g : Cat_2_Hom b c) :
   Cat_2_Hom a c.
 Proof.
 now destruct a, b.
@@ -1571,22 +1568,19 @@ Proof.
 now destruct a.
 Defined.
 
-Theorem Cat_2_unit_l a b (f : Cat_2_Hom a b) :
-  Cat_2_comp a a b (Cat_2_id a) f = f.
+Theorem Cat_2_unit_l a b (f : Cat_2_Hom a b) : Cat_2_comp (Cat_2_id a) f = f.
 Proof.
 now destruct a.
 Defined.
 
-Theorem Cat_2_unit_r a b (f : Cat_2_Hom a b) :
-  Cat_2_comp a b b f (Cat_2_id b) = f.
+Theorem Cat_2_unit_r a b (f : Cat_2_Hom a b) : Cat_2_comp f (Cat_2_id b) = f.
 Proof.
 now destruct a, b, f.
 Defined.
 
 Theorem Cat_2_assoc a b c d (f : Cat_2_Hom a b) (g : Cat_2_Hom b c)
   (h : Cat_2_Hom c d) :
-  Cat_2_comp a b d f (Cat_2_comp b c d g h) =
-  Cat_2_comp a c d (Cat_2_comp a b c f g) h.
+  Cat_2_comp f (Cat_2_comp g h) = Cat_2_comp (Cat_2_comp f g) h.
 Proof.
 now destruct a, b, c; cbn in *.
 Defined.
@@ -1602,7 +1596,7 @@ Defined.
 Definition Cat_2 :=
   {| Obj := bool;
      Hom := Cat_2_Hom;
-     comp := Cat_2_comp;
+     comp _ _ _ := Cat_2_comp;
      idc := Cat_2_id;
      unit_l := Cat_2_unit_l;
      unit_r := Cat_2_unit_r;
@@ -1709,7 +1703,7 @@ Definition is_monotone {A B} (f : ps_stype A → ps_stype B) :=
 
 Definition Pos_Hom A B := { f : ps_stype A → ps_stype B & is_monotone f }.
 
-Definition Pos_comp A B C (f : Pos_Hom A B) (g : Pos_Hom B C) :
+Definition Pos_comp {A B C} (f : Pos_Hom A B) (g : Pos_Hom B C) :
   Pos_Hom A C.
 Proof.
 exists (λ a, projT1 g (projT1 f a)).
@@ -1722,8 +1716,7 @@ Proof.
 now exists (λ a, a).
 Defined.
 
-Theorem Pos_unit_l A B (f : Pos_Hom A B) :
-  Pos_comp A A B (Pos_id A) f = f.
+Theorem Pos_unit_l A B (f : Pos_Hom A B) : Pos_comp (Pos_id A) f = f.
 Proof.
 unfold Pos_comp, Pos_id; cbn.
 destruct f as (f & Hf); cbn.
@@ -1739,8 +1732,7 @@ apply extensionality; intros g.
 apply ps_prop.
 Qed.
 
-Theorem Pos_unit_r A B (f : Pos_Hom A B) :
- Pos_comp A B B f (Pos_id B) = f.
+Theorem Pos_unit_r A B (f : Pos_Hom A B) : Pos_comp f (Pos_id B) = f.
 unfold Pos_comp, Pos_id; cbn.
 destruct f as (f & Hf); cbn.
 apply eq_existT_uncurried.
@@ -1757,8 +1749,7 @@ Qed.
 
 Theorem Pos_assoc A B C D (f : Pos_Hom A B) (g : Pos_Hom B C)
   (h : Pos_Hom C D) :
-  Pos_comp A B D f (Pos_comp B C D g h) =
-  Pos_comp A C D (Pos_comp A B C f g) h.
+  Pos_comp f (Pos_comp g h) = Pos_comp (Pos_comp f g) h.
 Proof.
 apply eq_existT_uncurried.
 now exists eq_refl.
@@ -1784,7 +1775,7 @@ Defined.
 Definition PosCat :=
   {| Obj := Pos_type;
      Hom := Pos_Hom;
-     comp := Pos_comp;
+     comp _ _ _ := Pos_comp;
      idc := Pos_id;
      unit_l := Pos_unit_l;
      unit_r := Pos_unit_r;
@@ -1878,7 +1869,7 @@ Check @hott4cat.PT_elim.
 
 (*
 Theorem Rel_unit_r (A B : Set_type) (f : st_type A → st_type B → hProp) :
-  Rel_comp A B B f (Rel_id B) = f.
+  Rel_comp f (Rel_id B) = f.
 Proof.
 apply extensionality; intros a.
 apply extensionality; intros b.
