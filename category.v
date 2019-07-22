@@ -1822,10 +1822,54 @@ split; intros H.
 -now exists a.
 Defined.
 
+Theorem Rel_unit_r A B (f : Rel_Hom A B) : Rel_comp f (Rel_id B) = f.
+Proof.
+apply fun_ext; intros a.
+apply fun_ext; intros b.
+apply prop_ext.
+unfold Rel_comp, Rel_id; cbn.
+split; intros H.
+-destruct H as (b' & Hb & Hf).
+ now subst b'.
+-now exists b.
+Defined.
+
+Theorem Rel_assoc {A B C D} (f : Rel_Hom A B) (g : Rel_Hom B C)
+  (h : Rel_Hom C D) :
+  Rel_comp f (Rel_comp g h) = Rel_comp (Rel_comp f g) h.
+Proof.
+apply fun_ext; intros a.
+apply fun_ext; intros b.
+apply prop_ext.
+unfold Rel_comp.
+split.
+-intros (b' & Hb & c & Hg & Hh).
+ exists c.
+ split; [ | easy ].
+ now exists b'.
+-intros (c & (b' & Hf & Hg) & Hh).
+ exists b'.
+ split; [ easy | ].
+ now exists c.
+Defined.
+
+Theorem Rel_Hom_set A B : isSet (Rel_Hom A B).
+Proof.
+unfold Rel_Hom.
+apply hott4cat.isSet_forall; intros a.
+apply hott4cat.isSet_forall; intros b.
+intros p q r s.
+...
+apply hott4cat.isProp_isSet.
+intros p q.
+apply prop_ext.
+
 Definition RelCat :=
   {| Obj := Set_type;
      Hom := Rel_Hom;
      comp _ _ _ := Rel_comp;
      idc := Rel_id;
      unit_l := Rel_unit_l;
-     unit_r := 42 |}.
+     unit_r := Rel_unit_r;
+     assoc _ _ _ _ := Rel_assoc;
+     Hom_set A B := 42 |}.
