@@ -1778,13 +1778,6 @@ Definition Cat_1 :=
 Definition Cat_2_Hom A B : Type :=
   if (A && negb B)%bool then False else True.
 
-(* I have a problem with this definition; it means that all arrows that
-   are True are equal. They must be indexed *)
-
-(* to be changed *)
-
-...
-
 Definition Cat_2_comp a b c (f : Cat_2_Hom a b) (g : Cat_2_Hom b c) :
   Cat_2_Hom a c.
 Proof.
@@ -1864,16 +1857,31 @@ Proof.
 now destruct a, b, c.
 Defined.
 
-...
+Definition Cat_3_id a : Cat_3_Hom a a.
+Proof.
+now destruct a.
+Defined.
+
+Theorem Cat_3_unit_l A B (f : Cat_3_Hom A B) :
+  Cat_3_comp (Cat_3_id A) f = f.
+Proof.
+now destruct A, B.
+Defined.
+
+Theorem Cat_3_unit_r A B (f : Cat_3_Hom A B) :
+  Cat_3_comp f (Cat_3_id B) = f.
+Proof.
+now destruct A, B, f; cbn.
+Defined.
 
 Definition Cat_3 :=
   {| Obj := Cat_3_type;
      Hom := Cat_3_Hom;
-     comp := Cat_3_comp |}.
+     comp _ _ _ := Cat_3_comp;
+     idc := Cat_3_id;
+     unit_l := Cat_3_unit_l;
+     unit_r := Cat_3_unit_r |}.
 
-     idc := Cat_2_id;
-     unit_l := Cat_2_unit_l;
-     unit_r := Cat_2_unit_r;
      assoc := Cat_2_assoc;
      Hom_set := Cat_2_Hom_set |}.
 ...
