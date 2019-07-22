@@ -1846,11 +1846,6 @@ Definition Cat_3_Hom A B : Type :=
       end
   end.
 
-(* but actually Hom C1 C3 must be equal to Hom C2 C3 ◦ Hom C1 C2,
-   by definition; they are supposed to be different arrows *)
-(* but if I refute Hom C1 C3, then it will be not
-    considered as an arrow *)
-
 Definition Cat_3_comp {a b c} (f : Cat_3_Hom a b) (g : Cat_3_Hom b c) :
   Cat_3_Hom a c.
 Proof.
@@ -1874,17 +1869,29 @@ Proof.
 now destruct A, B, f; cbn.
 Defined.
 
+Theorem Cat_3_assoc A B C D (f : Cat_3_Hom A B) (g : Cat_3_Hom B C)
+  (h : Cat_3_Hom C D) :
+  Cat_3_comp f (Cat_3_comp g h) = Cat_3_comp (Cat_3_comp f g) h.
+Proof.
+now destruct A, B, C, D, g, h.
+Defined.
+
+Theorem Cat_3_Hom_set A B : isSet (Cat_3_Hom A B).
+Proof.
+destruct A; [ apply hott4cat.isSet_True | | ].
+-destruct B; [ apply hott4cat.isSet_False | | ]; apply hott4cat.isSet_True.
+-destruct B; [ | | apply hott4cat.isSet_True ]; apply hott4cat.isSet_False.
+Defined.
+
 Definition Cat_3 :=
   {| Obj := Cat_3_type;
      Hom := Cat_3_Hom;
      comp _ _ _ := Cat_3_comp;
      idc := Cat_3_id;
      unit_l := Cat_3_unit_l;
-     unit_r := Cat_3_unit_r |}.
-
-     assoc := Cat_2_assoc;
-     Hom_set := Cat_2_Hom_set |}.
-...
+     unit_r := Cat_3_unit_r;
+     assoc := Cat_3_assoc;
+     Hom_set := Cat_3_Hom_set |}.
 
 (* category 0 *)
 
