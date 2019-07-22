@@ -1853,183 +1853,20 @@ split.
  now exists c.
 Defined.
 
-(* proving than prop_ext → isSet Prop *)
-(* stolen at ClassicalFacts.v *)
-
-Definition prop_extensionality := forall A B:Prop, (A <-> B) -> A = B.
-
-Record has_fixpoint (A:Prop) : Prop :=
-  {F : (A -> A) -> A; Fix : forall f:A -> A, F f = f (F f)}.
-
-Record retract (A B:Prop) : Prop :=
-  {f1 : A -> B; f2 : B -> A; f1_o_f2 : forall x:B, f1 (f2 x) = x}.
-
-Local Notation inhabited A := A (only parsing).
-
-Lemma prop_ext_A_eq_A_imp_A :
-  prop_extensionality -> forall A:Prop, inhabited A -> (A -> A) = A.
-Proof.
-  intros Ext A a.
-  apply (Ext (A -> A) A); split; [ exact (fun _ => a) | exact (fun _ _ => a) ].
-Qed.
-
-Lemma prop_ext_retract_A_A_imp_A :
-  prop_extensionality -> forall A:Prop, inhabited A -> retract A (A -> A).
-Proof.
-  intros Ext A a.
-  rewrite (prop_ext_A_eq_A_imp_A Ext A a).
-  exists (fun x:A => x) (fun x:A => x).
-  reflexivity.
-Qed.
-
-Lemma ext_prop_fixpoint :
-  prop_extensionality -> forall A:Prop, inhabited A -> has_fixpoint A.
-Proof.
-  intros Ext A a.
-  case (prop_ext_retract_A_A_imp_A Ext A a); intros g1 g2 g1_o_g2.
-  exists (fun f => (fun x:A => f (g1 x x)) (g2 (fun x => f (g1 x x)))).
-  intro f.
-  pattern (g1 (g2 (fun x:A => f (g1 x x)))) at 1.
-  rewrite (g1_o_g2 (fun x:A => f (g1 x x))).
-  reflexivity.
-Qed.
-
-Definition proof_irrelevance := forall (A:Prop) (a1 a2:A), a1 = a2.
-
-Section Proof_irrelevance_gen.
-
-  Variable bool : Prop.
-  Variable true : bool.
-  Variable false : bool.
-  Hypothesis bool_elim : forall C:Prop, C -> C -> bool -> C.
-  Hypothesis
-    bool_elim_redl : forall (C:Prop) (c1 c2:C), c1 = bool_elim C c1 c2 true.
-  Hypothesis
-    bool_elim_redr : forall (C:Prop) (c1 c2:C), c2 = bool_elim C c1 c2 false.
-  Let bool_dep_induction :=
-  forall P:bool -> Prop, P true -> P false -> forall b:bool, P b.
-
-  Lemma aux : prop_extensionality -> bool_dep_induction -> true = false.
-  Proof.
-    intros Ext Ind.
-    case (ext_prop_fixpoint Ext bool true); intros G Gfix.
-    set (neg := fun b:bool => bool_elim bool false true b).
-    generalize (eq_refl (G neg)).
-    pattern (G neg) at 1.
-    apply Ind with (b := G neg); intro Heq.
-    rewrite (bool_elim_redl bool false true).
-    change (true = neg true); rewrite Heq; apply Gfix.
-    rewrite (bool_elim_redr bool false true).
-    change (neg false = false); rewrite Heq; symmetry ;
-      apply Gfix.
-  Qed.
-
-  Lemma ext_prop_dep_proof_irrel_gen :
-    prop_extensionality -> bool_dep_induction -> proof_irrelevance.
-  Proof.
-    intros Ext Ind A a1 a2.
-    set (f := fun b:bool => bool_elim A a1 a2 b).
-    rewrite (bool_elim_redl A a1 a2).
-    change (f true = a2).
-    rewrite (bool_elim_redr A a1 a2).
-    change (f true = f false).
-    rewrite (aux Ext Ind).
-    reflexivity.
-  Qed.
-
-End Proof_irrelevance_gen.
-
-Section Proof_irrelevance_Prop_Ext_CC.
-
-  Definition BoolP := forall C:Prop, C -> C -> C.
-  Definition TrueP : BoolP := fun C c1 c2 => c1.
-  Definition FalseP : BoolP := fun C c1 c2 => c2.
-  Definition BoolP_elim C c1 c2 (b:BoolP) := b C c1 c2.
-  Definition BoolP_elim_redl (C:Prop) (c1 c2:C) :
-    c1 = BoolP_elim C c1 c2 TrueP := eq_refl c1.
-  Definition BoolP_elim_redr (C:Prop) (c1 c2:C) :
-    c2 = BoolP_elim C c1 c2 FalseP := eq_refl c2.
-
-  Definition BoolP_dep_induction :=
-    forall P:BoolP -> Prop, P TrueP -> P FalseP -> forall b:BoolP, P b.
-
-  Lemma ext_prop_dep_proof_irrel_cc :
-    prop_extensionality -> BoolP_dep_induction -> proof_irrelevance.
-  Proof.
-    exact (ext_prop_dep_proof_irrel_gen BoolP TrueP FalseP BoolP_elim BoolP_elim_redl
-      BoolP_elim_redr).
-  Qed.
-
-End Proof_irrelevance_Prop_Ext_CC.
-
-Section Proof_irrelevance_CIC.
-
-  Inductive boolP : Prop :=
-    | trueP : boolP
-    | falseP : boolP.
-  Definition boolP_elim_redl (C:Prop) (c1 c2:C) :
-    c1 = boolP_ind C c1 c2 trueP := eq_refl c1.
-  Definition boolP_elim_redr (C:Prop) (c1 c2:C) :
-    c2 = boolP_ind C c1 c2 falseP := eq_refl c2.
-  Scheme boolP_indd := Induction for boolP Sort Prop.
-
-  Lemma ext_prop_dep_proof_irrel_cic : prop_extensionality -> proof_irrelevance.
-  Proof.
-    exact (fun pe =>
-      ext_prop_dep_proof_irrel_gen boolP trueP falseP boolP_ind boolP_elim_redl
-      boolP_elim_redr pe boolP_indd).
-  Qed.
-
-End Proof_irrelevance_CIC.
+Require ClassicalFacts.
 
 Theorem proof_irrel : isSet Prop.
 intros a1 a2.
-apply (ext_prop_dep_proof_irrel_cic prop_ext).
+apply (ClassicalFacts.ext_prop_dep_proof_irrel_cic prop_ext).
 Qed.
-
-Print Assumptions proof_irrel.
-
-...
-
-Theorem proof_irrel : isSet Prop.
-Proof.
-intros a1 a2.
-Search bool.
-specialize (bool_rect) as H1.
-...
-bool_rect: ∀ P : bool → Type, P true → P false → ∀ b : bool, P b
-...
-
-intros a1 a2.
-set (f := fun b:bool => bool_elim _ A a1 a2 b).
-    rewrite (bool_elim_redl A a1 a2).
-    change (f true = a2).
-    rewrite (bool_elim_redr A a1 a2).
-    change (f true = f false).
-    rewrite (aux Ext Ind).
-    reflexivity.
-  Qed.
-
-Theorem proof_irrelevance : isSet Prop.
-Proof.
-intros A B p q.
-Check prop_ext.
-...
-
-(* y parait qu'on peut s'en sortir avec ClassicalFacts.v de Coq *)
-...
 
 Theorem Rel_Hom_set A B : isSet (Rel_Hom A B).
 Proof.
 unfold Rel_Hom.
 apply hott4cat.isSet_forall; intros a.
 apply hott4cat.isSet_forall; intros b.
-...
-intros p q r s.
-...
-apply hott4cat.isProp_isSet.
-intros p q.
-apply prop_ext.
+apply proof_irrel.
+Defined.
 
 Definition RelCat :=
   {| Obj := Set_type;
@@ -2039,4 +1876,4 @@ Definition RelCat :=
      unit_l := Rel_unit_l;
      unit_r := Rel_unit_r;
      assoc _ _ _ _ := Rel_assoc;
-     Hom_set A B := 42 |}.
+     Hom_set := Rel_Hom_set |}.
