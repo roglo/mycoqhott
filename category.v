@@ -1858,6 +1858,8 @@ Proof.
 unfold Rel_Hom.
 apply hott4cat.isSet_forall; intros a.
 apply hott4cat.isSet_forall; intros b.
+unfold Set_type in A, B.
+...
 intros p q r s.
 ...
 apply hott4cat.isProp_isSet.
