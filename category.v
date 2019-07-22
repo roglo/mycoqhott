@@ -6,10 +6,13 @@ Require Import Utf8.
 Require hott4cat.
 Set Nested Proofs Allowed.
 
-Axiom extensionality : ∀ A B (f g : ∀ x : A, B x), (∀ x, f x = g x) → f = g.
-
 Definition isSet := hott4cat.isSet.
 Definition isProp := hott4cat.isProp.
+
+Definition hProp := { A : Type & isProp A }.
+
+Axiom fun_ext : ∀ A B (f g : ∀ x : A, B x), (∀ x, f x = g x) → f = g.
+Axiom prop_ext : ∀ A B, isProp A → isProp B → (A → B) → (B → A) → A = B.
 
 Declare Scope category_scope.
 Declare Scope functor_scope.
@@ -209,7 +212,7 @@ unfold Cone_comp; cbn.
 destruct f as (f & Hf); cbn.
 apply eq_existT_uncurried.
 exists (unit_l _).
-apply extensionality.
+apply fun_ext.
 intros j.
 apply Hom_set.
 Defined.
@@ -223,7 +226,7 @@ unfold CoCone_comp; cbn.
 destruct f as (f & Hf); cbn.
 apply eq_existT_uncurried.
 exists (unit_l _).
-apply extensionality.
+apply fun_ext.
 intros j.
 apply Hom_set.
 Defined.
@@ -237,7 +240,7 @@ unfold Cone_comp; cbn.
 destruct f as (f & Hf); cbn.
 apply eq_existT_uncurried.
 exists (unit_r _).
-apply extensionality.
+apply fun_ext.
 intros j.
 apply Hom_set.
 Defined.
@@ -250,7 +253,7 @@ intros.
 destruct f as (f & Hf); cbn.
 apply eq_existT_uncurried.
 exists (unit_r _).
-apply extensionality.
+apply fun_ext.
 intros j.
 apply Hom_set.
 Defined.
@@ -264,7 +267,7 @@ intros.
 unfold Cone_comp; cbn.
 apply eq_existT_uncurried.
 exists (assoc _ _ _).
-apply extensionality.
+apply fun_ext.
 intros j.
 apply Hom_set.
 Defined.
@@ -277,7 +280,7 @@ Proof.
 intros.
 apply eq_existT_uncurried.
 exists (assoc _ _ _).
-apply extensionality.
+apply fun_ext.
 intros j.
 apply Hom_set.
 Defined.
@@ -290,7 +293,7 @@ unfold Cone_Hom.
 apply hott4cat.is_set_is_set_sigT; [ | apply Hom_set ].
 intros f.
 intros p q.
-apply extensionality.
+apply fun_ext.
 intros x.
 apply Hom_set.
 Qed.
@@ -303,7 +306,7 @@ unfold CoCone_Hom.
 apply hott4cat.is_set_is_set_sigT; [ | apply Hom_set ].
 intros f.
 intros p q.
-apply extensionality.
+apply fun_ext.
 intros x.
 apply Hom_set.
 Qed.
@@ -399,7 +402,7 @@ Proof.
 intros; cbn.
 apply eq_existT_uncurried; cbn.
 exists eq_refl; cbn.
-apply extensionality.
+apply fun_ext.
 intros j.
 apply Hom_set.
 Defined.
@@ -414,7 +417,7 @@ Proof.
 intros; cbn.
 apply eq_existT_uncurried; cbn.
 exists eq_refl; cbn.
-apply extensionality.
+apply fun_ext.
 intros j.
 apply Hom_set.
 Defined.
@@ -550,14 +553,14 @@ destruct f as (f, Hf).
 unfold nat_transf_comp; cbn.
 apply eq_existT_uncurried.
 assert (p : (λ x : Obj C, f x ◦ idc (f_map_obj F x)) = f). {
-  apply extensionality.
+  apply fun_ext.
   intros c.
   apply unit_l.
 }
 exists p.
-apply extensionality; intros x.
-apply extensionality; intros y.
-apply extensionality; intros g.
+apply fun_ext; intros x.
+apply fun_ext; intros y.
+apply fun_ext; intros g.
 apply Hom_set.
 Qed.
 
@@ -569,14 +572,14 @@ destruct f as (f, Hf).
 unfold nat_transf_comp; cbn.
 apply eq_existT_uncurried.
 assert (p : (λ x : Obj C, idc (f_map_obj G x) ◦ f x) = f). {
-  apply extensionality.
+  apply fun_ext.
   intros c.
   apply unit_r.
 }
 exists p.
-apply extensionality; intros x.
-apply extensionality; intros y.
-apply extensionality; intros g.
+apply fun_ext; intros x.
+apply fun_ext; intros y.
+apply fun_ext; intros g.
 apply Hom_set.
 Qed.
 
@@ -593,12 +596,12 @@ assert
  (p :
     (λ x, nt_component η'' x ◦ nt_component η' x ◦ nt_component η x) =
     (λ x, nt_component η'' x ◦ (nt_component η' x ◦ nt_component η x))). {
-  apply extensionality; intros; apply assoc.
+  apply fun_ext; intros; apply assoc.
 }
 exists p.
-apply extensionality; intros x.
-apply extensionality; intros y.
-apply extensionality; intros z.
+apply fun_ext; intros x.
+apply fun_ext; intros y.
+apply fun_ext; intros z.
 apply Hom_set.
 Qed.
 
@@ -609,9 +612,9 @@ intros.
 intros a b c d.
 apply hott4cat.is_set_is_set_sigT. {
   intros ϑ f g.
-  apply extensionality; intros x.
-  apply extensionality; intros y.
-  apply extensionality; intros h.
+  apply fun_ext; intros x.
+  apply fun_ext; intros y.
+  apply fun_ext; intros h.
   apply Hom_set.
 }
 apply hott4cat.isSet_forall.
@@ -668,13 +671,13 @@ Proof.
 unfold CatCat_comp, functor_id; cbn.
 destruct F; cbn in *.
 f_equal.
--apply extensionality; intros X.
- apply extensionality; intros Y.
- apply extensionality; intros Z.
- apply extensionality; intros f.
- apply extensionality; intros g.
+-apply fun_ext; intros X.
+ apply fun_ext; intros Y.
+ apply fun_ext; intros Z.
+ apply fun_ext; intros f.
+ apply fun_ext; intros g.
  apply Hom_set.
--apply extensionality; intros X.
+-apply fun_ext; intros X.
  apply Hom_set.
 Qed.
 
@@ -684,13 +687,13 @@ Proof.
 unfold CatCat_comp, functor_id; cbn.
 destruct F; cbn in *.
 f_equal.
--apply extensionality; intros X.
- apply extensionality; intros Y.
- apply extensionality; intros Z.
- apply extensionality; intros f.
- apply extensionality; intros g.
+-apply fun_ext; intros X.
+ apply fun_ext; intros Y.
+ apply fun_ext; intros Z.
+ apply fun_ext; intros f.
+ apply fun_ext; intros g.
  apply Hom_set.
--apply extensionality; intros X.
+-apply fun_ext; intros X.
  apply Hom_set.
 Qed.
 
@@ -701,18 +704,18 @@ Proof.
 unfold CatCat_comp; cbn.
 f_equal.
 -unfold CatCat_comp_prop; cbn.
- apply extensionality; intros X.
- apply extensionality; intros Y.
- apply extensionality; intros Z.
- apply extensionality; intros f.
- apply extensionality; intros g; cbn.
+ apply fun_ext; intros X.
+ apply fun_ext; intros Y.
+ apply fun_ext; intros Z.
+ apply fun_ext; intros f.
+ apply fun_ext; intros g; cbn.
  unfold eq_trans, f_equal.
  destruct
    (f_comp_prop (f_map_hom G (f_map_hom F f)) (f_map_hom G (f_map_hom F g))).
  destruct (f_comp_prop (f_map_hom F f) (f_map_hom F g)).
  now destruct (f_comp_prop f g).
 -unfold CatCat_id_prop.
- apply extensionality; intros X.
+ apply fun_ext; intros X.
  unfold eq_trans, f_equal; cbn.
  destruct f_id_prop; cbn.
  destruct f_id_prop; cbn.
@@ -915,7 +918,7 @@ Theorem cov_hom_functor_comp_prop {C} {A : Obj C} :
          (λ h, f ◦ h) (λ h, g ◦ h)).
 Proof.
 intros.
-apply extensionality; intros h.
+apply fun_ext; intros h.
 apply assoc.
 Qed.
 
@@ -924,7 +927,7 @@ Theorem cov_hom_functor_id_prop {C} {A : Obj C} :
   (λ h, idc B ◦ h) = (@idc SetCat (existT isSet (Hom A B) (Hom_set A B))).
 Proof.
 intros.
-apply extensionality; intros h; cbn.
+apply fun_ext; intros h; cbn.
 apply unit_r.
 Qed.
 
@@ -978,7 +981,7 @@ Theorem hom_functor_comp_prop {C} (A B : Obj C)
   hom_functor_map_hom A B Y Z g ◦ hom_functor_map_hom A B X Y f.
 Proof.
 unfold hom_functor_map_hom; cbn.
-apply extensionality; intros h; cbn in h; cbn.
+apply fun_ext; intros h; cbn in h; cbn.
 now do 2 rewrite assoc.
 Qed.
 
@@ -987,7 +990,7 @@ Theorem hom_functor_id_prop {C} (A B : Obj C)
   hom_functor_map_hom A B X X (idc X) = idc (hom_functor_map_obj A B X).
 Proof.
 unfold hom_functor_map_hom; cbn.
-apply extensionality; intros h; cbn in h; cbn.
+apply fun_ext; intros h; cbn in h; cbn.
 rewrite unit_l, unit_r.
 now destruct h.
 Qed.
@@ -1033,7 +1036,7 @@ assert (Hϑ :
   (λ g : Hom A X, ϑ Y (f ◦ g)) =
   (λ g : Hom A X, f_map_hom F f (ϑ X g))). {
   intros.
-  apply extensionality; intros g.
+  apply fun_ext; intros g.
   unfold ϑ; cbn.
   now rewrite f_comp_prop.
 }
@@ -1053,17 +1056,17 @@ split.
 -intros (η, Hη); cbn.
  apply eq_existT_uncurried.
  assert (p : (λ X f, f_map_hom F f (η A (idc A))) = η). {
-   apply extensionality; intros X.
-   apply extensionality; intros f.
+   apply fun_ext; intros X.
+   apply fun_ext; intros f.
    specialize (Hη A X f) as H1; cbn in H1.
    specialize (@hott4cat.happly _ _ _ _ H1 (idc A)) as H2.
    cbn in H2.
    now rewrite unit_l in H2.
  }
  exists p.
- apply extensionality; intros X.
- apply extensionality; intros Y.
- apply extensionality; intros f.
+ apply fun_ext; intros X.
+ apply fun_ext; intros Y.
+ apply fun_ext; intros f.
  apply hott4cat.isSet_forall.
  intros g.
  apply st_is_set.
@@ -1106,7 +1109,7 @@ destruct Z as (H, Z); cbn in *.
 destruct f as (η, f).
 destruct g as (η', g).
 move η' before η; cbn.
-apply extensionality; intros T; cbn.
+apply fun_ext; intros T; cbn.
 rewrite f_comp_prop; cbn.
 destruct η' as (η', η'_prop).
 destruct η as (η, η_prop).
@@ -1121,7 +1124,7 @@ Theorem functor_SetC_C_Set1_id_prop {C} (D := SetC_C C) (X : Obj D) :
 Proof.
 cbn in *.
 destruct X as (F, X); cbn.
-apply extensionality; intros T; cbn.
+apply fun_ext; intros T; cbn.
 now rewrite f_id_prop.
 Qed.
 
@@ -1145,7 +1148,7 @@ cbn; intros η.
 set (ϑ := λ A g, projT1 (fst f) A (projT1 η A (g ◦ snd f))).
 exists ϑ.
 intros Z T h.
-apply extensionality; intros g; cbn; cbn in h, ϑ.
+apply fun_ext; intros g; cbn; cbn in h, ϑ.
 specialize (ϑ T (comp g h)) as H1.
 unfold ϑ.
 destruct X as (F, X).
@@ -1173,7 +1176,7 @@ Theorem functor_SetC_C_Set2_comp_prop {C} (X Y Z : Obj (SetC_C C))
   functor_SetC_C_Set2_map_hom X Z (g ◦ f) =
   functor_SetC_C_Set2_map_hom Y Z g ◦ functor_SetC_C_Set2_map_hom X Y f.
 Proof.
-apply extensionality; intros η.
+apply fun_ext; intros η.
 unfold functor_SetC_C_Set2_map_hom; cbn.
 apply eq_existT_uncurried.
 destruct f as (η', f).
@@ -1191,15 +1194,15 @@ assert (p
        projT1 η'' A (projT1 η' A (projT1 η A (g0 ◦ (g ◦ f))))) =
     (λ (A : Obj C) (g0 : Hom Z A),
        projT1 η'' A (projT1 η' A (projT1 η A (g0 ◦ g ◦ f))))). {
-  apply extensionality; intros A.
-  apply extensionality; intros h.
+  apply fun_ext; intros A.
+  apply fun_ext; intros h.
   do 3 apply f_equal.
   symmetry; apply assoc.
 }
 exists p; cbn.
-apply extensionality; intros A.
-apply extensionality; intros B.
-apply extensionality; intros h.
+apply fun_ext; intros A.
+apply fun_ext; intros B.
+apply fun_ext; intros h.
 apply hott4cat.isSet_forall.
 intros i.
 now destruct (f_map_obj H B).
@@ -1208,19 +1211,19 @@ Qed.
 Theorem functor_SetC_C_Set2_id_prop {C} (X : Obj (SetC_C C)) :
   functor_SetC_C_Set2_map_hom X X (idc X) = idc (functor_SetC_C_Set2_map_obj X).
 Proof.
-apply extensionality; intros η; cbn.
+apply fun_ext; intros η; cbn.
 destruct η as (η, Hη); cbn in *.
 unfold functor_SetC_C_Set2_map_hom; cbn.
 apply eq_existT_uncurried; cbn.
 assert (p : (λ (A : Obj C) (g : Hom (snd X) A), η A (g ◦ idc (snd X))) = η). {
-  apply extensionality; intros A.
-  apply extensionality; intros f.
+  apply fun_ext; intros A.
+  apply fun_ext; intros f.
   now rewrite unit_l.
 }
 exists p; cbn.
-apply extensionality; intros Y.
-apply extensionality; intros Z.
-apply extensionality; intros f.
+apply fun_ext; intros Y.
+apply fun_ext; intros Z.
+apply fun_ext; intros f.
 apply hott4cat.isSet_forall.
 intros i.
 now destruct (f_map_obj (fst X) Z).
@@ -1247,7 +1250,7 @@ set (ϑ :=
   let ϑ := λ (X : Obj C) (f : Hom A X), f_map_hom F f T in
   existT _ ϑ
     (λ (X Y : Obj C) (f : Hom X Y),
-     extensionality _
+     fun_ext _
        (λ _ : Hom A X, st_type (f_map_obj F Y)) (λ HA : Hom A X, ϑ Y (f ◦ HA))
        (λ HA : Hom A X, f_map_hom F f (ϑ X HA))
        (λ g : Hom A X,
@@ -1257,7 +1260,7 @@ set (ϑ :=
           eq_refl (f_comp_prop g f)))).
 exists ϑ.
 intros F G η.
-apply extensionality; intros T.
+apply fun_ext; intros T.
 unfold ϑ; cbn.
 destruct F as (F, A).
 destruct G as (G, B).
@@ -1268,8 +1271,8 @@ assert (p :
     f_map_hom G f1 (let (f2, g) := η in (projT1 f2) B (f_map_hom F g T))) =
    (λ (A : Obj C) (g : Hom B A),
     projT1 (fst η) A (f_map_hom F (g ◦ snd η) T))). {
-  apply extensionality; intros X.
-  apply extensionality; intros f.
+  apply fun_ext; intros X.
+  apply fun_ext; intros f.
   destruct η as (η, g); cbn in *.
   destruct η as (η, Hη); cbn.
   rewrite f_comp_prop; cbn.
@@ -1279,9 +1282,9 @@ assert (p :
 }
 exists p.
 cbn.
-apply extensionality; intros X.
-apply extensionality; intros Y.
-apply extensionality; intros g.
+apply fun_ext; intros X.
+apply fun_ext; intros Y.
+apply fun_ext; intros g.
 apply hott4cat.isSet_forall.
 intros h.
 now destruct (f_map_obj G Y).
@@ -1531,7 +1534,7 @@ Definition FinSetCat :=
 
 Theorem Cat_1_unit (A B : unit) (f : unit → unit) : (λ x : unit, x) = f.
 Proof.
-apply extensionality; intros x.
+apply fun_ext; intros x.
 now destruct x, (f tt).
 Defined.
 
@@ -1722,13 +1725,13 @@ unfold Pos_comp, Pos_id; cbn.
 destruct f as (f & Hf); cbn.
 apply eq_existT_uncurried.
 assert (p : (λ a, f a) = f). {
-  apply extensionality.
+  apply fun_ext.
   now intros.
 }
 exists p; cbn.
-apply extensionality; intros a.
-apply extensionality; intros a'.
-apply extensionality; intros g.
+apply fun_ext; intros a.
+apply fun_ext; intros a'.
+apply fun_ext; intros g.
 apply ps_prop.
 Qed.
 
@@ -1737,13 +1740,13 @@ unfold Pos_comp, Pos_id; cbn.
 destruct f as (f & Hf); cbn.
 apply eq_existT_uncurried.
 assert (p : (λ a, f a) = f). {
-  apply extensionality.
+  apply fun_ext.
   now intros.
 }
 exists p; cbn.
-apply extensionality; intros a.
-apply extensionality; intros a'.
-apply extensionality; intros g.
+apply fun_ext; intros a.
+apply fun_ext; intros a'.
+apply fun_ext; intros g.
 apply ps_prop.
 Qed.
 
@@ -1761,9 +1764,9 @@ apply hott4cat.is_set_is_set_sigT. {
   intros f.
   unfold is_monotone.
   intros g h.
-  apply extensionality; intros a.
-  apply extensionality; intros a'.
-  apply extensionality; intros p.
+  apply fun_ext; intros a.
+  apply fun_ext; intros a'.
+  apply fun_ext; intros p.
   apply ps_prop.
 }
 apply hott4cat.isSet_forall.
@@ -1792,6 +1795,7 @@ Definition PosCat :=
    for f ⊆ A × B and g ⊆ B × C.
 *)
 
+(*
 Definition Rel_Hom A B :=
   { f : st_type A → st_type B → Type & ∀ a b, isProp (f a b) }.
 
@@ -1822,11 +1826,10 @@ apply eq_existT_uncurried.
 assert (p
   : (λ (_ : st_type A) (c : st_type B),
     hott4cat.PT {b & (hott4cat.PT (st_type A) * f b c)%type}) = f). {
-  apply extensionality; intros a.
-  apply extensionality; intros b.
+  apply fun_ext; intros a.
+  apply fun_ext; intros b.
   specialize (Hf a b) as H1.
   unfold isProp, hott4cat.isProp in H1.
-...
   specialize (hott4cat.PT_rec (st_type A) (st_type B → Type)) as H1.
   specialize (H1 f).
   assert (H : hott4cat.isProp (st_type B → Type)). {
@@ -1857,9 +1860,8 @@ Definition RelCat :=
      unit_l := Rel_unit_l |}.
      unit_r := Rel_unit_r |}.
 ...
-*)
 
-Definition hProp := { A : Type & isProp A }.
+*)
 
 Definition Rel_Hom A B := st_type A → st_type B → hProp.
 
@@ -1874,17 +1876,55 @@ Defined.
 Definition Rel_id (A : Set_type) : Rel_Hom A A.
 Proof.
 intros a1 a2.
-exists (hott4cat.PT (st_type A)).
+exists (hott4cat.PT (a1 = a2)).
 apply hott4cat.PT_eq.
 Defined.
 
 Theorem Rel_unit_l A B (f : Rel_Hom A B) : Rel_comp (Rel_id A) f = f.
 Proof.
-apply extensionality; intros a.
-apply extensionality; intros b.
+apply fun_ext; intros a.
+apply fun_ext; intros b.
+unfold Rel_comp, Rel_id; cbn.
 remember (f a b) as p eqn:Hp.
 destruct p as (C & HC).
-unfold Rel_comp.
+apply eq_existT_uncurried.
+assert (p : hott4cat.PT {b0 : st_type A & (hott4cat.PT (a = b0) * projT1 (f b0 b))%type} = C). {
+  apply prop_ext.
+  -apply hott4cat.PT_eq.
+  -easy.
+  -intros.
+   specialize (hott4cat.PT_rec) as H1.
+   specialize (H1 {b0 : st_type A & (hott4cat.PT (a = b0) * projT1 (f b0 b))%type}).
+   specialize (H1 C).
+   assert (p : {b0 : st_type A & (hott4cat.PT (a = b0) * projT1 (f b0 b))%type} → C). {
+     intros (a' & Ha & Ha2).
+     apply hott4cat.PT_elim in Ha.
+     -subst a'.
+      now rewrite <- Hp in Ha2; cbn in Ha2.
+     -unfold Set_type in A, B.
+      intros p q.
+      apply (projT2 A).
+   }
+   specialize (H1 p).
+...
+Check hott4cat.PT_eq.
+Search hott4cat.PT.
+     specialize (hott4cat.PT_rec) as H2.
+...
+   specialize (hott4cat.PT_rec X C) as H1.
+...
+remember (f a b)
+Check (f a b).
+apply prop_ext.
+assert (ef : (∃ b0 : st_type A, a = b0 ∧ f b0 b) ↔ f a b). {
+  firstorder.
+  now subst a.
+}
+now apply prop_ext.
+Defined.
+...
+remember (f a b) as p eqn:Hp.
+destruct p as (C & HC).
 apply eq_existT_uncurried.
 assert (p :
   hott4cat.PT {a' & (projT1 (Rel_id A a a') * projT1 (f a' b))%type} = C). {
@@ -1904,6 +1944,8 @@ assert (p :
       {a' : st_type A & (hott4cat.PT (st_type A) * projT1 (f a' b))%type}
       → C). {
     intros c.
+unfold Rel_Hom in f.
+...
     apply hott4cat.PT_elim in c. {
       destruct c as (a' & Ha1 & d).
       remember (f a' b) as q eqn:Hq.
@@ -1938,8 +1980,8 @@ Check @hott4cat.PT_elim.
 Theorem Rel_unit_r (A B : Set_type) (f : st_type A → st_type B → hProp) :
   Rel_comp f (Rel_id B) = f.
 Proof.
-apply extensionality; intros a.
-apply extensionality; intros b.
+apply fun_ext; intros a.
+apply fun_ext; intros b.
 remember (f a b) as p eqn:Hp.
 destruct p as (C & HC).
 unfold Rel_comp.
