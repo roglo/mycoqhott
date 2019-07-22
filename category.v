@@ -1775,46 +1775,43 @@ Definition Cat_1 :=
 
 (* category 2 *)
 
-Definition Cat_2_comp a b c
-  (f : ((if (a && negb b)%bool then False else True) : Type))
-  (g : ((if (b && negb c)%bool then False else True) : Type)) :
-  ((if (a && negb c)%bool then False else True) : Type).
+Definition Cat_2_Hom A B : Type :=
+  if (A && negb B)%bool then False else True.
+
+Definition Cat_2_comp a b c (f : Cat_2_Hom a b) (g : Cat_2_Hom b c) :
+  Cat_2_Hom a c.
 Proof.
 now destruct a, b.
 Defined.
 
-Definition Cat_2_id a : ((if (a && negb a)%bool then False else True) : Type).
+Definition Cat_2_id a : Cat_2_Hom a a.
 Proof.
 now destruct a.
 Defined.
 
-Theorem Cat_2_unit_l a b
-  (f : ((if (a && negb b)%bool then False else True) : Type)) :
+Theorem Cat_2_unit_l a b (f : Cat_2_Hom a b) :
   Cat_2_comp a a b (Cat_2_id a) f = f.
 Proof.
 now destruct a.
 Defined.
 
-Theorem Cat_2_unit_r a b
-  (f : ((if (a && negb b)%bool then False else True) : Type)) :
+Theorem Cat_2_unit_r a b (f : Cat_2_Hom a b) :
   Cat_2_comp a b b f (Cat_2_id b) = f.
 Proof.
 now destruct a, b, f.
 Defined.
 
-Theorem Cat_2_assoc a b c d
-  (f : ((if (a && negb b)%bool then False else True) : Type))
-  (g : ((if (b && negb c)%bool then False else True) : Type))
-  (h : ((if (c && negb d)%bool then False else True) : Type)) :
+Theorem Cat_2_assoc a b c d (f : Cat_2_Hom a b) (g : Cat_2_Hom b c)
+  (h : Cat_2_Hom c d) :
   Cat_2_comp a b d f (Cat_2_comp b c d g h) =
   Cat_2_comp a c d (Cat_2_comp a b c f g) h.
 Proof.
 now destruct a, b, c; cbn in *.
 Defined.
 
-Theorem Cat_2_Hom_set a b :
-  isSet (if (a && negb b)%bool then False else True).
+Theorem Cat_2_Hom_set a b : isSet (Cat_2_Hom a b).
 Proof.
+unfold Cat_2_Hom.
 destruct (a && negb b)%bool.
 -apply hott4cat.isSet_False.
 -apply hott4cat.isSet_True.
@@ -1822,7 +1819,7 @@ Defined.
 
 Definition Cat_2 :=
   {| Obj := bool;
-     Hom a b := if (a && negb b)%bool then False else True;
+     Hom := Cat_2_Hom;
      comp := Cat_2_comp;
      idc := Cat_2_id;
      unit_l := Cat_2_unit_l;
