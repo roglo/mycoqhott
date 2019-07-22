@@ -1792,6 +1792,73 @@ Definition PosCat :=
    for f ⊆ A × B and g ⊆ B × C.
 *)
 
+Definition Rel_Hom A B :=
+  { f : st_type A → st_type B → Type & ∀ a b, isProp (f a b) }.
+
+Definition Rel_comp {A B C} (f : Rel_Hom A B) (g : Rel_Hom B C) :
+  Rel_Hom A C.
+Proof.
+unfold Rel_Hom.
+destruct f as (f & Hf).
+destruct g as (g & Hg).
+exists (λ a c, hott4cat.PT {b : st_type B & (f a b * g b c)%type}).
+intros a c.
+apply hott4cat.PT_eq.
+Defined.
+
+Definition Rel_id A : Rel_Hom A A.
+Proof.
+unfold Rel_Hom.
+exists (λ a a', hott4cat.PT (st_type A)).
+intros a a'.
+apply hott4cat.PT_eq.
+Defined.
+
+Theorem Rel_unit_l A B (f : Rel_Hom A B) : Rel_comp (Rel_id A) f = f.
+Proof.
+unfold Rel_comp, Rel_id; cbn.
+destruct f as (f & Hf).
+apply eq_existT_uncurried.
+assert (p
+  : (λ (_ : st_type A) (c : st_type B),
+    hott4cat.PT {b & (hott4cat.PT (st_type A) * f b c)%type}) = f). {
+  apply extensionality; intros a.
+  apply extensionality; intros b.
+  specialize (Hf a b) as H1.
+  unfold isProp, hott4cat.isProp in H1.
+...
+  specialize (hott4cat.PT_rec (st_type A) (st_type B → Type)) as H1.
+  specialize (H1 f).
+  assert (H : hott4cat.isProp (st_type B → Type)). {
+    admit. (*
+    apply hott4cat.isProp_forall.
+*)
+  }
+  specialize (H1 H); clear H.
+  destruct H1 as (g & Hg).
+...
+1 subgoal (ID 3339)
+
+  A : Set_type
+  B : Set_type
+  f : st_type A → st_type B → Type
+  Hf : ∀ (a : st_type A) (b : st_type B), isProp (f a b)
+  a : st_type A
+  c : st_type B
+  ============================
+  hott4cat.PT {b : st_type A & hott4cat.PT (st_type A) * f b c} = f a c
+
+Definition RelCat :=
+  {| Obj := Set_type;
+     Hom := Rel_Hom;
+     comp _ _ _ := Rel_comp;
+     idc := Rel_id;
+     unit_l A B f := 42 |}.
+     unit_l := Rel_unit_l |}.
+     unit_r := Rel_unit_r |}.
+...
+*)
+
 Definition hProp := { A : Type & isProp A }.
 
 Definition Rel_Hom A B := st_type A → st_type B → hProp.
