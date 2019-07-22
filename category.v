@@ -1853,12 +1853,23 @@ split.
  now exists c.
 Defined.
 
+Theorem glop : (True → True) ↔ True.
+Proof.
+split; [ now intros | now intros ].
+Qed.
+
+Theorem pouet : isSet Prop.
+Proof.
+intros A B.
+Check prop_ext.
+(* y parait qu'on peut s'en sortir avec ClassicalFacts.v de Coq *)
+Abort.
+
 Theorem Rel_Hom_set A B : isSet (Rel_Hom A B).
 Proof.
 unfold Rel_Hom.
 apply hott4cat.isSet_forall; intros a.
 apply hott4cat.isSet_forall; intros b.
-unfold Set_type in A, B.
 ...
 intros p q r s.
 ...
