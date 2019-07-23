@@ -965,52 +965,6 @@ Proof. easy. Qed.
 
 (* Hom functor: bifunctor of covariant and contravariant *)
 
-(* erroneous definition
-
-Definition hom_functor_map_obj {C} (A B : Obj C)
-  (X : Obj (cat_prod (op C) C)) : Obj SetCat :=
-  existT isSet (@Hom C A (snd X) * @Hom C (fst X) B)%type
-    (hott4cat.isSet_pair (@Hom_set C A (snd X)) (@Hom_set C (fst X) B)).
-
-Definition hom_functor_map_hom {C} (A B : Obj C)
-  (X Y : Obj (cat_prod (op C) C)) (f : Hom X Y) :
-  Hom (hom_functor_map_obj A B X) (hom_functor_map_obj A B Y).
-Proof.
-intros g.
-split.
--eapply comp; [ apply (fst g) | apply (snd f) ].
--eapply comp; [ apply (fst f) | apply (snd g) ].
-Defined.
-
-Theorem hom_functor_comp_prop {C} (A B : Obj C)
-  (X Y Z : Obj (cat_prod (op C) C))
-  (f : Hom X Y) (g : Hom Y Z) :
-  hom_functor_map_hom A B X Z (g ◦ f) =
-  hom_functor_map_hom A B Y Z g ◦ hom_functor_map_hom A B X Y f.
-Proof.
-unfold hom_functor_map_hom; cbn.
-apply fun_ext; intros h; cbn in h; cbn.
-now do 2 rewrite assoc.
-Qed.
-
-Theorem hom_functor_id_prop {C} (A B : Obj C)
-  (X : Obj (cat_prod C (op C))) :
-  hom_functor_map_hom A B X X (idc X) = idc (hom_functor_map_obj A B X).
-Proof.
-unfold hom_functor_map_hom; cbn.
-apply fun_ext; intros h; cbn in h; cbn.
-rewrite unit_l, unit_r.
-now destruct h.
-Qed.
-
-Definition hom_functor {C} (A B : Obj C) :
-    functor (cat_prod (op C) C) SetCat :=
-  {| f_map_obj X := hom_functor_map_obj A B X : Obj SetCat;
-     f_map_hom := hom_functor_map_hom A B;
-     f_comp_prop := hom_functor_comp_prop A B;
-     f_id_prop := hom_functor_id_prop A B |}.
-*)
-
 Definition hom_functor_map_obj {C} (X : Obj (op C × C)) : Obj SetCat :=
   existT isSet (@Hom C (fst X) (snd X)) (@Hom_set C (fst X) (snd X)).
 
