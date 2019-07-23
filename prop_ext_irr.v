@@ -30,9 +30,8 @@ Theorem prop_ext_retract_A_A_imp_A :
   prop_extensionality → ∀ A : Prop, A → retract A (A → A).
 Proof.
 intros Ext A a.
-rewrite (prop_ext_A_eq_A_imp_A Ext A a).
-exists (λ x : A, x) (λ x : A, x).
-reflexivity.
+rewrite prop_ext_A_eq_A_imp_A; [ | easy | easy ].
+now exists (λ x, x) (λ x, x).
 Qed.
 
 Theorem ext_prop_fixpoint :
