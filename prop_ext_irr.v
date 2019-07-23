@@ -68,5 +68,6 @@ Proof.
 intros * Ext A a1 a2.
 set (f := λ b : boolP, boolP_ind A a1 a2 b).
 change (f trueP = f falseP).
-now rewrite (aux Ext).
+rewrite (aux Ext).
+reflexivity.
 Qed.
