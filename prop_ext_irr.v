@@ -10,14 +10,14 @@ Inductive boolP : Prop :=
   | trueP : boolP
   | falseP : boolP.
 
-Record has_fixpoint (A : Prop) : Prop :=
-  { F : (A → A) → A;
-    Fix : ∀ f : A → A, F f = f (F f) }.
-
 Record retract (A B : Prop) : Prop :=
   { f1 : A → B;
     f2 : B → A;
     f1_o_f2 : ∀ x : B, f1 (f2 x) = x }.
+
+Record has_fixpoint (A : Prop) : Prop :=
+  { F : (A → A) → A;
+    Fix : ∀ f : A → A, F f = f (F f) }.
 
 Theorem prop_ext_A_eq_A_imp_A :
   prop_extensionality → ∀ A : Prop, A → (A → A) = A.
