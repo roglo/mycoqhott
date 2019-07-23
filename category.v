@@ -3,6 +3,7 @@
 
 Set Universe Polymorphism.
 Require Import Utf8.
+Require ClassicalFacts.
 Require hott4cat.
 Set Nested Proofs Allowed.
 
@@ -13,6 +14,11 @@ Definition hProp := { A : Type & isProp A }.
 
 Axiom fun_ext : ∀ A B (f g : ∀ x : A, B x), (∀ x, f x = g x) → f = g.
 Axiom prop_ext : ∀ A B, (A ↔ B) → A = B.
+
+Theorem proof_irrel : isSet Prop.
+intros a1 a2.
+apply (ClassicalFacts.ext_prop_dep_proof_irrel_cic prop_ext).
+Qed.
 
 Declare Scope category_scope.
 Declare Scope functor_scope.
@@ -1852,13 +1858,6 @@ split.
  split; [ easy | ].
  now exists c.
 Defined.
-
-Require ClassicalFacts.
-
-Theorem proof_irrel : isSet Prop.
-intros a1 a2.
-apply (ClassicalFacts.ext_prop_dep_proof_irrel_cic prop_ext).
-Qed.
 
 Theorem Rel_Hom_set A B : isSet (Rel_Hom A B).
 Proof.
