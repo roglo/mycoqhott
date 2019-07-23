@@ -53,11 +53,12 @@ intros * Ext.
 assert (Ind : ∀ P : boolP → Prop, P trueP → P falseP → ∀ b, P b). {
   now intros; destruct b.
 }
-case (ext_prop_fixpoint Ext boolP trueP); intros G Gfix.
+specialize (ext_prop_fixpoint Ext boolP trueP) as G.
+destruct G as (G, Gfix).
 set (neg := λ b : boolP, boolP_ind boolP falseP trueP b).
 generalize (eq_refl (G neg)).
 pattern (G neg) at 1.
-apply Ind with (b := G neg); intro Heq.
+apply Ind; intros Heq.
 -change (trueP = neg trueP); rewrite Heq; apply Gfix.
 -change (neg falseP = falseP); rewrite Heq; symmetry; apply Gfix.
 Qed.
@@ -67,6 +68,5 @@ Proof.
 intros * Ext A a1 a2.
 set (f := λ b : boolP, boolP_ind A a1 a2 b).
 change (f trueP = f falseP).
-rewrite (aux Ext).
-reflexivity.
+now rewrite (aux Ext).
 Qed.
