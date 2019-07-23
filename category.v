@@ -997,8 +997,6 @@ Definition hom_functor C : functor (op C × C) SetCat :=
      f_comp_prop _ _ _ := hom_functor_comp_prop;
      f_id_prop := hom_functor_id_prop |}.
 
-...
-
 (* representable functors *)
 
 Definition is_representable_functor {C} (F : functor C SetCat) :=
@@ -1365,7 +1363,6 @@ Notation "L ⊣ R" := (are_adjoint L R) (at level 70).
 *)
 
 Check @hom_functor.
-...
 
 (* doubtful new implementation
 
@@ -1380,9 +1377,11 @@ Definition adjunction2 {C D} (L : functor C D) (R : functor D C) :=
 
 *)
 
-(*
-   (not sure this implementation is good)
-*)
+Definition adjunction2 {C D} (L : functor C D) (R : functor D C) : nat.
+Proof.
+Check (hom_functor C ◦ (fop R × ¹ C))%Fun.
+Check (hom_functor D ◦ (¹ op D × L))%Fun.
+...
 
 Definition adjunction2 {C D} (L : functor C D) (R : functor D C) :=
   ∀ X Y,
