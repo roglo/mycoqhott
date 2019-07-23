@@ -1330,27 +1330,8 @@ Definition right_whiskering {D E F} {G H : functor D E} :
     (right_whiskering_nt_component I α)
     (right_whiskering_nt_commute I α).
 
-(* adjunction *)
-
-Definition adjunction {C D} (L : functor C D) (R : functor D C)
-    (η : natural_transformation (¹ C) (R ◦ L))
-    (ε : natural_transformation (L ◦ R) (¹ D)) :=
-  (right_whiskering R ε ◦ left_whiskering η R = nat_transf_id R)%NT ∧
-  (left_whiskering ε L ◦ right_whiskering L η = nat_transf_id L)%NT.
-
-Definition is_left_adjoint {C D} (L : functor C D) :=
-  ∃ R η ε, adjunction L R η ε.
-
-Definition is_right_adjoint {C D} (R : functor D C) :=
-  ∃ L η ε, adjunction L R η ε.
-
-Definition are_adjoint {C D} (L : functor C D) (R : functor D C) :=
-  ∃ η ε, adjunction L R η ε.
-
-Notation "L ⊣ R" := (are_adjoint L R) (at level 70).
-
 (*
-   Other definition of adjunction.
+   adjunction: 1st definition
 
    An adjunction between categories C and D is a pair of functors
    (assumed to be covariant)
@@ -1362,21 +1343,40 @@ Notation "L ⊣ R" := (are_adjoint L R) (at level 70).
    (Wikipedia)
 *)
 
-Definition adjunction2 {C D} (L : functor C D) (R : functor D C) :=
+Definition adjunction {C D} (L : functor C D) (R : functor D C) :=
   ∀ (η :
     natural_transformation
       (hom_functor C ◦ (fop R × ¹ C))%Fun
       (hom_functor D ◦ (¹ op D × L))%Fun),
   is_natural_isomorphism η.
 
+Definition is_left_adjoint {C D} (L : functor C D) :=
+  ∃ R, adjunction L R.
+
+Definition is_right_adjoint {C D} (R : functor D C) :=
+  ∃ L, adjunction L R.
+
+Definition are_adjoint {C D} (L : functor C D) (R : functor D C) :=
+  adjunction L R.
+
+Notation "L ⊣ R" := (are_adjoint L R) (at level 70).
+
+(* adjunction: 2nd definition *)
+
+Definition adjunction2 {C D} (L : functor C D) (R : functor D C)
+    (η : natural_transformation (¹ C) (R ◦ L))
+    (ε : natural_transformation (L ◦ R) (¹ D)) :=
+  (right_whiskering R ε ◦ left_whiskering η R = nat_transf_id R)%NT ∧
+  (left_whiskering ε L ◦ right_whiskering L η = nat_transf_id L)%NT.
+
 Definition is_left_adjoint2 {C D} (L : functor C D) :=
-  ∃ R, adjunction2 L R.
+  ∃ R η ε, adjunction2 L R η ε.
 
 Definition is_right_adjoint2 {C D} (R : functor D C) :=
-  ∃ L, adjunction2 L R.
+  ∃ L η ε, adjunction2 L R η ε.
 
 Definition are_adjoint2 {C D} (L : functor C D) (R : functor D C) :=
-  adjunction2 L R.
+  ∃ η ε, adjunction2 L R η ε.
 
 ...
 
