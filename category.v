@@ -965,6 +965,8 @@ Proof. easy. Qed.
 
 (* Hom functor: bifunctor of covariant and contravariant *)
 
+(* erroneous definition
+
 Definition hom_functor_map_obj {C} (A B : Obj C)
   (X : Obj (cat_prod (op C) C)) : Obj SetCat :=
   existT isSet (@Hom C A (snd X) * @Hom C (fst X) B)%type
@@ -1007,6 +1009,27 @@ Definition hom_functor {C} (A B : Obj C) :
      f_map_hom := hom_functor_map_hom A B;
      f_comp_prop := hom_functor_comp_prop A B;
      f_id_prop := hom_functor_id_prop A B |}.
+*)
+
+Definition hom_functor_map_obj {C} (X : Obj (op C × C)) : Obj SetCat :=
+  existT _ (Hom (fst X) (snd X)) (Hom_set (fst X) (snd X)).
+
+Definition hom_functor_map_hom {C} (X Y : Obj (op C × C)) (f : Hom X Y) :
+  Hom (hom_functor_map_obj X) (hom_functor_map_obj Y).
+Proof.
+cbn; intros g.
+...
+
+Definition hom_functor {C} : functor (op C × C) SetCat :=
+  {| f_map_obj := hom_functor_map_obj;
+     f_map_hom := hom_functor_map_hom |}.
+
+  {| f_map_obj X := hom_functor_map_obj A B X : Obj SetCat;
+     f_map_hom := hom_functor_map_hom A B;
+     f_comp_prop := hom_functor_comp_prop A B;
+     f_id_prop := hom_functor_id_prop A B |}.
+
+...
 
 (* representable functors *)
 
@@ -1373,6 +1396,7 @@ Notation "L ⊣ R" := (are_adjoint L R) (at level 70).
    (Wikipedia)
 *)
 
+Check @hom_functor.
 ...
 
 (* doubtful new implementation
