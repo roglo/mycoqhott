@@ -1012,22 +1012,25 @@ Definition hom_functor {C} (A B : Obj C) :
 *)
 
 Definition hom_functor_map_obj {C} (X : Obj (op C × C)) : Obj SetCat :=
-  existT _ (Hom (fst X) (snd X)) (Hom_set (fst X) (snd X)).
+  existT isSet (@Hom C (fst X) (snd X)) (@Hom_set C (fst X) (snd X)).
 
 Definition hom_functor_map_hom {C} (X Y : Obj (op C × C)) (f : Hom X Y) :
-  Hom (hom_functor_map_obj X) (hom_functor_map_obj Y).
+  Hom (@hom_functor_map_obj C X) (@hom_functor_map_obj C Y) :=
+  λ g,
+  (@comp C (fst Y) (fst X) (snd Y) (fst f)
+     (@comp C (fst X) (snd X) (snd Y) g (snd f))).
+
+Theorem hom_functor_comp_prop {C} {X Y Z : Obj (op C × C)}
+  (f : @Hom (op C × C) X Y) (g : @Hom (op C × C) Y Z) :
+  @hom_functor_map_hom C X Z (g ◦ f) =
+  @hom_functor_map_hom C Y Z g ◦ @hom_functor_map_hom C X Y f.
 Proof.
-cbn; intros g.
 ...
 
-Definition hom_functor {C} : functor (op C × C) SetCat :=
+Definition hom_functor C : functor (op C × C) SetCat :=
   {| f_map_obj := hom_functor_map_obj;
-     f_map_hom := hom_functor_map_hom |}.
-
-  {| f_map_obj X := hom_functor_map_obj A B X : Obj SetCat;
-     f_map_hom := hom_functor_map_hom A B;
-     f_comp_prop := hom_functor_comp_prop A B;
-     f_id_prop := hom_functor_id_prop A B |}.
+     f_map_hom := hom_functor_map_hom;
+     f_comp_prop _ _ _ := hom_functor_comp_prop |}.
 
 ...
 
