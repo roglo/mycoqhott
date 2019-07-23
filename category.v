@@ -1373,6 +1373,8 @@ Notation "L ⊣ R" := (are_adjoint L R) (at level 70).
    (Wikipedia)
 *)
 
+...
+
 (* doubtful new implementation
 
 Definition adjunction2 {C D} (L : functor C D) (R : functor D C) :=
