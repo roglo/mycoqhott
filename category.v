@@ -500,7 +500,7 @@ Definition natural_transformation {C D} (F : functor C D) (G : functor C D) :=
   { ϑ : ∀ x, Hom (f_map_obj F x) (f_map_obj G x) &
     ∀ x y (f : Hom x y), ϑ y ◦ f_map_hom F f = f_map_hom G f ◦ ϑ x }.
 
-Arguments natural_transformation _ _ F%Fun G%Fun.
+Arguments natural_transformation {_} {_} F%Fun G%Fun.
 
 Definition nt_component {C D} {F G : functor C D}
   (η : natural_transformation F G) := projT1 η.
@@ -1362,27 +1362,24 @@ Notation "L ⊣ R" := (are_adjoint L R) (at level 70).
    (Wikipedia)
 *)
 
-Check @hom_functor.
-
-Definition adjunction2 {C D} (L : functor C D) (R : functor D C) : nat.
-Proof.
-Check (hom_functor C ◦ (fop R × ¹ C))%Fun.
-Check (hom_functor D ◦ (¹ op D × L))%Fun.
-...
-
 Definition adjunction2 {C D} (L : functor C D) (R : functor D C) :=
-  ∀ X Y,
-  (∃ f : Hom (f_map_obj R Y) X → Hom Y (f_map_obj L X),
-   ∃ g : Hom Y (f_map_obj L X) → Hom (f_map_obj R Y) X,
-   (∀ x, g (f x) = x) ∧ (∀ y, f (g y) = y)) ∧
-  (∀ (η :
-       natural_transformation
-         (hom_functor (f_map_obj R Y) X ◦ (fop R × ¹ C))%Fun
-         (hom_functor Y (f_map_obj L X) ◦ (¹ op D × L))%Fun),
-   is_natural_isomorphism η).
+  ∀ (η :
+    natural_transformation
+      (hom_functor C ◦ (fop R × ¹ C))%Fun
+      (hom_functor D ◦ (¹ op D × L))%Fun),
+  is_natural_isomorphism η.
+
+Definition is_left_adjoint2 {C D} (L : functor C D) :=
+  ∃ R, adjunction2 L R.
+
+Definition is_right_adjoint2 {C D} (R : functor D C) :=
+  ∃ L, adjunction2 L R.
 
 Definition are_adjoint2 {C D} (L : functor C D) (R : functor D C) :=
   adjunction2 L R.
+
+...
+
 
 (* cone image by a functor *)
 
