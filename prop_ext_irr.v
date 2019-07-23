@@ -23,7 +23,7 @@ Theorem prop_ext_A_eq_A_imp_A :
   prop_extensionality → ∀ A : Prop, A → (A → A) = A.
 Proof.
 intros Ext A a.
-apply (Ext (A -> A) A); split; [ exact (λ _, a) | exact (λ _ _, a) ].
+now apply Ext.
 Qed.
 
 Theorem prop_ext_retract_A_A_imp_A :
