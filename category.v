@@ -1389,6 +1389,11 @@ split; cycle 1.
  unfold are_adjoint, adjunction.
  destruct Ha as (η & ε & Hr & Hl).
  intros α.
+ unfold is_natural_isomorphism.
+ intros (Y, X).
+ unfold is_isomorphism; cbn.
+ destruct ε as (ε, Hε); cbn in *.
+ specialize (Hε Y (f_map_obj L X)) as H1.
 ...
 
 -intros Ha.
