@@ -77,7 +77,7 @@ Class functor (C D : category) :=
 
 Arguments functor C%Cat D%Cat.
 Arguments f_map_obj [_] [_] _%Fun.
-Arguments f_map_hom [_] [_] _ [_] [_].
+Arguments f_map_hom {_} {_} _ {_} {_}.
 
 Definition fop {C D} : functor C D → functor (op C) (op D) :=
   λ F,
@@ -125,6 +125,70 @@ Notation "g '◦' f" := (functor_comp f g) (at level 40, left associativity) :
   functor_scope.
 Notation "¹ C" := (functor_id C) (at level 35) :
   functor_scope.
+
+(* *)
+
+Theorem eq_eq_eq_pair {A B} {x y : A} {z t : B} :
+  ∀ (p : x = y) (q : z = t), (x, z) = (y, t).
+Proof.
+intros.
+now destruct p, q.
+Defined.
+
+Definition transport2 {C D} {F : functor C D} {G : functor D C}
+  (GF : ∀ x : Obj C, f_map_obj G (f_map_obj F x) = x) x y :=
+  hott4cat.transport (λ '(x, y), Hom x y)
+    (eq_eq_eq_pair (eq_sym (GF x)) (eq_sym (GF y))).
+
+(* faithfulness & fullness *)
+
+Example glop {C D} (F : functor C D) A A' B B' (f : @Hom C A B) (f' : @Hom C A' B') : False.
+Check (f_map_obj F A = f_map_obj F A').
+Check (f_map_obj F B = f_map_obj F B').
+Check (f_map_hom F f).
+Check (f_map_hom F f').
+Check transport2.
+Abort.
+
+Definition is_functor_injective_on_arrows {C D} (F : functor C D) :
+  ∀ (A A' B B' : Obj C) (f : Hom A B) (f' : Hom A' B')
+     (p : f_map_obj F A = f_map_obj F A') (q : f_map_obj F B = f_map_obj F B')
+     (r : Hom (f_map_obj F A) (f_map_obj F B) = Hom (f_map_obj F A') (f_map_obj F B')),
+  f_map_hom F f = f_map_hom F f' → f = f'.
+...
+
+Definition is_functor_injective_on_arrows {C D} (F : functor C D) :
+  ∀ (A A' B B' : Obj C) (f : Hom A B) (f' : Hom A' B')
+     (p : f_map_obj F A = f_map_obj F A') (q : f_map_obj F B = f_map_obj F B')
+     (r : Hom (f_map_obj F A) (f_map_obj F B) = Hom (f_map_obj F A') (f_map_obj F B')),
+False.
+intros.
+...
+
+Check (@hott4cat.transport).
+set (P := λ AB, Hom (f_map_obj F (fst AB)) (f_map_obj F (snd AB))).
+Check (@hott4cat.transport _ P).
+Check (@hott4cat.transport _ P r (f_map_hom F f)).
+
+Check (f_map_hom F f).
+Check (f_map_hom F f').
+
+f_map_hom F f
+     : Hom (f_map_obj F A) (f_map_obj F B)
+f_map_hom F f'
+     : Hom (f_map_obj F A') (f_map_obj F B')
+
+  f_map_hom F f = f_map_hom F f' → f = f'.
+
+...
+
+Definition is_faithful_functor {C D} (F : functor C D) :=
+  ∀ (A B : Obj C) (f g : Hom A B), f_map_hom F f = f_map_hom F g → f = g.
+
+...
+
+Definition is_full_functor {C D} (F : functor C D) :=
+  ∀ A B (g : Hom (f_map_obj F A) (f_map_obj F B)), ∃ f, f_map_hom F f = g.
 
 (* *)
 
@@ -453,18 +517,6 @@ Theorem F_CoConeCat2_CoConeCat_id {J C} {D : functor J C} :
   ∀ cc,
   f_map_obj F_CoConeCat_CoConeCat2 (f_map_obj F_CoConeCat2_CoConeCat cc) = cc.
 Proof. now intros; destruct cc. Defined.
-
-Theorem eq_eq_eq_pair {A B} {x y : A} {z t : B} :
-  ∀ (p : x = y) (q : z = t), (x, z) = (y, t).
-Proof.
-intros.
-now destruct p, q.
-Defined.
-
-Definition transport2 {C D} {F : functor C D} {G : functor D C}
-  (GF : ∀ x : Obj C, f_map_obj G (f_map_obj F x) = x) x y :=
-  hott4cat.transport (λ '(x, y), Hom x y)
-    (eq_eq_eq_pair (eq_sym (GF x)) (eq_sym (GF y))).
 
 (* Guetta & Allioux pretend the following to be equivalent to
    is_equiv_betw_cat above, but testing the latter to CoConeCat
