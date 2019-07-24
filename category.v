@@ -1392,8 +1392,10 @@ split; cycle 1.
  unfold is_natural_isomorphism.
  intros (Y, X).
  unfold is_isomorphism; cbn.
- destruct ε as (ε, Hε); cbn in *.
- specialize (Hε Y (f_map_obj L X)) as H1.
+ specialize (projT2 ε Y (f_map_obj L X)) as H1; cbn in H1.
+ assert (G : @Hom D Y (f_map_obj L X) → @Hom C (f_map_obj R Y) X). {
+   intros f.
+   specialize (H1 f).
 ...
 
 -intros Ha.
