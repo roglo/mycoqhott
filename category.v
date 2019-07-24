@@ -1383,7 +1383,14 @@ Definition are_adjoint2 {C D} (L : functor C D) (R : functor D C) :=
 Theorem adj_adj {C D} (L : functor C D) (R : functor D C) :
   are_adjoint L R ↔ are_adjoint2 L R.
 Proof.
-split.
+split; cycle 1.
+-intros Ha.
+ unfold are_adjoint2, adjunction2 in Ha.
+ unfold are_adjoint, adjunction.
+ destruct Ha as (η & ε & Hr & Hl).
+ intros α.
+...
+
 -intros Ha.
  unfold are_adjoint, adjunction in Ha.
  unfold are_adjoint2, adjunction2.
