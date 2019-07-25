@@ -1406,6 +1406,7 @@ split.
  destruct Ha as (ϑ, Hϑ).
 ...
   ηC : c → RLc
+faire C^op→[C,Set] à la place C^op×C→Set
 ...
 -intros Ha.
  unfold are_adjoint2, adjunction2 in Ha.
