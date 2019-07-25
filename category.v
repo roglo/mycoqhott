@@ -145,7 +145,6 @@ Definition transport2 {C D} {F : functor C D} {G : functor D C}
 Definition is_functor_injective_on_objects {C D} (F : functor C D) :=
   ∀ (A B : Obj C), f_map_obj F A = f_map_obj F B → A = B.
 
-(*
 Check @hott4cat.transport.
 
 Definition is_functor_injective_on_arrows {C D} (F : functor C D) :
@@ -200,7 +199,6 @@ f_map_hom F f'
   f_map_hom F f = f_map_hom F f' → f = f'.
 
 ...
-*)
 
 Definition is_faithful_functor {C D} (F : functor C D) :=
   ∀ (A B : Obj C) (f g : Hom A B), f_map_hom F f = f_map_hom F g → f = g.
