@@ -151,7 +151,7 @@ Definition is_full_functor {C D} (F : functor C D) :=
 Definition is_functor_injective_on_objects {C D} (F : functor C D) :=
   ∀ (A B : Obj C), f_map_obj F A = f_map_obj F B → A = B.
 
-Definition is_functor_injective_on_arrows {C D} (F : functor C D) :
+Definition is_functor_injective_on_arrows {C D} (F : functor C D) :=
   is_functor_injective_on_objects F ∧ is_faithful_functor F.
 
 (* *)
