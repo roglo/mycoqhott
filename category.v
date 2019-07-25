@@ -1394,7 +1394,7 @@ Definition is_right_adjoint2 {C D} (R : functor D C) :=
 Definition are_adjoint2 {C D} (L : functor C D) (R : functor D C) :=
   ∃ η ε, adjunction2 L R η ε.
 
-(* equivalence between both definitions of adjunction *)
+(* equivalence between both definitions of adjunction
 
 Theorem adj_adj {C D} (L : functor C D) (R : functor D C) :
   are_adjoint L R ↔ are_adjoint2 L R.
@@ -1418,6 +1418,7 @@ split; cycle 1.
  unfold are_adjoint, adjunction in Ha.
  unfold are_adjoint2, adjunction2.
 ...
+*)
 
 (* cone image by a functor *)
 
