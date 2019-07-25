@@ -1359,21 +1359,21 @@ Definition right_whiskering {D E F} {G H : functor D E} :
    (Wikipedia)
 *)
 
-Definition adjunction {C D} (L : functor C D) (R : functor D C) :=
-  ∀ (η :
+Definition adjunction {C D} (L : functor C D) (R : functor D C)
+  (ϑ :
     natural_transformation
       (hom_functor C ◦ (fop R × ¹ C))%Fun
-      (hom_functor D ◦ (¹ op D × L))%Fun),
-  is_natural_isomorphism η.
-
-Definition is_left_adjoint {C D} (L : functor C D) :=
-  ∃ R, adjunction L R.
-
-Definition is_right_adjoint {C D} (R : functor D C) :=
-  ∃ L, adjunction L R.
+      (hom_functor D ◦ (¹ op D × L))%Fun) :=
+  is_natural_isomorphism ϑ.
 
 Definition are_adjoint {C D} (L : functor C D) (R : functor D C) :=
-  adjunction L R.
+  ∃ ϑ, adjunction L R ϑ.
+
+Definition is_left_adjoint {C D} (L : functor C D) :=
+  ∃ R, are_adjoint L R.
+
+Definition is_right_adjoint {C D} (R : functor D C) :=
+  ∃ L, are_adjoint L R.
 
 Notation "L ⊣ R" := (are_adjoint L R) (at level 70).
 
@@ -1394,7 +1394,7 @@ Definition is_right_adjoint2 {C D} (R : functor D C) :=
 Definition are_adjoint2 {C D} (L : functor C D) (R : functor D C) :=
   ∃ η ε, adjunction2 L R η ε.
 
-(* equivalence between both definitions of adjunction
+(* equivalence between both definitions of adjunction *)
 
 Theorem adj_adj {C D} (L : functor C D) (R : functor D C) :
   are_adjoint L R ↔ are_adjoint2 L R.
@@ -1404,6 +1404,7 @@ split; cycle 1.
  unfold are_adjoint2, adjunction2 in Ha.
  unfold are_adjoint, adjunction.
  destruct Ha as (η & ε & Hr & Hl).
+...
  intros α.
  unfold is_natural_isomorphism.
  intros (Y, X).
@@ -1418,7 +1419,6 @@ split; cycle 1.
  unfold are_adjoint, adjunction in Ha.
  unfold are_adjoint2, adjunction2.
 ...
-*)
 
 (* cone image by a functor *)
 
