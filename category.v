@@ -123,8 +123,9 @@ Definition functor_id C : functor C C :=
 
 Notation "g '◦' f" := (functor_comp f g) (at level 40, left associativity) :
   functor_scope.
-Notation "1 C" := (functor_id C) (at level 35) :
+Notation "1 C" := (functor_id C) (at level 8) :
   functor_scope.
+
 
 (* *)
 
@@ -1363,7 +1364,7 @@ Definition adjunction {C D} (L : functor C D) (R : functor D C)
   (ϑ :
     natural_transformation
       (hom_functor C ◦ (fop R × 1 C))%Fun
-      (hom_functor D ◦ (1 op D × L))%Fun) :=
+      (hom_functor D ◦ (1 (op D) × L))%Fun) :=
   is_natural_isomorphism ϑ.
 
 Definition are_adjoint {C D} (L : functor C D) (R : functor D C) :=
