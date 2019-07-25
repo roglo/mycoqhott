@@ -1892,3 +1892,8 @@ Definition RelCat :=
      unit_r := Rel_unit_r;
      assoc _ _ _ _ := Rel_assoc;
      Hom_set := Rel_Hom_set |}.
+
+(* *)
+
+Print adjunction2.
+Print natural_transformation.
