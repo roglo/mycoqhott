@@ -1399,25 +1399,16 @@ Definition are_adjoint2 {C D} (L : functor C D) (R : functor D C) :=
 Theorem adj_adj {C D} (L : functor C D) (R : functor D C) :
   are_adjoint L R ↔ are_adjoint2 L R.
 Proof.
-split; cycle 1.
+split.
+-intros Ha.
+ unfold are_adjoint, adjunction in Ha.
+ unfold are_adjoint2, adjunction2.
+ destruct Ha as (ϑ, Hϑ).
+...
 -intros Ha.
  unfold are_adjoint2, adjunction2 in Ha.
  unfold are_adjoint, adjunction.
  destruct Ha as (η & ε & Hr & Hl).
-...
- intros α.
- unfold is_natural_isomorphism.
- intros (Y, X).
- unfold is_isomorphism; cbn.
- specialize (projT2 ε Y (f_map_obj L X)) as H1; cbn in H1.
- assert (G : @Hom D Y (f_map_obj L X) → @Hom C (f_map_obj R Y) X). {
-   intros f.
-   specialize (H1 f).
-...
-
--intros Ha.
- unfold are_adjoint, adjunction in Ha.
- unfold are_adjoint2, adjunction2.
 ...
 
 (* cone image by a functor *)
