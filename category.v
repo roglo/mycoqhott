@@ -1405,6 +1405,8 @@ split.
  unfold are_adjoint2, adjunction2.
  destruct Ha as (ϑ, Hϑ).
 ...
+  ηC : c → RLc
+...
 -intros Ha.
  unfold are_adjoint2, adjunction2 in Ha.
  unfold are_adjoint, adjunction.
