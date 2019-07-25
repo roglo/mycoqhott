@@ -142,69 +142,17 @@ Definition transport2 {C D} {F : functor C D} {G : functor D C}
 
 (* faithfulness & fullness *)
 
-Definition is_functor_injective_on_objects {C D} (F : functor C D) :=
-  ∀ (A B : Obj C), f_map_obj F A = f_map_obj F B → A = B.
-
-Check @hott4cat.transport.
-
-Definition is_functor_injective_on_arrows {C D} (F : functor C D) :
-  ∀ (A B A' B' : Obj C) (f : Hom A B) (f' : Hom A' B')
-     (p : f_map_obj F A = f_map_obj F A')
-     (q : f_map_obj F B = f_map_obj F B'),
-   True.
-intros.
-Check (f_map_hom F f).
-Check (f_map_hom F f').
-assert
-  (r : Hom (f_map_obj F A) (f_map_obj F B) =
-       Hom (f_map_obj F A') (f_map_obj F B')). {
-  now destruct p, q.
-}
-remember (f_map_hom F f) as g eqn:Hg.
-remember (f_map_hom F f') as g' eqn:Hg'.
-move g' before g.
-Check @transport2.
-...
-Check (@hott4cat.transport).
-...
-
-Definition is_functor_injective_on_arrows {C D} (F : functor C D) :
-  ∀ (A A' B B' : Obj C) (f : Hom A B) (f' : Hom A' B')
-     (p : f_map_obj F A = f_map_obj F A') (q : f_map_obj F B = f_map_obj F B')
-     (r : Hom (f_map_obj F A) (f_map_obj F B) = Hom (f_map_obj F A') (f_map_obj F B')),
-  f_map_hom F f = f_map_hom F f' → f = f'.
-...
-
-Definition is_functor_injective_on_arrows {C D} (F : functor C D) :
-  ∀ (A A' B B' : Obj C) (f : Hom A B) (f' : Hom A' B')
-     (p : f_map_obj F A = f_map_obj F A') (q : f_map_obj F B = f_map_obj F B')
-     (r : Hom (f_map_obj F A) (f_map_obj F B) = Hom (f_map_obj F A') (f_map_obj F B')),
-False.
-intros.
-...
-
-Check (@hott4cat.transport).
-set (P := λ AB, Hom (f_map_obj F (fst AB)) (f_map_obj F (snd AB))).
-Check (@hott4cat.transport _ P).
-Check (@hott4cat.transport _ P r (f_map_hom F f)).
-
-Check (f_map_hom F f).
-Check (f_map_hom F f').
-
-f_map_hom F f
-     : Hom (f_map_obj F A) (f_map_obj F B)
-f_map_hom F f'
-     : Hom (f_map_obj F A') (f_map_obj F B')
-
-  f_map_hom F f = f_map_hom F f' → f = f'.
-
-...
-
 Definition is_faithful_functor {C D} (F : functor C D) :=
   ∀ (A B : Obj C) (f g : Hom A B), f_map_hom F f = f_map_hom F g → f = g.
 
 Definition is_full_functor {C D} (F : functor C D) :=
   ∀ A B (g : Hom (f_map_obj F A) (f_map_obj F B)), ∃ f, f_map_hom F f = g.
+
+Definition is_functor_injective_on_objects {C D} (F : functor C D) :=
+  ∀ (A B : Obj C), f_map_obj F A = f_map_obj F B → A = B.
+
+Definition is_functor_injective_on_arrows {C D} (F : functor C D) :
+  is_functor_injective_on_objects F ∧ is_faithful_functor F.
 
 (* *)
 
