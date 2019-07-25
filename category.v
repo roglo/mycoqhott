@@ -123,7 +123,7 @@ Definition functor_id C : functor C C :=
 
 Notation "g '◦' f" := (functor_comp f g) (at level 40, left associativity) :
   functor_scope.
-Notation "¹ C" := (functor_id C) (at level 35) :
+Notation "1 C" := (functor_id C) (at level 35) :
   functor_scope.
 
 (* *)
@@ -1362,8 +1362,8 @@ Definition right_whiskering {D E F} {G H : functor D E} :
 Definition adjunction {C D} (L : functor C D) (R : functor D C)
   (ϑ :
     natural_transformation
-      (hom_functor C ◦ (fop R × ¹ C))%Fun
-      (hom_functor D ◦ (¹ op D × L))%Fun) :=
+      (hom_functor C ◦ (fop R × 1 C))%Fun
+      (hom_functor D ◦ (1 op D × L))%Fun) :=
   is_natural_isomorphism ϑ.
 
 Definition are_adjoint {C D} (L : functor C D) (R : functor D C) :=
@@ -1380,8 +1380,8 @@ Notation "L ⊣ R" := (are_adjoint L R) (at level 70).
 (* adjunction: 2nd definition *)
 
 Definition adjunction2 {C D} (L : functor C D) (R : functor D C)
-    (η : natural_transformation (¹ C) (R ◦ L))
-    (ε : natural_transformation (L ◦ R) (¹ D)) :=
+    (η : natural_transformation (1 C) (R ◦ L))
+    (ε : natural_transformation (L ◦ R) (1 D)) :=
   (right_whiskering R ε ◦ left_whiskering η R = nat_transf_id R)%NT ∧
   (left_whiskering ε L ◦ right_whiskering L η = nat_transf_id L)%NT.
 
