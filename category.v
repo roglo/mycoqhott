@@ -1406,29 +1406,42 @@ split.
  unfold are_adjoint, adjunction in Ha.
  unfold are_adjoint2, adjunction2.
  destruct Ha as (ϑ, Hiso).
- assert (αHHHH : ∀ X, Hom (f_map_obj (1 C) X) (f_map_obj (L ◦ R) X)). {
+(*
+ assert (α : ∀ X, Hom (f_map_obj (1 C) X) (f_map_obj (L ◦ R) X)). {
    intros; cbn.
    destruct ϑ as (ϑ, Hϑ); cbn in *.
-   specialize (ϑ (X, f_map_obj R X)) as f; cbn in f.
-   now specialize (f (idc _)).
-Show Proof.
+   now specialize (ϑ (X, f_map_obj R X) (idc _)) as f.
  }
-...
+*)
+ set (α :=
         λ X : Obj C,
           (let (ϑ0, Hϑ) as s return (is_natural_isomorphism s → Hom X (f_map_obj L (f_map_obj R X))) := ϑ in
-           λ _ : is_natural_isomorphism
-                   (existT
-                      (λ ϑ1 : ∀ x : Obj (op C × D),
-                                Hom (f_map_obj (hom_functor D ◦ (fop R × 1 D)%Fun) x)
-                                  (f_map_obj (hom_functor C ◦ (1 (op C) × L)%Fun) x),
-                         ∀ (x y : Obj (op C × D)) (f : Hom x y),
-                           ϑ1 y ◦ f_map_hom (hom_functor D ◦ (fop R × 1 D))%Fun f =
-                           f_map_hom (hom_functor C ◦ (1 (op C) × L))%Fun f ◦ ϑ1 x) ϑ0 Hϑ),
-             let f := ϑ0 (X, f_map_obj R X) in let f0 := f (idc (f_map_obj R X)) in f0) Hiso in
+           λ _,
+
+           let f := ϑ0 (X, f_map_obj R X) in
+           let f0 := f (idc (f_map_obj R X)) in f0) Hiso).
+
  assert (Hα : ∀ X Y (f : Hom X Y),
    α Y ◦ f_map_hom (1 C)%Fun f = f_map_hom (L ◦ R)%Fun f ◦ α X). {
    intros X Y f.
-   cbn in α.
+   cbn in α; cbn.
+(**)
+   unfold α; cbn.
+   destruct ϑ as (ϑ, Hϑ); cbn in *.
+   do 2 rewrite <- f_id_prop.
+...
+   specialize (α X) as fX; cbn in fX.
+   specialize (α Y) as fY; cbn in fY.
+   specialize (Hiso (X, f_map_obj R X)) as H1.
+   destruct H1 as (g & Hg1 & Hg2).
+   cbn in g, Hg1, Hg2.
+   specialize (@hott4cat.happly _ _ _ _ Hg1) as H1; cbn in H1; clear Hg1.
+   specialize (@hott4cat.happly _ _ _ _ Hg2) as H2; cbn in H2; clear Hg2.
+   specialize (H2 fX).
+...
+ }
+...
+ exists (existT _ α Hα).
 ...
    specialize (Hiso (X, f_map_obj R Y)) as H1.
    destruct H1 as (g & Hg1 & Hg2).
