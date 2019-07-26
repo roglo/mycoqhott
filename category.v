@@ -1386,14 +1386,14 @@ Definition adjunction2 {C D} (L : functor C D) (R : functor D C)
   (right_whiskering R ε ◦ left_whiskering η R = nat_transf_id R)%NT ∧
   (left_whiskering ε L ◦ right_whiskering L η = nat_transf_id L)%NT.
 
+Definition are_adjoint2 {C D} (L : functor C D) (R : functor D C) :=
+  { η & { ε & adjunction2 L R η ε }}.
+
 Definition is_left_adjoint2 {C D} (L : functor C D) :=
   ∃ R η ε, adjunction2 L R η ε.
 
 Definition is_right_adjoint2 {C D} (R : functor D C) :=
   ∃ L η ε, adjunction2 L R η ε.
-
-Definition are_adjoint2 {C D} (L : functor C D) (R : functor D C) :=
-  ∃ η ε, adjunction2 L R η ε.
 
 (* equivalence between both definitions of adjunction *)
 
@@ -1401,6 +1401,24 @@ Theorem adj_adj {C D} (L : functor C D) (R : functor D C) :
   (are_adjoint L R → are_adjoint2 L R) *
   (are_adjoint2 L R → are_adjoint L R).
 Proof.
+(*
+split; cycle 1.
+-intros Ha.
+ unfold are_adjoint2, adjunction2 in Ha.
+ unfold are_adjoint, adjunction.
+ destruct Ha as (η & ε & Hr & Hl).
+ assert (ϑ : ∀ x,
+   Hom (f_map_obj R (fst x)) (snd x) → Hom (fst x) (f_map_obj L (snd x))). {
+   intros (Y, X) f; cbn in f; cbn.
+   apply (f_map_hom L) in f.
+   eapply comp; [ | apply f ].
+   destruct ε as (ε & Hε).
+   cbn in ε, Hε, Hr, Hl.
+   specialize (ε Y) as H1.
+   specialize (Hε Y (f_map_obj L X)) as H2.
+   specialize (Hε (f_map_obj L X) Y) as H3.
+...
+*)
 split.
 -intros Ha.
  unfold are_adjoint, adjunction in Ha.
