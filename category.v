@@ -1423,6 +1423,8 @@ split.
    unfold α; cbn.
    specialize (α X) as fX; cbn in fX.
    specialize (α Y) as fY; cbn in fY.
+   do 2 rewrite f_id_prop.
+...
    destruct ϑ as (ϑ & Hϑ).
    cbn in ϑ, Hiso, α; cbn.
    specialize (Hϑ (Y, f_map_obj R Y) (X, f_map_obj R Y)) as H1.
