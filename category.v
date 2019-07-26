@@ -1397,6 +1397,7 @@ Definition is_left_adjoint2 {C D} (L : functor D C) :=
 
 (* equivalence between both definitions of adjunction *)
 
+...
 Definition pouet {A B C} (F G : functor (A × B) C)
   (α : natural_transformation F G) (X : Obj A) : Obj (B × C).
 Proof.
