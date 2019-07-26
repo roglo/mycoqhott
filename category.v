@@ -1409,26 +1409,28 @@ split.
 (*
  assert (α : ∀ X, Hom (f_map_obj (1 C) X) (f_map_obj (L ◦ R) X)). {
    intros; cbn.
-   destruct ϑ as (ϑ, Hϑ); cbn in *.
-   now specialize (ϑ (X, f_map_obj R X) (idc _)) as f.
+   now specialize (nt_component ϑ (X, f_map_obj R X) (idc _)) as f.
  }
 *)
- set (α :=
-        λ X : Obj C,
-          (let (ϑ0, Hϑ) as s return (is_natural_isomorphism s → Hom X (f_map_obj L (f_map_obj R X))) := ϑ in
-           λ _,
-
-           let f := ϑ0 (X, f_map_obj R X) in
-           let f0 := f (idc (f_map_obj R X)) in f0) Hiso).
-
+ set (α := λ X, nt_component ϑ (X, f_map_obj R X) (f_map_hom R (idc X))).
+(*
+ set (α := λ X, nt_component ϑ (X, f_map_obj R X) (idc (f_map_obj R X))).
+*)
+ cbn in α.
  assert (Hα : ∀ X Y (f : Hom X Y),
    α Y ◦ f_map_hom (1 C)%Fun f = f_map_hom (L ◦ R)%Fun f ◦ α X). {
-   intros X Y f.
-   cbn in α; cbn.
-(**)
+   intros X Y f; cbn.
    unfold α; cbn.
-   destruct ϑ as (ϑ, Hϑ); cbn in *.
-   do 2 rewrite <- f_id_prop.
+   specialize (α X) as fX; cbn in fX.
+   specialize (α Y) as fY; cbn in fY.
+   destruct ϑ as (ϑ & Hϑ).
+   cbn in ϑ, Hiso, α; cbn.
+   specialize (Hϑ (Y, f_map_obj R Y) (X, f_map_obj R Y)) as H1.
+   specialize (H1 (f, idc _)); cbn in H1.
+   specialize (@hott4cat.happly _ _ _ _ H1) as H2; cbn in H2; clear H1.
+   specialize (H2 (idc _)).
+   unfold hom_functor_map_hom in H2; cbn in H2.
+   rewrite <- f_id_prop in H2.
 ...
    specialize (α X) as fX; cbn in fX.
    specialize (α Y) as fY; cbn in fY.
