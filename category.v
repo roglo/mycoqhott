@@ -1363,8 +1363,8 @@ Definition right_whiskering {D E F} {G H : functor D E} :
 Definition adjunction {C D} (L : functor C D) (R : functor D C)
   (ϑ :
     natural_transformation
-      (hom_functor C ◦ (fop R × 1 C))%Fun
-      (hom_functor D ◦ (1 (op D) × L))%Fun) :=
+      (hom_functor D ◦ (fop L × 1 D))%Fun
+      (hom_functor C ◦ (1 (op C) × R))%Fun) :=
   is_natural_isomorphism ϑ.
 
 Definition are_adjoint {C D} (L : functor C D) (R : functor D C) :=
@@ -1401,24 +1401,6 @@ Theorem adj_adj {C D} (L : functor C D) (R : functor D C) :
   (are_adjoint L R → are_adjoint2 L R) *
   (are_adjoint2 L R → are_adjoint L R).
 Proof.
-(*
-split; cycle 1.
--intros Ha.
- unfold are_adjoint2, adjunction2 in Ha.
- unfold are_adjoint, adjunction.
- destruct Ha as (η & ε & Hr & Hl).
- assert (ϑ : ∀ x,
-   Hom (f_map_obj R (fst x)) (snd x) → Hom (fst x) (f_map_obj L (snd x))). {
-   intros (Y, X) f; cbn in f; cbn.
-   apply (f_map_hom L) in f.
-   eapply comp; [ | apply f ].
-   destruct ε as (ε & Hε).
-   cbn in ε, Hε, Hr, Hl.
-   specialize (ε Y) as H1.
-   specialize (Hε Y (f_map_obj L X)) as H2.
-   specialize (Hε (f_map_obj L X) Y) as H3.
-...
-*)
 split.
 -intros Ha.
  unfold are_adjoint, adjunction in Ha.
@@ -1426,42 +1408,10 @@ split.
  destruct Ha as (ϑ, Hiso).
  assert (α : ∀ X, Hom (f_map_obj (1 C) X) (f_map_obj (R ◦ L) X)). {
    intros; cbn.
-   specialize (Hiso (f_map_obj L X, X)) as H2; cbn in H2.
-   destruct H2 as (g & Hg1 & Hg2); cbn in g, Hg1, Hg2.
-   specialize (g (idc _)) as h.
-...
    destruct ϑ as (ϑ, Hϑ); cbn in *.
-   specialize (ϑ (f_map_obj L X, (f_map_obj R (f_map_obj L X)))) as f; cbn in f.
-   specialize (f (idc _)).
-...
-   specialize (@hott4cat.happly _ _ _ _ Hg1) as H1; cbn in H1.
-   specialize (@hott4cat.happly _ _ _ _ Hg2) as H2; cbn in H2.
-   clear Hg1 Hg2.
-   specialize (H1 h).
-   specialize (H2 (idc _)) as i; cbn in i.
-...
-   specialize (ϑ (f_map_obj L X, X)) as f; cbn in f.
-   specialize (Hiso (f_map_obj L X, X)) as H2; cbn in H2.
-   unfold is_isomorphism in H2; cbn in H2.
-   destruct H2 as (g & Hg1 & Hg2).
-   specialize (@hott4cat.happly _ _ _ _ Hg1) as H1; cbn in H1.
-   specialize (@hott4cat.happly _ _ _ _ Hg2) as H2; cbn in H2.
-   clear Hg1 Hg2.
-...
-
-   unfold is_natural_isomorphism in Hiso.
-   specialize (@hott4cat.happly _ _ _ _ Hg1) as H1; cbn in H1.
-   specialize (@hott4cat.happly _ _ _ _ Hg2) as H2; cbn in H2.
-   unfold nt_component in H1, H2.
-   specialize (ϑ (f_map_obj L X, X)) as H3; cbn in H3.
-   specialize (Hϑ (f_map_obj L X, X) (f_map_obj L X, X)) as H4; cbn in H4.
-   assert (f : Hom (f_map_obj L X) (f_map_obj L X) * Hom X X). {
-     split; apply idc.
-   }
-   specialize (H4 f).
-   specialize (@hott4cat.happly _ _ _ _ H4) as H5; cbn in H5.
-   clear H4.
-   unfold hom_functor_map_hom in H5; cbn in H5.
+   specialize (ϑ (X, f_map_obj L X)) as f; cbn in f.
+   now specialize (f (idc _)).
+ }
 ...
   ηC : c → RLc
 faire C^op→[C,Set] à la place C^op×C→Set
