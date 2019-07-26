@@ -1397,6 +1397,21 @@ Definition is_left_adjoint2 {C D} (L : functor D C) :=
 
 (* equivalence between both definitions of adjunction *)
 
+Definition pouet {A B C} (F G : functor (A × B) C)
+  (α : natural_transformation F G) (X : Obj A) : Obj (B × C).
+Proof.
+cbn.
+Check (nt_component α).
+...
+
+Definition glop {A B C} (F G : functor (A × B) C)
+  (α : natural_transformation F G) :
+  { F' : functor A (B × C) &
+    { G' : functor A (B × C) & natural_transformation F' G' } }.
+Proof.
+exists {| f_map_obj := pouet F G α |}.
+...
+
 Theorem adj_adj {C D} (R : functor C D) (L : functor D C) :
   (are_adjoint R L → are_adjoint2 R L) *
   (are_adjoint2 R L → are_adjoint R L).
@@ -1406,6 +1421,9 @@ split.
  unfold are_adjoint, adjunction in Ha.
  unfold are_adjoint2, adjunction2.
  destruct Ha as (ϑ, Hiso).
+Check (hom_functor D ◦ (fop R × 1 D))%Fun.
+...
+specialize (glop _ _ ϑ) as H1.
 (*
  assert (α : ∀ X, Hom (f_map_obj (1 C) X) (f_map_obj (L ◦ R) X)). {
    intros; cbn.
