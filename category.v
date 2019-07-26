@@ -77,7 +77,7 @@ Class functor (C D : category) :=
 
 Arguments functor C%Cat D%Cat.
 Arguments f_map_obj [_] [_] _%Fun.
-Arguments f_map_hom {_} {_} _ {_} {_}.
+Arguments f_map_hom {_%Cat} {_%Cat} _ {_} {_}.
 
 Definition fop {C D} : functor C D → functor (op C) (op D) :=
   λ F,
@@ -1397,20 +1397,16 @@ Definition is_left_adjoint2 {C D} (L : functor D C) :=
 
 (* equivalence between both definitions of adjunction *)
 
-...
-Definition pouet {A B C} (F G : functor (A × B) C)
-  (α : natural_transformation F G) (X : Obj A) : Obj (B × C).
-Proof.
-cbn.
-Check (nt_component α).
-...
+Definition curry {A B C} (f : A * B → C) (X : A) (Y : B) := f (X, Y).
 
-Definition glop {A B C} (F G : functor (A × B) C)
-  (α : natural_transformation F G) :
-  { F' : functor A (B × C) &
-    { G' : functor A (B × C) & natural_transformation F' G' } }.
+Definition functor_curry {A B C} (F : functor (A × B) C) :
+  Obj A → functor B C.
 Proof.
-exists {| f_map_obj := pouet F G α |}.
+intros X.
+apply
+  {| f_map_obj (Y : Obj B) := f_map_obj F (X, Y) : Obj C;
+     f_map_hom (Y Y' : Obj B) (f : Hom Y Y') :=
+       @f_map_hom (A × B) _ _ (X, Y) (X, Y') (idc X, f) |}.
 ...
 
 Theorem adj_adj {C D} (R : functor C D) (L : functor D C) :
