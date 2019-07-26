@@ -1411,6 +1411,14 @@ split.
    destruct ϑ as (ϑ, Hϑ); cbn in *.
    specialize (ϑ (f_map_obj L X, (f_map_obj R (f_map_obj L X)))) as f; cbn in f.
    specialize (f (idc _)).
+   specialize (Hiso (f_map_obj L X, X)) as H2; cbn in H2.
+   destruct H2 as (g & Hg1 & Hg2); cbn in g, Hg1, Hg2.
+   specialize (@hott4cat.happly _ _ _ _ Hg1) as H1; cbn in H1.
+   specialize (@hott4cat.happly _ _ _ _ Hg2) as H2; cbn in H2.
+   clear Hg1 Hg2.
+   specialize (g (idc _)) as h.
+   specialize (H1 h).
+   specialize (H2 (idc _)) as i; cbn in i.
 ...
    specialize (ϑ (f_map_obj L X, X)) as f; cbn in f.
    specialize (Hiso (f_map_obj L X, X)) as H2; cbn in H2.
