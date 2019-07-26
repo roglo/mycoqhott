@@ -1360,58 +1360,63 @@ Definition right_whiskering {D E F} {G H : functor D E} :
    (Wikipedia)
 *)
 
-Definition adjunction {C D} (L : functor C D) (R : functor D C)
+Definition adjunction {C D} (R : functor C D) (L : functor D C)
   (ϑ :
     natural_transformation
-      (hom_functor D ◦ (fop L × 1 D))%Fun
-      (hom_functor C ◦ (1 (op C) × R))%Fun) :=
+      (hom_functor D ◦ (fop R × 1 D))%Fun
+      (hom_functor C ◦ (1 (op C) × L))%Fun) :=
   is_natural_isomorphism ϑ.
 
-Definition are_adjoint {C D} (L : functor C D) (R : functor D C) :=
-  { ϑ & adjunction L R ϑ }.
+Definition are_adjoint {C D} (R : functor C D) (L : functor D C) :=
+  { ϑ & adjunction R L ϑ }.
 
-Definition is_left_adjoint {C D} (L : functor C D) :=
-  { R & are_adjoint L R }.
+Definition is_right_adjoint {C D} (R : functor C D) :=
+  { L & are_adjoint R L }.
 
-Definition is_right_adjoint {C D} (R : functor D C) :=
-  { L & are_adjoint L R }.
+Definition is_left_adjoint {C D} (L : functor D C) :=
+  { R & are_adjoint R L }.
 
-Notation "L ⊣ R" := (are_adjoint L R) (at level 70).
+Notation "L ⊣ R" := (are_adjoint R L) (at level 70).
 
 (* adjunction: 2nd definition *)
 
-Definition adjunction2 {C D} (L : functor C D) (R : functor D C)
-    (η : natural_transformation (1 C) (R ◦ L))
-    (ε : natural_transformation (L ◦ R) (1 D)) :=
-  (right_whiskering R ε ◦ left_whiskering η R = nat_transf_id R)%NT ∧
-  (left_whiskering ε L ◦ right_whiskering L η = nat_transf_id L)%NT.
+Definition adjunction2 {C D} (R : functor C D) (L : functor D C)
+    (η : natural_transformation (1 C) (L ◦ R))
+    (ε : natural_transformation (R ◦ L) (1 D)) :=
+  (right_whiskering L ε ◦ left_whiskering η L = nat_transf_id L)%NT ∧
+  (left_whiskering ε R ◦ right_whiskering R η = nat_transf_id R)%NT.
 
-Definition are_adjoint2 {C D} (L : functor C D) (R : functor D C) :=
-  { η & { ε & adjunction2 L R η ε }}.
+Definition are_adjoint2 {C D} (R : functor C D) (L : functor D C) :=
+  { η & { ε & adjunction2 R L η ε }}.
 
-Definition is_left_adjoint2 {C D} (L : functor C D) :=
-  ∃ R η ε, adjunction2 L R η ε.
+Definition is_right_adjoint2 {C D} (R : functor C D) :=
+  ∃ L η ε, adjunction2 R L η ε.
 
-Definition is_right_adjoint2 {C D} (R : functor D C) :=
-  ∃ L η ε, adjunction2 L R η ε.
+Definition is_left_adjoint2 {C D} (L : functor D C) :=
+  ∃ R η ε, adjunction2 R L η ε.
 
 (* equivalence between both definitions of adjunction *)
 
-Theorem adj_adj {C D} (L : functor C D) (R : functor D C) :
-  (are_adjoint L R → are_adjoint2 L R) *
-  (are_adjoint2 L R → are_adjoint L R).
+Theorem adj_adj {C D} (R : functor C D) (L : functor D C) :
+  (are_adjoint R L → are_adjoint2 R L) *
+  (are_adjoint2 R L → are_adjoint R L).
 Proof.
 split.
 -intros Ha.
  unfold are_adjoint, adjunction in Ha.
  unfold are_adjoint2, adjunction2.
  destruct Ha as (ϑ, Hiso).
- assert (α : ∀ X, Hom (f_map_obj (1 C) X) (f_map_obj (R ◦ L) X)). {
+ assert (α : ∀ X, Hom (f_map_obj (1 C) X) (f_map_obj (L ◦ R) X)). {
    intros; cbn.
    destruct ϑ as (ϑ, Hϑ); cbn in *.
-   specialize (ϑ (X, f_map_obj L X)) as f; cbn in f.
+   specialize (ϑ (X, f_map_obj R X)) as f; cbn in f.
    now specialize (f (idc _)).
  }
+ assert (Hα : ∀ X Y (f : Hom X Y),
+   α Y ◦ f_map_hom (1 C)%Fun f = f_map_hom (L ◦ R)%Fun f ◦ α X). {
+...
+ }
+ exists (existT _ α Hα).
 ...
   ηC : c → RLc
 faire C^op→[C,Set] à la place C^op×C→Set
