@@ -87,7 +87,7 @@ Definition fop {C D} : functor C D → functor (op C) (op D) :=
      f_id_prop a := @f_id_prop _ _ F a |}.
 
 Definition is_isomorphism {C : category} {A B : Obj C} (f : Hom A B) :=
-  ∃ g : Hom B A, g ◦ f = idc A ∧ f ◦ g = idc B.
+  { g : Hom B A & ((g ◦ f = idc A) * (f ◦ g = idc B))%type }.
 
 Theorem functor_comp_id_prop {C D E} {F : functor C D} {G : functor D E} :
   ∀ x : Obj C,
@@ -123,7 +123,7 @@ Definition functor_id C : functor C C :=
 
 Notation "g '◦' f" := (functor_comp f g) (at level 40, left associativity) :
   functor_scope.
-Notation "1 C" := (functor_id C) (at level 8) :
+Notation "1 C" := (functor_id C) (at level 10) :
   functor_scope.
 
 
@@ -1368,13 +1368,13 @@ Definition adjunction {C D} (L : functor C D) (R : functor D C)
   is_natural_isomorphism ϑ.
 
 Definition are_adjoint {C D} (L : functor C D) (R : functor D C) :=
-  ∃ ϑ, adjunction L R ϑ.
+  { ϑ & adjunction L R ϑ }.
 
 Definition is_left_adjoint {C D} (L : functor C D) :=
-  ∃ R, are_adjoint L R.
+  { R & are_adjoint L R }.
 
 Definition is_right_adjoint {C D} (R : functor D C) :=
-  ∃ L, are_adjoint L R.
+  { L & are_adjoint L R }.
 
 Notation "L ⊣ R" := (are_adjoint L R) (at level 70).
 
@@ -1398,13 +1398,33 @@ Definition are_adjoint2 {C D} (L : functor C D) (R : functor D C) :=
 (* equivalence between both definitions of adjunction *)
 
 Theorem adj_adj {C D} (L : functor C D) (R : functor D C) :
-  are_adjoint L R ↔ are_adjoint2 L R.
+  (are_adjoint L R → are_adjoint2 L R) *
+  (are_adjoint2 L R → are_adjoint L R).
 Proof.
 split.
 -intros Ha.
  unfold are_adjoint, adjunction in Ha.
  unfold are_adjoint2, adjunction2.
- destruct Ha as (ϑ, Hϑ).
+ destruct Ha as (ϑ, Hiso).
+ assert (α : ∀ X, Hom (f_map_obj (1 C) X) (f_map_obj (R ◦ L) X)). {
+   intros; cbn.
+   unfold is_natural_isomorphism in Hiso.
+   unfold is_isomorphism in Hiso.
+   specialize (Hiso (f_map_obj L X, X)) as H1; cbn in H1.
+   destruct H1 as (g & Hg1 & Hg2).
+   specialize (@hott4cat.happly _ _ _ _ Hg1) as H1; cbn in H1.
+   specialize (@hott4cat.happly _ _ _ _ Hg2) as H2; cbn in H2.
+   unfold nt_component in H1, H2.
+   destruct ϑ as (ϑ, Hϑ); cbn in *.
+   specialize (ϑ (f_map_obj L X, X)) as H3; cbn in H3.
+   specialize (Hϑ (f_map_obj L X, X) (f_map_obj L X, X)) as H4; cbn in H4.
+   assert (f : Hom (f_map_obj L X) (f_map_obj L X) * Hom X X). {
+     split; apply idc.
+   }
+   specialize (H4 f).
+   specialize (@hott4cat.happly _ _ _ _ H4) as H5; cbn in H5.
+   clear H4.
+   unfold hom_functor_map_hom in H5; cbn in H5.
 ...
   ηC : c → RLc
 faire C^op→[C,Set] à la place C^op×C→Set
