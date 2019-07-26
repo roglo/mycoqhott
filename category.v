@@ -1408,14 +1408,23 @@ split.
  destruct Ha as (ϑ, Hiso).
  assert (α : ∀ X, Hom (f_map_obj (1 C) X) (f_map_obj (R ◦ L) X)). {
    intros; cbn.
+   destruct ϑ as (ϑ, Hϑ); cbn in *.
+   specialize (ϑ (f_map_obj L X, (f_map_obj R (f_map_obj L X)))) as f; cbn in f.
+   specialize (f (idc _)).
+...
+   specialize (ϑ (f_map_obj L X, X)) as f; cbn in f.
+   specialize (Hiso (f_map_obj L X, X)) as H2; cbn in H2.
+   unfold is_isomorphism in H2; cbn in H2.
+   destruct H2 as (g & Hg1 & Hg2).
+   specialize (@hott4cat.happly _ _ _ _ Hg1) as H1; cbn in H1.
+   specialize (@hott4cat.happly _ _ _ _ Hg2) as H2; cbn in H2.
+   clear Hg1 Hg2.
+...
+
    unfold is_natural_isomorphism in Hiso.
-   unfold is_isomorphism in Hiso.
-   specialize (Hiso (f_map_obj L X, X)) as H1; cbn in H1.
-   destruct H1 as (g & Hg1 & Hg2).
    specialize (@hott4cat.happly _ _ _ _ Hg1) as H1; cbn in H1.
    specialize (@hott4cat.happly _ _ _ _ Hg2) as H2; cbn in H2.
    unfold nt_component in H1, H2.
-   destruct ϑ as (ϑ, Hϑ); cbn in *.
    specialize (ϑ (f_map_obj L X, X)) as H3; cbn in H3.
    specialize (Hϑ (f_map_obj L X, X) (f_map_obj L X, X)) as H4; cbn in H4.
    assert (f : Hom (f_map_obj L X) (f_map_obj L X) * Hom X X). {
