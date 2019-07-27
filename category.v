@@ -103,9 +103,19 @@ unfold ArrowCat_Hom.
 exists (AC_Hom_g1 g ◦ AC_Hom_g1 f).
 exists (AC_Hom_g2 g ◦ AC_Hom_g2 f).
 unfold AC_Hom_g2, AC_Hom_g1.
+(*
+symmetry.
+etransitivity; [ symmetry; apply assoc | ].
+etransitivity; [ apply f_equal; symmetry; apply (AC_Hom_prop g) | ].
+etransitivity; [ apply assoc | symmetry ].
+etransitivity; [ apply assoc | ].
+f_equal.
+apply (AC_Hom_prop f).
+*)
 rewrite assoc, (AC_Hom_prop f).
 do 2 rewrite <- assoc.
 apply f_equal, (AC_Hom_prop g).
+(**)
 Defined.
 
 Definition ArrowCat_id {C} (X : ArrowCat_Obj C) : ArrowCat_Hom X X.
