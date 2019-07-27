@@ -1397,6 +1397,7 @@ Definition is_left_adjoint2 {C D} (L : functor D C) :=
 
 (* equivalence between both definitions of adjunction *)
 
+(*
 Definition curry {A B C} (f : A * B → C) (X : A) (Y : B) := f (X, Y).
 
 Definition functor_curry {A B C} (F : functor (A × B) C) :
@@ -1408,6 +1409,7 @@ apply
      f_map_hom (Y Y' : Obj B) (f : Hom Y Y') :=
        @f_map_hom (A × B) _ _ (X, Y) (X, Y') (idc X, f) |}.
 ...
+*)
 
 Theorem adj_adj {C D} (R : functor C D) (L : functor D C) :
   (are_adjoint R L → are_adjoint2 R L) *
@@ -1418,9 +1420,6 @@ split.
  unfold are_adjoint, adjunction in Ha.
  unfold are_adjoint2, adjunction2.
  destruct Ha as (ϑ, Hiso).
-Check (hom_functor D ◦ (fop R × 1 D))%Fun.
-...
-specialize (glop _ _ ϑ) as H1.
 (*
  assert (α : ∀ X, Hom (f_map_obj (1 C) X) (f_map_obj (L ◦ R) X)). {
    intros; cbn.
@@ -1439,6 +1438,7 @@ specialize (glop _ _ ϑ) as H1.
    specialize (α X) as fX; cbn in fX.
    specialize (α Y) as fY; cbn in fY.
    do 2 rewrite f_id_prop.
+Check (nt_component ϑ).
 ...
    destruct ϑ as (ϑ & Hϑ).
    cbn in ϑ, Hiso, α; cbn.
