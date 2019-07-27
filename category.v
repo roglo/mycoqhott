@@ -89,10 +89,30 @@ Definition ArrowCat_Hom {C} (X X' : ArrowCat_Obj C) :=
   { g1 : Hom (AC_A X) (AC_A X') &
     { g2 : Hom (AC_B X) (AC_B X') &
       g2 ◦ AC_Hom X = AC_Hom X' ◦ g1 }}.
+Definition AC_Hom_g1 {C} {X X' : ArrowCat_Obj C} (f : ArrowCat_Hom X X') :=
+  projT1 f.
+Definition AC_Hom_g2 {C} {X X' : ArrowCat_Obj C} (f : ArrowCat_Hom X X') :=
+  projT1 (projT2 f).
+Definition AC_Hom_prop {C} {X X' : ArrowCat_Obj C} (f : ArrowCat_Hom X X') :=
+  projT2 (projT2 f).
+
+Definition ArrowCat_comp {C} {X Y Z : ArrowCat_Obj C}
+  (f : ArrowCat_Hom X Y) (g : ArrowCat_Hom Y Z) : ArrowCat_Hom X Z.
+Proof.
+unfold ArrowCat_Hom.
+exists (AC_Hom_g1 g ◦ AC_Hom_g1 f).
+exists (AC_Hom_g2 g ◦ AC_Hom_g2 f).
+unfold AC_Hom_g2, AC_Hom_g1.
+rewrite assoc, (AC_Hom_prop f).
+do 2 rewrite <- assoc.
+apply f_equal, (AC_Hom_prop g).
+Defined.
 
 Definition ArrowCat C :=
   {| Obj := ArrowCat_Obj C;
-     Hom := ArrowCat_Hom |}.
+     Hom := ArrowCat_Hom;
+     comp _ _ _ := ArrowCat_comp;
+     idc X := 42 |}.
 
 ...
 
