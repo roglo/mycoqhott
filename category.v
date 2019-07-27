@@ -108,11 +108,29 @@ do 2 rewrite <- assoc.
 apply f_equal, (AC_Hom_prop g).
 Defined.
 
+Definition ArrowCat_id {C} (X : ArrowCat_Obj C) : ArrowCat_Hom X X.
+Proof.
+exists (idc _).
+exists (idc _).
+etransitivity; [ apply unit_r | ].
+symmetry; apply unit_l.
+Defined.
+
+Theorem ArrowCat_unit_l {C} {X Y : ArrowCat_Obj C} (f : ArrowCat_Hom X Y) :
+  ArrowCat_comp (ArrowCat_id X) f = f.
+Proof.
+destruct f as (g1 & g2 & Hgg).
+unfold ArrowCat_comp; cbn.
+apply eq_existT_uncurried.
+exists (unit_l _).
+...
+
 Definition ArrowCat C :=
   {| Obj := ArrowCat_Obj C;
      Hom := ArrowCat_Hom;
      comp _ _ _ := ArrowCat_comp;
-     idc X := 42 |}.
+     idc := ArrowCat_id;
+     unit_l X Y f := 42 |}.
 
 ...
 
