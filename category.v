@@ -61,6 +61,43 @@ Definition op C :=
      assoc _ _ _ _ f g h := eq_sym (assoc h g f);
      Hom_set x y := Hom_set y x |}.
 
+(* The arrow category C→ of a category C has the arrows of C as objects,
+   and an arrow g from f : A → B to f' : A' → B' in C→ is a “commutative
+   square”
+           g₁
+        A ---> A'
+        |      |
+      f |      | f'
+        |      |
+        v      v
+        B ---> B'
+           g₂
+
+   where g1 and g2 are arrows in C. That is, such an arrow is a pair of
+   arrows g = (g1, g2) in C such that
+       g2 ◦ f = f' ◦ g1.
+
+   (Awodey)
+*)
+
+Definition ArrowCat_Obj C := { A : Obj C & { B : Obj C & Hom A B } }.
+Definition AC_A {C} (X : ArrowCat_Obj C) := projT1 X.
+Definition AC_B {C} (X : ArrowCat_Obj C) := projT1 (projT2 X).
+Definition AC_Hom {C} (X : ArrowCat_Obj C) := projT2 (projT2 X).
+
+Definition ArrowCat_Hom {C} (X X' : ArrowCat_Obj C) :=
+  { g1 : Hom (AC_A X) (AC_A X') &
+    { g2 : Hom (AC_B X) (AC_B X') &
+      g2 ◦ AC_Hom X = AC_Hom X' ◦ g1 }}.
+
+Definition ArrowCat C :=
+  {| Obj := ArrowCat_Obj C;
+     Hom := ArrowCat_Hom |}.
+
+...
+
+(* initial & final *)
+
 Definition is_initial {C : category} (c : Obj C) :=
   ∀ d, ∃ f : Hom c d, ∀ g : Hom c d, f = g.
 Definition is_terminal {C : category} (c : Obj C) :=
