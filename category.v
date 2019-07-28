@@ -129,8 +129,7 @@ exists (unit_l _).
 unfold eq_rect.
 assert (isProp {g & g ◦ AC_Hom X = AC_Hom Y ◦ g1}). {
   apply (hott4cat.isnType_isnType_sigT _ 0).
-  -intros g p q.
-   apply Hom_set.
+  -intros g p q; apply Hom_set.
   -cbn.
    destruct X, Y; cbn in *.
    destruct s, s0; cbn in *.
