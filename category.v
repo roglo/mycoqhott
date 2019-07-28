@@ -126,14 +126,23 @@ destruct f as (g1 & g2 & Hgg).
 unfold ArrowCat_comp; cbn.
 apply eq_existT_uncurried.
 exists (unit_l _).
-...
+unfold eq_rect.
+(* Blocked. This does not work:
+destruct (unit_l g1).
+Error: Abstracting over the terms "g1" and "e" leads to a term...
+blah blah blah...
+*)
+Abort.
 
+(*
 Definition ArrowCat C :=
   {| Obj := ArrowCat_Obj C;
      Hom := ArrowCat_Hom;
      comp _ _ _ := ArrowCat_comp;
      idc := ArrowCat_id;
      unit_l X Y f := 42 |}.
+*)
+
 ...
 
 (* initial & final *)
