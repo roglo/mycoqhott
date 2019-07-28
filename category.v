@@ -134,19 +134,12 @@ assert (isProp {g & g ◦ AC_Hom X = AC_Hom Y ◦ g1}). {
   -cbn.
    destruct X, Y; cbn in *.
    destruct s, s0; cbn in *.
-
+Search (hott4cat.isProp).
 ...
 }
 apply H.
-...
-(* Blocked. This does not work:
-destruct (unit_l g1).
-Error: Abstracting over the terms "g1" and "e" leads to a term...
-blah blah blah...
-*)
-Abort.
+..
 
-(*
 Definition ArrowCat C :=
   {| Obj := ArrowCat_Obj C;
      Hom := ArrowCat_Hom;
