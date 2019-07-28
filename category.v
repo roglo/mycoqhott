@@ -145,9 +145,13 @@ Definition ArrowCat C :=
 
 (* slice category *)
 
+Definition SliceCat_Hom {C} {B : Obj C} (X Y : ∀ A : Obj C, Hom A B) : Type.
+Proof.
+...
+
 Definition SliceCat {C} (B : Obj C) :=
   {| Obj := ∀ A, Hom A B;
-     Hom := 42 |}.
+     Hom := SliceCat_Hom |}.
 
 ...
 
