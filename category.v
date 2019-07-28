@@ -143,6 +143,12 @@ Definition ArrowCat C :=
      unit_l X Y f := 42 |}.
 *)
 
+(* slice category *)
+
+Definition SliceCat {C} (B : Obj C) :=
+  {| Obj := ∀ A, Hom A B;
+     Hom := 42 |}.
+
 ...
 
 (* initial & final *)
