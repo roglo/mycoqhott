@@ -4,11 +4,11 @@
 Set Universe Polymorphism.
 Require Import Utf8.
 Require ClassicalFacts.
-Require hott4cat.
+Require h4c.
 Set Nested Proofs Allowed.
 
-Definition isSet := hott4cat.isSet.
-Definition isProp := hott4cat.isProp.
+Definition isSet := h4c.isSet.
+Definition isProp := h4c.isProp.
 
 Definition hProp := { A : Type & isProp A }.
 
@@ -123,7 +123,7 @@ Theorem ArrowCat_unit_l {C} {X Y : ArrowCat_Ob C} (f : ArrowCat_Hom X Y) :
 Proof.
 destruct f as ((g1, g2) & Hgg); cbn in Hgg.
 unfold ArrowCat_comp; cbn.
-apply hott4cat.pair_transport_eq_existT.
+apply h4c.pair_transport_eq_existT.
 assert (p : (g1 ◦ idc (AC_A X), g2 ◦ idc (AC_B X)) = (g1, g2)). {
   now do 2 rewrite unit_l.
 }
@@ -136,7 +136,7 @@ Theorem ArrowCat_unit_r {C} {X Y : ArrowCat_Ob C} (f : ArrowCat_Hom X Y) :
 Proof.
 destruct f as ((g1, g2) & Hgg); cbn in Hgg.
 unfold ArrowCat_comp; cbn.
-apply hott4cat.pair_transport_eq_existT.
+apply h4c.pair_transport_eq_existT.
 assert (p : (idc (AC_A Y) ◦ g1, idc (AC_B Y) ◦ g2) = (g1, g2)). {
   now do 2 rewrite unit_r.
 }
@@ -149,7 +149,7 @@ Theorem ArrowCat_assoc {C} {X Y Z T : ArrowCat_Ob C} (f : ArrowCat_Hom X Y)
   ArrowCat_comp f (ArrowCat_comp g h) = ArrowCat_comp (ArrowCat_comp f g) h.
 Proof.
 unfold ArrowCat_comp at 1 3.
-apply hott4cat.pair_transport_eq_existT.
+apply h4c.pair_transport_eq_existT.
 assert (p
   : (AC_Hom_g1 (ArrowCat_comp g h) ◦ AC_Hom_g1 f,
      AC_Hom_g2 (ArrowCat_comp g h) ◦ AC_Hom_g2 f) =
@@ -165,11 +165,11 @@ Theorem ArrowCat_Hom_set {C} (X Y : ArrowCat_Ob C) :
   isSet (ArrowCat_Hom X Y).
 Proof.
 unfold ArrowCat_Hom.
-apply hott4cat.is_set_is_set_sigT. 2: {
-  apply hott4cat.isSet_pair; apply Hom_set.
+apply h4c.is_set_is_set_sigT. 2: {
+  apply h4c.isSet_pair; apply Hom_set.
 }
 intros (f, g); cbn.
-unfold hott4cat.isProp.
+unfold h4c.isProp.
 apply Hom_set.
 Defined.
 
@@ -225,7 +225,7 @@ Theorem SliceCat_unit_l {C} {B : Ob C} {f f' : SliceCat_Ob B}
 Proof.
 destruct g as (g & Hg).
 unfold SliceCat_comp; cbn.
-apply hott4cat.pair_transport_eq_existT.
+apply h4c.pair_transport_eq_existT.
 exists (unit_l _).
 apply Hom_set.
 Defined.
@@ -235,7 +235,7 @@ Theorem SliceCat_unit_r {C} {B : Ob C} {f f' : SliceCat_Ob B}
 Proof.
 destruct g as (g & Hg).
 unfold SliceCat_comp; cbn.
-apply hott4cat.pair_transport_eq_existT.
+apply h4c.pair_transport_eq_existT.
 exists (unit_r _).
 apply Hom_set.
 Defined.
@@ -246,7 +246,7 @@ Theorem SliceCat_assoc {C} {B : Ob C} {f f' f'' f''' : SliceCat_Ob B}
   SliceCat_comp g (SliceCat_comp h i) = SliceCat_comp (SliceCat_comp g h) i.
 Proof.
 unfold SliceCat_comp at 1 3.
-apply hott4cat.pair_transport_eq_existT; cbn.
+apply h4c.pair_transport_eq_existT; cbn.
 exists (assoc _ _ _).
 apply Hom_set.
 Defined.
@@ -255,9 +255,9 @@ Theorem SliceCat_Hom_set {C} {B : Ob C} (f f' : SliceCat_Ob B) :
   isSet (SliceCat_Hom f f').
 Proof.
 unfold SliceCat_Hom.
-apply hott4cat.is_set_is_set_sigT; [ | apply Hom_set ].
+apply h4c.is_set_is_set_sigT; [ | apply Hom_set ].
 intros g.
-unfold hott4cat.isProp.
+unfold h4c.isProp.
 apply Hom_set.
 Defined.
 
@@ -270,6 +270,8 @@ Definition SliceCat {C} (B : Ob C) :=
      unit_r _ _ := SliceCat_unit_r;
      assoc _ _ _ _ := SliceCat_assoc;
      Hom_set := SliceCat_Hom_set |}.
+
+...
 
 (* initial & final *)
 
@@ -349,7 +351,7 @@ Defined.
 
 Definition transport2 {C D} {F : functor C D} {G : functor D C}
   (GF : ∀ x : Ob C, f_map_obj G (f_map_obj F x) = x) x y :=
-  hott4cat.transport (λ '(x, y), Hom x y)
+  h4c.transport (λ '(x, y), Hom x y)
     (eq_eq_eq_pair (eq_sym (GF x)) (eq_sym (GF y))).
 
 (* faithfulness & fullness *)
@@ -536,7 +538,7 @@ Theorem Cone_Hom_set {J C} {D : functor J C} :
 Proof.
 intros.
 unfold Cone_Hom.
-apply hott4cat.is_set_is_set_sigT; [ | apply Hom_set ].
+apply h4c.is_set_is_set_sigT; [ | apply Hom_set ].
 intros f.
 intros p q.
 apply fun_ext.
@@ -549,7 +551,7 @@ Theorem CoCone_Hom_set {J C} {D : functor J C} :
 Proof.
 intros.
 unfold CoCone_Hom.
-apply hott4cat.is_set_is_set_sigT; [ | apply Hom_set ].
+apply h4c.is_set_is_set_sigT; [ | apply Hom_set ].
 intros f.
 intros p q.
 apply fun_ext.
@@ -844,14 +846,14 @@ Theorem Fun_Hom_set {C D} : ∀ F G : functor C D,
 Proof.
 intros.
 intros a b c d.
-apply hott4cat.is_set_is_set_sigT. {
+apply h4c.is_set_is_set_sigT. {
   intros ϑ f g.
   apply fun_ext; intros x.
   apply fun_ext; intros y.
   apply fun_ext; intros h.
   apply Hom_set.
 }
-apply hott4cat.isSet_forall.
+apply h4c.isSet_forall.
 intros x.
 apply Hom_set.
 Qed.
@@ -963,20 +965,20 @@ destruct F, G; cbn in *.
 Set Keep Proof Equalities.
 injection p; intros H1 H2 H3 H4.
 destruct H4.
-apply hott4cat.eq_existT_pair_transport in H3.
+apply h4c.eq_existT_pair_transport in H3.
 destruct H3 as (Hp3 & H3).
 destruct H3.
-apply hott4cat.eq_existT_pair_transport in H2.
+apply h4c.eq_existT_pair_transport in H2.
 destruct H2 as (Hp2 & H2).
 destruct H2.
-apply hott4cat.eq_existT_pair_transport in H1.
+apply h4c.eq_existT_pair_transport in H1.
 destruct H1 as (Hp1 & H1).
 destruct H1.
 move Hp1 after Hp3; move Hp2 after Hp3.
 injection p; intros H1 H2 H3.
 injection H3.
 intros H4.
-apply hott4cat.eq_existT_pair_transport in H4.
+apply h4c.eq_existT_pair_transport in H4.
 destruct H4 as (Hp4 & H4).
 move Hp4 before Hp3.
 (* doesn't work; but is it true? *)
@@ -1053,7 +1055,7 @@ Qed.
 Definition pair_isSet {C1 C2} (X Y : Ob C1 * Ob C2) :
   isSet (Hom (fst X) (fst Y) * Hom (snd X) (snd Y)).
 Proof.
-apply hott4cat.isSet_pair; apply Hom_set.
+apply h4c.isSet_pair; apply Hom_set.
 Qed.
 
 Definition cat_prod (C1 C2 : category) : category :=
@@ -1118,7 +1120,7 @@ Theorem Set_Hom_set : ∀ x y : Set_type, isSet (st_type x → st_type y).
 Proof.
 intros (A, HA) (B, HB).
 move B before A; cbn.
-apply hott4cat.isSet_forall.
+apply h4c.isSet_forall.
 now intros a.
 Qed.
 
@@ -1282,7 +1284,7 @@ split.
    apply fun_ext; intros X.
    apply fun_ext; intros f.
    specialize (Hη A X f) as H1; cbn in H1.
-   specialize (@hott4cat.happly _ _ _ _ H1 (idc A)) as H2.
+   specialize (@h4c.happly _ _ _ _ H1 (idc A)) as H2.
    cbn in H2.
    now rewrite unit_l in H2.
  }
@@ -1290,7 +1292,7 @@ split.
  apply fun_ext; intros X.
  apply fun_ext; intros Y.
  apply fun_ext; intros f.
- apply hott4cat.isSet_forall.
+ apply h4c.isSet_forall.
  intros g.
  apply st_is_set.
 -intros u; cbn.
@@ -1339,7 +1341,7 @@ destruct η as (η, η_prop).
 cbn in *.
 apply f_equal.
 specialize (η_prop Y Z g) as H1.
-now specialize (@hott4cat.happly _ _ _ _ H1 (f_map_hom F f T)) as H2.
+now specialize (@h4c.happly _ _ _ _ H1 (f_map_hom F f T)) as H2.
 Qed.
 
 Theorem functor_SetC_C_Set1_id_prop {C} (D := SetC_C C) (X : Ob D) :
@@ -1387,7 +1389,7 @@ specialize @nat_transf_comp_nt_commute as H2.
 specialize (H2 C SetCat (cov_hom_functor X) F G η η' Z T h).
 cbn in H2.
 unfold nt_component in H2.
-specialize (@hott4cat.happly _ _ _ _ H2 (g ◦ f)) as H3.
+specialize (@h4c.happly _ _ _ _ H2 (g ◦ f)) as H3.
 cbn in H3.
 etransitivity; [ | apply H3 ].
 do 2 apply f_equal.
@@ -1426,7 +1428,7 @@ exists p; cbn.
 apply fun_ext; intros A.
 apply fun_ext; intros B.
 apply fun_ext; intros h.
-apply hott4cat.isSet_forall.
+apply h4c.isSet_forall.
 intros i.
 now destruct (f_map_obj H B).
 Qed.
@@ -1447,7 +1449,7 @@ exists p; cbn.
 apply fun_ext; intros Y.
 apply fun_ext; intros Z.
 apply fun_ext; intros f.
-apply hott4cat.isSet_forall.
+apply h4c.isSet_forall.
 intros i.
 now destruct (f_map_obj (fst X) Z).
 Qed.
@@ -1500,7 +1502,7 @@ assert (p :
   destruct η as (η, Hη); cbn.
   rewrite f_comp_prop; cbn.
   specialize (Hη B X f) as H1; cbn in H1.
-  specialize (@hott4cat.happly _ _ _ _ H1) as H2; cbn in H2.
+  specialize (@h4c.happly _ _ _ _ H1) as H2; cbn in H2.
   symmetry; apply H2.
 }
 exists p.
@@ -1508,7 +1510,7 @@ cbn.
 apply fun_ext; intros X.
 apply fun_ext; intros Y.
 apply fun_ext; intros g.
-apply hott4cat.isSet_forall.
+apply h4c.isSet_forall.
 intros h.
 now destruct (f_map_obj G Y).
 Qed.
@@ -1655,7 +1657,7 @@ Check (nt_component ϑ).
    cbn in ϑ, Hiso, α; cbn.
    specialize (Hϑ (Y, f_map_obj R Y) (X, f_map_obj R Y)) as H1.
    specialize (H1 (f, idc _)); cbn in H1.
-   specialize (@hott4cat.happly _ _ _ _ H1) as H2; cbn in H2; clear H1.
+   specialize (@h4c.happly _ _ _ _ H1) as H2; cbn in H2; clear H1.
    specialize (H2 (idc _)).
    unfold hom_functor_map_hom in H2; cbn in H2.
    rewrite <- f_id_prop in H2.
@@ -1665,8 +1667,8 @@ Check (nt_component ϑ).
    specialize (Hiso (X, f_map_obj R X)) as H1.
    destruct H1 as (g & Hg1 & Hg2).
    cbn in g, Hg1, Hg2.
-   specialize (@hott4cat.happly _ _ _ _ Hg1) as H1; cbn in H1; clear Hg1.
-   specialize (@hott4cat.happly _ _ _ _ Hg2) as H2; cbn in H2; clear Hg2.
+   specialize (@h4c.happly _ _ _ _ Hg1) as H1; cbn in H1; clear Hg1.
+   specialize (@h4c.happly _ _ _ _ Hg2) as H2; cbn in H2; clear Hg2.
    specialize (H2 fX).
 ...
  }
@@ -1676,14 +1678,14 @@ Check (nt_component ϑ).
    specialize (Hiso (X, f_map_obj R Y)) as H1.
    destruct H1 as (g & Hg1 & Hg2).
    cbn in g, Hg1, Hg2.
-   specialize (@hott4cat.happly _ _ _ _ Hg1) as H1; cbn in H1; clear Hg1.
-   specialize (@hott4cat.happly _ _ _ _ Hg2) as H2; cbn in H2; clear Hg2.
+   specialize (@h4c.happly _ _ _ _ Hg1) as H1; cbn in H1; clear Hg1.
+   specialize (@h4c.happly _ _ _ _ Hg2) as H2; cbn in H2; clear Hg2.
 ...
    destruct ϑ as (ϑ, Hϑ); cbn in *.
    specialize (Hϑ (Y, f_map_obj R Y) (X, f_map_obj R Y)) as H1.
    unfold hom_functor_map_hom in H1; cbn in H1.
    specialize (H1 (f, idc _)).
-   specialize (@hott4cat.happly _ _ _ _ H1) as H2; clear H1; cbn in H2.
+   specialize (@h4c.happly _ _ _ _ H1) as H2; clear H1; cbn in H2.
    specialize (H2 (idc _)).
    rewrite <- f_id_prop in H2.
 ...
@@ -1816,7 +1818,7 @@ Definition fs_finite (FS : FinSet_type) := snd (projT2 FS).
 
 Definition FinSet_Hom_set (A B : FinSet_type) : isSet (fs_type A → fs_type B).
 Proof.
-apply hott4cat.isSet_forall.
+apply h4c.isSet_forall.
 intros a.
 apply fs_is_set.
 Qed.
@@ -1841,8 +1843,8 @@ Defined.
 
 Theorem Cat_1_Hom_set (a b : unit) : isSet (unit → unit).
 Proof.
-apply hott4cat.isSet_forall; intros x.
-apply hott4cat.isProp_isSet; intros y z.
+apply h4c.isSet_forall; intros x.
+apply h4c.isProp_isSet; intros y z.
 now destruct y, z.
 Qed.
 
@@ -1893,8 +1895,8 @@ Theorem Cat_2_Hom_set a b : isSet (Cat_2_Hom a b).
 Proof.
 unfold Cat_2_Hom.
 destruct (a && negb b)%bool.
--apply hott4cat.isSet_False.
--apply hott4cat.isSet_True.
+-apply h4c.isSet_False.
+-apply h4c.isSet_True.
 Defined.
 
 Definition Cat_2 :=
@@ -1958,9 +1960,9 @@ Defined.
 
 Theorem Cat_3_Hom_set A B : isSet (Cat_3_Hom A B).
 Proof.
-destruct A; [ apply hott4cat.isSet_True | | ].
--destruct B; [ apply hott4cat.isSet_False | | ]; apply hott4cat.isSet_True.
--destruct B; [ | | apply hott4cat.isSet_True ]; apply hott4cat.isSet_False.
+destruct A; [ apply h4c.isSet_True | | ].
+-destruct B; [ apply h4c.isSet_False | | ]; apply h4c.isSet_True.
+-destruct B; [ | | apply h4c.isSet_True ]; apply h4c.isSet_False.
 Defined.
 
 Definition Cat_3 :=
@@ -2061,7 +2063,7 @@ Defined.
 
 Theorem Pos_Hom_set A B : isSet (Pos_Hom A B).
 Proof.
-apply hott4cat.is_set_is_set_sigT. {
+apply h4c.is_set_is_set_sigT. {
   intros f.
   unfold is_monotone.
   intros g h.
@@ -2070,7 +2072,7 @@ apply hott4cat.is_set_is_set_sigT. {
   apply fun_ext; intros p.
   apply ps_prop.
 }
-apply hott4cat.isSet_forall.
+apply h4c.isSet_forall.
 intros a.
 unfold ps_stype; cbn.
 apply st_is_set.
@@ -2157,8 +2159,8 @@ Defined.
 Theorem Rel_Hom_set A B : isSet (Rel_Hom A B).
 Proof.
 unfold Rel_Hom.
-apply hott4cat.isSet_forall; intros a.
-apply hott4cat.isSet_forall; intros b.
+apply h4c.isSet_forall; intros a.
+apply h4c.isSet_forall; intros b.
 apply proof_irrel.
 Defined.
 

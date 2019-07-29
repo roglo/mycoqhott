@@ -1,4 +1,4 @@
-all: hott4cat.vo chap1.vo chap2.vo chap3.vo chap4.vo chap5.vo
+all: h4c.vo chap1.vo chap2.vo chap3.vo chap4.vo chap5.vo
 
 clean:
 	rm -f *.vo *.glob
