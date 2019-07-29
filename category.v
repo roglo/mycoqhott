@@ -127,7 +127,6 @@ unfold ArrowCat_comp; cbn.
 apply hott4cat.pair_transport_eq_existT.
 exists (unit_l _).
 Search hott4cat.transport.
-...
 destruct X as (XA & XB & Xf).
 destruct Y as (YA & YB & Yf); cbn in *.
 move Xf before Yf.
@@ -140,7 +139,7 @@ remember
                  (eq_trans (assoc Xf (idc XB) g2)
                     (eq_ind_r _ eq_refl
                        (eq_trans (unit_r Xf) (eq_sym (unit_l Xf))))))))))
-  as H1 eqn:H2.
+  as Hgg' eqn:H1.
 ...
 (**)
 assert (isProp {g & g ◦ AC_Hom X = AC_Hom Y ◦ g1}). {
