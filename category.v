@@ -141,6 +141,28 @@ exists p.
 apply Hom_set.
 Defined.
 
+Theorem ArrowCat_assoc {C} {X Y Z T : ArrowCat_Obj C} (f : ArrowCat_Hom X Y)
+  (g : ArrowCat_Hom Y Z) (h : ArrowCat_Hom Z T) :
+  ArrowCat_comp f (ArrowCat_comp g h) = ArrowCat_comp (ArrowCat_comp f g) h.
+Proof.
+unfold ArrowCat_comp at 1 3.
+apply hott4cat.pair_transport_eq_existT.
+assert (p
+  : (AC_Hom_g1 (ArrowCat_comp g h) ◦ AC_Hom_g1 f,
+     AC_Hom_g2 (ArrowCat_comp g h) ◦ AC_Hom_g2 f) =
+    (AC_Hom_g1 h ◦ AC_Hom_g1 (ArrowCat_comp f g),
+     AC_Hom_g2 h ◦ AC_Hom_g2 (ArrowCat_comp f g))). {
+  now cbn; do 2 rewrite assoc.
+}
+exists p.
+apply Hom_set.
+Qed.
+
+Theorem ArrowCat_Hom_set {C} (X Y : ArrowCat_Obj C) :
+  isSet (ArrowCat_Hom X Y).
+Proof.
+...
+
 Definition ArrowCat C :=
   {| Obj := ArrowCat_Obj C;
      Hom := ArrowCat_Hom;
@@ -148,7 +170,8 @@ Definition ArrowCat C :=
      idc := ArrowCat_id;
      unit_l _ _ := ArrowCat_unit_l;
      unit_r _ _ := ArrowCat_unit_r;
-     assoc X Y Z T f g h := 42 |}.
+     assoc _ _ _ _ := ArrowCat_assoc;
+     Hom_set := ArrowCat_Hom_set |}.
 
 (* slice category *)
 
