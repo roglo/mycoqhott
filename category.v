@@ -28,8 +28,8 @@ Delimit Scope functor_scope with Fun.
 Delimit Scope nat_transf_scope with NT.
 
 Class category :=
-  { Obj : Type;
-    Hom : Obj → Obj → Type;
+  { Ob : Type;
+    Hom : Ob → Ob → Type;
     comp : ∀ {A B C}, Hom A B → Hom B C → Hom A C;
     idc : ∀ A, Hom A A;
     unit_l : ∀ {A B} (f : Hom A B), comp (idc A) f = f;
@@ -38,13 +38,13 @@ Class category :=
       comp f (comp g h) = comp (comp f g) h;
     Hom_set x y : isSet (Hom x y) }.
 
-Arguments Obj : clear implicits.
-Arguments Obj C%Cat : rename.
+Arguments Ob : clear implicits.
+Arguments Ob C%Cat : rename.
 Arguments Hom [_%Cat].
 Notation "g '◦' f" := (comp f g) (at level 40, left associativity).
 
-Definition dom {C : category} {O1 O2 : Obj C} (f : Hom O1 O2) := O1.
-Definition cod {C : category} {O1 O2 : Obj C} (f : Hom O1 O2) := O2.
+Definition dom {C : category} {O1 O2 : Ob C} (f : Hom O1 O2) := O1.
+Definition cod {C : category} {O1 O2 : Ob C} (f : Hom O1 O2) := O2.
 
 (* The opposite (or “dual”) category C^op of a category C has the same
    objects as C, and an arrow f : C → D in C^op is an arrow f : D → C
@@ -52,7 +52,7 @@ Definition cod {C : category} {O1 O2 : Obj C} (f : Hom O1 O2) := O2.
    around. *)
 
 Definition op C :=
-  {| Obj := Obj C;
+  {| Ob := Ob C;
      Hom c d := Hom d c;
      comp _ _ _ f g := f ◦ g;
      idc := @idc C;
@@ -60,6 +60,8 @@ Definition op C :=
      unit_r _ _ f := unit_l f;
      assoc _ _ _ _ f g h := eq_sym (assoc h g f);
      Hom_set x y := Hom_set y x |}.
+
+Notation "C ⁰" := (op C) (at level 8, left associativity, format "C ⁰").
 
 (* The arrow category C→ of a category C has the arrows of C as objects,
    and an arrow g from f : A → B to f' : A' → B' in C→ is a “commutative
@@ -80,22 +82,22 @@ Definition op C :=
    (Awodey)
 *)
 
-Definition ArrowCat_Obj C := { A : Obj C & { B : Obj C & Hom A B } }.
-Definition AC_A {C} (X : ArrowCat_Obj C) := projT1 X.
-Definition AC_B {C} (X : ArrowCat_Obj C) := projT1 (projT2 X).
-Definition AC_Hom {C} (X : ArrowCat_Obj C) := projT2 (projT2 X).
+Definition ArrowCat_Ob C := { A : Ob C & { B : Ob C & Hom A B } }.
+Definition AC_A {C} (X : ArrowCat_Ob C) := projT1 X.
+Definition AC_B {C} (X : ArrowCat_Ob C) := projT1 (projT2 X).
+Definition AC_Hom {C} (X : ArrowCat_Ob C) := projT2 (projT2 X).
 
-Definition ArrowCat_Hom {C} (X X' : ArrowCat_Obj C) :=
+Definition ArrowCat_Hom {C} (X X' : ArrowCat_Ob C) :=
   { g1g2 & snd g1g2 ◦ AC_Hom X = AC_Hom X' ◦ fst g1g2 }.
 
-Definition AC_Hom_g1 {C} {X X' : ArrowCat_Obj C} (f : ArrowCat_Hom X X') :=
+Definition AC_Hom_g1 {C} {X X' : ArrowCat_Ob C} (f : ArrowCat_Hom X X') :=
   fst (projT1 f).
-Definition AC_Hom_g2 {C} {X X' : ArrowCat_Obj C} (f : ArrowCat_Hom X X') :=
+Definition AC_Hom_g2 {C} {X X' : ArrowCat_Ob C} (f : ArrowCat_Hom X X') :=
   snd (projT1 f).
-Definition AC_Hom_prop {C} {X X' : ArrowCat_Obj C} (f : ArrowCat_Hom X X') :=
+Definition AC_Hom_prop {C} {X X' : ArrowCat_Ob C} (f : ArrowCat_Hom X X') :=
   projT2 f.
 
-Definition ArrowCat_comp {C} {X Y Z : ArrowCat_Obj C}
+Definition ArrowCat_comp {C} {X Y Z : ArrowCat_Ob C}
   (f : ArrowCat_Hom X Y) (g : ArrowCat_Hom Y Z) : ArrowCat_Hom X Z.
 Proof.
 unfold ArrowCat_Hom.
@@ -109,14 +111,14 @@ etransitivity; [ apply assoc | ].
 now rewrite (AC_Hom_prop f).
 Defined.
 
-Definition ArrowCat_id {C} (X : ArrowCat_Obj C) : ArrowCat_Hom X X.
+Definition ArrowCat_id {C} (X : ArrowCat_Ob C) : ArrowCat_Hom X X.
 Proof.
 exists (idc _, idc _).
 etransitivity; [ apply unit_r | ].
 symmetry; apply unit_l.
 Defined.
 
-Theorem ArrowCat_unit_l {C} {X Y : ArrowCat_Obj C} (f : ArrowCat_Hom X Y) :
+Theorem ArrowCat_unit_l {C} {X Y : ArrowCat_Ob C} (f : ArrowCat_Hom X Y) :
   ArrowCat_comp (ArrowCat_id X) f = f.
 Proof.
 destruct f as ((g1, g2) & Hgg); cbn in Hgg.
@@ -129,7 +131,7 @@ exists p.
 apply Hom_set.
 Defined.
 
-Theorem ArrowCat_unit_r {C} {X Y : ArrowCat_Obj C} (f : ArrowCat_Hom X Y) :
+Theorem ArrowCat_unit_r {C} {X Y : ArrowCat_Ob C} (f : ArrowCat_Hom X Y) :
   ArrowCat_comp f (ArrowCat_id Y) = f.
 Proof.
 destruct f as ((g1, g2) & Hgg); cbn in Hgg.
@@ -142,7 +144,7 @@ exists p.
 apply Hom_set.
 Defined.
 
-Theorem ArrowCat_assoc {C} {X Y Z T : ArrowCat_Obj C} (f : ArrowCat_Hom X Y)
+Theorem ArrowCat_assoc {C} {X Y Z T : ArrowCat_Ob C} (f : ArrowCat_Hom X Y)
   (g : ArrowCat_Hom Y Z) (h : ArrowCat_Hom Z T) :
   ArrowCat_comp f (ArrowCat_comp g h) = ArrowCat_comp (ArrowCat_comp f g) h.
 Proof.
@@ -159,7 +161,7 @@ exists p.
 apply Hom_set.
 Qed.
 
-Theorem ArrowCat_Hom_set {C} (X Y : ArrowCat_Obj C) :
+Theorem ArrowCat_Hom_set {C} (X Y : ArrowCat_Ob C) :
   isSet (ArrowCat_Hom X Y).
 Proof.
 unfold ArrowCat_Hom.
@@ -172,7 +174,7 @@ apply Hom_set.
 Defined.
 
 Definition ArrowCat C :=
-  {| Obj := ArrowCat_Obj C;
+  {| Ob := ArrowCat_Ob C;
      Hom := ArrowCat_Hom;
      comp _ _ _ := ArrowCat_comp;
      idc := ArrowCat_id;
@@ -194,27 +196,29 @@ Definition ArrowCat C :=
    (Awodey)
  *)
 
-Definition SliceCat_Hom {C} {B : Obj C} (X Y : ∀ A : Obj C, Hom A B) : Type.
-Proof.
-...
+Definition SliceCat_Ob {C} (B : Ob C) := { A & Hom A B }.
+Definition SC_arr {C} {B : Ob C} (f : SliceCat_Ob B) := projT2 f.
 
-Definition SliceCat {C} (B : Obj C) :=
-  {| Obj := ∀ A, Hom A B;
-     Hom := SliceCat_Hom |}.
+Definition SliceCat_Hom {C} {B : Ob C} (f f' : SliceCat_Ob B) :=
+  { g & SC_arr f' ◦ g = SC_arr f }.
 
+Definition SliceCat {C} (B : Ob C) :=
+  {| Ob := SliceCat_Ob B;
+     Hom := SliceCat_Hom;
+     comp f f' f'' g g' := 42 |}.
 ...
 
 (* initial & final *)
 
-Definition is_initial {C : category} (c : Obj C) :=
+Definition is_initial {C : category} (c : Ob C) :=
   ∀ d, ∃ f : Hom c d, ∀ g : Hom c d, f = g.
-Definition is_terminal {C : category} (c : Obj C) :=
+Definition is_terminal {C : category} (c : Ob C) :=
   ∀ d, ∃ f : Hom d c, ∀ g : Hom d c, f = g.
 
 (* functors *)
 
 Class functor (C D : category) :=
-  { f_map_obj : Obj C → Obj D;
+  { f_map_obj : Ob C → Ob D;
     f_map_hom {a b} : Hom a b → Hom (f_map_obj a) (f_map_obj b);
     f_comp_prop {a b c} (f : Hom a b) (g : Hom b c) :
       f_map_hom (g ◦ f) = f_map_hom g ◦ f_map_hom f;
@@ -224,18 +228,18 @@ Arguments functor C%Cat D%Cat.
 Arguments f_map_obj [_] [_] _%Fun.
 Arguments f_map_hom {_%Cat} {_%Cat} _ {_} {_}.
 
-Definition fop {C D} : functor C D → functor (op C) (op D) :=
+Definition fop {C D} : functor C D → functor C⁰ D⁰ :=
   λ F,
-  {| f_map_obj (x : Obj (op C)) := (@f_map_obj C D F x : Obj (op D));
+  {| f_map_obj (x : Ob C⁰) := (@f_map_obj C D F x : Ob D⁰);
      f_map_hom _ _ f := f_map_hom F f;
      f_comp_prop _ _ _ f g := @f_comp_prop _ _ F _ _ _ g f;
      f_id_prop a := @f_id_prop _ _ F a |}.
 
-Definition is_isomorphism {C : category} {A B : Obj C} (f : Hom A B) :=
+Definition is_isomorphism {C : category} {A B : Ob C} (f : Hom A B) :=
   { g : Hom B A & ((g ◦ f = idc A) * (f ◦ g = idc B))%type }.
 
 Theorem functor_comp_id_prop {C D E} {F : functor C D} {G : functor D E} :
-  ∀ x : Obj C,
+  ∀ x : Ob C,
    f_map_hom G (f_map_hom F (idc x)) = idc (f_map_obj G (f_map_obj F x)).
 Proof.
 intros.
@@ -244,7 +248,7 @@ apply f_equal, f_id_prop.
 Defined.
 
 Theorem functor_comp_prop {C D E} {F : functor C D} {G : functor D E} :
-   ∀ (a b c : Obj C) (f : Hom a b) (g : Hom b c),
+   ∀ (a b c : Ob C) (f : Hom a b) (g : Hom b c),
    f_map_hom G (f_map_hom F (g ◦ f)) =
    f_map_hom G (f_map_hom F g) ◦ f_map_hom G (f_map_hom F f).
 Proof.
@@ -281,20 +285,20 @@ now destruct p, q.
 Defined.
 
 Definition transport2 {C D} {F : functor C D} {G : functor D C}
-  (GF : ∀ x : Obj C, f_map_obj G (f_map_obj F x) = x) x y :=
+  (GF : ∀ x : Ob C, f_map_obj G (f_map_obj F x) = x) x y :=
   hott4cat.transport (λ '(x, y), Hom x y)
     (eq_eq_eq_pair (eq_sym (GF x)) (eq_sym (GF y))).
 
 (* faithfulness & fullness *)
 
 Definition is_faithful_functor {C D} (F : functor C D) :=
-  ∀ (A B : Obj C) (f g : Hom A B), f_map_hom F f = f_map_hom F g → f = g.
+  ∀ (A B : Ob C) (f g : Hom A B), f_map_hom F f = f_map_hom F g → f = g.
 
 Definition is_full_functor {C D} (F : functor C D) :=
   ∀ A B (g : Hom (f_map_obj F A) (f_map_obj F B)), ∃ f, f_map_hom F f = g.
 
 Definition is_functor_injective_on_objects {C D} (F : functor C D) :=
-  ∀ (A B : Obj C), f_map_obj F A = f_map_obj F B → A = B.
+  ∀ (A B : Ob C), f_map_obj F A = f_map_obj F B → A = B.
 
 Definition is_functor_injective_on_arrows {C D} (F : functor C D) :=
   is_functor_injective_on_objects F ∧ is_faithful_functor F.
@@ -315,12 +319,12 @@ Definition are_equivalent_categories (C D : category) :=
    commutes. *)
 
 Record cone {J C} (D : functor J C) :=
-  { cn_top : Obj C;
+  { cn_top : Ob C;
     cn_fam : ∀ j, Hom cn_top (f_map_obj D j);
     cn_commute : ∀ i j (α : Hom i j), cn_fam j = f_map_hom D α ◦ cn_fam i }.
 
 Record co_cone {J C} (D : functor J C) :=
-  { cc_top : Obj C;
+  { cc_top : Ob C;
     cc_fam : ∀ j, Hom (f_map_obj D j) cc_top;
     cc_commute : ∀ i j (α : Hom i j), cc_fam i = cc_fam j ◦ f_map_hom D α }.
 
@@ -491,7 +495,7 @@ apply Hom_set.
 Qed.
 
 Definition ConeCat {J C} (D : functor J C) :=
-  {| Obj := cone D;
+  {| Ob := cone D;
      Hom := Cone_Hom;
      comp _ _ _ := Cone_comp;
      idc := Cone_id;
@@ -501,7 +505,7 @@ Definition ConeCat {J C} (D : functor J C) :=
      Hom_set := Cone_Hom_set |}.
 
 Definition CoConeCat {J C} (D : functor J C) :=
-  {| Obj := co_cone D;
+  {| Ob := co_cone D;
      Hom := CoCone_Hom;
      comp _ _ _ := CoCone_comp;
      idc := CoCone_id;
@@ -542,14 +546,14 @@ split. {
   now symmetry.
 }
 intros h Hh.
-assert (Hh' : ∀ j : Obj J, cn_fam c j = cn_fam l j ◦ h). {
+assert (Hh' : ∀ j : Ob J, cn_fam c j = cn_fam l j ◦ h). {
   intros j; specialize (Hh j).
   now symmetry.
 }
 remember
   (existT
      (λ ϑ : Hom (cn_top c) (cn_top l),
-      ∀ j : Obj J, cn_fam c j = cn_fam l j ◦ ϑ) h Hh') as hh.
+      ∀ j : Ob J, cn_fam c j = cn_fam l j ◦ ϑ) h Hh') as hh.
 now rewrite (H1 hh); subst hh.
 Qed.
 
@@ -560,19 +564,19 @@ Definition CoConeCat2 {J C} (D : functor J C) := op (ConeCat (fop D)).
 Definition cone_fop_of_co_cone {J C} {D : functor J C} :
     co_cone D → cone (fop D) :=
   λ cc,
-  {| cn_top := cc_top cc : Obj (op C);
+  {| cn_top := cc_top cc : Ob (op C);
      cn_fam j := cc_fam cc j : @Hom (op C) (cc_top cc) (f_map_obj (fop D) j);
      cn_commute i j := cc_commute cc j i |}.
 
 Definition co_cone_of_cone_fop {J C} {D : functor J C} :
     cone (fop D) → co_cone D :=
   λ cn,
-  {| cc_top := cn_top cn : Obj C;
+  {| cc_top := cn_top cn : Ob C;
      cc_fam j := cn_fam cn j : @Hom (op C) (cn_top cn) (f_map_obj D j);
      cc_commute i j := cn_commute cn j i |}.
 
 Definition F_CoConeCat_CoConeCat2_comp_prop {J C} {D : functor J C}
-  {x y z : Obj (CoConeCat D)} :
+  {x y z : Ob (CoConeCat D)} :
   ∀ (f : Hom x y) (g : Hom y z),
    g ◦ f =
    @comp (CoConeCat2 D) (cone_fop_of_co_cone x) (cone_fop_of_co_cone y)
@@ -587,7 +591,7 @@ apply Hom_set.
 Defined.
 
 Definition F_CoConeCat2_CoConeCat_comp_prop {J C} {D : functor J C}
-  {x y z : Obj (CoConeCat2 D)} :
+  {x y z : Ob (CoConeCat2 D)} :
   ∀ (f : Hom x y) (g : Hom y z),
   g ◦ f =
   @comp (CoConeCat D) (co_cone_of_cone_fop x) (co_cone_of_cone_fop y)
@@ -604,7 +608,7 @@ Defined.
 Definition F_CoConeCat_CoConeCat2 {J C} {D : functor J C} :
     functor (CoConeCat D) (CoConeCat2 D) :=
   {| f_map_obj :=
-       cone_fop_of_co_cone : Obj (CoConeCat D) → Obj (CoConeCat2 D);
+       cone_fop_of_co_cone : Ob (CoConeCat D) → Ob (CoConeCat2 D);
      f_map_hom _ _ f := f;
      f_comp_prop _ _ _ := F_CoConeCat_CoConeCat2_comp_prop;
      f_id_prop _ := eq_refl |}.
@@ -612,7 +616,7 @@ Definition F_CoConeCat_CoConeCat2 {J C} {D : functor J C} :
 Definition F_CoConeCat2_CoConeCat {J C} {D : functor J C} :
     functor (CoConeCat2 D) (CoConeCat D) :=
   {| f_map_obj :=
-       co_cone_of_cone_fop : Obj (CoConeCat2 D) → Obj (CoConeCat D);
+       co_cone_of_cone_fop : Ob (CoConeCat2 D) → Ob (CoConeCat D);
      f_map_hom _ _ f := f;
      f_comp_prop _ _ _ := F_CoConeCat2_CoConeCat_comp_prop;
      f_id_prop _ := eq_refl |}.
@@ -633,11 +637,11 @@ Proof. now intros; destruct cc. Defined.
 
 Definition is_iso_betw_cat {C D} (F : functor C D) :=
   { G : functor D C &
-    { GF : ∀ x : Obj C, f_map_obj G (f_map_obj F x) = x &
-      { FG : ∀ y : Obj D, f_map_obj F (f_map_obj G y) = y &
-        ((∀ (x y : Obj C) (f : Hom x y),
+    { GF : ∀ x : Ob C, f_map_obj G (f_map_obj F x) = x &
+      { FG : ∀ y : Ob D, f_map_obj F (f_map_obj G y) = y &
+        ((∀ (x y : Ob C) (f : Hom x y),
           f_map_hom G (f_map_hom F f) = transport2 GF x y f) *
-         (∀ (x y : Obj D) (g : Hom x y),
+         (∀ (x y : Ob D) (g : Hom x y),
           f_map_hom F (f_map_hom G g) = transport2 FG x y g))%type }}}.
 
 Definition are_isomorphic_categories (C D : category) :=
@@ -679,7 +683,7 @@ Defined.
 
 Theorem nat_transf_comp_nt_commute {C D} {F G H : functor C D} :
   ∀ (η : natural_transformation F G) (η' : natural_transformation G H),
-  ∀ (x y : Obj C) (f : Hom x y),
+  ∀ (x y : Ob C) (f : Hom x y),
   nt_component η' y ◦ nt_component η y ◦ f_map_hom F f =
   f_map_hom H f ◦ (nt_component η' x ◦ nt_component η x).
 Proof.
@@ -719,7 +723,7 @@ intros.
 destruct f as (f, Hf).
 unfold nat_transf_comp; cbn.
 apply eq_existT_uncurried.
-assert (p : (λ x : Obj C, f x ◦ idc (f_map_obj F x)) = f). {
+assert (p : (λ x : Ob C, f x ◦ idc (f_map_obj F x)) = f). {
   apply fun_ext.
   intros c.
   apply unit_l.
@@ -738,7 +742,7 @@ intros.
 destruct f as (f, Hf).
 unfold nat_transf_comp; cbn.
 apply eq_existT_uncurried.
-assert (p : (λ x : Obj C, idc (f_map_obj G x) ◦ f x) = f). {
+assert (p : (λ x : Ob C, idc (f_map_obj G x) ◦ f x) = f). {
   apply fun_ext.
   intros c.
   apply unit_r.
@@ -790,7 +794,7 @@ apply Hom_set.
 Qed.
 
 Definition FunCat C D :=
-  {| Obj := functor C D;
+  {| Ob := functor C D;
      Hom := natural_transformation;
      comp _ _ _ := nat_transf_comp;
      idc := nat_transf_id;
@@ -806,7 +810,7 @@ Notation "g '◦' f" := (nat_transf_comp f g) (at level 40, left associativity) 
 
 Theorem CatCat_comp_prop {C C' C'' : category}
   {F : functor C C'} {G : functor C' C''} :
-  ∀ (X Y Z : Obj C) (f : Hom X Y) (g : Hom Y Z),
+  ∀ (X Y Z : Ob C) (f : Hom X Y) (g : Hom Y Z),
   f_map_hom G (f_map_hom F (g ◦ f)) =
   f_map_hom G (f_map_hom F g) ◦ f_map_hom G (f_map_hom F f).
 Proof.
@@ -817,7 +821,7 @@ Defined.
 
 Theorem CatCat_id_prop {C C' C'' : category}
   {F : functor C C'} {G : functor C' C''} :
-  ∀ X : Obj C,
+  ∀ X : Ob C,
   f_map_hom G (f_map_hom F (idc X)) = idc (f_map_obj G (f_map_obj F X)).
 Proof.
 intros.
@@ -918,7 +922,7 @@ move Hp4 before Hp3.
 Hom_set does not work: perhaps false or not
 
 Definition CatCat :=
-  {| Obj := category;
+  {| Ob := category;
      Hom := functor;
      comp _ _ := CatCat_comp;
      idc := CatCat_idc;
@@ -950,7 +954,7 @@ Definition is_equiv_betw_cat_guetta {C D} (F : functor C D) :=
 
 (* product of categories *)
 
-Definition pair_unit_l {C1 C2} (X Y : Obj C1 * Obj C2)
+Definition pair_unit_l {C1 C2} (X Y : Ob C1 * Ob C2)
      (f : Hom (fst X) (fst Y) * Hom (snd X) (snd Y)) :
   (fst f ◦ fst (idc (fst X), idc (snd X)),
    snd f ◦ snd (idc (fst X), idc (snd X))) = f.
@@ -959,7 +963,7 @@ destruct f as (f1, f2); cbn.
 now do 2 rewrite unit_l.
 Qed.
 
-Definition pair_unit_r {C1 C2} (X Y : Obj C1 * Obj C2)
+Definition pair_unit_r {C1 C2} (X Y : Ob C1 * Ob C2)
      (f : Hom (fst X) (fst Y) * Hom (snd X) (snd Y)) :
   (fst (idc (fst Y), idc (snd Y)) ◦ fst f,
    snd (idc (fst Y), idc (snd Y)) ◦ snd f) = f.
@@ -968,7 +972,7 @@ destruct f as (f1, f2); cbn.
 now do 2 rewrite unit_r.
 Qed.
 
-Definition pair_assoc {C1 C2} (X Y Z T : Obj C1 * Obj C2)
+Definition pair_assoc {C1 C2} (X Y Z T : Ob C1 * Ob C2)
   (f : Hom (fst X) (fst Y) * Hom (snd X) (snd Y))
   (g : Hom (fst Y) (fst Z) * Hom (snd Y) (snd Z))
   (h : Hom (fst Z) (fst T) * Hom (snd Z) (snd T)) :
@@ -983,14 +987,14 @@ destruct h as (h1, h2); cbn.
 now do 2 rewrite assoc.
 Qed.
 
-Definition pair_isSet {C1 C2} (X Y : Obj C1 * Obj C2) :
+Definition pair_isSet {C1 C2} (X Y : Ob C1 * Ob C2) :
   isSet (Hom (fst X) (fst Y) * Hom (snd X) (snd Y)).
 Proof.
 apply hott4cat.isSet_pair; apply Hom_set.
 Qed.
 
 Definition cat_prod (C1 C2 : category) : category :=
-  {| Obj := Obj C1 * Obj C2;
+  {| Ob := Ob C1 * Ob C2;
      Hom X Y := (Hom (fst X) (fst Y) * Hom (snd X) (snd Y))%type;
      comp _ _ _ f g := (fst g ◦ fst f, snd g ◦ snd f);
      idc X := (idc (fst X), idc (snd X));
@@ -1005,7 +1009,7 @@ Notation "C × D" := (cat_prod C D) (at level 40) : category_scope.
 
 Theorem functor_prod_comp_prop {C C' D D'}
     {F : functor C D} {F' : functor C' D'}
-    (X Y Z : Obj (cat_prod C C')) (f : Hom X Y) (g : Hom Y Z) :
+    (X Y Z : Ob (cat_prod C C')) (f : Hom X Y) (g : Hom Y Z) :
   (f_map_hom F (fst (g ◦ f)), f_map_hom F' (snd (g ◦ f))) =
   @comp (cat_prod D D')
         (f_map_obj F (fst X), f_map_obj F' (snd X))
@@ -1019,7 +1023,7 @@ Defined.
 
 Theorem functor_prod_id_prop {C C' D D'}
     {F : functor C D} {F' : functor C' D'}
-    (X : Obj (cat_prod C C')) :
+    (X : Ob (cat_prod C C')) :
   (f_map_hom F (fst (idc X)), f_map_hom F' (snd (idc X))) =
   @idc (cat_prod D D') (f_map_obj F (fst X), f_map_obj F' (snd X)).
 Proof.
@@ -1028,8 +1032,8 @@ Defined.
 
 Definition functor_prod {C C' D D'} (F : functor C D) (F' : functor C' D') :
   functor (cat_prod C C') (cat_prod D D') :=
-  {| f_map_obj (X : Obj (cat_prod C C')) :=
-       (f_map_obj F (fst X), f_map_obj F' (snd X)) : Obj (cat_prod D D');
+  {| f_map_obj (X : Ob (cat_prod C C')) :=
+       (f_map_obj F (fst X), f_map_obj F' (snd X)) : Ob (cat_prod D D');
      f_map_hom _ _ f :=
        (f_map_hom F (fst f), f_map_hom F' (snd f));
      f_comp_prop :=
@@ -1056,7 +1060,7 @@ now intros a.
 Qed.
 
 Definition SetCat :=
-  {| Obj := Set_type;
+  {| Ob := Set_type;
      Hom A B := st_type A → st_type B;
      comp A B C f g x := g (f x);
      idc _ A := A;
@@ -1076,8 +1080,8 @@ Definition SetCat :=
         g ↦ f ∘ g for each g in Hom(A, X).
 *)
 
-Theorem cov_hom_functor_comp_prop {C} {A : Obj C} :
-  ∀ (B B' B'' : Obj C) (f : Hom B B') (g : Hom B' B''),
+Theorem cov_hom_functor_comp_prop {C} {A : Ob C} :
+  ∀ (B B' B'' : Ob C) (f : Hom B B') (g : Hom B' B''),
   (λ h, g ◦ f ◦ h) =
   (@comp SetCat (existT isSet (Hom A B) (Hom_set A B))
          (existT isSet (Hom A B') (Hom_set A B'))
@@ -1089,8 +1093,8 @@ apply fun_ext; intros h.
 apply assoc.
 Qed.
 
-Theorem cov_hom_functor_id_prop {C} {A : Obj C} :
-  ∀ B : Obj C,
+Theorem cov_hom_functor_id_prop {C} {A : Ob C} :
+  ∀ B : Ob C,
   (λ h, idc B ◦ h) = (@idc SetCat (existT isSet (Hom A B) (Hom_set A B))).
 Proof.
 intros.
@@ -1098,8 +1102,8 @@ apply fun_ext; intros h; cbn.
 apply unit_r.
 Qed.
 
-Definition cov_hom_functor {C} (A : Obj C) : functor C SetCat :=
-  {| f_map_obj (X : Obj C) := existT isSet (Hom A X) (Hom_set A X) : Obj SetCat;
+Definition cov_hom_functor {C} (A : Ob C) : functor C SetCat :=
+  {| f_map_obj (X : Ob C) := existT isSet (Hom A X) (Hom_set A X) : Ob SetCat;
      f_map_hom X Y (F : Hom X Y) (G : Hom A X) := F ◦ G;
      f_comp_prop := cov_hom_functor_comp_prop;
      f_id_prop := cov_hom_functor_id_prop |}.
@@ -1113,29 +1117,29 @@ Definition cov_hom_functor {C} (A : Obj C) : functor C SetCat :=
         g ↦ g ∘ h for each g in Hom(Y, B).
 *)
 
-Definition con_hom_functor {C} (B : Obj C) : functor (op C) SetCat :=
-  {| f_map_obj (X : Obj (op C)) :=
-       existT isSet (@Hom C X B) (@Hom_set C X B) : Obj SetCat;
-     f_map_hom (X Y : Obj C) (H : @Hom C Y X) (G : @Hom C X B) := G ◦ H;
+Definition con_hom_functor {C} (B : Ob C) : functor (op C) SetCat :=
+  {| f_map_obj (X : Ob (op C)) :=
+       existT isSet (@Hom C X B) (@Hom_set C X B) : Ob SetCat;
+     f_map_hom (X Y : Ob C) (H : @Hom C Y X) (G : @Hom C X B) := G ◦ H;
      f_comp_prop := @cov_hom_functor_comp_prop (op C) B;
      f_id_prop := @cov_hom_functor_id_prop (op C) B |}.
 
-Theorem con_hom_functor_is_cov_hom_functor_op {C} {A : Obj C} :
+Theorem con_hom_functor_is_cov_hom_functor_op {C} {A : Ob C} :
   con_hom_functor A = @cov_hom_functor (op C) A.
 Proof. easy. Qed.
 
 (* Hom functor: bifunctor of covariant and contravariant *)
 
-Definition hom_functor_map_obj {C} (X : Obj (op C × C)) : Obj SetCat :=
+Definition hom_functor_map_obj {C} (X : Ob (op C × C)) : Ob SetCat :=
   existT isSet (@Hom C (fst X) (snd X)) (@Hom_set C (fst X) (snd X)).
 
-Definition hom_functor_map_hom {C} {X Y : Obj (op C × C)} (f : Hom X Y) :
+Definition hom_functor_map_hom {C} {X Y : Ob (op C × C)} (f : Hom X Y) :
   Hom (@hom_functor_map_obj C X) (@hom_functor_map_obj C Y) :=
   λ g,
   (@comp C (fst Y) (fst X) (snd Y) (fst f)
      (@comp C (fst X) (snd X) (snd Y) g (snd f))).
 
-Theorem hom_functor_comp_prop {C} {X Y Z : Obj (op C × C)}
+Theorem hom_functor_comp_prop {C} {X Y Z : Ob (op C × C)}
   (f : Hom X Y) (g : Hom Y Z) :
   hom_functor_map_hom (g ◦ f) = hom_functor_map_hom g ◦ hom_functor_map_hom f.
 Proof.
@@ -1144,7 +1148,7 @@ apply fun_ext; intros h.
 now do 5 rewrite assoc.
 Defined.
 
-Theorem hom_functor_id_prop {C} (X : Obj (op C × C)) :
+Theorem hom_functor_id_prop {C} (X : Ob (op C × C)) :
   hom_functor_map_hom (idc X) = idc (hom_functor_map_obj X).
 Proof.
 unfold hom_functor_map_hom; cbn.
@@ -1161,7 +1165,7 @@ Definition hom_functor C : functor (op C × C) SetCat :=
 (* representable functors *)
 
 Definition is_representable_functor {C} (F : functor C SetCat) :=
-  { X : Obj C & are_isomorphic_functors F (cov_hom_functor X) }.
+  { X : Ob C & are_isomorphic_functors F (cov_hom_functor X) }.
 
 (* Yoneda lemma *)
 
@@ -1178,17 +1182,17 @@ Definition is_representable_functor {C} (F : functor C SetCat) :=
   (wikipedia)
 *)
 
-Definition Yoneda_NT_FA {C} (F : functor C SetCat) (A : Obj C) :
+Definition Yoneda_NT_FA {C} (F : functor C SetCat) (A : Ob C) :
   natural_transformation (cov_hom_functor A) F → st_type (f_map_obj F A) :=
   λ Φ, nt_component Φ A (idc A) : st_type (f_map_obj F A).
 
-Definition Yoneda_FA_NT {C} (F : functor C SetCat) (A : Obj C) :
+Definition Yoneda_FA_NT {C} (F : functor C SetCat) (A : Ob C) :
   st_type (f_map_obj F A) → natural_transformation (cov_hom_functor A) F.
 Proof.
 intros u.
-set (ϑ := λ (X : Obj C) (f : Hom A X), f_map_hom F f u).
+set (ϑ := λ (X : Ob C) (f : Hom A X), f_map_hom F f u).
 assert (Hϑ :
-  ∀ (X Y : Obj C) (f : Hom X Y),
+  ∀ (X Y : Ob C) (f : Hom X Y),
   (λ g : Hom A X, ϑ Y (f ◦ g)) =
   (λ g : Hom A X, f_map_hom F f (ϑ X g))). {
   intros.
@@ -1199,7 +1203,7 @@ assert (Hϑ :
 apply (existT _ ϑ Hϑ).
 Defined.
 
-Lemma Yoneda {C} (F : functor C SetCat) (A : Obj C) :
+Lemma Yoneda {C} (F : functor C SetCat) (A : Ob C) :
   let NT := natural_transformation (cov_hom_functor A) F in
   let FA := st_type (f_map_obj F A) in
   ∃ f : NT → FA, ∃ g : FA → NT,
@@ -1242,7 +1246,7 @@ Qed.
 
 Definition SetC_C (C : category) := cat_prod (FunCat C SetCat) C.
 
-Definition functor_SetC_C_Set1_map_hom {C} (D := SetC_C C) (X Y : Obj D)
+Definition functor_SetC_C_Set1_map_hom {C} (D := SetC_C C) (X Y : Ob D)
   (f : Hom X Y) : Hom (f_map_obj (fst X) (snd X)) (f_map_obj (fst Y) (snd Y)).
 Proof.
 cbn in X, Y, f.
@@ -1253,7 +1257,7 @@ destruct f as (f, g).
 now apply f, (f_map_hom F g).
 Defined.
 
-Theorem functor_SetC_C_Set1_comp_prop {C} (D := SetC_C C) (X Y Z : Obj D)
+Theorem functor_SetC_C_Set1_comp_prop {C} (D := SetC_C C) (X Y Z : Ob D)
   (f : Hom X Y) (g : Hom Y Z) :
   functor_SetC_C_Set1_map_hom X Z (g ◦ f) =
   functor_SetC_C_Set1_map_hom Y Z g ◦ functor_SetC_C_Set1_map_hom X Y f.
@@ -1275,7 +1279,7 @@ specialize (η_prop Y Z g) as H1.
 now specialize (@hott4cat.happly _ _ _ _ H1 (f_map_hom F f T)) as H2.
 Qed.
 
-Theorem functor_SetC_C_Set1_id_prop {C} (D := SetC_C C) (X : Obj D) :
+Theorem functor_SetC_C_Set1_id_prop {C} (D := SetC_C C) (X : Ob D) :
   functor_SetC_C_Set1_map_hom X X (idc X) = idc (f_map_obj (fst X) (snd X)).
 Proof.
 cbn in *.
@@ -1285,18 +1289,18 @@ now rewrite f_id_prop.
 Qed.
 
 Definition functor_SetC_C_Set1 C : functor (SetC_C C) SetCat :=
-  {| f_map_obj (X : Obj (SetC_C C)) := f_map_obj (fst X) (snd X);
+  {| f_map_obj (X : Ob (SetC_C C)) := f_map_obj (fst X) (snd X);
      f_map_hom := functor_SetC_C_Set1_map_hom;
      f_comp_prop := functor_SetC_C_Set1_comp_prop;
      f_id_prop := functor_SetC_C_Set1_id_prop |}.
 
-Definition functor_SetC_C_Set2_map_obj {C} (A : Obj (SetC_C C)) : Obj SetCat.
+Definition functor_SetC_C_Set2_map_obj {C} (A : Ob (SetC_C C)) : Ob SetCat.
 Proof.
 exists (natural_transformation (cov_hom_functor (snd A)) (fst A)).
 apply Fun_Hom_set.
 Defined.
 
-Definition functor_SetC_C_Set2_map_hom {C} (X Y : Obj (SetC_C C))
+Definition functor_SetC_C_Set2_map_hom {C} (X Y : Ob (SetC_C C))
     (f : Hom X Y) :
   Hom (functor_SetC_C_Set2_map_obj X) (functor_SetC_C_Set2_map_obj Y).
 Proof.
@@ -1327,7 +1331,7 @@ do 2 apply f_equal.
 apply assoc.
 Defined.
 
-Theorem functor_SetC_C_Set2_comp_prop {C} (X Y Z : Obj (SetC_C C))
+Theorem functor_SetC_C_Set2_comp_prop {C} (X Y Z : Ob (SetC_C C))
     (f : Hom X Y) (g : Hom Y Z) :
   functor_SetC_C_Set2_map_hom X Z (g ◦ f) =
   functor_SetC_C_Set2_map_hom Y Z g ◦ functor_SetC_C_Set2_map_hom X Y f.
@@ -1346,9 +1350,9 @@ move G before F; move H before G.
 cbn in *.
 unfold nt_component.
 assert (p
-  : (λ (A : Obj C) (g0 : Hom Z A),
+  : (λ (A : Ob C) (g0 : Hom Z A),
        projT1 η'' A (projT1 η' A (projT1 η A (g0 ◦ (g ◦ f))))) =
-    (λ (A : Obj C) (g0 : Hom Z A),
+    (λ (A : Ob C) (g0 : Hom Z A),
        projT1 η'' A (projT1 η' A (projT1 η A (g0 ◦ g ◦ f))))). {
   apply fun_ext; intros A.
   apply fun_ext; intros h.
@@ -1364,14 +1368,14 @@ intros i.
 now destruct (f_map_obj H B).
 Qed.
 
-Theorem functor_SetC_C_Set2_id_prop {C} (X : Obj (SetC_C C)) :
+Theorem functor_SetC_C_Set2_id_prop {C} (X : Ob (SetC_C C)) :
   functor_SetC_C_Set2_map_hom X X (idc X) = idc (functor_SetC_C_Set2_map_obj X).
 Proof.
 apply fun_ext; intros η; cbn.
 destruct η as (η, Hη); cbn in *.
 unfold functor_SetC_C_Set2_map_hom; cbn.
 apply eq_existT_uncurried; cbn.
-assert (p : (λ (A : Obj C) (g : Hom (snd X) A), η A (g ◦ idc (snd X))) = η). {
+assert (p : (λ (A : Ob C) (g : Hom (snd X) A), η A (g ◦ idc (snd X))) = η). {
   apply fun_ext; intros A.
   apply fun_ext; intros f.
   now rewrite unit_l.
@@ -1396,16 +1400,16 @@ Theorem Yoneda_natural {C} :
 Proof.
 unfold natural_transformation; cbn.
 set (ϑ :=
-  λ F : functor C SetCat * Obj C,
+  λ F : functor C SetCat * Ob C,
   let (F, A) as p
     return
       (st_type (f_map_obj (fst p) (snd p))
       → natural_transformation (cov_hom_functor (snd p)) (fst p)) := F
   in
   λ T : st_type (f_map_obj F A),
-  let ϑ := λ (X : Obj C) (f : Hom A X), f_map_hom F f T in
+  let ϑ := λ (X : Ob C) (f : Hom A X), f_map_hom F f T in
   existT _ ϑ
-    (λ (X Y : Obj C) (f : Hom X Y),
+    (λ (X Y : Ob C) (f : Hom X Y),
      fun_ext _
        (λ _ : Hom A X, st_type (f_map_obj F Y)) (λ HA : Hom A X, ϑ Y (f ◦ HA))
        (λ HA : Hom A X, f_map_hom F f (ϑ X HA))
@@ -1423,9 +1427,9 @@ destruct G as (G, B).
 unfold functor_SetC_C_Set2_map_hom; cbn.
 apply eq_existT_uncurried; cbn.
 assert (p :
-   (λ (X : Obj C) (f1 : Hom B X),
+   (λ (X : Ob C) (f1 : Hom B X),
     f_map_hom G f1 (let (f2, g) := η in (projT1 f2) B (f_map_hom F g T))) =
-   (λ (A : Obj C) (g : Hom B A),
+   (λ (A : Ob C) (g : Hom B A),
     projT1 (fst η) A (f_map_hom F (g ◦ snd η) T))). {
   apply fun_ext; intros X.
   apply fun_ext; intros f.
@@ -1545,12 +1549,12 @@ Definition is_left_adjoint2 {C D} (L : functor D C) :=
 Definition curry {A B C} (f : A * B → C) (X : A) (Y : B) := f (X, Y).
 
 Definition functor_curry {A B C} (F : functor (A × B) C) :
-  Obj A → functor B C.
+  Ob A → functor B C.
 Proof.
 intros X.
 apply
-  {| f_map_obj (Y : Obj B) := f_map_obj F (X, Y) : Obj C;
-     f_map_hom (Y Y' : Obj B) (f : Hom Y Y') :=
+  {| f_map_obj (Y : Ob B) := f_map_obj F (X, Y) : Ob C;
+     f_map_hom (Y Y' : Ob B) (f : Hom Y Y') :=
        @f_map_hom (A × B) _ _ (X, Y) (X, Y') (idc X, f) |}.
 ...
 *)
@@ -1635,12 +1639,12 @@ faire C^op→[C,Set] à la place C^op×C→Set
 (* cone image by a functor *)
 
 Definition cone_image_fam {J C D} {X : functor J C} {cn : cone X}
-    (F : functor C D) (j : Obj J) :
+    (F : functor C D) (j : Ob J) :
     Hom (f_map_obj F (cn_top cn)) (f_map_obj (F ◦ X) j) :=
   f_map_hom F (cn_fam cn j).
 
 Theorem cone_image_commute {J C D} {X : functor J C} (F : functor C D)
-    {cn : cone X} (i j : Obj J) (f : Hom i j) :
+    {cn : cone X} (i j : Ob J) (f : Hom i j) :
   f_map_hom F (cn_fam cn j) =
   f_map_hom (F ◦ X)%Fun f ◦ f_map_hom F (cn_fam cn i).
 Proof.
@@ -1674,12 +1678,12 @@ Definition cone_image {J C D} {X : functor J C} (F : functor C D) :
 (* this "hom_functor Y (cn_top c)", a functor is supposed to be isomorphic
    to .... something *)
 Check
-  (λ J C (X_ : functor J C) (Y : Obj C) (c : cone X_) (p : is_limit c),
+  (λ J C (X_ : functor J C) (Y : Ob C) (c : cone X_) (p : is_limit c),
    hom_functor Y (cn_top c)).
 (* → functor (op C × C) SetCat *)
 (* ... to? *)
 Check
-  (λ J C (X_ : functor J C) (Y : Obj C),
+  (λ J C (X_ : functor J C) (Y : Ob C),
    (cov_hom_functor Y ◦ X_)%Fun).
 (* → functor J SetCat *)
 
@@ -1690,7 +1694,7 @@ Check @is_natural_isomorphism.
 Theorem hom_functor_preserves_limit {C} :
   ∀ J (X_ : functor J C) (lim_i_Xi : cone X_),
   is_limit lim_i_Xi →
-  ∀ (Y : Obj C) lim_i_Hom_C_Y_Xi,
+  ∀ (Y : Ob C) lim_i_Hom_C_Y_Xi,
   @is_natural_isomorphism _ _
     (hom_functor Y (cn_top lim_i_Xi))
     (cov_hom_functor Y ◦ X_)%Fun.
@@ -1706,7 +1710,7 @@ intros * Hlim *.
 (* ah bon *)
 ...
 
-Theorem hom_functor_preserves_limit {C} (A B : Obj C)
+Theorem hom_functor_preserves_limit {C} (A B : Ob C)
     (F := hom_functor A B) :
   ∀ J (X : functor J (op C × C)) (cn : cone X),
   is_limit cn → is_limit (cone_image F cn).
@@ -1731,7 +1735,7 @@ destruct HLR as (η & ε & H1 & H2).
 Check @hom_functor.
 Print cone.
 
-Theorem lim_hom_fun {J C D} (E : functor J C) (F : functor C D) (X : Obj C) (j : Obj J) (cn : cone E) :
+Theorem lim_hom_fun {J C D} (E : functor J C) (F : functor C D) (X : Ob C) (j : Ob J) (cn : cone E) :
   hom_functor X (cn_fam cn j).
 ...
 *)
@@ -1755,7 +1759,7 @@ apply fs_is_set.
 Qed.
 
 Definition FinSetCat :=
-  {| Obj := FinSet_type;
+  {| Ob := FinSet_type;
      Hom A B := fs_type A → fs_type B;
      comp A B C f g x := g (f x);
      idc _ A := A;
@@ -1780,7 +1784,7 @@ now destruct y, z.
 Qed.
 
 Definition Cat_1 :=
-  {| Obj := unit;
+  {| Ob := unit;
      Hom _ _ := unit → unit;
      comp _ _ _ _ _ := λ x, x;
      idc _ x := x;
@@ -1831,7 +1835,7 @@ destruct (a && negb b)%bool.
 Defined.
 
 Definition Cat_2 :=
-  {| Obj := bool;
+  {| Ob := bool;
      Hom := Cat_2_Hom;
      comp _ _ _ := Cat_2_comp;
      idc := Cat_2_id;
@@ -1897,7 +1901,7 @@ destruct A; [ apply hott4cat.isSet_True | | ].
 Defined.
 
 Definition Cat_3 :=
-  {| Obj := Cat_3_type;
+  {| Ob := Cat_3_type;
      Hom := Cat_3_Hom;
      comp _ _ _ := Cat_3_comp;
      idc := Cat_3_id;
@@ -1909,7 +1913,7 @@ Definition Cat_3 :=
 (* category 0 *)
 
 Definition Cat_0 :=
-  {| Obj := False;
+  {| Ob := False;
      Hom _ _ := False;
      comp _ _ _ f _ := f;
      idc x := x;
@@ -2010,7 +2014,7 @@ apply st_is_set.
 Defined.
 
 Definition PosCat :=
-  {| Obj := Pos_type;
+  {| Ob := Pos_type;
      Hom := Pos_Hom;
      comp _ _ _ := Pos_comp;
      idc := Pos_id;
@@ -2096,7 +2100,7 @@ apply proof_irrel.
 Defined.
 
 Definition RelCat :=
-  {| Obj := Set_type;
+  {| Ob := Set_type;
      Hom := Rel_Hom;
      comp _ _ _ := Rel_comp;
      idc := Rel_id;
