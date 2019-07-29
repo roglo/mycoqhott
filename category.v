@@ -119,27 +119,14 @@ etransitivity; [ apply unit_r | ].
 symmetry; apply unit_l.
 Defined.
 
-Definition transport {A} P {x y : A} (p : x = y) : P x → P y :=
-  match p with
-  | eq_refl _ => id
-  end.
-
-Theorem transport_eq_rect {A} (P : A → Type) {x y : A} (p : x = y) px :
-  transport P p px = eq_rect x P px y p.
-Proof.
-now destruct p.
-Qed.
-
 Theorem ArrowCat_unit_l {C} {X Y : ArrowCat_Obj C} (f : ArrowCat_Hom X Y) :
   ArrowCat_comp (ArrowCat_id X) f = f.
 Proof.
 destruct f as (g1 & g2 & Hgg).
 unfold ArrowCat_comp; cbn.
-apply eq_existT_uncurried.
+apply hott4cat.pair_transport_eq_existT.
 exists (unit_l _).
-(**)
-rewrite <- transport_eq_rect.
-(**)
+Search hott4cat.transport.
 ...
 destruct X as (XA & XB & Xf).
 destruct Y as (YA & YB & Yf); cbn in *.
@@ -154,8 +141,6 @@ remember
                     (eq_ind_r _ eq_refl
                        (eq_trans (unit_r Xf) (eq_sym (unit_l Xf))))))))))
   as H1 eqn:H2.
-Print eq_rect.
-Print transport.
 ...
 (**)
 assert (isProp {g & g ◦ AC_Hom X = AC_Hom Y ◦ g1}). {
