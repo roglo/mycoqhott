@@ -126,14 +126,29 @@ assert (p : (g1 ◦ idc (AC_A X), g2 ◦ idc (AC_B X)) = (g1, g2)). {
 }
 exists p.
 apply Hom_set.
-Qed.
+Defined.
+
+Theorem ArrowCat_unit_r {C} {X Y : ArrowCat_Obj C} (f : ArrowCat_Hom X Y) :
+  ArrowCat_comp f (ArrowCat_id Y) = f.
+Proof.
+destruct f as ((g1, g2) & Hgg); cbn in Hgg.
+unfold ArrowCat_comp; cbn.
+apply hott4cat.pair_transport_eq_existT.
+assert (p : (idc (AC_A Y) ◦ g1, idc (AC_B Y) ◦ g2) = (g1, g2)). {
+  now do 2 rewrite unit_r.
+}
+exists p.
+apply Hom_set.
+Defined.
 
 Definition ArrowCat C :=
   {| Obj := ArrowCat_Obj C;
      Hom := ArrowCat_Hom;
      comp _ _ _ := ArrowCat_comp;
      idc := ArrowCat_id;
-     unit_l _ _ := ArrowCat_unit_l |}.
+     unit_l _ _ := ArrowCat_unit_l;
+     unit_r _ _ := ArrowCat_unit_r;
+     assoc X Y Z T f g h := 42 |}.
 
 (* slice category *)
 
