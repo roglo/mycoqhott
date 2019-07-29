@@ -167,11 +167,9 @@ apply hott4cat.is_set_is_set_sigT. 2: {
   apply hott4cat.isSet_pair; apply Hom_set.
 }
 intros (f, g); cbn.
-destruct X as (XA & XB & Xf).
-destruct Y as (YA & YB & Yf).
-move Xf before Yf; cbn in *.
-Search (hott4cat.isProp (_ = _)).
-...
+unfold hott4cat.isProp.
+apply Hom_set.
+Defined.
 
 Definition ArrowCat C :=
   {| Obj := ArrowCat_Obj C;
