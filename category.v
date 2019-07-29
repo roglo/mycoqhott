@@ -86,23 +86,20 @@ Definition AC_B {C} (X : ArrowCat_Obj C) := projT1 (projT2 X).
 Definition AC_Hom {C} (X : ArrowCat_Obj C) := projT2 (projT2 X).
 
 Definition ArrowCat_Hom {C} (X X' : ArrowCat_Obj C) :=
-  { g1 : Hom (AC_A X) (AC_A X') &
-    { g2 : Hom (AC_B X) (AC_B X') &
-      g2 ◦ AC_Hom X = AC_Hom X' ◦ g1 }}.
+  { g1g2 & snd g1g2 ◦ AC_Hom X = AC_Hom X' ◦ fst g1g2 }.
 Definition AC_Hom_g1 {C} {X X' : ArrowCat_Obj C} (f : ArrowCat_Hom X X') :=
-  projT1 f.
+  fst (projT1 f).
 Definition AC_Hom_g2 {C} {X X' : ArrowCat_Obj C} (f : ArrowCat_Hom X X') :=
-  projT1 (projT2 f).
+  snd (projT1 f).
 Definition AC_Hom_prop {C} {X X' : ArrowCat_Obj C} (f : ArrowCat_Hom X X') :=
-  projT2 (projT2 f).
+  projT2 f.
 
 Definition ArrowCat_comp {C} {X Y Z : ArrowCat_Obj C}
   (f : ArrowCat_Hom X Y) (g : ArrowCat_Hom Y Z) : ArrowCat_Hom X Z.
 Proof.
 unfold ArrowCat_Hom.
-exists (AC_Hom_g1 g ◦ AC_Hom_g1 f).
-exists (AC_Hom_g2 g ◦ AC_Hom_g2 f).
-unfold AC_Hom_g2, AC_Hom_g1.
+exists (AC_Hom_g1 g ◦ AC_Hom_g1 f, AC_Hom_g2 g ◦ AC_Hom_g2 f).
+unfold AC_Hom_g2, AC_Hom_g1; cbn.
 symmetry.
 etransitivity; [ symmetry; apply assoc | ].
 etransitivity; [ apply f_equal; symmetry; apply (AC_Hom_prop g) | ].
@@ -113,8 +110,7 @@ Defined.
 
 Definition ArrowCat_id {C} (X : ArrowCat_Obj C) : ArrowCat_Hom X X.
 Proof.
-exists (idc _).
-exists (idc _).
+exists (idc _, idc _).
 etransitivity; [ apply unit_r | ].
 symmetry; apply unit_l.
 Defined.
@@ -122,43 +118,22 @@ Defined.
 Theorem ArrowCat_unit_l {C} {X Y : ArrowCat_Obj C} (f : ArrowCat_Hom X Y) :
   ArrowCat_comp (ArrowCat_id X) f = f.
 Proof.
-destruct f as (g1 & g2 & Hgg).
+destruct f as ((g1, g2) & Hgg); cbn in Hgg.
 unfold ArrowCat_comp; cbn.
 apply hott4cat.pair_transport_eq_existT.
-exists (unit_l _).
-destruct X as (XA & XB & Xf).
-destruct Y as (YA & YB & Yf); cbn in *.
-move Xf before Yf.
-remember
-  (eq_sym
-     (eq_trans (eq_sym (assoc (idc XA) g1 Yf))
-        (eq_trans (f_equal (comp (idc XA)) (eq_sym Hgg))
-           (eq_trans (assoc (idc XA) Xf g2)
-              (eq_sym
-                 (eq_trans (assoc Xf (idc XB) g2)
-                    (eq_ind_r _ eq_refl
-                       (eq_trans (unit_r Xf) (eq_sym (unit_l Xf))))))))))
-  as Hgg' eqn:H1.
-...
-(**)
-assert (isProp {g & g ◦ AC_Hom X = AC_Hom Y ◦ g1}). {
-  apply (hott4cat.isnType_isnType_sigT _ 0).
-  -intros g p q; apply Hom_set.
-  -cbn.
-   destruct X, Y; cbn in *.
-   destruct s, s0; cbn in *.
-Search (hott4cat.isProp).
-...
+assert (p : (g1 ◦ idc (AC_A X), g2 ◦ idc (AC_B X)) = (g1, g2)). {
+  now do 2 rewrite unit_l.
 }
-apply H.
-...
+exists p.
+apply Hom_set.
+Qed.
 
 Definition ArrowCat C :=
   {| Obj := ArrowCat_Obj C;
      Hom := ArrowCat_Hom;
      comp _ _ _ := ArrowCat_comp;
      idc := ArrowCat_id;
-     unit_l X Y f := 42 |}.
+     unit_l _ _ := ArrowCat_unit_l |}.
 
 (* slice category *)
 
