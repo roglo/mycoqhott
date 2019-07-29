@@ -181,7 +181,18 @@ Definition ArrowCat C :=
      assoc _ _ _ _ := ArrowCat_assoc;
      Hom_set := ArrowCat_Hom_set |}.
 
-(* slice category *)
+(* The slice category 𝒞/C of a category 𝒞 over an object C ∈ 𝒞 has:
+    • objects: all arrows f ∈ 𝒞 such that cod(f)=C,
+    • arrows: g from f : X → C to f′ : X′ → C is an arrow g : X → X′ in 𝒞
+      such that f′ ◦ g = f, as indicated in
+                 g
+            X ------> X'
+             \       /
+            f \     / f'
+               ↘ ↙
+                 C
+   (Awodey)
+ *)
 
 Definition SliceCat_Hom {C} {B : Obj C} (X Y : ∀ A : Obj C, Hom A B) : Type.
 Proof.
