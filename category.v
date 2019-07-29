@@ -201,11 +201,36 @@ Definition SC_arr {C} {B : Ob C} (f : SliceCat_Ob B) := projT2 f.
 
 Definition SliceCat_Hom {C} {B : Ob C} (f f' : SliceCat_Ob B) :=
   { g & SC_arr f' ◦ g = SC_arr f }.
+Definition SC_hom {C} {B : Ob C} {f f' : SliceCat_Ob B}
+  (g : SliceCat_Hom f f') := projT1 g.
+Definition SC_prop {C} {B : Ob C} {f f' : SliceCat_Ob B}
+  (g : SliceCat_Hom f f') := projT2 g.
+
+Definition SliceCat_comp {C} {B : Ob C} {f f' f'' : SliceCat_Ob B}
+  (g : SliceCat_Hom f f') (g' : SliceCat_Hom f' f'') : SliceCat_Hom f f''.
+Proof.
+exists (SC_hom g' ◦ SC_hom g).
+rewrite <- assoc.
+unfold SC_hom; rewrite SC_prop; apply SC_prop.
+Defined.
+
+Definition SliceCat_id {C} {B : Ob C} (f : SliceCat_Ob B) : SliceCat_Hom f f.
+Proof.
+exists (idc _).
+apply unit_l.
+Defined.
+
+Theorem SliceCat_unit_l {C} {B : Ob C} {f f' : SliceCat_Ob B}
+  (g : SliceCat_Hom f f') : SliceCat_comp (SliceCat_id f) g = g.
+Proof.
+...
 
 Definition SliceCat {C} (B : Ob C) :=
   {| Ob := SliceCat_Ob B;
      Hom := SliceCat_Hom;
-     comp f f' f'' g g' := 42 |}.
+     comp _ _ _ := SliceCat_comp;
+     idc := SliceCat_id;
+     unit_l _ _ := SliceCat_unit_l |}.
 ...
 
 (* initial & final *)
