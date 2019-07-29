@@ -271,7 +271,159 @@ Definition SliceCat {C} (B : Ob C) :=
      assoc _ _ _ _ := SliceCat_assoc;
      Hom_set := SliceCat_Hom_set |}.
 
-...
+(* category 1 *)
+
+Theorem Cat_1_unit (A B : unit) (f : unit → unit) : (λ x : unit, x) = f.
+Proof.
+apply fun_ext; intros x.
+now destruct x, (f tt).
+Defined.
+
+Theorem Cat_1_Hom_set (a b : unit) : isSet (unit → unit).
+Proof.
+apply h4c.isSet_forall; intros x.
+apply h4c.isProp_isSet; intros y z.
+now destruct y, z.
+Qed.
+
+Definition Cat_1 :=
+  {| Ob := unit;
+     Hom _ _ := unit → unit;
+     comp _ _ _ _ _ := λ x, x;
+     idc _ x := x;
+     unit_l := Cat_1_unit;
+     unit_r := Cat_1_unit;
+     assoc _ _ _ _ _ _ _ := eq_refl;
+     Hom_set := Cat_1_Hom_set |}.
+
+(* category 2 *)
+
+Definition Cat_2_Hom A B : Type :=
+  if (A && negb B)%bool then False else True.
+
+Definition Cat_2_comp {a b c} (f : Cat_2_Hom a b) (g : Cat_2_Hom b c) :
+  Cat_2_Hom a c.
+Proof.
+now destruct a, b.
+Defined.
+
+Definition Cat_2_id a : Cat_2_Hom a a.
+Proof.
+now destruct a.
+Defined.
+
+Theorem Cat_2_unit_l a b (f : Cat_2_Hom a b) : Cat_2_comp (Cat_2_id a) f = f.
+Proof.
+now destruct a.
+Defined.
+
+Theorem Cat_2_unit_r a b (f : Cat_2_Hom a b) : Cat_2_comp f (Cat_2_id b) = f.
+Proof.
+now destruct a, b, f.
+Defined.
+
+Theorem Cat_2_assoc a b c d (f : Cat_2_Hom a b) (g : Cat_2_Hom b c)
+  (h : Cat_2_Hom c d) :
+  Cat_2_comp f (Cat_2_comp g h) = Cat_2_comp (Cat_2_comp f g) h.
+Proof.
+now destruct a, b, c; cbn in *.
+Defined.
+
+Theorem Cat_2_Hom_set a b : isSet (Cat_2_Hom a b).
+Proof.
+unfold Cat_2_Hom.
+destruct (a && negb b)%bool.
+-apply h4c.isSet_False.
+-apply h4c.isSet_True.
+Defined.
+
+Definition Cat_2 :=
+  {| Ob := bool;
+     Hom := Cat_2_Hom;
+     comp _ _ _ := Cat_2_comp;
+     idc := Cat_2_id;
+     unit_l := Cat_2_unit_l;
+     unit_r := Cat_2_unit_r;
+     assoc := Cat_2_assoc;
+     Hom_set := Cat_2_Hom_set |}.
+
+(* category 3 *)
+
+Inductive Cat_3_type := C1 | C2 | C3.
+
+Definition Cat_3_Hom A B : Type :=
+  match A with
+  | C1 => True
+  | C2 =>
+      match B with
+      | C1 => False
+      | _ => True
+      end
+  | C3 =>
+      match B with
+      | C3 => True
+      | _ => False
+      end
+  end.
+
+Definition Cat_3_comp {a b c} (f : Cat_3_Hom a b) (g : Cat_3_Hom b c) :
+  Cat_3_Hom a c.
+Proof.
+now destruct a, b, c.
+Defined.
+
+Definition Cat_3_id a : Cat_3_Hom a a.
+Proof.
+now destruct a.
+Defined.
+
+Theorem Cat_3_unit_l A B (f : Cat_3_Hom A B) :
+  Cat_3_comp (Cat_3_id A) f = f.
+Proof.
+now destruct A, B.
+Defined.
+
+Theorem Cat_3_unit_r A B (f : Cat_3_Hom A B) :
+  Cat_3_comp f (Cat_3_id B) = f.
+Proof.
+now destruct A, B, f; cbn.
+Defined.
+
+Theorem Cat_3_assoc A B C D (f : Cat_3_Hom A B) (g : Cat_3_Hom B C)
+  (h : Cat_3_Hom C D) :
+  Cat_3_comp f (Cat_3_comp g h) = Cat_3_comp (Cat_3_comp f g) h.
+Proof.
+now destruct A, B, C, D, g, h.
+Defined.
+
+Theorem Cat_3_Hom_set A B : isSet (Cat_3_Hom A B).
+Proof.
+destruct A; [ apply h4c.isSet_True | | ].
+-destruct B; [ apply h4c.isSet_False | | ]; apply h4c.isSet_True.
+-destruct B; [ | | apply h4c.isSet_True ]; apply h4c.isSet_False.
+Defined.
+
+Definition Cat_3 :=
+  {| Ob := Cat_3_type;
+     Hom := Cat_3_Hom;
+     comp _ _ _ := Cat_3_comp;
+     idc := Cat_3_id;
+     unit_l := Cat_3_unit_l;
+     unit_r := Cat_3_unit_r;
+     assoc := Cat_3_assoc;
+     Hom_set := Cat_3_Hom_set |}.
+
+(* category 0 *)
+
+Definition Cat_0 :=
+  {| Ob := False;
+     Hom _ _ := False;
+     comp _ _ _ f _ := f;
+     idc x := x;
+     unit_l A := match A with end;
+     unit_r A := match A with end;
+     assoc A _ _ _ _ := match A with end;
+     Hom_set A := match A with end |}.
 
 (* initial & final *)
 
@@ -377,6 +529,16 @@ Definition is_equiv_betw_cat {C D} (F : functor C D) :=
 
 Definition are_equivalent_categories (C D : category) :=
   { F : functor C D & is_equiv_betw_cat F }.
+
+(* arrow category equivalent to 2→C *)
+
+...
+
+???
+
+Theorem arr_cat_equiv_2_cat {C} :
+  are_equivalent_categories (ArrowCat C) (Cat_2 → C) ?
+...
 
 (* A cone to a functor D(J,C) consists of an object c in C and a
    family of arrows in C : cj : c → Dj one for each object j ∈ J, such
@@ -1832,160 +1994,6 @@ Definition FinSetCat :=
      unit_r _ _ _ := eq_refl;
      assoc _ _ _ _ _ _ _ := eq_refl;
      Hom_set := FinSet_Hom_set |}.
-
-(* category 1 *)
-
-Theorem Cat_1_unit (A B : unit) (f : unit → unit) : (λ x : unit, x) = f.
-Proof.
-apply fun_ext; intros x.
-now destruct x, (f tt).
-Defined.
-
-Theorem Cat_1_Hom_set (a b : unit) : isSet (unit → unit).
-Proof.
-apply h4c.isSet_forall; intros x.
-apply h4c.isProp_isSet; intros y z.
-now destruct y, z.
-Qed.
-
-Definition Cat_1 :=
-  {| Ob := unit;
-     Hom _ _ := unit → unit;
-     comp _ _ _ _ _ := λ x, x;
-     idc _ x := x;
-     unit_l := Cat_1_unit;
-     unit_r := Cat_1_unit;
-     assoc _ _ _ _ _ _ _ := eq_refl;
-     Hom_set := Cat_1_Hom_set |}.
-
-(* category 2 *)
-
-Definition Cat_2_Hom A B : Type :=
-  if (A && negb B)%bool then False else True.
-
-Definition Cat_2_comp {a b c} (f : Cat_2_Hom a b) (g : Cat_2_Hom b c) :
-  Cat_2_Hom a c.
-Proof.
-now destruct a, b.
-Defined.
-
-Definition Cat_2_id a : Cat_2_Hom a a.
-Proof.
-now destruct a.
-Defined.
-
-Theorem Cat_2_unit_l a b (f : Cat_2_Hom a b) : Cat_2_comp (Cat_2_id a) f = f.
-Proof.
-now destruct a.
-Defined.
-
-Theorem Cat_2_unit_r a b (f : Cat_2_Hom a b) : Cat_2_comp f (Cat_2_id b) = f.
-Proof.
-now destruct a, b, f.
-Defined.
-
-Theorem Cat_2_assoc a b c d (f : Cat_2_Hom a b) (g : Cat_2_Hom b c)
-  (h : Cat_2_Hom c d) :
-  Cat_2_comp f (Cat_2_comp g h) = Cat_2_comp (Cat_2_comp f g) h.
-Proof.
-now destruct a, b, c; cbn in *.
-Defined.
-
-Theorem Cat_2_Hom_set a b : isSet (Cat_2_Hom a b).
-Proof.
-unfold Cat_2_Hom.
-destruct (a && negb b)%bool.
--apply h4c.isSet_False.
--apply h4c.isSet_True.
-Defined.
-
-Definition Cat_2 :=
-  {| Ob := bool;
-     Hom := Cat_2_Hom;
-     comp _ _ _ := Cat_2_comp;
-     idc := Cat_2_id;
-     unit_l := Cat_2_unit_l;
-     unit_r := Cat_2_unit_r;
-     assoc := Cat_2_assoc;
-     Hom_set := Cat_2_Hom_set |}.
-
-(* category 3 *)
-
-Inductive Cat_3_type := C1 | C2 | C3.
-
-Definition Cat_3_Hom A B : Type :=
-  match A with
-  | C1 => True
-  | C2 =>
-      match B with
-      | C1 => False
-      | _ => True
-      end
-  | C3 =>
-      match B with
-      | C3 => True
-      | _ => False
-      end
-  end.
-
-Definition Cat_3_comp {a b c} (f : Cat_3_Hom a b) (g : Cat_3_Hom b c) :
-  Cat_3_Hom a c.
-Proof.
-now destruct a, b, c.
-Defined.
-
-Definition Cat_3_id a : Cat_3_Hom a a.
-Proof.
-now destruct a.
-Defined.
-
-Theorem Cat_3_unit_l A B (f : Cat_3_Hom A B) :
-  Cat_3_comp (Cat_3_id A) f = f.
-Proof.
-now destruct A, B.
-Defined.
-
-Theorem Cat_3_unit_r A B (f : Cat_3_Hom A B) :
-  Cat_3_comp f (Cat_3_id B) = f.
-Proof.
-now destruct A, B, f; cbn.
-Defined.
-
-Theorem Cat_3_assoc A B C D (f : Cat_3_Hom A B) (g : Cat_3_Hom B C)
-  (h : Cat_3_Hom C D) :
-  Cat_3_comp f (Cat_3_comp g h) = Cat_3_comp (Cat_3_comp f g) h.
-Proof.
-now destruct A, B, C, D, g, h.
-Defined.
-
-Theorem Cat_3_Hom_set A B : isSet (Cat_3_Hom A B).
-Proof.
-destruct A; [ apply h4c.isSet_True | | ].
--destruct B; [ apply h4c.isSet_False | | ]; apply h4c.isSet_True.
--destruct B; [ | | apply h4c.isSet_True ]; apply h4c.isSet_False.
-Defined.
-
-Definition Cat_3 :=
-  {| Ob := Cat_3_type;
-     Hom := Cat_3_Hom;
-     comp _ _ _ := Cat_3_comp;
-     idc := Cat_3_id;
-     unit_l := Cat_3_unit_l;
-     unit_r := Cat_3_unit_r;
-     assoc := Cat_3_assoc;
-     Hom_set := Cat_3_Hom_set |}.
-
-(* category 0 *)
-
-Definition Cat_0 :=
-  {| Ob := False;
-     Hom _ _ := False;
-     comp _ _ _ f _ := f;
-     idc x := x;
-     unit_l A := match A with end;
-     unit_r A := match A with end;
-     assoc A _ _ _ _ := match A with end;
-     Hom_set A := match A with end |}.
 
 (* category Pos of partially ordered sets (posets) *)
 
