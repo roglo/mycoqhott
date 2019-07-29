@@ -153,7 +153,7 @@ Search (hott4cat.isProp).
 ...
 }
 apply H.
-..
+...
 
 Definition ArrowCat C :=
   {| Obj := ArrowCat_Obj C;
@@ -161,7 +161,6 @@ Definition ArrowCat C :=
      comp _ _ _ := ArrowCat_comp;
      idc := ArrowCat_id;
      unit_l X Y f := 42 |}.
-*)
 
 (* slice category *)
 
