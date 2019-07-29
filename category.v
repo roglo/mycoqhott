@@ -223,15 +223,53 @@ Defined.
 Theorem SliceCat_unit_l {C} {B : Ob C} {f f' : SliceCat_Ob B}
   (g : SliceCat_Hom f f') : SliceCat_comp (SliceCat_id f) g = g.
 Proof.
-...
+destruct g as (g & Hg).
+unfold SliceCat_comp; cbn.
+apply hott4cat.pair_transport_eq_existT.
+exists (unit_l _).
+apply Hom_set.
+Defined.
+
+Theorem SliceCat_unit_r {C} {B : Ob C} {f f' : SliceCat_Ob B}
+  (g : SliceCat_Hom f f') : SliceCat_comp g (SliceCat_id f') = g.
+Proof.
+destruct g as (g & Hg).
+unfold SliceCat_comp; cbn.
+apply hott4cat.pair_transport_eq_existT.
+exists (unit_r _).
+apply Hom_set.
+Defined.
+
+Theorem SliceCat_assoc {C} {B : Ob C} {f f' f'' f''' : SliceCat_Ob B}
+  (g : SliceCat_Hom f f') (h : SliceCat_Hom f' f'')
+  (i : SliceCat_Hom f'' f''') :
+  SliceCat_comp g (SliceCat_comp h i) = SliceCat_comp (SliceCat_comp g h) i.
+Proof.
+unfold SliceCat_comp at 1 3.
+apply hott4cat.pair_transport_eq_existT; cbn.
+exists (assoc _ _ _).
+apply Hom_set.
+Defined.
+
+Theorem SliceCat_Hom_set {C} {B : Ob C} (f f' : SliceCat_Ob B) :
+  isSet (SliceCat_Hom f f').
+Proof.
+unfold SliceCat_Hom.
+apply hott4cat.is_set_is_set_sigT; [ | apply Hom_set ].
+intros g.
+unfold hott4cat.isProp.
+apply Hom_set.
+Defined.
 
 Definition SliceCat {C} (B : Ob C) :=
   {| Ob := SliceCat_Ob B;
      Hom := SliceCat_Hom;
      comp _ _ _ := SliceCat_comp;
      idc := SliceCat_id;
-     unit_l _ _ := SliceCat_unit_l |}.
-...
+     unit_l _ _ := SliceCat_unit_l;
+     unit_r _ _ := SliceCat_unit_r;
+     assoc _ _ _ _ := SliceCat_assoc;
+     Hom_set := SliceCat_Hom_set |}.
 
 (* initial & final *)
 
