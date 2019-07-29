@@ -126,7 +126,6 @@ destruct f as (g1 & g2 & Hgg).
 unfold ArrowCat_comp; cbn.
 apply hott4cat.pair_transport_eq_existT.
 exists (unit_l _).
-Search hott4cat.transport.
 destruct X as (XA & XB & Xf).
 destruct Y as (YA & YB & Yf); cbn in *.
 move Xf before Yf.
