@@ -126,7 +126,22 @@ destruct f as (g1 & g2 & Hgg).
 unfold ArrowCat_comp; cbn.
 apply eq_existT_uncurried.
 exists (unit_l _).
-unfold eq_rect.
+(**)
+destruct X as (XA & XB & Xf).
+destruct Y as (YA & YB & Yf); cbn in *.
+move Xf before Yf.
+remember
+  (eq_sym
+     (eq_trans (eq_sym (assoc (idc XA) g1 Yf))
+        (eq_trans (f_equal (comp (idc XA)) (eq_sym Hgg))
+           (eq_trans (assoc (idc XA) Xf g2)
+              (eq_sym
+                 (eq_trans (assoc Xf (idc XB) g2)
+                    (eq_ind_r _ eq_refl
+                       (eq_trans (unit_r Xf) (eq_sym (unit_l Xf))))))))))
+  as H1 eqn:H2.
+...
+(**)
 assert (isProp {g & g ◦ AC_Hom X = AC_Hom Y ◦ g1}). {
   apply (hott4cat.isnType_isnType_sigT _ 0).
   -intros g p q; apply Hom_set.
