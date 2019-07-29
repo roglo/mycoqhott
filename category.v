@@ -530,6 +530,8 @@ Definition is_equiv_betw_cat {C D} (F : functor C D) :=
 Definition are_equivalent_categories (C D : category) :=
   { F : functor C D & is_equiv_betw_cat F }.
 
+Arguments are_equivalent_categories C%Cat D%Cat.
+
 (* A cone to a functor D(J,C) consists of an object c in C and a
    family of arrows in C : cj : c → Dj one for each object j ∈ J, such
    that for each arrow α : i → j in J, the following triangle
@@ -1381,12 +1383,9 @@ Definition hom_functor C : functor (op C × C) SetCat :=
 
 (* arrow category is equivalent to [2, C] *)
 
-...
-
-???
-
 Theorem arr_cat_equiv_2_cat {C} :
-  are_equivalent_categories (ArrowCat C) (Cat_2 → C) ?
+  are_equivalent_categories (ArrowCat C) (Cat_2 × C).
+Proof.
 ...
 
 
