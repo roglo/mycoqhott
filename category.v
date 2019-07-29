@@ -87,6 +87,7 @@ Definition AC_Hom {C} (X : ArrowCat_Obj C) := projT2 (projT2 X).
 
 Definition ArrowCat_Hom {C} (X X' : ArrowCat_Obj C) :=
   { g1g2 & snd g1g2 ◦ AC_Hom X = AC_Hom X' ◦ fst g1g2 }.
+
 Definition AC_Hom_g1 {C} {X X' : ArrowCat_Obj C} (f : ArrowCat_Hom X X') :=
   fst (projT1 f).
 Definition AC_Hom_g2 {C} {X X' : ArrowCat_Obj C} (f : ArrowCat_Hom X X') :=
@@ -161,6 +162,15 @@ Qed.
 Theorem ArrowCat_Hom_set {C} (X Y : ArrowCat_Obj C) :
   isSet (ArrowCat_Hom X Y).
 Proof.
+unfold ArrowCat_Hom.
+apply hott4cat.is_set_is_set_sigT. 2: {
+  apply hott4cat.isSet_pair; apply Hom_set.
+}
+intros (f, g); cbn.
+destruct X as (XA & XB & Xf).
+destruct Y as (YA & YB & Yf).
+move Xf before Yf; cbn in *.
+Search (hott4cat.isProp (_ = _)).
 ...
 
 Definition ArrowCat C :=
@@ -251,7 +261,6 @@ Notation "g '◦' f" := (functor_comp f g) (at level 40, left associativity) :
   functor_scope.
 Notation "1 C" := (functor_id C) (at level 10) :
   functor_scope.
-
 
 (* *)
 
