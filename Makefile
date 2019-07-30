@@ -1,6 +1,6 @@
 FILESFORDEP=`LC_ALL=C ls *.v`
 
-all: category.vo cone_lim.vo yoneda.vo chap4.vo
+all: category.vo misc_cat.vo cone_lim.vo yoneda.vo chap4.vo
 
 clean:
 	rm -f *.vo *.glob

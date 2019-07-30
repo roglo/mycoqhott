@@ -1,0 +1,368 @@
+(* miscellaneous categories *)
+
+Set Universe Polymorphism.
+Require Import Utf8.
+Require Import category.
+
+(* The arrow category C→ of a category C has the arrows of C as objects,
+   and an arrow g from f : A → B to f' : A' → B' in C→ is a “commutative
+   square”
+           g₁
+        A ---> A'
+        |      |
+      f |      | f'
+        |      |
+        v      v
+        B ---> B'
+           g₂
+
+   where g1 and g2 are arrows in C. That is, such an arrow is a pair of
+   arrows g = (g1, g2) in C such that
+       g2 ◦ f = f' ◦ g1.
+
+   (Awodey)
+*)
+
+Definition ArrowCat_Ob C := { A : Ob C & { B : Ob C & Hom A B } }.
+Definition AC_A {C} (X : ArrowCat_Ob C) := projT1 X.
+Definition AC_B {C} (X : ArrowCat_Ob C) := projT1 (projT2 X).
+Definition AC_Hom {C} (X : ArrowCat_Ob C) := projT2 (projT2 X).
+
+Definition ArrowCat_Hom {C} (X X' : ArrowCat_Ob C) :=
+  { g1g2 & snd g1g2 ◦ AC_Hom X = AC_Hom X' ◦ fst g1g2 }.
+
+Definition AC_Hom_g1 {C} {X X' : ArrowCat_Ob C} (f : ArrowCat_Hom X X') :=
+  fst (projT1 f).
+Definition AC_Hom_g2 {C} {X X' : ArrowCat_Ob C} (f : ArrowCat_Hom X X') :=
+  snd (projT1 f).
+Definition AC_Hom_prop {C} {X X' : ArrowCat_Ob C} (f : ArrowCat_Hom X X') :=
+  projT2 f.
+
+Definition ArrowCat_comp {C} {X Y Z : ArrowCat_Ob C}
+  (f : ArrowCat_Hom X Y) (g : ArrowCat_Hom Y Z) : ArrowCat_Hom X Z.
+Proof.
+unfold ArrowCat_Hom.
+exists (AC_Hom_g1 g ◦ AC_Hom_g1 f, AC_Hom_g2 g ◦ AC_Hom_g2 f).
+unfold AC_Hom_g2, AC_Hom_g1; cbn.
+symmetry.
+etransitivity; [ symmetry; apply assoc | ].
+etransitivity; [ apply f_equal; symmetry; apply (AC_Hom_prop g) | ].
+etransitivity; [ apply assoc | symmetry ].
+etransitivity; [ apply assoc | ].
+now rewrite (AC_Hom_prop f).
+Defined.
+
+Definition ArrowCat_id {C} (X : ArrowCat_Ob C) : ArrowCat_Hom X X.
+Proof.
+exists (idc _, idc _).
+etransitivity; [ apply unit_r | ].
+symmetry; apply unit_l.
+Defined.
+
+Theorem ArrowCat_unit_l {C} {X Y : ArrowCat_Ob C} (f : ArrowCat_Hom X Y) :
+  ArrowCat_comp (ArrowCat_id X) f = f.
+Proof.
+destruct f as ((g1, g2) & Hgg); cbn in Hgg.
+unfold ArrowCat_comp; cbn.
+apply h4c.pair_transport_eq_existT.
+assert (p : (g1 ◦ idc (AC_A X), g2 ◦ idc (AC_B X)) = (g1, g2)). {
+  now do 2 rewrite unit_l.
+}
+exists p.
+apply Hom_set.
+Defined.
+
+Theorem ArrowCat_unit_r {C} {X Y : ArrowCat_Ob C} (f : ArrowCat_Hom X Y) :
+  ArrowCat_comp f (ArrowCat_id Y) = f.
+Proof.
+destruct f as ((g1, g2) & Hgg); cbn in Hgg.
+unfold ArrowCat_comp; cbn.
+apply h4c.pair_transport_eq_existT.
+assert (p : (idc (AC_A Y) ◦ g1, idc (AC_B Y) ◦ g2) = (g1, g2)). {
+  now do 2 rewrite unit_r.
+}
+exists p.
+apply Hom_set.
+Defined.
+
+Theorem ArrowCat_assoc {C} {X Y Z T : ArrowCat_Ob C} (f : ArrowCat_Hom X Y)
+  (g : ArrowCat_Hom Y Z) (h : ArrowCat_Hom Z T) :
+  ArrowCat_comp f (ArrowCat_comp g h) = ArrowCat_comp (ArrowCat_comp f g) h.
+Proof.
+unfold ArrowCat_comp at 1 3.
+apply h4c.pair_transport_eq_existT.
+assert (p
+  : (AC_Hom_g1 (ArrowCat_comp g h) ◦ AC_Hom_g1 f,
+     AC_Hom_g2 (ArrowCat_comp g h) ◦ AC_Hom_g2 f) =
+    (AC_Hom_g1 h ◦ AC_Hom_g1 (ArrowCat_comp f g),
+     AC_Hom_g2 h ◦ AC_Hom_g2 (ArrowCat_comp f g))). {
+  now cbn; do 2 rewrite assoc.
+}
+exists p.
+apply Hom_set.
+Qed.
+
+Theorem ArrowCat_Hom_set {C} (X Y : ArrowCat_Ob C) :
+  isSet (ArrowCat_Hom X Y).
+Proof.
+unfold ArrowCat_Hom.
+apply h4c.is_set_is_set_sigT. 2: {
+  apply h4c.isSet_pair; apply Hom_set.
+}
+intros (f, g); cbn.
+unfold h4c.isProp.
+apply Hom_set.
+Defined.
+
+Definition ArrowCat C :=
+  {| Ob := ArrowCat_Ob C;
+     Hom := ArrowCat_Hom;
+     comp _ _ _ := ArrowCat_comp;
+     idc := ArrowCat_id;
+     unit_l _ _ := ArrowCat_unit_l;
+     unit_r _ _ := ArrowCat_unit_r;
+     assoc _ _ _ _ := ArrowCat_assoc;
+     Hom_set := ArrowCat_Hom_set |}.
+
+(* The slice category 𝒞/C of a category 𝒞 over an object C ∈ 𝒞 has:
+    • objects: all arrows f ∈ 𝒞 such that cod(f)=C,
+    • arrows: g from f : X → C to f′ : X′ → C is an arrow g : X → X′ in 𝒞
+      such that f′ ◦ g = f, as indicated in
+                 g
+            X ------> X'
+             \       /
+            f \     / f'
+               ↘ ↙
+                 C
+   (Awodey)
+ *)
+
+Definition SliceCat_Ob {C} (B : Ob C) := { A & Hom A B }.
+Definition SC_arr {C} {B : Ob C} (f : SliceCat_Ob B) := projT2 f.
+
+Definition SliceCat_Hom {C} {B : Ob C} (f f' : SliceCat_Ob B) :=
+  { g & SC_arr f' ◦ g = SC_arr f }.
+Definition SC_hom {C} {B : Ob C} {f f' : SliceCat_Ob B}
+  (g : SliceCat_Hom f f') := projT1 g.
+Definition SC_prop {C} {B : Ob C} {f f' : SliceCat_Ob B}
+  (g : SliceCat_Hom f f') := projT2 g.
+
+Definition SliceCat_comp {C} {B : Ob C} {f f' f'' : SliceCat_Ob B}
+  (g : SliceCat_Hom f f') (g' : SliceCat_Hom f' f'') : SliceCat_Hom f f''.
+Proof.
+exists (SC_hom g' ◦ SC_hom g).
+rewrite <- assoc.
+unfold SC_hom; rewrite SC_prop; apply SC_prop.
+Defined.
+
+Definition SliceCat_id {C} {B : Ob C} (f : SliceCat_Ob B) : SliceCat_Hom f f.
+Proof.
+exists (idc _).
+apply unit_l.
+Defined.
+
+Theorem SliceCat_unit_l {C} {B : Ob C} {f f' : SliceCat_Ob B}
+  (g : SliceCat_Hom f f') : SliceCat_comp (SliceCat_id f) g = g.
+Proof.
+destruct g as (g & Hg).
+unfold SliceCat_comp; cbn.
+apply h4c.pair_transport_eq_existT.
+exists (unit_l _).
+apply Hom_set.
+Defined.
+
+Theorem SliceCat_unit_r {C} {B : Ob C} {f f' : SliceCat_Ob B}
+  (g : SliceCat_Hom f f') : SliceCat_comp g (SliceCat_id f') = g.
+Proof.
+destruct g as (g & Hg).
+unfold SliceCat_comp; cbn.
+apply h4c.pair_transport_eq_existT.
+exists (unit_r _).
+apply Hom_set.
+Defined.
+
+Theorem SliceCat_assoc {C} {B : Ob C} {f f' f'' f''' : SliceCat_Ob B}
+  (g : SliceCat_Hom f f') (h : SliceCat_Hom f' f'')
+  (i : SliceCat_Hom f'' f''') :
+  SliceCat_comp g (SliceCat_comp h i) = SliceCat_comp (SliceCat_comp g h) i.
+Proof.
+unfold SliceCat_comp at 1 3.
+apply h4c.pair_transport_eq_existT; cbn.
+exists (assoc _ _ _).
+apply Hom_set.
+Defined.
+
+Theorem SliceCat_Hom_set {C} {B : Ob C} (f f' : SliceCat_Ob B) :
+  isSet (SliceCat_Hom f f').
+Proof.
+unfold SliceCat_Hom.
+apply h4c.is_set_is_set_sigT; [ | apply Hom_set ].
+intros g.
+unfold h4c.isProp.
+apply Hom_set.
+Defined.
+
+Definition SliceCat {C} (B : Ob C) :=
+  {| Ob := SliceCat_Ob B;
+     Hom := SliceCat_Hom;
+     comp _ _ _ := SliceCat_comp;
+     idc := SliceCat_id;
+     unit_l _ _ := SliceCat_unit_l;
+     unit_r _ _ := SliceCat_unit_r;
+     assoc _ _ _ _ := SliceCat_assoc;
+     Hom_set := SliceCat_Hom_set |}.
+
+(* category 1 *)
+
+Theorem Cat_1_unit (A B : unit) (f : unit → unit) : (λ x : unit, x) = f.
+Proof.
+apply fun_ext; intros x.
+now destruct x, (f tt).
+Defined.
+
+Theorem Cat_1_Hom_set (a b : unit) : isSet (unit → unit).
+Proof.
+apply h4c.isSet_forall; intros x.
+apply h4c.isProp_isSet; intros y z.
+now destruct y, z.
+Qed.
+
+Definition Cat_1 :=
+  {| Ob := unit;
+     Hom _ _ := unit → unit;
+     comp _ _ _ _ _ := λ x, x;
+     idc _ x := x;
+     unit_l := Cat_1_unit;
+     unit_r := Cat_1_unit;
+     assoc _ _ _ _ _ _ _ := eq_refl;
+     Hom_set := Cat_1_Hom_set |}.
+
+(* category 2 *)
+
+Definition Cat_2_Hom A B : Type :=
+  if (A && negb B)%bool then False else True.
+
+Definition Cat_2_comp {a b c} (f : Cat_2_Hom a b) (g : Cat_2_Hom b c) :
+  Cat_2_Hom a c.
+Proof.
+now destruct a, b.
+Defined.
+
+Definition Cat_2_id a : Cat_2_Hom a a.
+Proof.
+now destruct a.
+Defined.
+
+Theorem Cat_2_unit_l a b (f : Cat_2_Hom a b) : Cat_2_comp (Cat_2_id a) f = f.
+Proof.
+now destruct a.
+Defined.
+
+Theorem Cat_2_unit_r a b (f : Cat_2_Hom a b) : Cat_2_comp f (Cat_2_id b) = f.
+Proof.
+now destruct a, b, f.
+Defined.
+
+Theorem Cat_2_assoc a b c d (f : Cat_2_Hom a b) (g : Cat_2_Hom b c)
+  (h : Cat_2_Hom c d) :
+  Cat_2_comp f (Cat_2_comp g h) = Cat_2_comp (Cat_2_comp f g) h.
+Proof.
+now destruct a, b, c; cbn in *.
+Defined.
+
+Theorem Cat_2_Hom_set a b : isSet (Cat_2_Hom a b).
+Proof.
+unfold Cat_2_Hom.
+destruct (a && negb b)%bool.
+-apply h4c.isSet_False.
+-apply h4c.isSet_True.
+Defined.
+
+Definition Cat_2 :=
+  {| Ob := bool;
+     Hom := Cat_2_Hom;
+     comp _ _ _ := Cat_2_comp;
+     idc := Cat_2_id;
+     unit_l := Cat_2_unit_l;
+     unit_r := Cat_2_unit_r;
+     assoc := Cat_2_assoc;
+     Hom_set := Cat_2_Hom_set |}.
+
+(* category 3 *)
+
+Inductive Cat_3_type := C1 | C2 | C3.
+
+Definition Cat_3_Hom A B : Type :=
+  match A with
+  | C1 => True
+  | C2 =>
+      match B with
+      | C1 => False
+      | _ => True
+      end
+  | C3 =>
+      match B with
+      | C3 => True
+      | _ => False
+      end
+  end.
+
+Definition Cat_3_comp {a b c} (f : Cat_3_Hom a b) (g : Cat_3_Hom b c) :
+  Cat_3_Hom a c.
+Proof.
+now destruct a, b, c.
+Defined.
+
+Definition Cat_3_id a : Cat_3_Hom a a.
+Proof.
+now destruct a.
+Defined.
+
+Theorem Cat_3_unit_l A B (f : Cat_3_Hom A B) :
+  Cat_3_comp (Cat_3_id A) f = f.
+Proof.
+now destruct A, B.
+Defined.
+
+Theorem Cat_3_unit_r A B (f : Cat_3_Hom A B) :
+  Cat_3_comp f (Cat_3_id B) = f.
+Proof.
+now destruct A, B, f; cbn.
+Defined.
+
+Theorem Cat_3_assoc A B C D (f : Cat_3_Hom A B) (g : Cat_3_Hom B C)
+  (h : Cat_3_Hom C D) :
+  Cat_3_comp f (Cat_3_comp g h) = Cat_3_comp (Cat_3_comp f g) h.
+Proof.
+now destruct A, B, C, D, g, h.
+Defined.
+
+Theorem Cat_3_Hom_set A B : isSet (Cat_3_Hom A B).
+Proof.
+destruct A; [ apply h4c.isSet_True | | ].
+-destruct B; [ apply h4c.isSet_False | | ]; apply h4c.isSet_True.
+-destruct B; [ | | apply h4c.isSet_True ]; apply h4c.isSet_False.
+Defined.
+
+Definition Cat_3 :=
+  {| Ob := Cat_3_type;
+     Hom := Cat_3_Hom;
+     comp _ _ _ := Cat_3_comp;
+     idc := Cat_3_id;
+     unit_l := Cat_3_unit_l;
+     unit_r := Cat_3_unit_r;
+     assoc := Cat_3_assoc;
+     Hom_set := Cat_3_Hom_set |}.
+
+(* category 0 *)
+
+Definition Cat_0 :=
+  {| Ob := False;
+     Hom _ _ := False;
+     comp _ _ _ f _ := f;
+     idc x := x;
+     unit_l A := match A with end;
+     unit_r A := match A with end;
+     assoc A _ _ _ _ := match A with end;
+     Hom_set A := match A with end |}.
+

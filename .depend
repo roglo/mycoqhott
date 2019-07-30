@@ -16,6 +16,8 @@ funib.vio: funib.v chap1.vio chap2.vio
 funib.vo funib.glob funib.v.beautified: funib.v chap1.vo chap2.vo
 h4c.vio: h4c.v
 h4c.vo h4c.glob h4c.v.beautified: h4c.v
+misc_cat.vio: misc_cat.v category.vio
+misc_cat.vo misc_cat.glob misc_cat.v.beautified: misc_cat.v category.vo
 prop_ext_irr.vio: prop_ext_irr.v
 prop_ext_irr.vo prop_ext_irr.glob prop_ext_irr.v.beautified: prop_ext_irr.v
 yoneda.vio: yoneda.v category.vio
