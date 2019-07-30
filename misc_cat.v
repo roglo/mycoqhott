@@ -365,6 +365,35 @@ Definition Cat_0 :=
      unit_r A := match A with end;
      assoc A _ _ _ _ := match A with end;
      Hom_set A := match A with end |}.
+
+(* category of finite sets *)
+
+Definition isInj {A B} (f : A → B) := ∀ x y : A, f x = f y → x = y.
+Definition isFin T := { f : T → nat & isInj f }.
+
+Definition FinSet_type := { S : Type & (isSet S * isFin S)%type }.
+
+Definition fs_type (FS : FinSet_type) := projT1 FS.
+Definition fs_is_set (FS : FinSet_type) := fst (projT2 FS).
+Definition fs_finite (FS : FinSet_type) := snd (projT2 FS).
+
+Definition FinSet_Hom_set (A B : FinSet_type) : isSet (fs_type A → fs_type B).
+Proof.
+apply h4c.isSet_forall.
+intros a.
+apply fs_is_set.
+Qed.
+
+Definition FinSetCat :=
+  {| Ob := FinSet_type;
+     Hom A B := fs_type A → fs_type B;
+     comp A B C f g x := g (f x);
+     idc _ A := A;
+     unit_l _ _ _ := eq_refl;
+     unit_r _ _ _ := eq_refl;
+     assoc _ _ _ _ _ _ _ := eq_refl;
+     Hom_set := FinSet_Hom_set |}.
+
 (* category of categories *)
 
 Theorem CatCat_comp_prop {C C' C'' : category}

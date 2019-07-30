@@ -113,6 +113,7 @@ apply
 ...
 *)
 
+(*
 Theorem adj_adj {C D} (R : functor C D) (L : functor D C) :
   (are_adjoint R L → are_adjoint2 R L) *
   (are_adjoint2 R L → are_adjoint R L).
@@ -189,3 +190,4 @@ faire C^op→[C,Set] à la place C^op×C→Set
  unfold are_adjoint, adjunction.
  destruct Ha as (η & ε & Hr & Hl).
 ...
+*)
