@@ -837,27 +837,15 @@ Definition fun_2_C_arr_cat_map_hom {C} {X Y : Ob (FunCat Cat_2 C)}
   (f : Hom X Y) : Hom (fun_2_C_arr_cat_map_obj X) (fun_2_C_arr_cat_map_obj Y).
 Proof.
 cbn; unfold ArrowCat_Hom; cbn.
-assert
-  (g1g2 :
-   Hom (f_map_obj X false) (f_map_obj Y false) *
-   Hom (f_map_obj X true) (f_map_obj Y true)). {
-  split; apply f.
-}
-exists g1g2.
-destruct g1g2 as (g1, g2); cbn in *.
-destruct X, Y; cbn in *.
-destruct f; cbn in *.
-specialize (x false) as h1.
-specialize (x true) as h2.
-move h1 before g1.
-specialize (e false true I) as H1.
-specialize (Hom_set (f_map_obj false) (f_map_obj0 false)) as H2.
-unfold isSet, h4c.isSet in H2.
-specialize (H2 g1 h1).
-...
+exists (nt_component f false, nt_component f true); cbn.
+apply nt_commute.
+Defined.
 
-specialize (f_map_hom false false I) as H2.
-cbn in H2.
+Theorem fun_2_C_arr_cat_comp_prop {C} {X Y Z : Ob (FunCat Cat_2 C)}
+  (f : Hom X Y) (g : Hom Y Z) :
+  fun_2_C_arr_cat_map_hom (g ◦ f) =
+  fun_2_C_arr_cat_map_hom g ◦ fun_2_C_arr_cat_map_hom f.
+Proof.
 ...
 
 Theorem arr_cat_equiv_2_cat {C} :
@@ -870,11 +858,8 @@ exists
      f_comp_prop _ _ _ := arr_cat_fun_2_C_comp_prop;
      f_id_prop := arr_cat_fun_2_C_id_prop |}.
 unfold is_equiv_betw_cat; cbn.
-assert (G : functor (FunCat Cat_2 C) (ArrowCat C)). {
-  apply
-    {| f_map_obj := fun_2_C_arr_cat_map_obj;
-       f_map_hom _ _ := fun_2_C_arr_cat_map_hom |}.
-...
-}
-exists G.
+exists
+  {| f_map_obj := fun_2_C_arr_cat_map_obj;
+     f_map_hom _ _ := fun_2_C_arr_cat_map_hom;
+     f_comp_prop _ _ _ := fun_2_C_arr_cat_comp_prop |}.
 ...
