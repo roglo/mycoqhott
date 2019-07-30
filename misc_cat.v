@@ -709,9 +709,12 @@ Definition CatCat :=
 
 (* arrow category is equivalent to [2, C] *)
 
+Definition fun_arr_2_C_map_obj {C} (X : Ob (ArrowCat C)) (b : Ob Cat_2) :
+    Ob C := if b then AC_B X else AC_A X.
+
 Definition fun_arr_2_C_map_hom {C} (X : Ob (ArrowCat C))
     {b1 b2 : Ob Cat_2} (f : Hom b1 b2) :
-  Hom (if b1 then AC_B X else AC_A X) (if b2 then AC_B X else AC_A X).
+  Hom (fun_arr_2_C_map_obj X b1) (fun_arr_2_C_map_obj X b2).
 Proof.
 intros.
 destruct b1.
@@ -739,11 +742,35 @@ now destruct b.
 Defined.
 
 Definition arr_cat_fun_2_C_map_obj {C} (X : Ob (ArrowCat C)) :
-     Ob (FunCat Cat_2 C) :=
-  {| f_map_obj (b : Ob Cat_2) := if b then AC_B X else AC_A X;
+     Ob (FunCat Cat_2 C)
+:=
+  {| f_map_obj := fun_arr_2_C_map_obj X;
      f_map_hom _ _ := fun_arr_2_C_map_hom X;
      f_comp_prop _ _ _ := fun_arr_2_C_comp_prop X;
      f_id_prop := fun_arr_2_C_id_prop X |}.
+
+Definition arr_cat_fun_2_C_map_hom {C} {X Y : Ob (ArrowCat C)}
+   (f : Hom X Y) :
+  Hom (arr_cat_fun_2_C_map_obj X) (arr_cat_fun_2_C_map_obj Y).
+Proof.
+cbn; unfold natural_transformation; cbn.
+destruct f as ((g1 & g2) & Hgg); cbn in Hgg.
+exists
+  (λ b : bool,
+   if b return Hom (fun_arr_2_C_map_obj X b) (fun_arr_2_C_map_obj Y b)
+   then g2 else g1).
+intros b1 b2 f.
+destruct X as (XA & XB & Xf).
+destruct Y as (YA & YB & Yf).
+move Xf before Yf.
+unfold fun_arr_2_C_map_hom.
+cbn in *.
+destruct b1, b2; cbn.
+-now rewrite unit_l, unit_r.
+-easy.
+-easy.
+-now rewrite unit_l, unit_r.
+Defined.
 
 Theorem arr_cat_equiv_2_cat {C} :
   are_equivalent_categories (ArrowCat C) (FunCat Cat_2 C).
@@ -751,5 +778,6 @@ Proof.
 unfold are_equivalent_categories.
 exists
   {| f_map_obj := arr_cat_fun_2_C_map_obj;
-     f_map_hom := 42 |}.
+     f_map_hom _ _ := arr_cat_fun_2_C_map_hom;
+     f_comp_prop := 42 |}.
 ...
