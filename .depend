@@ -1,0 +1,22 @@
+category.vio: category.v h4c.vio
+category.vo category.glob category.v.beautified: category.v h4c.vo
+chap1.vio: chap1.v
+chap1.vo chap1.glob chap1.v.beautified: chap1.v
+chap2.vio: chap2.v chap1.vio
+chap2.vo chap2.glob chap2.v.beautified: chap2.v chap1.vo
+chap3.vio: chap3.v chap1.vio chap2.vio
+chap3.vo chap3.glob chap3.v.beautified: chap3.v chap1.vo chap2.vo
+chap4.vio: chap4.v chap1.vio chap2.vio chap3.vio
+chap4.vo chap4.glob chap4.v.beautified: chap4.v chap1.vo chap2.vo chap3.vo
+chap5.vio: chap5.v chap1.vio chap2.vio chap3.vio chap4.vio
+chap5.vo chap5.glob chap5.v.beautified: chap5.v chap1.vo chap2.vo chap3.vo chap4.vo
+cone_lim.vio: cone_lim.v category.vio
+cone_lim.vo cone_lim.glob cone_lim.v.beautified: cone_lim.v category.vo
+funib.vio: funib.v chap1.vio chap2.vio
+funib.vo funib.glob funib.v.beautified: funib.v chap1.vo chap2.vo
+h4c.vio: h4c.v
+h4c.vo h4c.glob h4c.v.beautified: h4c.v
+prop_ext_irr.vio: prop_ext_irr.v
+prop_ext_irr.vo prop_ext_irr.glob prop_ext_irr.v.beautified: prop_ext_irr.v
+yoneda.vio: yoneda.v category.vio
+yoneda.vo yoneda.glob yoneda.v.beautified: yoneda.v category.vo
