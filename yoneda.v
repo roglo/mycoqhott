@@ -6,7 +6,7 @@ Require Import category.
 
 (*
   Let F be an arbitrary functor from C to SetCat. Then Yoneda's lemma
-  says that: (h^A being the cov_hom_functor above)
+  says that: (h^A being the cov_hom_functor defined in category.v)
 
   For each object A of C, the natural transformations from h^A to F
   are in one-to-one correspondence with the elements of F(A). That is,
