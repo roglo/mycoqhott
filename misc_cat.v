@@ -846,20 +846,30 @@ Theorem fun_2_C_arr_cat_comp_prop {C} {X Y Z : Ob (FunCat Cat_2 C)}
   fun_2_C_arr_cat_map_hom (g ◦ f) =
   fun_2_C_arr_cat_map_hom g ◦ fun_2_C_arr_cat_map_hom f.
 Proof.
-...
+apply h4c.pair_transport_eq_existT; cbn.
+exists eq_refl; cbn.
+apply Hom_set.
+Defined.
+
+Theorem fun_2_C_arr_cat_id_prop {C} (X : Ob (FunCat Cat_2 C)) :
+  fun_2_C_arr_cat_map_hom (idc X) = idc (fun_2_C_arr_cat_map_obj X).
+Proof.
+apply h4c.pair_transport_eq_existT; cbn.
+now exists eq_refl.
+Defined.
 
 Theorem arr_cat_equiv_2_cat {C} :
   are_equivalent_categories (ArrowCat C) (FunCat Cat_2 C).
 Proof.
-unfold are_equivalent_categories.
 exists
   {| f_map_obj := arr_cat_fun_2_C_map_obj;
      f_map_hom _ _ := arr_cat_fun_2_C_map_hom;
      f_comp_prop _ _ _ := arr_cat_fun_2_C_comp_prop;
      f_id_prop := arr_cat_fun_2_C_id_prop |}.
-unfold is_equiv_betw_cat; cbn.
 exists
   {| f_map_obj := fun_2_C_arr_cat_map_obj;
      f_map_hom _ _ := fun_2_C_arr_cat_map_hom;
-     f_comp_prop _ _ _ := fun_2_C_arr_cat_comp_prop |}.
+     f_comp_prop _ _ _ := fun_2_C_arr_cat_comp_prop;
+     f_id_prop := fun_2_C_arr_cat_id_prop |}.
+-unfold functor_comp; cbn.
 ...
