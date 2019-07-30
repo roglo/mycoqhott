@@ -858,6 +858,52 @@ apply h4c.pair_transport_eq_existT; cbn.
 now exists eq_refl.
 Defined.
 
+Theorem glop {A} {P : A → Type} :
+  ∀ a b (Ha : P a) (Hb : P b),
+  {p : a = b & h4c.transport P p Ha = Hb} → existT P a Ha = existT P b Hb.
+Proof.
+intros * (p, Hp).
+now destruct p, Hp.
+Defined.
+
+Check f_map_hom.
+
+Theorem pouet {C D} : ∀ (mo1 : Ob C → Ob D) mo2 mh1 mh2 mc1 mi1 mc2 mi2,
+  ∀ (P : (Ob C → Ob D) → Type) (Hmh1 : P mo1) (Hmh2 : P mo2),
+  {pmo : mo1 = mo2 & h4c.transport P pmo Hmh1 = Hmh2}
+(*
+→
+∀ (Q : (Ob C → Ob D) → Type) (Ha : Q mo1) (Hb : Q mo2),
+  {pmo : mo1 = mo2 & h4c.transport Q pmo Ha = Hb}
+*)
+(*
+  ∀ (P : ∀ mo, ∀ a b : Ob C, Hom a b → Hom (mo a) (mo b) → Type),
+  ∀ (P : (∀ a b : Ob C, Hom a b → Hom (mo1 a) (mo1 b)) → Type)
+     (Hmh1 : P mh1) (Hmh2 : P mh2),
+*)
+(*
+  → {p : a = b & h4c.transport P p mh1 = mh2}
+*)
+  → {| f_map_obj := mo1; f_map_hom := mh1; f_comp_prop := mc1;
+        f_id_prop := mi1 |} =
+     {| f_map_obj := mo2; f_map_hom := mh2; f_comp_prop := mc2;
+        f_id_prop := mi2 |}.
+Proof.
+intros * (pmo & Hpmo).
+...
+Check
+  (λ (Q : ∀ mo (a b : Ob C), Hom a b → Hom (mo a) (mo b) → Type) p
+     (Ha : Q mo1) (Hb : Q mo2), h4c.transport Q p Ha = Hb).
+destruct pmo.
+cbn in Hpmo.
+...
+Check (λ P p (Ha : P mo1) (Hb : P mo2), h4c.transport P p Ha = Hb).
+λ (P : (Ob C → Ob D) → Type) (p : mo1 = mo2) (Ha : P mo1) (Hb : P mo2),
+  h4c.transport P p Ha = Hb
+...
+destruct pmo.
+...
+
 Theorem arr_cat_equiv_2_cat {C} :
   are_equivalent_categories (ArrowCat C) (FunCat Cat_2 C).
 Proof.
@@ -873,6 +919,7 @@ exists
      f_id_prop := fun_2_C_arr_cat_id_prop |}.
 -unfold functor_comp; cbn.
  unfold functor_id; cbn.
+
  assert
    (H1 :
     (λ X, fun_2_C_arr_cat_map_obj (arr_cat_fun_2_C_map_obj X)) = (λ X, X)). {
