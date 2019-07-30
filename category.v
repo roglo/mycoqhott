@@ -574,112 +574,6 @@ Definition hom_functor C : functor (op C × C) SetCat :=
 Definition is_representable_functor {C} (F : functor C SetCat) :=
   { X : Ob C & are_isomorphic_functors F (cov_hom_functor X) }.
 
-(*
-
-(* cone image by a functor *)
-
-Definition cone_image_fam {J C D} {X : functor J C} {cn : cone X}
-    (F : functor C D) (j : Ob J) :
-    Hom (f_map_obj F (cn_top cn)) (f_map_obj (F ◦ X) j) :=
-  f_map_hom F (cn_fam cn j).
-
-Theorem cone_image_commute {J C D} {X : functor J C} (F : functor C D)
-    {cn : cone X} (i j : Ob J) (f : Hom i j) :
-  f_map_hom F (cn_fam cn j) =
-  f_map_hom (F ◦ X)%Fun f ◦ f_map_hom F (cn_fam cn i).
-Proof.
-cbn.
-rewrite (cn_commute cn i j f).
-apply f_comp_prop.
-Qed.
-
-Definition cone_image {J C D} {X : functor J C} (F : functor C D) :
-    cone X → cone (F ◦ X) :=
-  λ cn,
-  {| cn_top := f_map_obj F (cn_top cn);
-     cn_fam := cone_image_fam F;
-     cn_commute := cone_image_commute F |}.
-
-(* hom-functor preserves limits *)
-(* https://ncatlab.org/nlab/show/hom-functor+preserves+limits *)
-
-(* failed to understand and prove id
-
-(*
-   let X• : ℐ⟶𝒞 be a diagram. Then:
-   1. If the limit lim_←i Xi exists in 𝒞 then for all Y ∈ 𝒞
-      there is a natural isomorphism
-        Hom_𝒞(Y,lim_←i Xi) ≃ lim_←i (Hom_𝒞(Y,Xi)),
-      where on the right we have the limit over the diagram of
-      hom-sets given by
-        Hom_𝒞(Y,−) ∘ X : ℐ −(X)→ 𝒞 −(Hom_𝒞(Y,−))→ Set.
-*)
-
-(* this "hom_functor Y (cn_top c)", a functor is supposed to be isomorphic
-   to .... something *)
-Check
-  (λ J C (X_ : functor J C) (Y : Ob C) (c : cone X_) (p : is_limit c),
-   hom_functor Y (cn_top c)).
-(* → functor (op C × C) SetCat *)
-(* ... to? *)
-Check
-  (λ J C (X_ : functor J C) (Y : Ob C),
-   (cov_hom_functor Y ◦ X_)%Fun).
-(* → functor J SetCat *)
-
-(* functors not of the same type! *)
-
-Check @is_natural_isomorphism.
-
-Theorem hom_functor_preserves_limit {C} :
-  ∀ J (X_ : functor J C) (lim_i_Xi : cone X_),
-  is_limit lim_i_Xi →
-  ∀ (Y : Ob C) lim_i_Hom_C_Y_Xi,
-  @is_natural_isomorphism _ _
-    (hom_functor Y (cn_top lim_i_Xi))
-    (cov_hom_functor Y ◦ X_)%Fun.
-...
-  ∀ Y (cn' : cone (cov_hom_functor Y ◦ X_)), is_limit cn'.
-Proof.
-intros * Hlim *.
-(* "First observe that, by the very definition of limiting cones,
-    maps out of some Y into them are in natural bijection with
-    the set Cones(Y,X•) of cones over the diagram X• with tip Y:
-       Hom(Y,lim⟵i Xi)≃Cones(Y,X•).
-   " *)
-(* ah bon *)
-...
-
-Theorem hom_functor_preserves_limit {C} (A B : Ob C)
-    (F := hom_functor A B) :
-  ∀ J (X : functor J (op C × C)) (cn : cone X),
-  is_limit cn → is_limit (cone_image F cn).
-...
-
-(* RAPL : Right Adjoint Preserves Limit *)
-(* https://ncatlab.org/nlab/show/adjoints+preserve+%28co-%29limits *)
-
-Theorem RAPL {C D} (L : functor C D) (R : functor D C) :
-  L ⊣ R →
-  ∀ J (X : functor J D) (cn : cone X),
-  is_limit cn → is_limit (cone_image R cn).
-Proof.
-intros HLR * Hlim.
-unfold is_limit, is_terminal in Hlim |-*.
-cbn in Hlim |-*.
-intros cn'; move cn' before cn.
-specialize (Hlim cn) as H1.
-destruct H1 as (cn1 & Hcn1).
-destruct HLR as (η & ε & H1 & H2).
-...
-Check @hom_functor.
-Print cone.
-
-Theorem lim_hom_fun {J C D} (E : functor J C) (F : functor C D) (X : Ob C) (j : Ob J) (cn : cone E) :
-  hom_functor X (cn_fam cn j).
-...
-*)
-
 (* category of finite sets *)
 
 Definition isInj {A B} (f : A → B) := ∀ x y : A, f x = f y → x = y.
@@ -707,6 +601,8 @@ Definition FinSetCat :=
      unit_r _ _ _ := eq_refl;
      assoc _ _ _ _ _ _ _ := eq_refl;
      Hom_set := FinSet_Hom_set |}.
+
+(*
 
 (* category Pos of partially ordered sets (posets) *)
 
