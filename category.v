@@ -8,21 +8,19 @@ Require h4c.
 Set Nested Proofs Allowed.
 
 Definition isSet := h4c.isSet.
-(*
 Definition isProp := h4c.isProp.
 
+(*
 Definition hProp := { A : Type & isProp A }.
 *)
 
 Axiom fun_ext : ∀ A B (f g : ∀ x : A, B x), (∀ x, f x = g x) → f = g.
-(*
 Axiom prop_ext : ∀ A B, (A ↔ B) → A = B.
 
 Theorem proof_irrel : isSet Prop.
 intros a1 a2.
 apply (ClassicalFacts.ext_prop_dep_proof_irrel_cic prop_ext).
 Qed.
-*)
 
 Declare Scope category_scope.
 Declare Scope functor_scope.
@@ -575,194 +573,6 @@ Definition is_representable_functor {C} (F : functor C SetCat) :=
   { X : Ob C & are_isomorphic_functors F (cov_hom_functor X) }.
 
 (*
-
-(* category Pos of partially ordered sets (posets) *)
-
-Record Pos_type :=
-  { ps_type : Set_type;
-    ps_le : st_type ps_type → st_type ps_type → Type;
-(*
-    These properties are not needed in Pos category:
-    ps_refl : ∀ a : st_type ps_type, ps_le a a;
-    ps_trans : ∀ a b c, ps_le a b → ps_le b c → ps_le a c;
-    ps_antisym : ∀ a b, ps_le a b → ps_le b a → a = b;
-*)
-    ps_prop : ∀ a b, isProp (ps_le a b) }.
-
-Arguments ps_le {_}.
-
-Definition ps_stype A := st_type (ps_type A).
-
-Definition is_monotone {A B} (f : ps_stype A → ps_stype B) :=
-  ∀ a a' : ps_stype A, ps_le a a' → ps_le (f a) (f a').
-
-Definition Pos_Hom A B := { f : ps_stype A → ps_stype B & is_monotone f }.
-
-Definition Pos_comp {A B C} (f : Pos_Hom A B) (g : Pos_Hom B C) :
-  Pos_Hom A C.
-Proof.
-exists (λ a, projT1 g (projT1 f a)).
-intros a a' Hle.
-now apply (projT2 g), (projT2 f).
-Defined.
-
-Definition Pos_id A : Pos_Hom A A.
-Proof.
-now exists (λ a, a).
-Defined.
-
-Theorem Pos_unit_l A B (f : Pos_Hom A B) : Pos_comp (Pos_id A) f = f.
-Proof.
-unfold Pos_comp, Pos_id; cbn.
-destruct f as (f & Hf); cbn.
-apply eq_existT_uncurried.
-assert (p : (λ a, f a) = f). {
-  apply fun_ext.
-  now intros.
-}
-exists p; cbn.
-apply fun_ext; intros a.
-apply fun_ext; intros a'.
-apply fun_ext; intros g.
-apply ps_prop.
-Qed.
-
-Theorem Pos_unit_r A B (f : Pos_Hom A B) : Pos_comp f (Pos_id B) = f.
-unfold Pos_comp, Pos_id; cbn.
-destruct f as (f & Hf); cbn.
-apply eq_existT_uncurried.
-assert (p : (λ a, f a) = f). {
-  apply fun_ext.
-  now intros.
-}
-exists p; cbn.
-apply fun_ext; intros a.
-apply fun_ext; intros a'.
-apply fun_ext; intros g.
-apply ps_prop.
-Qed.
-
-Theorem Pos_assoc A B C D (f : Pos_Hom A B) (g : Pos_Hom B C)
-  (h : Pos_Hom C D) :
-  Pos_comp f (Pos_comp g h) = Pos_comp (Pos_comp f g) h.
-Proof.
-apply eq_existT_uncurried.
-now exists eq_refl.
-Defined.
-
-Theorem Pos_Hom_set A B : isSet (Pos_Hom A B).
-Proof.
-apply h4c.is_set_is_set_sigT. {
-  intros f.
-  unfold is_monotone.
-  intros g h.
-  apply fun_ext; intros a.
-  apply fun_ext; intros a'.
-  apply fun_ext; intros p.
-  apply ps_prop.
-}
-apply h4c.isSet_forall.
-intros a.
-unfold ps_stype; cbn.
-apply st_is_set.
-Defined.
-
-Definition PosCat :=
-  {| Ob := Pos_type;
-     Hom := Pos_Hom;
-     comp _ _ _ := Pos_comp;
-     idc := Pos_id;
-     unit_l := Pos_unit_l;
-     unit_r := Pos_unit_r;
-     assoc := Pos_assoc;
-     Hom_set := Pos_Hom_set |}.
-
-(* category Rel *)
-
-(* http://angg.twu.net/tmp/2016-optativa/awodey__category_theory.pdf *)
-(* The objects of Rel are sets, and an arrow f : A → B is a relation from A
-   to B, that is, f ⊆ A × B. The identity relation {<a,a> ∈ A × A| a ∈ A}
-   is the identity arrow on a set A. Composition in Rel is to be given by
-      g ◦ f = {<a,c> ∈ A × C | ∃b (<a,b> ∈ f & <b,c> ∈ g)}
-   for f ⊆ A × B and g ⊆ B × C.
-*)
-
-Definition Rel_Hom A B := st_type A → st_type B → Prop.
-
-Definition Rel_comp {A B C} (f : Rel_Hom A B) (g : Rel_Hom B C) :
-  Rel_Hom A C.
-Proof.
-intros a c.
-apply (∃ b, f a b ∧ g b c).
-Defined.
-
-Definition Rel_id (A : Set_type) : Rel_Hom A A.
-Proof.
-intros a1 a2.
-apply (a1 = a2).
-Defined.
-
-Theorem Rel_unit_l A B (f : Rel_Hom A B) : Rel_comp (Rel_id A) f = f.
-Proof.
-apply fun_ext; intros a.
-apply fun_ext; intros b.
-apply prop_ext.
-unfold Rel_comp, Rel_id; cbn.
-split; intros H.
--destruct H as (a' & Ha & Hf).
- now subst a'.
--now exists a.
-Defined.
-
-Theorem Rel_unit_r A B (f : Rel_Hom A B) : Rel_comp f (Rel_id B) = f.
-Proof.
-apply fun_ext; intros a.
-apply fun_ext; intros b.
-apply prop_ext.
-unfold Rel_comp, Rel_id; cbn.
-split; intros H.
--destruct H as (b' & Hb & Hf).
- now subst b'.
--now exists b.
-Defined.
-
-Theorem Rel_assoc {A B C D} (f : Rel_Hom A B) (g : Rel_Hom B C)
-  (h : Rel_Hom C D) :
-  Rel_comp f (Rel_comp g h) = Rel_comp (Rel_comp f g) h.
-Proof.
-apply fun_ext; intros a.
-apply fun_ext; intros b.
-apply prop_ext.
-unfold Rel_comp.
-split.
--intros (b' & Hb & c & Hg & Hh).
- exists c.
- split; [ | easy ].
- now exists b'.
--intros (c & (b' & Hf & Hg) & Hh).
- exists b'.
- split; [ easy | ].
- now exists c.
-Defined.
-
-Theorem Rel_Hom_set A B : isSet (Rel_Hom A B).
-Proof.
-unfold Rel_Hom.
-apply h4c.isSet_forall; intros a.
-apply h4c.isSet_forall; intros b.
-apply proof_irrel.
-Defined.
-
-Definition RelCat :=
-  {| Ob := Set_type;
-     Hom := Rel_Hom;
-     comp _ _ _ := Rel_comp;
-     idc := Rel_id;
-     unit_l := Rel_unit_l;
-     unit_r := Rel_unit_r;
-     assoc _ _ _ _ := Rel_assoc;
-     Hom_set := Rel_Hom_set |}.
-
 (* *)
 
 Print adjunction2.
