@@ -1384,14 +1384,9 @@ Definition hom_functor C : functor (op C × C) SetCat :=
 (* arrow category is equivalent to [2, C] *)
 
 Theorem arr_cat_equiv_2_cat {C} :
-  are_equivalent_categories (ArrowCat C) (Cat_2 × C).
+  are_equivalent_categories (ArrowCat C) (FunCat C Cat_2).
 Proof.
-Print ArrowCat_Ob.
-Print ArrowCat_Hom.
 ...
-{ (g1, g2) & g2 ◦ f = f' ◦ g1 }
-...
-
 
 (* representable functors *)
 
