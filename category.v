@@ -934,6 +934,7 @@ Definition is_natural_isomorphism {C D} {F G : functor C D}
   ∀ X, is_isomorphism (nt_component η X).
 
 (* category of functors *)
+(* noted [C, D] or D^C *)
 
 Theorem Fun_unit_l {C D} (F G : functor C D) :
   ∀ (f : natural_transformation F G), nat_transf_comp (nat_transf_id F) f = f.
