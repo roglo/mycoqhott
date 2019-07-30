@@ -365,4 +365,128 @@ Definition Cat_0 :=
      unit_r A := match A with end;
      assoc A _ _ _ _ := match A with end;
      Hom_set A := match A with end |}.
+(* category of categories *)
 
+Theorem CatCat_comp_prop {C C' C'' : category}
+  {F : functor C C'} {G : functor C' C''} :
+  ∀ (X Y Z : Ob C) (f : Hom X Y) (g : Hom Y Z),
+  f_map_hom G (f_map_hom F (g ◦ f)) =
+  f_map_hom G (f_map_hom F g) ◦ f_map_hom G (f_map_hom F f).
+Proof.
+intros.
+etransitivity; [ | apply f_comp_prop ].
+apply f_equal, f_comp_prop.
+Defined.
+
+Theorem CatCat_id_prop {C C' C'' : category}
+  {F : functor C C'} {G : functor C' C''} :
+  ∀ X : Ob C,
+  f_map_hom G (f_map_hom F (idc X)) = idc (f_map_obj G (f_map_obj F X)).
+Proof.
+intros.
+etransitivity; [ | apply f_id_prop ].
+apply f_equal, f_id_prop.
+Defined.
+
+Definition CatCat_comp {C C' C'' : category}
+  (F : functor C C') (G : functor C' C'') : functor C C'' :=
+  {| f_map_obj X := f_map_obj G (f_map_obj F X);
+     f_map_hom X Y f := f_map_hom G (f_map_hom F f);
+     f_comp_prop := CatCat_comp_prop;
+     f_id_prop := CatCat_id_prop |}.
+
+Theorem CatCat_unit_l (C C' : category) (F : functor C C') :
+  CatCat_comp (functor_id C) F = F.
+Proof.
+unfold CatCat_comp, functor_id; cbn.
+destruct F; cbn in *.
+f_equal.
+-apply fun_ext; intros X.
+ apply fun_ext; intros Y.
+ apply fun_ext; intros Z.
+ apply fun_ext; intros f.
+ apply fun_ext; intros g.
+ apply Hom_set.
+-apply fun_ext; intros X.
+ apply Hom_set.
+Qed.
+
+Theorem CatCat_unit_r (C C' : category) (F : functor C C') :
+  CatCat_comp F (functor_id C') = F.
+Proof.
+unfold CatCat_comp, functor_id; cbn.
+destruct F; cbn in *.
+f_equal.
+-apply fun_ext; intros X.
+ apply fun_ext; intros Y.
+ apply fun_ext; intros Z.
+ apply fun_ext; intros f.
+ apply fun_ext; intros g.
+ apply Hom_set.
+-apply fun_ext; intros X.
+ apply Hom_set.
+Qed.
+
+Theorem CatCat_assoc C C' C'' C'''
+  (F : functor C C') (G : functor C' C'') (H : functor C'' C''') :
+  CatCat_comp F (CatCat_comp G H) = CatCat_comp (CatCat_comp F G) H.
+Proof.
+unfold CatCat_comp; cbn.
+f_equal.
+-unfold CatCat_comp_prop; cbn.
+ apply fun_ext; intros X.
+ apply fun_ext; intros Y.
+ apply fun_ext; intros Z.
+ apply fun_ext; intros f.
+ apply fun_ext; intros g; cbn.
+ unfold eq_trans, f_equal.
+ destruct
+   (f_comp_prop (f_map_hom G (f_map_hom F f)) (f_map_hom G (f_map_hom F g))).
+ destruct (f_comp_prop (f_map_hom F f) (f_map_hom F g)).
+ now destruct (f_comp_prop f g).
+-unfold CatCat_id_prop.
+ apply fun_ext; intros X.
+ unfold eq_trans, f_equal; cbn.
+ destruct f_id_prop; cbn.
+ destruct f_id_prop; cbn.
+ now destruct f_id_prop; cbn.
+Qed.
+
+(*
+Theorem CatCat_Hom_set C C' (F G : functor C C') (p q : F = G) : p = q.
+Proof.
+destruct F, G; cbn in *.
+Set Keep Proof Equalities.
+injection p; intros H1 H2 H3 H4.
+destruct H4.
+apply h4c.eq_existT_pair_transport in H3.
+destruct H3 as (Hp3 & H3).
+destruct H3.
+apply h4c.eq_existT_pair_transport in H2.
+destruct H2 as (Hp2 & H2).
+destruct H2.
+apply h4c.eq_existT_pair_transport in H1.
+destruct H1 as (Hp1 & H1).
+destruct H1.
+move Hp1 after Hp3; move Hp2 after Hp3.
+injection p; intros H1 H2 H3.
+injection H3.
+intros H4.
+apply h4c.eq_existT_pair_transport in H4.
+destruct H4 as (Hp4 & H4).
+move Hp4 before Hp3.
+(* doesn't work; but is it true? *)
+...
+
+Hom_set does not work: perhaps false or not
+
+Definition CatCat :=
+  {| Ob := category;
+     Hom := functor;
+     comp _ _ := CatCat_comp;
+     idc := CatCat_idc;
+     unit_l := CatCat_unit_l;
+     unit_r := CatCat_unit_r;
+     assoc := CatCat_assoc;
+     Hom_set := 42 |}.
+*)
