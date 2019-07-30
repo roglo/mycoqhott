@@ -571,10 +571,3 @@ Definition hom_functor C : functor (op C × C) SetCat :=
 
 Definition is_representable_functor {C} (F : functor C SetCat) :=
   { X : Ob C & are_isomorphic_functors F (cov_hom_functor X) }.
-
-(*
-(* *)
-
-Print adjunction2.
-Print natural_transformation.
-*)
