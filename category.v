@@ -1383,16 +1383,33 @@ Definition hom_functor C : functor (op C × C) SetCat :=
 
 (* arrow category is equivalent to [2, C] *)
 
+Definition fun_arr_cat_2_C_map_hom {C} (X : Ob (ArrowCat C))
+    {b1 b2 : Ob Cat_2} (f : Hom b1 b2) :
+  Hom (if b1 then AC_B X else AC_A X) (if b2 then AC_B X else AC_A X).
+Proof.
+intros.
+destruct b1.
+-destruct b2; [ apply idc | easy ].
+-destruct b2; [ now destruct X as (XA & XB & Xf) | apply idc ].
+Defined.
+
+Theorem fun_arr_cat_2_C_comp_prop {C} (X : Ob (ArrowCat C))
+        {b1 b2 b3 : Ob Cat_2} (f : Hom b1 b2) (g : Hom b2 b3) :
+  fun_arr_cat_2_C_map_hom X (g ◦ f) =
+  fun_arr_cat_2_C_map_hom X g ◦ fun_arr_cat_2_C_map_hom X f.
+Proof.
+...
+
 Theorem arr_cat_equiv_2_cat {C} :
   are_equivalent_categories (ArrowCat C) (FunCat Cat_2 C).
 Proof.
 unfold are_equivalent_categories.
-Print ArrowCat_Ob.
 assert (C2 : ∀ (X : Ob (ArrowCat C)), functor Cat_2 C). {
   intros.
   apply
-    {| f_map_obj (b : Ob Cat_2) := if b then AC_A X else AC_B X;
-       f_map_hom b1 b2 f := 42 |}.
+    {| f_map_obj (b : Ob Cat_2) := if b then AC_B X else AC_A X;
+       f_map_hom _ _ := fun_arr_cat_2_C_map_hom X;
+       f_comp_prop _ _ _ := fun_arr_cat_2_C_comp_prop X |}.
 ...
 exists
   {| f_map_obj (X : Ob (ArrowCat C)) := C2 X : Ob (FunCat Cat_2 C) |}.
