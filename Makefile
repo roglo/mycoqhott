@@ -14,9 +14,4 @@ depend:
 .v.vo:
 	coqc -indices-matter $<
 
-chap2.vo: chap1.vo
-chap3.vo: chap2.vo
-chap4.vo: chap3.vo
-chap5.vo: chap4.vo
-
 include .depend
