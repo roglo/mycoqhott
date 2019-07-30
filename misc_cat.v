@@ -872,4 +872,11 @@ exists
      f_comp_prop _ _ _ := fun_2_C_arr_cat_comp_prop;
      f_id_prop := fun_2_C_arr_cat_id_prop |}.
 -unfold functor_comp; cbn.
+ unfold functor_id; cbn.
+ assert
+   (H1 :
+    (λ X, fun_2_C_arr_cat_map_obj (arr_cat_fun_2_C_map_obj X)) = (λ X, X)). {
+   apply fun_ext.
+   now intros (XA & XB & Xf).
+ }
 ...
