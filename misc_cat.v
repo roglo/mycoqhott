@@ -836,6 +836,28 @@ Defined.
 Definition fun_2_C_arr_cat_map_hom {C} {X Y : Ob (FunCat Cat_2 C)}
   (f : Hom X Y) : Hom (fun_2_C_arr_cat_map_obj X) (fun_2_C_arr_cat_map_obj Y).
 Proof.
+cbn; unfold ArrowCat_Hom; cbn.
+assert
+  (g1g2 :
+   Hom (f_map_obj X false) (f_map_obj Y false) *
+   Hom (f_map_obj X true) (f_map_obj Y true)). {
+  split; apply f.
+}
+exists g1g2.
+destruct g1g2 as (g1, g2); cbn in *.
+destruct X, Y; cbn in *.
+destruct f; cbn in *.
+specialize (x false) as h1.
+specialize (x true) as h2.
+move h1 before g1.
+specialize (e false true I) as H1.
+specialize (Hom_set (f_map_obj false) (f_map_obj0 false)) as H2.
+unfold isSet, h4c.isSet in H2.
+specialize (H2 g1 h1).
+...
+
+specialize (f_map_hom false false I) as H2.
+cbn in H2.
 ...
 
 Theorem arr_cat_equiv_2_cat {C} :
