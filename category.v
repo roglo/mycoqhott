@@ -1399,7 +1399,19 @@ Theorem fun_arr_cat_2_C_comp_prop {C} (X : Ob (ArrowCat C))
   fun_arr_cat_2_C_map_hom X (g ◦ f) =
   fun_arr_cat_2_C_map_hom X g ◦ fun_arr_cat_2_C_map_hom X f.
 Proof.
-...
+destruct X as (XA & XB & Xf); symmetry.
+destruct b1, b2, b3; cbn; try easy.
+-apply unit_l.
+-apply unit_r.
+-apply unit_l.
+-apply unit_r.
+Defined.
+
+Theorem fun_arr_cat_2_C_id_prop {C} (X : Ob (ArrowCat C)) (b : Ob Cat_2) :
+  fun_arr_cat_2_C_map_hom X (idc b) = idc (if b then AC_B X else AC_A X).
+Proof.
+now destruct b.
+Defined.
 
 Theorem arr_cat_equiv_2_cat {C} :
   are_equivalent_categories (ArrowCat C) (FunCat Cat_2 C).
@@ -1410,10 +1422,12 @@ assert (C2 : ∀ (X : Ob (ArrowCat C)), functor Cat_2 C). {
   apply
     {| f_map_obj (b : Ob Cat_2) := if b then AC_B X else AC_A X;
        f_map_hom _ _ := fun_arr_cat_2_C_map_hom X;
-       f_comp_prop _ _ _ := fun_arr_cat_2_C_comp_prop X |}.
-...
+       f_comp_prop _ _ _ := fun_arr_cat_2_C_comp_prop X;
+       f_id_prop := fun_arr_cat_2_C_id_prop X |}.
+}
 exists
-  {| f_map_obj (X : Ob (ArrowCat C)) := C2 X : Ob (FunCat Cat_2 C) |}.
+  {| f_map_obj := C2 : ∀ _, Ob (FunCat Cat_2 C);
+     f_map_hom := 42 |}.
 ...
 
 (* representable functors *)
