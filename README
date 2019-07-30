@@ -1,4 +1,12 @@
 Tested with coq 8.10
 
-Trying to implement the HoTT book in Coq: not terminated.
-Implementing categories in Coq; work in progress; file category.v
+Trying to implement the HoTT book in Coq (files chap1.v to chap4.v):
+not terminated.
+
+File h4c.v holds specific hott tools needed for categories, borrowed
+from chap*.v above.
+
+Work in progress:
+
+Implementing categories in Coq.
+  files: category.v misc_cat.v cone_lim.v adjunction.v yoneda.v.
