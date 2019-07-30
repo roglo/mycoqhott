@@ -1,4 +1,4 @@
-Tested with coq 8.10
+Compilable with coq 8.10.
 
 Trying to implement the HoTT book in Coq (files chap1.v to chap4.v):
 not terminated.
