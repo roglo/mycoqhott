@@ -876,11 +876,9 @@ Theorem dep_pair_functor_eq {C D} :
         f_id_prop := mi2 |}.
 Proof.
 intros * (p, Hp).
-...
 destruct p.
 destruct Hp; cbn.
-cbn in mc2.
-Print functor.
+cbn in mc2, mi2.
 ...
 
 Theorem arr_cat_equiv_2_cat {C} :
