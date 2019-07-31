@@ -25,25 +25,25 @@ Require Import category.
    (Awodey)
 *)
 
-Definition ArrowCat_Ob C := { A : Ob C & { B : Ob C & Hom A B } }.
-Definition AC_A {C} (X : ArrowCat_Ob C) := projT1 X.
-Definition AC_B {C} (X : ArrowCat_Ob C) := projT1 (projT2 X).
-Definition AC_Hom {C} (X : ArrowCat_Ob C) := projT2 (projT2 X).
+Definition Arr_Ob C := { A : Ob C & { B : Ob C & Hom A B } }.
+Definition AC_A {C} (X : Arr_Ob C) := projT1 X.
+Definition AC_B {C} (X : Arr_Ob C) := projT1 (projT2 X).
+Definition AC_Hom {C} (X : Arr_Ob C) := projT2 (projT2 X).
 
-Definition ArrowCat_Hom {C} (X X' : ArrowCat_Ob C) :=
+Definition Arr_Hom {C} (X X' : Arr_Ob C) :=
   { g1g2 & snd g1g2 ◦ AC_Hom X = AC_Hom X' ◦ fst g1g2 }.
 
-Definition AC_Hom_g1 {C} {X X' : ArrowCat_Ob C} (f : ArrowCat_Hom X X') :=
+Definition AC_Hom_g1 {C} {X X' : Arr_Ob C} (f : Arr_Hom X X') :=
   fst (projT1 f).
-Definition AC_Hom_g2 {C} {X X' : ArrowCat_Ob C} (f : ArrowCat_Hom X X') :=
+Definition AC_Hom_g2 {C} {X X' : Arr_Ob C} (f : Arr_Hom X X') :=
   snd (projT1 f).
-Definition AC_Hom_prop {C} {X X' : ArrowCat_Ob C} (f : ArrowCat_Hom X X') :=
+Definition AC_Hom_prop {C} {X X' : Arr_Ob C} (f : Arr_Hom X X') :=
   projT2 f.
 
-Definition ArrowCat_comp {C} {X Y Z : ArrowCat_Ob C}
-  (f : ArrowCat_Hom X Y) (g : ArrowCat_Hom Y Z) : ArrowCat_Hom X Z.
+Definition Arr_comp {C} {X Y Z : Arr_Ob C}
+  (f : Arr_Hom X Y) (g : Arr_Hom Y Z) : Arr_Hom X Z.
 Proof.
-unfold ArrowCat_Hom.
+unfold Arr_Hom.
 exists (AC_Hom_g1 g ◦ AC_Hom_g1 f, AC_Hom_g2 g ◦ AC_Hom_g2 f).
 unfold AC_Hom_g2, AC_Hom_g1; cbn.
 symmetry.
@@ -54,18 +54,18 @@ etransitivity; [ apply assoc | ].
 now rewrite (AC_Hom_prop f).
 Defined.
 
-Definition ArrowCat_id {C} (X : ArrowCat_Ob C) : ArrowCat_Hom X X.
+Definition Arr_id {C} (X : Arr_Ob C) : Arr_Hom X X.
 Proof.
 exists (idc _, idc _).
 etransitivity; [ apply unit_r | ].
 symmetry; apply unit_l.
 Defined.
 
-Theorem ArrowCat_unit_l {C} {X Y : ArrowCat_Ob C} (f : ArrowCat_Hom X Y) :
-  ArrowCat_comp (ArrowCat_id X) f = f.
+Theorem Arr_unit_l {C} {X Y : Arr_Ob C} (f : Arr_Hom X Y) :
+  Arr_comp (Arr_id X) f = f.
 Proof.
 destruct f as ((g1, g2) & Hgg); cbn in Hgg.
-unfold ArrowCat_comp; cbn.
+unfold Arr_comp; cbn.
 apply h4c.pair_transport_eq_existT.
 assert (p : (g1 ◦ idc (AC_A X), g2 ◦ idc (AC_B X)) = (g1, g2)). {
   now do 2 rewrite unit_l.
@@ -74,11 +74,11 @@ exists p.
 apply Hom_set.
 Defined.
 
-Theorem ArrowCat_unit_r {C} {X Y : ArrowCat_Ob C} (f : ArrowCat_Hom X Y) :
-  ArrowCat_comp f (ArrowCat_id Y) = f.
+Theorem Arr_unit_r {C} {X Y : Arr_Ob C} (f : Arr_Hom X Y) :
+  Arr_comp f (Arr_id Y) = f.
 Proof.
 destruct f as ((g1, g2) & Hgg); cbn in Hgg.
-unfold ArrowCat_comp; cbn.
+unfold Arr_comp; cbn.
 apply h4c.pair_transport_eq_existT.
 assert (p : (idc (AC_A Y) ◦ g1, idc (AC_B Y) ◦ g2) = (g1, g2)). {
   now do 2 rewrite unit_r.
@@ -87,27 +87,27 @@ exists p.
 apply Hom_set.
 Defined.
 
-Theorem ArrowCat_assoc {C} {X Y Z T : ArrowCat_Ob C} (f : ArrowCat_Hom X Y)
-  (g : ArrowCat_Hom Y Z) (h : ArrowCat_Hom Z T) :
-  ArrowCat_comp f (ArrowCat_comp g h) = ArrowCat_comp (ArrowCat_comp f g) h.
+Theorem Arr_assoc {C} {X Y Z T : Arr_Ob C} (f : Arr_Hom X Y)
+  (g : Arr_Hom Y Z) (h : Arr_Hom Z T) :
+  Arr_comp f (Arr_comp g h) = Arr_comp (Arr_comp f g) h.
 Proof.
-unfold ArrowCat_comp at 1 3.
+unfold Arr_comp at 1 3.
 apply h4c.pair_transport_eq_existT.
 assert (p
-  : (AC_Hom_g1 (ArrowCat_comp g h) ◦ AC_Hom_g1 f,
-     AC_Hom_g2 (ArrowCat_comp g h) ◦ AC_Hom_g2 f) =
-    (AC_Hom_g1 h ◦ AC_Hom_g1 (ArrowCat_comp f g),
-     AC_Hom_g2 h ◦ AC_Hom_g2 (ArrowCat_comp f g))). {
+  : (AC_Hom_g1 (Arr_comp g h) ◦ AC_Hom_g1 f,
+     AC_Hom_g2 (Arr_comp g h) ◦ AC_Hom_g2 f) =
+    (AC_Hom_g1 h ◦ AC_Hom_g1 (Arr_comp f g),
+     AC_Hom_g2 h ◦ AC_Hom_g2 (Arr_comp f g))). {
   now cbn; do 2 rewrite assoc.
 }
 exists p.
 apply Hom_set.
 Qed.
 
-Theorem ArrowCat_Hom_set {C} (X Y : ArrowCat_Ob C) :
-  isSet (ArrowCat_Hom X Y).
+Theorem Arr_Hom_set {C} (X Y : Arr_Ob C) :
+  isSet (Arr_Hom X Y).
 Proof.
-unfold ArrowCat_Hom.
+unfold Arr_Hom.
 apply h4c.is_set_is_set_sigT. 2: {
   apply h4c.isSet_pair; apply Hom_set.
 }
@@ -116,15 +116,15 @@ unfold h4c.isProp.
 apply Hom_set.
 Defined.
 
-Definition ArrowCat C :=
-  {| Ob := ArrowCat_Ob C;
-     Hom := ArrowCat_Hom;
-     comp _ _ _ := ArrowCat_comp;
-     idc := ArrowCat_id;
-     unit_l _ _ := ArrowCat_unit_l;
-     unit_r _ _ := ArrowCat_unit_r;
-     assoc _ _ _ _ := ArrowCat_assoc;
-     Hom_set := ArrowCat_Hom_set |}.
+Definition ArrCat C :=
+  {| Ob := Arr_Ob C;
+     Hom := Arr_Hom;
+     comp _ _ _ := Arr_comp;
+     idc := Arr_id;
+     unit_l _ _ := Arr_unit_l;
+     unit_r _ _ := Arr_unit_r;
+     assoc _ _ _ _ := Arr_assoc;
+     Hom_set := Arr_Hom_set |}.
 
 (* The slice category 𝒞/C of a category 𝒞 over an object C ∈ 𝒞 has:
     • objects: all arrows f ∈ 𝒞 such that cod(f)=C,
@@ -711,10 +711,10 @@ Definition CatCat :=
 
 (* arrow category is equivalent to [2, C] *)
 
-Definition fun_arr_2_C_map_obj {C} (X : Ob (ArrowCat C)) (b : Ob Cat_2) :
+Definition fun_arr_2_C_map_obj {C} (X : Ob (ArrCat C)) (b : Ob Cat_2) :
     Ob C := if b then AC_B X else AC_A X.
 
-Definition fun_arr_2_C_map_hom {C} (X : Ob (ArrowCat C))
+Definition fun_arr_2_C_map_hom {C} (X : Ob (ArrCat C))
     {b1 b2 : Ob Cat_2} (f : Hom b1 b2) :
   Hom (fun_arr_2_C_map_obj X b1) (fun_arr_2_C_map_obj X b2).
 Proof.
@@ -724,7 +724,7 @@ destruct b1.
 -destruct b2; [ now destruct X as (XA & XB & Xf) | apply idc ].
 Defined.
 
-Theorem fun_arr_2_C_comp_prop {C} (X : Ob (ArrowCat C))
+Theorem fun_arr_2_C_comp_prop {C} (X : Ob (ArrCat C))
         {b1 b2 b3 : Ob Cat_2} (f : Hom b1 b2) (g : Hom b2 b3) :
   fun_arr_2_C_map_hom X (g ◦ f) =
   fun_arr_2_C_map_hom X g ◦ fun_arr_2_C_map_hom X f.
@@ -737,13 +737,13 @@ destruct b1, b2, b3; cbn; try easy.
 -apply unit_r.
 Defined.
 
-Theorem fun_arr_2_C_id_prop {C} (X : Ob (ArrowCat C)) (b : Ob Cat_2) :
+Theorem fun_arr_2_C_id_prop {C} (X : Ob (ArrCat C)) (b : Ob Cat_2) :
   fun_arr_2_C_map_hom X (idc b) = idc (if b then AC_B X else AC_A X).
 Proof.
 now destruct b.
 Defined.
 
-Definition arr_cat_fun_2_C_map_obj {C} (X : Ob (ArrowCat C)) :
+Definition arr_cat_fun_2_C_map_obj {C} (X : Ob (ArrCat C)) :
      Ob (FunCat Cat_2 C)
 :=
   {| f_map_obj := fun_arr_2_C_map_obj X;
@@ -751,7 +751,7 @@ Definition arr_cat_fun_2_C_map_obj {C} (X : Ob (ArrowCat C)) :
      f_comp_prop _ _ _ := fun_arr_2_C_comp_prop X;
      f_id_prop := fun_arr_2_C_id_prop X |}.
 
-Definition arr_cat_fun_2_C_map_hom {C} {X Y : Ob (ArrowCat C)}
+Definition arr_cat_fun_2_C_map_hom {C} {X Y : Ob (ArrCat C)}
    (f : Hom X Y) :
   Hom (arr_cat_fun_2_C_map_obj X) (arr_cat_fun_2_C_map_obj Y).
 Proof.
@@ -774,7 +774,7 @@ destruct b1, b2; cbn.
 -now rewrite unit_l, unit_r.
 Defined.
 
-Theorem arr_cat_fun_2_C_comp_prop {C} {X Y Z : Ob (ArrowCat C)}
+Theorem arr_cat_fun_2_C_comp_prop {C} {X Y Z : Ob (ArrCat C)}
   (f : Hom X Y) (g : Hom Y Z) :
   arr_cat_fun_2_C_map_hom (g ◦ f) =
   arr_cat_fun_2_C_map_hom g ◦ arr_cat_fun_2_C_map_hom f.
@@ -806,7 +806,7 @@ apply fun_ext; intros f.
 apply Hom_set.
 Qed.
 
-Theorem arr_cat_fun_2_C_id_prop {C} (X : Ob (ArrowCat C)) :
+Theorem arr_cat_fun_2_C_id_prop {C} (X : Ob (ArrCat C)) :
   arr_cat_fun_2_C_map_hom (idc X) = idc (arr_cat_fun_2_C_map_obj X).
 Proof.
 cbn; unfold nat_transf_id.
@@ -828,7 +828,7 @@ apply Hom_set.
 Qed.
 
 Definition fun_2_C_arr_cat_map_obj {C} (X : Ob (FunCat Cat_2 C)) :
-  Ob (ArrowCat C).
+  Ob (ArrCat C).
 Proof.
 exists (f_map_obj X false).
 exists (f_map_obj X true).
@@ -838,7 +838,7 @@ Defined.
 Definition fun_2_C_arr_cat_map_hom {C} {X Y : Ob (FunCat Cat_2 C)}
   (f : Hom X Y) : Hom (fun_2_C_arr_cat_map_obj X) (fun_2_C_arr_cat_map_obj Y).
 Proof.
-cbn; unfold ArrowCat_Hom; cbn.
+cbn; unfold Arr_Hom; cbn.
 exists (nt_component f false, nt_component f true); cbn.
 apply nt_commute.
 Defined.
@@ -889,8 +889,24 @@ intros H1 H2.
 now destruct H1, H2.
 Qed.
 
+Theorem arr_cat_isom_2_cat {C} :
+  are_isomorphic_categories (ArrCat C) (FunCat Cat_2 C).
+Proof.
+set (F :=
+  {| f_map_obj := arr_cat_fun_2_C_map_obj;
+     f_map_hom _ _ := arr_cat_fun_2_C_map_hom;
+     f_comp_prop _ _ _ := arr_cat_fun_2_C_comp_prop;
+     f_id_prop := arr_cat_fun_2_C_id_prop |}).
+set (G :=
+  {| f_map_obj := fun_2_C_arr_cat_map_obj;
+     f_map_hom _ _ := fun_2_C_arr_cat_map_hom;
+     f_comp_prop _ _ _ := fun_2_C_arr_cat_comp_prop;
+     f_id_prop := fun_2_C_arr_cat_id_prop |}).
+exists F, G.
+...
+
 Theorem arr_cat_equiv_2_cat {C} :
-  are_equivalent_categories (ArrowCat C) (FunCat Cat_2 C).
+  are_equivalent_categories (Arr C) (FunCat Cat_2 C).
 Proof.
 exists
   {| f_map_obj := arr_cat_fun_2_C_map_obj;
@@ -904,9 +920,11 @@ exists
      f_id_prop := fun_2_C_arr_cat_id_prop |}.
 -unfold functor_comp; cbn.
  unfold functor_id; cbn.
+(* seems not to work *)
+...
  unfold functor_comp_id_prop; cbn.
  assert
-   (H1 : (λ x : ArrowCat_Ob C,
+   (H1 : (λ x : Arr_Ob C,
      fun_2_C_arr_cat_map_obj (arr_cat_fun_2_C_map_obj x)) =
     (λ x, x)). {
    apply fun_ext; intros x.
@@ -916,11 +934,11 @@ exists
  apply h4c.pair_transport_eq_existT.
  exists H1.
 Check (existT
-    (λ mh : ∀ a b : Ob (ArrowCat C), Hom a b → Hom a b,
-       ((∀ (a b c : Ob (ArrowCat C)) (f : Hom a b) (g : Hom b c), mh a c (g ◦ f) = mh b c g ◦ mh a b f) *
-        (∀ a : Ob (ArrowCat C), mh a a (idc a) = idc a))%type) (λ (x y : ArrowCat_Ob C) (f : ArrowCat_Hom x y), f)
-    (λ (a b c : ArrowCat_Ob C) (f : ArrowCat_Hom a b) (g : ArrowCat_Hom b c), eq_refl,
-    λ a : ArrowCat_Ob C, eq_refl)).
+    (λ mh : ∀ a b : Ob (Arr C), Hom a b → Hom a b,
+       ((∀ (a b c : Ob (Arr C)) (f : Hom a b) (g : Hom b c), mh a c (g ◦ f) = mh b c g ◦ mh a b f) *
+        (∀ a : Ob (Arr C), mh a a (idc a) = idc a))%type) (λ (x y : Arr_Ob C) (f : Arr_Hom x y), f)
+    (λ (a b c : Arr_Ob C) (f : Arr_Hom a b) (g : Arr_Hom b c), eq_refl,
+    λ a : Arr_Ob C, eq_refl)).
 ...
 unfold fun_2_C_arr_cat_map_hom.
 unfold arr_cat_fun_2_C_map_hom.
@@ -938,10 +956,10 @@ Check functor_eq_of_dep_pair.
  exists p; cbn.
 *)
  exists (
-     fun_ext (Ob (ArrowCat C)) (λ _ : Ob (ArrowCat C), Ob (ArrowCat C))
-             (λ x : Ob (ArrowCat C), fun_2_C_arr_cat_map_obj (arr_cat_fun_2_C_map_obj x))
-             (λ x : Ob (ArrowCat C), x)
-             (λ X : Ob (ArrowCat C),
+     fun_ext (Ob (Arr C)) (λ _ : Ob (Arr C), Ob (Arr C))
+             (λ x : Ob (Arr C), fun_2_C_arr_cat_map_obj (arr_cat_fun_2_C_map_obj x))
+             (λ x : Ob (Arr C), x)
+             (λ X : Ob (Arr C),
                     let (XA, s) as s return (fun_2_C_arr_cat_map_obj (arr_cat_fun_2_C_map_obj s) = s) := X in
                     let
                       (XB, Xf) as s0
@@ -952,7 +970,7 @@ Check functor_eq_of_dep_pair.
                     eq_refl)).
  cbn.
  unfold fun_2_C_arr_cat_map_obj, arr_cat_fun_2_C_map_obj; cbn.
- unfold ArrowCat_Ob, ArrowCat_Hom; cbn.
+ unfold Arr_Ob, Arr_Hom; cbn.
  unfold fun_2_C_arr_cat_map_hom; cbn.
  unfold arr_cat_fun_2_C_map_hom; cbn.
  Set Printing Depth 15.
