@@ -906,6 +906,14 @@ exists
  unfold functor_id; cbn.
  apply dep_pair_functor_eq.
  apply h4c.pair_transport_eq_existT.
+(*
+ assert (pppp :
+   (λ x, fun_2_C_arr_cat_map_obj (arr_cat_fun_2_C_map_obj x)) = (λ x, x)). {
+   apply fun_ext; intros X.
+   now destruct X as (XA & XB & Xf).
+ }
+ exists p; cbn.
+*)
  exists (
      fun_ext (Ob (ArrowCat C)) (λ _ : Ob (ArrowCat C), Ob (ArrowCat C))
              (λ x : Ob (ArrowCat C), fun_2_C_arr_cat_map_obj (arr_cat_fun_2_C_map_obj x))
@@ -920,15 +928,12 @@ exists
                        existT (λ A : Ob C, {B : Ob C & Hom A B}) XA s0) := s in
                     eq_refl)).
  cbn.
-(*
- assert (pppp :
-   (λ x, fun_2_C_arr_cat_map_obj (arr_cat_fun_2_C_map_obj x)) = (λ x, x)). {
-   apply fun_ext; intros X.
-   now destruct X as (XA & XB & Xf).
- }
- exists p; cbn.
-*)
-Search (h4c.transport _ _ (existT _ _ _)).
+ unfold fun_2_C_arr_cat_map_obj, arr_cat_fun_2_C_map_obj; cbn.
+ unfold ArrowCat_Ob, ArrowCat_Hom; cbn.
+ unfold fun_2_C_arr_cat_map_hom; cbn.
+ unfold arr_cat_fun_2_C_map_hom; cbn.
+ Set Printing Depth 16.
+ unfold h4c.transport.
 ...
 }
 exists p.
