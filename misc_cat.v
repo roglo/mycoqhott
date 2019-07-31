@@ -903,6 +903,14 @@ set (G :=
      f_comp_prop _ _ _ := fun_2_C_arr_cat_comp_prop;
      f_id_prop := fun_2_C_arr_cat_id_prop |}).
 exists F, G.
+set (GF :=
+  λ x : Ob (ArrCat C),
+  let (XA, s) as s return (f_map_obj G (f_map_obj F s) = s) := x in
+  let (XB, Xf) as s return
+    (f_map_obj G (f_map_obj F (existT (λ A : Ob C, {B : Ob C & Hom A B}) XA s)) =
+     existT (λ A : Ob C, {B : Ob C & Hom A B}) XA s) := s in
+  eq_refl).
+exists GF.
 ...
 
 Theorem arr_cat_equiv_2_cat {C} :
