@@ -899,6 +899,7 @@ Qed.
 
 (* *)
 
+(*
 Theorem arr_cat_isom_2_cat {C} :
   are_isomorphic_categories (ArrCat C) (FunCat Cat_2 C).
 Proof.
@@ -946,9 +947,10 @@ Print is_iso_betw_cat.
   }
   exists p.
 ...
+*)
 
 Theorem arr_cat_equiv_2_cat {C} :
-  are_equivalent_categories (Arr C) (FunCat Cat_2 C).
+  are_equivalent_categories (ArrCat C) (FunCat Cat_2 C).
 Proof.
 (* seem false (actually not provable) *)
 exists
