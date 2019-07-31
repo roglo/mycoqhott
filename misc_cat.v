@@ -905,6 +905,20 @@ exists
 -unfold functor_comp; cbn.
  unfold functor_id; cbn.
  unfold functor_comp_id_prop; cbn.
+ assert
+   (H1 : (λ x : ArrowCat_Ob C,
+     fun_2_C_arr_cat_map_obj (arr_cat_fun_2_C_map_obj x)) =
+    (λ x, x)). {
+   apply fun_ext; intros x.
+   now destruct x as (XA & XB & Xf).
+ }
+ apply functor_eq_of_dep_pair.
+ apply h4c.pair_transport_eq_existT.
+ exists H1.
+...
+unfold fun_2_C_arr_cat_map_hom.
+unfold arr_cat_fun_2_C_map_hom.
+cbn.
 Check functor_eq_of_dep_pair.
 ...
  apply functor_eq_of_dep_pair.
