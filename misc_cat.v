@@ -867,7 +867,7 @@ Definition functor_td C D :=
          mh a c (g ◦ f) = mh b c g ◦ mh a b f) *
      (∀ a : Ob C, mh a a (idc a) = idc (mo a)))%type }}.
 
-Theorem dep_pair_functor_eq {C D} :
+Theorem functor_eq_of_dep_pair {C D} :
   ∀ (mo1 mo2 : Ob C → Ob D) mh1 mh2 mc1 mc2 mi1 mi2,
   (existT _ mo1 (existT _ mh1 (mc1, mi1)) : functor_td C D) =
   (existT _ mo2 (existT _ mh2 (mc2, mi2)) : functor_td C D)
@@ -904,7 +904,9 @@ exists
      f_id_prop := fun_2_C_arr_cat_id_prop |}.
 -unfold functor_comp; cbn.
  unfold functor_id; cbn.
- apply dep_pair_functor_eq.
+Check functor_eq_of_dep_pair.
+...
+ apply functor_eq_of_dep_pair.
  apply h4c.pair_transport_eq_existT.
 (*
  assert (pppp :
@@ -932,8 +934,7 @@ exists
  unfold ArrowCat_Ob, ArrowCat_Hom; cbn.
  unfold fun_2_C_arr_cat_map_hom; cbn.
  unfold arr_cat_fun_2_C_map_hom; cbn.
- Set Printing Depth 16.
- unfold h4c.transport.
+ Set Printing Depth 15.
 ...
 }
 exists p.
