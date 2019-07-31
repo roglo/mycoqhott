@@ -927,6 +927,12 @@ assert (FG : ∀ y : Ob (FunCat Cat_2 C), f_map_obj F (f_map_obj G y) = y). {
    replaced by an extensional equality of functors, testing it on objects and
    and in arrows, not checking the full equality of functor records, which seems
    not possible to prove *)
+Print are_isomorphic_categories.
+Print is_iso_betw_cat.
+(*
+   {FG : ∀ y : Ob D, f_map_obj F (f_map_obj G y) = y &
+   here, objects of D are functors... this is my problem
+*)
 ...
   destruct y as (fo, fh, fc, fi).
   unfold arr_cat_fun_2_C_map_obj.
