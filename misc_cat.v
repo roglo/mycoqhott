@@ -915,6 +915,12 @@ exists
  apply functor_eq_of_dep_pair.
  apply h4c.pair_transport_eq_existT.
  exists H1.
+Check (existT
+    (λ mh : ∀ a b : Ob (ArrowCat C), Hom a b → Hom a b,
+       ((∀ (a b c : Ob (ArrowCat C)) (f : Hom a b) (g : Hom b c), mh a c (g ◦ f) = mh b c g ◦ mh a b f) *
+        (∀ a : Ob (ArrowCat C), mh a a (idc a) = idc a))%type) (λ (x y : ArrowCat_Ob C) (f : ArrowCat_Hom x y), f)
+    (λ (a b c : ArrowCat_Ob C) (f : ArrowCat_Hom a b) (g : ArrowCat_Hom b c), eq_refl,
+    λ a : ArrowCat_Ob C, eq_refl)).
 ...
 unfold fun_2_C_arr_cat_map_hom.
 unfold arr_cat_fun_2_C_map_hom.
