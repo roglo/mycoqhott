@@ -97,20 +97,10 @@ Definition fop {C D} : functor C D → functor C⁰ D⁰ :=
 Definition is_isomorphism {C : category} {A B : Ob C} (f : Hom A B) :=
   { g : Hom B A & ((g ◦ f = idc A) * (f ◦ g = idc B))%type }.
 
-(* ah merde, c'est un type dépendant, encore... *)
-(* faut faire un transport des flèches *)
-Theorem glop {C D} (F G : functor C D) (p : ∀ X : Ob C, f_map_obj F X = f_map_obj G X) : True.
-set (P := λ XY, let (X, Y) := (XY : Ob C * Ob C) in Hom (X : Ob C) (Y : Ob C)).
-Check (h4c.transport P).
-Check (λ X Y, P (X, Y)).
-Check (f_map_hom F).
-Check (λ P p X Y (f : Hom X Y), h4c.transport P p (f_map_hom F f) = f_map_hom G f).
-...
-
 Definition functor_eq {C D} (F G : functor C D) :=
-  { p : ∀ X : Ob C, f_map_obj F X = f_map_obj G X &
-    ∀ X Y (f : Hom X Y), h4c.transport P (p X) (f_map_hom F f) = f_map_hom G f }.
-...
+  let P := λ f, ∀ a b : Ob C, Hom a b → Hom (f a) (f b) in
+  { p : f_map_obj F = f_map_obj G &
+    h4c.transport P p (@f_map_hom C D F) = @f_map_hom C D G }.
 
 Theorem functor_comp_id_prop {C D E} {F : functor C D} {G : functor D E} :
   ∀ x : Ob C,
