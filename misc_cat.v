@@ -861,9 +861,14 @@ now exists eq_refl.
 Defined.
 
 Theorem dep_pair_functor_eq {C D} :
-  ∀ (Pmh := λ f : Ob C → Ob D, ∀ a b : Ob C, Hom a b → Hom (f a) (f b)),
-  ∀ mo1 mo2 (mh1 : Pmh mo1) (mh2 : Pmh mo2)
-     mc1 mc2 mi1 mi2,
+  ∀ (Pmh := λ f : Ob C → Ob D, ∀ a b : Ob C, Hom a b → Hom (f a) (f b))
+     (Pmc := λ (mo : Ob C → Ob D) (mh : Pmh mo),
+      ∀ (a b c : Ob C) (f : Hom a b) (g : Hom b c),
+      mh a c (g ◦ f) = mh b c g ◦ mh a b f),
+  ∀ mo1 mo2
+     (mh1 : Pmh mo1) (mh2 : Pmh mo2)
+     (mc1 : Pmc mo1 mh1) (mc2 : Pmc mo2 mh2)
+     mi1 mi2,
   {p : mo1 = mo2 & h4c.transport Pmh p mh1 = mh2}
   → {| f_map_obj := mo1; f_map_hom := mh1; f_comp_prop := mc1;
         f_id_prop := mi1 |} =
@@ -871,8 +876,11 @@ Theorem dep_pair_functor_eq {C D} :
         f_id_prop := mi2 |}.
 Proof.
 intros * (p, Hp).
+...
 destruct p.
 destruct Hp; cbn.
+cbn in mc2.
+Print functor.
 ...
 
 Theorem arr_cat_equiv_2_cat {C} :
