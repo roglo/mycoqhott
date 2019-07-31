@@ -952,7 +952,6 @@ Print is_iso_betw_cat.
 Theorem arr_cat_equiv_2_cat {C} :
   are_equivalent_categories (ArrCat C) (FunCat Cat_2 C).
 Proof.
-(* seem false (actually not provable) *)
 exists
   {| f_map_obj := arr_cat_fun_2_C_map_obj;
      f_map_hom _ _ := arr_cat_fun_2_C_map_hom;
@@ -965,7 +964,23 @@ exists
      f_id_prop := fun_2_C_arr_cat_id_prop |}.
 -unfold functor_comp; cbn.
  unfold functor_id; cbn.
-(* seems not to work *)
+ unfold functor_eq; cbn.
+ assert (p
+  : (λ x : Arr_Ob C, fun_2_C_arr_cat_map_obj (arr_cat_fun_2_C_map_obj x)) =
+    (λ x : Arr_Ob C, x)). {
+   apply fun_ext; intros X.
+   destruct X as (XA & XB & Xf); cbn.
+   apply h4c.pair_transport_eq_existT.
+   unfold arr_cat_fun_2_C_map_obj; cbn.
+   now exists eq_refl.
+ }
+ exists p.
+ apply fun_ext; intros X.
+ apply fun_ext; intros Y.
+ apply fun_ext; intros f.
+ unfold Arr_Hom in f.
+ destruct f as ((g1, g2) & Hgg); cbn in Hgg.
+ unfold fun_2_C_arr_cat_map_hom; cbn.
 ...
  unfold functor_comp_id_prop; cbn.
  assert
