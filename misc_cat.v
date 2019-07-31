@@ -860,17 +860,67 @@ apply h4c.pair_transport_eq_existT; cbn.
 now exists eq_refl.
 Defined.
 
+Record gunctor (C D : category) : Type :=
+  { g_map_obj : Ob C → Ob D;
+    g_map_hom : ∀ a b : Ob C, Hom a b → Hom (g_map_obj a) (g_map_obj b) }.
+
+Theorem dep_pair_gunctor_eq {C D} :
+  ∀ (Pmh := λ f : Ob C → Ob D, ∀ a b : Ob C, Hom a b → Hom (f a) (f b)),
+  ∀ mo1 mo2
+     (mh1 : Pmh mo1) (mh2 : Pmh mo2),
+  {p : mo1 = mo2 & h4c.transport Pmh p mh1 = mh2}
+  → {| g_map_obj := mo1; g_map_hom := mh1 |} =
+     {| g_map_obj := mo2; g_map_hom := mh2 |}.
+Proof.
+intros * (p, Hp).
+now destruct p, Hp.
+Qed.
+
+Print functor.
+
+Record hunctor (C D : category) : Type :=
+  { h_map : gunctor C D;
+    h_comp_prop : ∀ (a b c : Ob C) (f : Hom a b) (g : Hom b c),
+      g_map_hom C D h_map a c (g ◦ f) =
+        g_map_hom C D h_map b c g ◦ g_map_hom C D h_map a b f;
+    h_id_prop :
+      ∀ a : Ob C, g_map_hom C D h_map a a (idc a) = idc (g_map_obj C D h_map a) }.
+
+Theorem dep_pair_hunctor_eq {C D} :
+  ∀ (Phc := λ hm,
+    ((∀ (a b c : Ob C) (f : Hom a b) (g : Hom b c),
+      g_map_hom C D hm a c (g ◦ f) =
+      g_map_hom C D hm b c g ◦ g_map_hom C D hm a b f) *
+     (∀ a : Ob C, g_map_hom C D hm a a (idc a) = idc (g_map_obj C D hm a)))%type),
+  ∀ (hm1 hm2 : gunctor C D) hci1 hci2,
+  {p : hm1 = hm2 & h4c.transport Phc p hci1 = hci2}
+  → {| h_map := hm1; h_comp_prop := fst hci1; h_id_prop := snd hci1 |} =
+     {| h_map := hm2; h_comp_prop := fst hci2; h_id_prop := snd hci2 |}.
+Proof.
+intros * (p, Hp).
+now destruct p, Hp; cbn.
+Qed.
+...
+
+Theorem dep_pair_hunctor_eq {C D} :
+  ∀ (Phc := λ hm,
+    ∀ (a b c : Ob C) (f : Hom a b) (g : Hom b c),
+      g_map_hom C D hm a c (g ◦ f) =
+      g_map_hom C D hm b c g ◦ g_map_hom C D hm a b f),
+  ∀ (hm1 hm2 : gunctor C D) hc1 hc2 hi1 hi2,
+  {p : hm1 = hm2 & h4c.transport Phc p hc1 = hc2}
+  → {| h_map := hm1; h_comp_prop := hc1; h_id_prop := hi1 |} =
+     {| h_map := hm2; h_comp_prop := hc2; h_id_prop := hi2 |}.
+Proof.
+intros * (p, Hp).
+destruct p, Hp; cbn.
+...
+
 Theorem dep_pair_functor_eq {C D} :
   ∀ (Pmh := λ f : Ob C → Ob D, ∀ a b : Ob C, Hom a b → Hom (f a) (f b))
-(**)
      (Pmc := λ mo_mh : { mo : Ob C → Ob D & Pmh mo },
       ∀ (a b c : Ob C) (f : Hom a b) (g : Hom b c),
       projT2 mo_mh a c (g ◦ f) = projT2 mo_mh b c g ◦ projT2 mo_mh a b f),
-(*
-     (Pmc := λ (mo : Ob C → Ob D) (mh : Pmh mo),
-      ∀ (a b c : Ob C) (f : Hom a b) (g : Hom b c),
-      mh a c (g ◦ f) = mh b c g ◦ mh a b f),
-*)
   ∀ mo1 mo2
      (mh1 : Pmh mo1) (mh2 : Pmh mo2)
      (mc1 : Pmc (existT _ mo1 mh1)) (mc2 : Pmc (existT _ mo2 mh2))
@@ -888,17 +938,6 @@ destruct Hp; cbn.
 cbn in mc2, mi2.
 unfold Pmc in mc1, mc2.
 cbn in mc1, mc2.
-...
-Check (λ Q, {p : mo1 = mo2 & {q : h4c.transport Pmh p mh1 = mh2 & h4c.transport Q q (h4c.transport Pmh p mh1) = mh2}}).
-
-The term "h4c.transport Pmh p0 mh1" has type "Pmh mo2"
-while it is expected to have type "Q (h4c.transport Pmh p0 mh1)".
-
-Check (h4c.transport Pmh p mh1)
-
-destruct p.
-destruct Hp; cbn.
-cbn in mc2, mi2.
 ...
 
 Theorem arr_cat_equiv_2_cat {C} :
