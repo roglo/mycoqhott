@@ -2,10 +2,11 @@
 (* http://angg.twu.net/tmp/2016-optativa/awodey__category_theory.pdf *)
 
 Set Universe Polymorphism.
+Set Nested Proofs Allowed.
+
 Require Import Utf8.
 Require ClassicalFacts.
 Require h4c.
-Set Nested Proofs Allowed.
 
 Definition isSet := h4c.isSet.
 Definition isProp := h4c.isProp.
