@@ -860,64 +860,34 @@ apply h4c.pair_transport_eq_existT; cbn.
 now exists eq_refl.
 Defined.
 
-Record gunctor (C D : category) : Type :=
-  { g_map_obj : Ob C → Ob D;
-    g_map_hom : ∀ a b : Ob C, Hom a b → Hom (g_map_obj a) (g_map_obj b) }.
-
-Theorem dep_pair_gunctor_eq {C D} :
-  ∀ (Pmh := λ f : Ob C → Ob D, ∀ a b : Ob C, Hom a b → Hom (f a) (f b)),
-  ∀ mo1 mo2
-     (mh1 : Pmh mo1) (mh2 : Pmh mo2),
-  {p : mo1 = mo2 & h4c.transport Pmh p mh1 = mh2}
-  → {| g_map_obj := mo1; g_map_hom := mh1 |} =
-     {| g_map_obj := mo2; g_map_hom := mh2 |}.
-Proof.
-intros * (p, Hp).
-now destruct p, Hp.
-Qed.
-
-Theorem dep_pair_functor_eq {C D} :
-  ∀ (Phc := λ hm,
+Definition functor_td C D :=
+  {mo : Ob C → Ob D &
+   {mh : ∀ a b : Ob C, Hom a b → Hom (mo a) (mo b) &
     ((∀ (a b c : Ob C) (f : Hom a b) (g : Hom b c),
-      g_map_hom C D hm a c (g ◦ f) =
-      g_map_hom C D hm b c g ◦ g_map_hom C D hm a b f) *
-     (∀ a : Ob C, g_map_hom C D hm a a (idc a) = idc (g_map_obj C D hm a)))%type),
-  ∀ (hm1 hm2 : gunctor C D) hci1 hci2,
-  {p : hm1 = hm2 & h4c.transport Phc p hci1 = hci2}
-  → {| f_map_obj := g_map_obj C D hm1; f_map_hom := g_map_hom C D hm1;
-        f_comp_prop := fst hci1; f_id_prop := snd hci1 |} =
-     {| f_map_obj := g_map_obj C D hm2; f_map_hom := g_map_hom C D hm2;
-        f_comp_prop := fst hci2; f_id_prop := snd hci2 |}.
-Proof.
-intros * (p, Hp).
-now destruct p, Hp; cbn.
-Qed.
-
-...
+         mh a c (g ◦ f) = mh b c g ◦ mh a b f) *
+     (∀ a : Ob C, mh a a (idc a) = idc (mo a)))%type }}.
 
 Theorem dep_pair_functor_eq {C D} :
-  ∀ (Pmh := λ f : Ob C → Ob D, ∀ a b : Ob C, Hom a b → Hom (f a) (f b))
-     (Pmc := λ mo_mh : { mo : Ob C → Ob D & Pmh mo },
-      ∀ (a b c : Ob C) (f : Hom a b) (g : Hom b c),
-      projT2 mo_mh a c (g ◦ f) = projT2 mo_mh b c g ◦ projT2 mo_mh a b f),
-  ∀ mo1 mo2
-     (mh1 : Pmh mo1) (mh2 : Pmh mo2)
-     (mc1 : Pmc (existT _ mo1 mh1)) (mc2 : Pmc (existT _ mo2 mh2))
-     mi1 mi2,
-  {p : mo1 = mo2 & h4c.transport Pmh p mh1 = mh2}
+  ∀ (mo1 mo2 : Ob C → Ob D) mh1 mh2 mc1 mc2 mi1 mi2,
+  (existT _ mo1 (existT _ mh1 (mc1, mi1)) : functor_td C D) =
+  (existT _ mo2 (existT _ mh2 (mc2, mi2)) : functor_td C D)
   → {| f_map_obj := mo1; f_map_hom := mh1; f_comp_prop := mc1;
         f_id_prop := mi1 |} =
      {| f_map_obj := mo2; f_map_hom := mh2; f_comp_prop := mc2;
         f_id_prop := mi2 |}.
 Proof.
-intros * (p, Hp).
-destruct p.
-...
-destruct Hp; cbn.
-cbn in mc2, mi2.
-unfold Pmc in mc1, mc2.
-cbn in mc1, mc2.
-...
+intros * Hp.
+apply h4c.eq_existT_pair_transport in Hp.
+destruct Hp as (p, Hp).
+destruct p; cbn in Hp.
+apply h4c.eq_existT_pair_transport in Hp.
+destruct Hp as (p, Hp).
+destruct p; cbn in Hp.
+Set Keep Proof Equalities.
+injection Hp.
+intros H1 H2.
+now destruct H1, H2.
+Qed.
 
 Theorem arr_cat_equiv_2_cat {C} :
   are_equivalent_categories (ArrowCat C) (FunCat Cat_2 C).
@@ -934,6 +904,37 @@ exists
      f_id_prop := fun_2_C_arr_cat_id_prop |}.
 -unfold functor_comp; cbn.
  unfold functor_id; cbn.
+ apply dep_pair_functor_eq.
+ apply h4c.pair_transport_eq_existT.
+ exists (
+     fun_ext (Ob (ArrowCat C)) (λ _ : Ob (ArrowCat C), Ob (ArrowCat C))
+             (λ x : Ob (ArrowCat C), fun_2_C_arr_cat_map_obj (arr_cat_fun_2_C_map_obj x))
+             (λ x : Ob (ArrowCat C), x)
+             (λ X : Ob (ArrowCat C),
+                    let (XA, s) as s return (fun_2_C_arr_cat_map_obj (arr_cat_fun_2_C_map_obj s) = s) := X in
+                    let
+                      (XB, Xf) as s0
+                      return
+                      (fun_2_C_arr_cat_map_obj
+                         (arr_cat_fun_2_C_map_obj (existT (λ A : Ob C, {B : Ob C & Hom A B}) XA s0)) =
+                       existT (λ A : Ob C, {B : Ob C & Hom A B}) XA s0) := s in
+                    eq_refl)).
+ cbn.
+(*
+ assert (pppp :
+   (λ x, fun_2_C_arr_cat_map_obj (arr_cat_fun_2_C_map_obj x)) = (λ x, x)). {
+   apply fun_ext; intros X.
+   now destruct X as (XA & XB & Xf).
+ }
+ exists p; cbn.
+*)
+Search (h4c.transport _ _ (existT _ _ _)).
+...
+}
+exists p.
+apply Hom_set.
+Defined.
+
 ...
 
  assert
