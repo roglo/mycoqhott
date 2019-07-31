@@ -860,17 +860,7 @@ apply h4c.pair_transport_eq_existT; cbn.
 now exists eq_refl.
 Defined.
 
-Theorem glop {A} {P : A → Type} :
-  ∀ a b (Ha : P a) (Hb : P b),
-  {p : a = b & h4c.transport P p Ha = Hb} → existT P a Ha = existT P b Hb.
-Proof.
-intros * (p, Hp).
-now destruct p, Hp.
-Defined.
-
-Print functor.
-
-Theorem agaga {C D} :
+Theorem dep_pair_functor_eq {C D} :
   ∀ (Pmh := λ f : Ob C → Ob D, ∀ a b : Ob C, Hom a b → Hom (f a) (f b)),
   ∀ mo1 mo2 (mh1 : Pmh mo1) (mh2 : Pmh mo2)
      mc1 mc2 mi1 mi2,
@@ -900,6 +890,7 @@ exists
      f_id_prop := fun_2_C_arr_cat_id_prop |}.
 -unfold functor_comp; cbn.
  unfold functor_id; cbn.
+...
 
  assert
    (H1 :
