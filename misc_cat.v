@@ -876,17 +876,7 @@ intros * (p, Hp).
 now destruct p, Hp.
 Qed.
 
-Print functor.
-
-Record hunctor (C D : category) : Type :=
-  { h_map : gunctor C D;
-    h_comp_prop : ∀ (a b c : Ob C) (f : Hom a b) (g : Hom b c),
-      g_map_hom C D h_map a c (g ◦ f) =
-        g_map_hom C D h_map b c g ◦ g_map_hom C D h_map a b f;
-    h_id_prop :
-      ∀ a : Ob C, g_map_hom C D h_map a a (idc a) = idc (g_map_obj C D h_map a) }.
-
-Theorem dep_pair_hunctor_eq {C D} :
+Theorem dep_pair_functor_eq {C D} :
   ∀ (Phc := λ hm,
     ((∀ (a b c : Ob C) (f : Hom a b) (g : Hom b c),
       g_map_hom C D hm a c (g ◦ f) =
@@ -894,26 +884,15 @@ Theorem dep_pair_hunctor_eq {C D} :
      (∀ a : Ob C, g_map_hom C D hm a a (idc a) = idc (g_map_obj C D hm a)))%type),
   ∀ (hm1 hm2 : gunctor C D) hci1 hci2,
   {p : hm1 = hm2 & h4c.transport Phc p hci1 = hci2}
-  → {| h_map := hm1; h_comp_prop := fst hci1; h_id_prop := snd hci1 |} =
-     {| h_map := hm2; h_comp_prop := fst hci2; h_id_prop := snd hci2 |}.
+  → {| f_map_obj := g_map_obj C D hm1; f_map_hom := g_map_hom C D hm1;
+        f_comp_prop := fst hci1; f_id_prop := snd hci1 |} =
+     {| f_map_obj := g_map_obj C D hm2; f_map_hom := g_map_hom C D hm2;
+        f_comp_prop := fst hci2; f_id_prop := snd hci2 |}.
 Proof.
 intros * (p, Hp).
 now destruct p, Hp; cbn.
 Qed.
-...
 
-Theorem dep_pair_hunctor_eq {C D} :
-  ∀ (Phc := λ hm,
-    ∀ (a b c : Ob C) (f : Hom a b) (g : Hom b c),
-      g_map_hom C D hm a c (g ◦ f) =
-      g_map_hom C D hm b c g ◦ g_map_hom C D hm a b f),
-  ∀ (hm1 hm2 : gunctor C D) hc1 hc2 hi1 hi2,
-  {p : hm1 = hm2 & h4c.transport Phc p hc1 = hc2}
-  → {| h_map := hm1; h_comp_prop := hc1; h_id_prop := hi1 |} =
-     {| h_map := hm2; h_comp_prop := hc2; h_id_prop := hi2 |}.
-Proof.
-intros * (p, Hp).
-destruct p, Hp; cbn.
 ...
 
 Theorem dep_pair_functor_eq {C D} :
