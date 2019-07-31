@@ -106,7 +106,7 @@ etransitivity; [ | apply f_id_prop ].
 apply f_equal, f_id_prop.
 Defined.
 
-Theorem functor_comp_prop {C D E} {F : functor C D} {G : functor D E} :
+Theorem functor_comp_comp_prop {C D E} {F : functor C D} {G : functor D E} :
    ∀ (a b c : Ob C) (f : Hom a b) (g : Hom b c),
    f_map_hom G (f_map_hom F (g ◦ f)) =
    f_map_hom G (f_map_hom F g) ◦ f_map_hom G (f_map_hom F f).
@@ -120,7 +120,7 @@ Definition functor_comp {C D E} : functor C D → functor D E → functor C E :=
   λ F G,
   {| f_map_obj x := f_map_obj G (f_map_obj F x);
      f_map_hom x y f := f_map_hom G (f_map_hom F f);
-     f_comp_prop := functor_comp_prop;
+     f_comp_prop := functor_comp_comp_prop;
      f_id_prop := functor_comp_id_prop |}.
 
 Definition functor_id C : functor C C :=

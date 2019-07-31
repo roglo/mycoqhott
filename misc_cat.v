@@ -904,6 +904,7 @@ exists
      f_id_prop := fun_2_C_arr_cat_id_prop |}.
 -unfold functor_comp; cbn.
  unfold functor_id; cbn.
+ unfold functor_comp_id_prop; cbn.
 Check functor_eq_of_dep_pair.
 ...
  apply functor_eq_of_dep_pair.
