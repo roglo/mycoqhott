@@ -862,12 +862,18 @@ Defined.
 
 Theorem dep_pair_functor_eq {C D} :
   ∀ (Pmh := λ f : Ob C → Ob D, ∀ a b : Ob C, Hom a b → Hom (f a) (f b))
+(**)
+     (Pmc := λ mo_mh : { mo : Ob C → Ob D & Pmh mo },
+      ∀ (a b c : Ob C) (f : Hom a b) (g : Hom b c),
+      projT2 mo_mh a c (g ◦ f) = projT2 mo_mh b c g ◦ projT2 mo_mh a b f),
+(*
      (Pmc := λ (mo : Ob C → Ob D) (mh : Pmh mo),
       ∀ (a b c : Ob C) (f : Hom a b) (g : Hom b c),
       mh a c (g ◦ f) = mh b c g ◦ mh a b f),
+*)
   ∀ mo1 mo2
      (mh1 : Pmh mo1) (mh2 : Pmh mo2)
-     (mc1 : Pmc mo1 mh1) (mc2 : Pmc mo2 mh2)
+     (mc1 : Pmc (existT _ mo1 mh1)) (mc2 : Pmc (existT _ mo2 mh2))
      mi1 mi2,
   {p : mo1 = mo2 & h4c.transport Pmh p mh1 = mh2}
   → {| f_map_obj := mo1; f_map_hom := mh1; f_comp_prop := mc1;
@@ -876,6 +882,20 @@ Theorem dep_pair_functor_eq {C D} :
         f_id_prop := mi2 |}.
 Proof.
 intros * (p, Hp).
+destruct p.
+...
+destruct Hp; cbn.
+cbn in mc2, mi2.
+unfold Pmc in mc1, mc2.
+cbn in mc1, mc2.
+...
+Check (λ Q, {p : mo1 = mo2 & {q : h4c.transport Pmh p mh1 = mh2 & h4c.transport Q q (h4c.transport Pmh p mh1) = mh2}}).
+
+The term "h4c.transport Pmh p0 mh1" has type "Pmh mo2"
+while it is expected to have type "Q (h4c.transport Pmh p0 mh1)".
+
+Check (h4c.transport Pmh p mh1)
+
 destruct p.
 destruct Hp; cbn.
 cbn in mc2, mi2.
