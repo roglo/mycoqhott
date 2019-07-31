@@ -860,6 +860,14 @@ apply h4c.pair_transport_eq_existT; cbn.
 now exists eq_refl.
 Defined.
 
+(* to use equality of functor records;
+   to do:
+     1/ move it to category.v after the definition of records
+        (but not sure it is useful, actually)
+     2/ use the same system for all definitions with dependend
+        pairs I made, to define them with records, which is
+        more readable *)
+
 Definition functor_td C D :=
   {mo : Ob C → Ob D &
    {mh : ∀ a b : Ob C, Hom a b → Hom (mo a) (mo b) &
@@ -889,6 +897,8 @@ intros H1 H2.
 now destruct H1, H2.
 Qed.
 
+(* *)
+
 Theorem arr_cat_isom_2_cat {C} :
   are_isomorphic_categories (ArrCat C) (FunCat Cat_2 C).
 Proof.
@@ -911,11 +921,30 @@ set (GF :=
      existT (λ A : Ob C, {B : Ob C & Hom A B}) XA s) := s in
   eq_refl).
 exists GF.
+assert (FG : ∀ y : Ob (FunCat Cat_2 C), f_map_obj F (f_map_obj G y) = y). {
+  intros; cbn; cbn in y.
+(* here, y, the parameter of FG, is a functor and this equality should perhaps
+   replaced by an extensional equality of functors, testing it on objects and
+   and in arrows, not checking the full equality of functor records, which seems
+   not possible to prove *)
+...
+  destruct y as (fo, fh, fc, fi).
+  unfold arr_cat_fun_2_C_map_obj.
+  unfold fun_2_C_arr_cat_map_obj; cbn.
+  unfold fun_arr_2_C_map_obj; cbn.
+  apply functor_eq_of_dep_pair.
+  apply h4c.pair_transport_eq_existT.
+  assert (p : (λ b : bool, if b then fo true else fo false) = fo). {
+    apply fun_ext; intros b.
+    now destruct b.
+  }
+  exists p.
 ...
 
 Theorem arr_cat_equiv_2_cat {C} :
   are_equivalent_categories (Arr C) (FunCat Cat_2 C).
 Proof.
+(* seem false (actually not provable) *)
 exists
   {| f_map_obj := arr_cat_fun_2_C_map_obj;
      f_map_hom _ _ := arr_cat_fun_2_C_map_hom;
