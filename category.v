@@ -174,56 +174,16 @@ Arguments are_equivalent_categories C%Cat D%Cat.
 
 (* natural transformation *)
 
-Record natural_transformation {C D} (F : functor C D) (G : functor C D) :=
-  { nt_component  : ∀ x, Hom (f_map_obj F x) (f_map_obj G x);
-    nt_commute :
-      ∀ x y (f : Hom x y),
-      nt_component y ◦ f_map_hom F f = f_map_hom G f ◦ nt_component x }.
+Definition natural_transformation {C D} (F : functor C D) (G : functor C D) :=
+  { ϑ : ∀ x, Hom (f_map_obj F x) (f_map_obj G x) &
+    ∀ x y (f : Hom x y), ϑ y ◦ f_map_hom F f = f_map_hom G f ◦ ϑ x }.
 
 Arguments natural_transformation {_} {_} F%Fun G%Fun.
-Arguments nt_component {_} {_} {_} {_}.
-Arguments nt_commute {_} {_} {_} {_}.
 
-(*
 Definition nt_component {C D} {F G : functor C D}
   (η : natural_transformation F G) := projT1 η.
 Definition nt_commute {C D} {F G : functor C D}
   (η : natural_transformation F G) := projT2 η.
-*)
-
-Definition nt_dep_pair {C D} (F : functor C D) (G : functor C D) :=
-  { ϑ : ∀ x, Hom (f_map_obj F x) (f_map_obj G x) &
-    ∀ x y (f : Hom x y), ϑ y ◦ f_map_hom F f = f_map_hom G f ◦ ϑ x }.
-
-Theorem nt_eq_of_dep_pair {C D} (F : functor C D) (G : functor C D) :
-  ∀ np1 np2 nm1 nm2,
-  (existT _ np1 nm1 : nt_dep_pair F G) =
-  (existT _ np2 nm2 : nt_dep_pair F G)
-  → {| nt_component := np1; nt_commute := nm1 |} =
-     {| nt_component := np2; nt_commute := nm2 |}.
-Proof.
-intros * Hp.
-apply h4c.eq_existT_pair_transport in Hp.
-destruct Hp as (p, Hp).
-now destruct p, Hp.
-Qed.
-
-Theorem dep_pair_eq_of_nt {C D} (F : functor C D) (G : functor C D) :
-  ∀ np1 np2 nm1 nm2,
-  {| nt_component := np1; nt_commute := nm1 |} =
-  {| nt_component := np2; nt_commute := nm2 |}
-  → (existT _ np1 nm1 : nt_dep_pair F G) =
-     (existT _ np2 nm2 : nt_dep_pair F G).
-Proof.
-intros * Hp; cbn.
-apply h4c.pair_transport_eq_existT.
-injection Hp; intros H1.
-destruct H1; exists eq_refl; cbn.
-apply fun_ext; intros X.
-apply fun_ext; intros Y.
-apply fun_ext; intros f.
-apply Hom_set.
-Qed.
 
 Definition nat_transf_id {C D} (F : functor C D) :
   natural_transformation F F.
@@ -250,8 +210,8 @@ Definition nat_transf_comp {C D} {F G H : functor C D} :
     natural_transformation F G → natural_transformation G H →
     natural_transformation F H :=
   λ η η',
-  {| nt_component x := nt_component η' x ◦ nt_component η x;
-     nt_commute := nat_transf_comp_nt_commute η η' |}.
+  existT _ (λ x, nt_component η' x ◦ nt_component η x)
+    (nat_transf_comp_nt_commute η η').
 
 (* natural isomorphism *)
 
@@ -276,7 +236,6 @@ Proof.
 intros.
 destruct f as (f, Hf).
 unfold nat_transf_comp; cbn.
-apply nt_eq_of_dep_pair.
 apply eq_existT_uncurried.
 assert (p : (λ x : Ob C, f x ◦ idc (f_map_obj F x)) = f). {
   apply fun_ext.
@@ -296,7 +255,6 @@ Proof.
 intros.
 destruct f as (f, Hf).
 unfold nat_transf_comp; cbn.
-apply nt_eq_of_dep_pair.
 apply eq_existT_uncurried.
 assert (p : (λ x : Ob C, idc (f_map_obj G x) ◦ f x) = f). {
   apply fun_ext.
@@ -318,7 +276,6 @@ Theorem Fun_assoc {C D} (F G H I : functor C D) :
 Proof.
 intros.
 unfold nat_transf_comp; cbn.
-apply nt_eq_of_dep_pair.
 apply eq_existT_uncurried.
 assert
  (p :
@@ -336,21 +293,8 @@ Qed.
 Theorem Fun_Hom_set {C D} : ∀ F G : functor C D,
   isSet (natural_transformation F G).
 Proof.
-intros * a b c d.
-destruct a as (a, Ha).
-destruct b as (b, Hb).
-move b before a.
-injection c; intros p; destruct p.
-assert (H1 : Ha = Hb). {
-  apply fun_ext; intros X.
-  apply fun_ext; intros Y.
-  apply fun_ext; intros f.
-  apply Hom_set.
-}
-Check @h4c.is_set_is_set_sigT.
-Check h4c.isSet_forall.
-...
-intros * a b c d.
+intros.
+intros a b c d.
 apply h4c.is_set_is_set_sigT. {
   intros ϑ f g.
   apply fun_ext; intros x.
