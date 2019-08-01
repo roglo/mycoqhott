@@ -66,7 +66,7 @@ Theorem Arr_unit_l {C} {X Y : Arr_Ob C} (f : Arr_Hom X Y) :
 Proof.
 destruct f as ((g1, g2) & Hgg); cbn in Hgg.
 unfold Arr_comp; cbn.
-apply h4c.pair_transport_eq_existT.
+apply eq_existT_uncurried.
 assert (p : (g1 ◦ idc (AC_A X), g2 ◦ idc (AC_B X)) = (g1, g2)). {
   now do 2 rewrite unit_l.
 }
@@ -79,7 +79,7 @@ Theorem Arr_unit_r {C} {X Y : Arr_Ob C} (f : Arr_Hom X Y) :
 Proof.
 destruct f as ((g1, g2) & Hgg); cbn in Hgg.
 unfold Arr_comp; cbn.
-apply h4c.pair_transport_eq_existT.
+apply eq_existT_uncurried.
 assert (p : (idc (AC_A Y) ◦ g1, idc (AC_B Y) ◦ g2) = (g1, g2)). {
   now do 2 rewrite unit_r.
 }
@@ -92,7 +92,7 @@ Theorem Arr_assoc {C} {X Y Z T : Arr_Ob C} (f : Arr_Hom X Y)
   Arr_comp f (Arr_comp g h) = Arr_comp (Arr_comp f g) h.
 Proof.
 unfold Arr_comp at 1 3.
-apply h4c.pair_transport_eq_existT.
+apply eq_existT_uncurried.
 assert (p
   : (AC_Hom_g1 (Arr_comp g h) ◦ AC_Hom_g1 f,
      AC_Hom_g2 (Arr_comp g h) ◦ AC_Hom_g2 f) =
@@ -168,7 +168,7 @@ Theorem SliceCat_unit_l {C} {B : Ob C} {f f' : SliceCat_Ob B}
 Proof.
 destruct g as (g & Hg).
 unfold SliceCat_comp; cbn.
-apply h4c.pair_transport_eq_existT.
+apply eq_existT_uncurried.
 exists (unit_l _).
 apply Hom_set.
 Defined.
@@ -178,7 +178,7 @@ Theorem SliceCat_unit_r {C} {B : Ob C} {f f' : SliceCat_Ob B}
 Proof.
 destruct g as (g & Hg).
 unfold SliceCat_comp; cbn.
-apply h4c.pair_transport_eq_existT.
+apply eq_existT_uncurried.
 exists (unit_r _).
 apply Hom_set.
 Defined.
@@ -189,7 +189,7 @@ Theorem SliceCat_assoc {C} {B : Ob C} {f f' f'' f''' : SliceCat_Ob B}
   SliceCat_comp g (SliceCat_comp h i) = SliceCat_comp (SliceCat_comp g h) i.
 Proof.
 unfold SliceCat_comp at 1 3.
-apply h4c.pair_transport_eq_existT; cbn.
+apply eq_existT_uncurried.
 exists (assoc _ _ _).
 apply Hom_set.
 Defined.
@@ -784,7 +784,7 @@ destruct g as ((g1 & g2) & Hgg); cbn in Hgg.
 move Hff before Hgg.
 unfold arr_cat_fun_2_C_map_hom; cbn.
 unfold nat_transf_comp; cbn.
-apply h4c.pair_transport_eq_existT; cbn.
+apply eq_existT_uncurried.
 assert
   (p
   : (λ b : bool,
@@ -810,7 +810,7 @@ Theorem arr_cat_fun_2_C_id_prop {C} (X : Ob (ArrCat C)) :
   arr_cat_fun_2_C_map_hom (idc X) = idc (arr_cat_fun_2_C_map_obj X).
 Proof.
 cbn; unfold nat_transf_id.
-apply h4c.pair_transport_eq_existT; cbn.
+apply eq_existT_uncurried.
 assert
   (p
   : (λ b : bool,
@@ -848,7 +848,7 @@ Theorem fun_2_C_arr_cat_comp_prop {C} {X Y Z : Ob (FunCat Cat_2 C)}
   fun_2_C_arr_cat_map_hom (g ◦ f) =
   fun_2_C_arr_cat_map_hom g ◦ fun_2_C_arr_cat_map_hom f.
 Proof.
-apply h4c.pair_transport_eq_existT; cbn.
+apply eq_existT_uncurried.
 exists eq_refl; cbn.
 apply Hom_set.
 Defined.
@@ -856,7 +856,7 @@ Defined.
 Theorem fun_2_C_arr_cat_id_prop {C} (X : Ob (FunCat Cat_2 C)) :
   fun_2_C_arr_cat_map_hom (idc X) = idc (fun_2_C_arr_cat_map_obj X).
 Proof.
-apply h4c.pair_transport_eq_existT; cbn.
+apply eq_existT_uncurried.
 now exists eq_refl.
 Defined.
 
@@ -967,8 +967,13 @@ exists
      f_id_prop := fun_2_C_arr_cat_id_prop |}.
 -unfold functor_comp; cbn.
  unfold functor_id; cbn.
+ unfold functor_comp_id_prop; cbn.
+ unfold fun_2_C_arr_cat_map_hom at 2.
+...
+ unfold f_equal.
+...
  apply functor_eq_of_dep_pair.
- apply h4c.pair_transport_eq_existT.
+ apply eq_existT_uncurried.
  transparent assert
    (H1 : (λ x : Arr_Ob C,
      fun_2_C_arr_cat_map_obj (arr_cat_fun_2_C_map_obj x)) =
@@ -977,4 +982,5 @@ exists
    now destruct x as (XA & XB & Xf).
  }
  exists H1; cbn.
+ Set Printing Depth 14.
 ...
