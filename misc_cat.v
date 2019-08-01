@@ -970,8 +970,6 @@ exists
  unfold functor_comp_id_prop; cbn.
  unfold fun_2_C_arr_cat_map_hom at 2.
 ...
- unfold f_equal.
-...
  apply functor_eq_of_dep_pair.
  apply eq_existT_uncurried.
  transparent assert
