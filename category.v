@@ -217,17 +217,13 @@ Theorem dep_pair_eq_of_nt {C D} (F : functor C D) (G : functor C D) :
 Proof.
 intros * Hp; cbn.
 apply h4c.pair_transport_eq_existT.
-Set Keep Proof Equalities.
-injection Hp; intros H1 H2.
-destruct H2; exists eq_refl; cbn.
-cbn in H1.
-apply h4c.eq_existT_pair_transport in H1.
-...
-destruct H1 as (p & Hp); clear Hp.
-destruct p.
-cbn in H2.
-destruct H1
-...
+injection Hp; intros H1.
+destruct H1; exists eq_refl; cbn.
+apply fun_ext; intros X.
+apply fun_ext; intros Y.
+apply fun_ext; intros f.
+apply Hom_set.
+Qed.
 
 Definition nat_transf_id {C D} (F : functor C D) :
   natural_transformation F F.
@@ -340,14 +336,21 @@ Qed.
 Theorem Fun_Hom_set {C D} : ∀ F G : functor C D,
   isSet (natural_transformation F G).
 Proof.
-intros.
-intros a b c d.
+intros * a b c d.
 destruct a as (a, Ha).
 destruct b as (b, Hb).
-specialize (dep_pair_of_nt_eq) as H1.
+move b before a.
+injection c; intros p; destruct p.
+assert (H1 : Ha = Hb). {
+  apply fun_ext; intros X.
+  apply fun_ext; intros Y.
+  apply fun_ext; intros f.
+  apply Hom_set.
+}
+Check @h4c.is_set_is_set_sigT.
+Check h4c.isSet_forall.
 ...
-intros.
-intros a b c d.
+intros * a b c d.
 apply h4c.is_set_is_set_sigT. {
   intros ϑ f g.
   apply fun_ext; intros x.
