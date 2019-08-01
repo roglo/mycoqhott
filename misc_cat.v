@@ -955,6 +955,14 @@ Tactic Notation "transparent" "assert" "(" ident(H) ":" lconstr(type) ")" :=
 Theorem arr_cat_equiv_2_cat {C} :
   are_equivalent_categories (ArrCat C) (FunCat Cat_2 C).
 Proof.
+set (D := FunCat Cat_2 C).
+unfold FunCat, Cat_2 in D.
+cbn in D.
+unfold Cat_2_Hom in D.
+cbn in D.
+destruct C.
+cbn in *.
+...
 exists
   {| f_map_obj := arr_cat_fun_2_C_map_obj;
      f_map_hom _ _ := arr_cat_fun_2_C_map_hom;
