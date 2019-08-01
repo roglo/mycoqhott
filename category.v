@@ -97,11 +97,6 @@ Definition fop {C D} : functor C D → functor C⁰ D⁰ :=
 Definition is_isomorphism {C : category} {A B : Ob C} (f : Hom A B) :=
   { g : Hom B A & ((g ◦ f = idc A) * (f ◦ g = idc B))%type }.
 
-Definition functor_eq {C D} (F G : functor C D) :=
-  let P := λ f, ∀ a b : Ob C, Hom a b → Hom (f a) (f b) in
-  { p : f_map_obj F = f_map_obj G &
-    h4c.transport P p (@f_map_hom C D F) = @f_map_hom C D G }.
-
 Theorem functor_comp_id_prop {C D E} {F : functor C D} {G : functor D E} :
   ∀ x : Ob C,
    f_map_hom G (f_map_hom F (idc x)) = idc (f_map_obj G (f_map_obj F x)).
@@ -170,9 +165,7 @@ Definition is_functor_injective_on_arrows {C D} (F : functor C D) :=
 (* *)
 
 Definition is_equiv_betw_cat {C D} (F : functor C D) :=
-  { G : functor D C &
-    functor_eq (functor_comp F G) (functor_id C) &
-    functor_eq (functor_comp G F) (functor_id D) }.
+  { G : functor D C & (G ◦ F = 1 C)%Fun & (F ◦ G = 1 D)%Fun }.
 
 Definition are_equivalent_categories (C D : category) :=
   { F : functor C D & is_equiv_betw_cat F }.

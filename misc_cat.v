@@ -949,6 +949,9 @@ Print is_iso_betw_cat.
 ...
 *)
 
+Tactic Notation "transparent" "assert" "(" ident(H) ":" lconstr(type) ")" :=
+  unshelve (refine (let H := (_ : type) in _)).
+
 Theorem arr_cat_equiv_2_cat {C} :
   are_equivalent_categories (ArrCat C) (FunCat Cat_2 C).
 Proof.
@@ -964,153 +967,14 @@ exists
      f_id_prop := fun_2_C_arr_cat_id_prop |}.
 -unfold functor_comp; cbn.
  unfold functor_id; cbn.
- unfold functor_eq; cbn.
-(**)
- assert (p
-  : (λ x : Arr_Ob C, fun_2_C_arr_cat_map_obj (arr_cat_fun_2_C_map_obj x)) =
-    (λ x : Arr_Ob C, x)). {
-   apply fun_ext; intros X.
-   destruct X as (XA & XB & Xf); cbn.
-   apply h4c.pair_transport_eq_existT.
-   unfold arr_cat_fun_2_C_map_obj; cbn.
-   now exists eq_refl.
- }
-(*
- set (p :=
-(
-           fun_ext (Arr_Ob C) (λ _ : Arr_Ob C, Ob (ArrCat C))
-             (λ x : Arr_Ob C,
-                @fun_2_C_arr_cat_map_obj C (@arr_cat_fun_2_C_map_obj C x))
-             (λ x : Arr_Ob C, x)
-             (λ X : Arr_Ob C,
-                let
-                  (XA, s) as s
-                   return
-                     (@fun_2_C_arr_cat_map_obj C (@arr_cat_fun_2_C_map_obj C s) =
-                      s) := X in
-                let
-                  (XB, Xf) as s0
-                   return
-                     (@fun_2_C_arr_cat_map_obj C
-                        (@arr_cat_fun_2_C_map_obj C
-                           (@existT (Ob C)
-                              (λ A : Ob C, {B : Ob C & @Hom C A B}) XA s0)) =
-                      @existT (Ob C) (λ A : Ob C, {B : Ob C & @Hom C A B}) XA
-                        s0) := s in
-                @h4c.pair_transport_eq_existT (Ob C)
-                  (λ A : Ob C, {B : Ob C & @Hom C A B})
-                  (@f_map_obj Cat_2 C
-                     (@arr_cat_fun_2_C_map_obj C
-                        (@existT (Ob C) (λ A : Ob C, {B : Ob C & @Hom C A B})
-                           XA (@existT (Ob C) (λ B : Ob C, @Hom C XA B) XB Xf)))
-                     false) XA
-                  (@existT (Ob C)
-                     (λ B : Ob C,
-                        @Hom C
-                          (@f_map_obj Cat_2 C
-                             (@arr_cat_fun_2_C_map_obj C
-                                (@existT (Ob C)
-                                   (λ A : Ob C, {B0 : Ob C & @Hom C A B0}) XA
-                                   (@existT (Ob C) (λ B0 : Ob C, @Hom C XA B0)
-                                      XB Xf))) false) B)
-                     (@f_map_obj Cat_2 C
-                        (@arr_cat_fun_2_C_map_obj C
-                           (@existT (Ob C)
-                              (λ A : Ob C, {B : Ob C & @Hom C A B}) XA
-                              (@existT (Ob C) (λ B : Ob C, @Hom C XA B) XB Xf)))
-                        true)
-                     (@f_map_hom Cat_2 C
-                        (@arr_cat_fun_2_C_map_obj C
-                           (@existT (Ob C)
-                              (λ A : Ob C, {B : Ob C & @Hom C A B}) XA
-                              (@existT (Ob C) (λ B : Ob C, @Hom C XA B) XB Xf)))
-                        false true I))
-                  (@existT (Ob C) (λ B : Ob C, @Hom C XA B) XB Xf)
-                  (@existT (XA = XA)
-                     (λ p : XA = XA,
-                        @h4c.transport (Ob C)
-                          (λ A : Ob C, {B : Ob C & @Hom C A B}) XA XA p
-                          (@existT (Ob C) (λ B : Ob C, @Hom C XA B) XB Xf) =
-                        @existT (Ob C) (λ B : Ob C, @Hom C XA B) XB Xf)
-                     (@eq_refl (Ob C) XA)
-                     (@eq_refl {B : Ob C & @Hom C XA B}
-                        (@existT (Ob C) (λ B : Ob C, @Hom C XA B) XB Xf)))))
-:
-           (λ x : Arr_Ob C, fun_2_C_arr_cat_map_obj (arr_cat_fun_2_C_map_obj x)) =
-           (λ x : Arr_Ob C, x)).
-*)
- exists p.
- apply fun_ext; intros X.
- apply fun_ext; intros Y.
- apply fun_ext; intros f.
- unfold Arr_Hom in f.
- destruct f as ((g1, g2) & Hgg); cbn in Hgg.
- unfold fun_2_C_arr_cat_map_hom; cbn.
-...
- unfold functor_comp_id_prop; cbn.
- assert
+ apply functor_eq_of_dep_pair.
+ apply h4c.pair_transport_eq_existT.
+ transparent assert
    (H1 : (λ x : Arr_Ob C,
      fun_2_C_arr_cat_map_obj (arr_cat_fun_2_C_map_obj x)) =
     (λ x, x)). {
    apply fun_ext; intros x.
    now destruct x as (XA & XB & Xf).
  }
- apply functor_eq_of_dep_pair.
- apply h4c.pair_transport_eq_existT.
- exists H1.
-Check (existT
-    (λ mh : ∀ a b : Ob (Arr C), Hom a b → Hom a b,
-       ((∀ (a b c : Ob (Arr C)) (f : Hom a b) (g : Hom b c), mh a c (g ◦ f) = mh b c g ◦ mh a b f) *
-        (∀ a : Ob (Arr C), mh a a (idc a) = idc a))%type) (λ (x y : Arr_Ob C) (f : Arr_Hom x y), f)
-    (λ (a b c : Arr_Ob C) (f : Arr_Hom a b) (g : Arr_Hom b c), eq_refl,
-    λ a : Arr_Ob C, eq_refl)).
-...
-unfold fun_2_C_arr_cat_map_hom.
-unfold arr_cat_fun_2_C_map_hom.
-cbn.
-Check functor_eq_of_dep_pair.
-...
- apply functor_eq_of_dep_pair.
- apply h4c.pair_transport_eq_existT.
-(*
- assert (pppp :
-   (λ x, fun_2_C_arr_cat_map_obj (arr_cat_fun_2_C_map_obj x)) = (λ x, x)). {
-   apply fun_ext; intros X.
-   now destruct X as (XA & XB & Xf).
- }
- exists p; cbn.
-*)
- exists (
-     fun_ext (Ob (Arr C)) (λ _ : Ob (Arr C), Ob (Arr C))
-             (λ x : Ob (Arr C), fun_2_C_arr_cat_map_obj (arr_cat_fun_2_C_map_obj x))
-             (λ x : Ob (Arr C), x)
-             (λ X : Ob (Arr C),
-                    let (XA, s) as s return (fun_2_C_arr_cat_map_obj (arr_cat_fun_2_C_map_obj s) = s) := X in
-                    let
-                      (XB, Xf) as s0
-                      return
-                      (fun_2_C_arr_cat_map_obj
-                         (arr_cat_fun_2_C_map_obj (existT (λ A : Ob C, {B : Ob C & Hom A B}) XA s0)) =
-                       existT (λ A : Ob C, {B : Ob C & Hom A B}) XA s0) := s in
-                    eq_refl)).
- cbn.
- unfold fun_2_C_arr_cat_map_obj, arr_cat_fun_2_C_map_obj; cbn.
- unfold Arr_Ob, Arr_Hom; cbn.
- unfold fun_2_C_arr_cat_map_hom; cbn.
- unfold arr_cat_fun_2_C_map_hom; cbn.
- Set Printing Depth 15.
-...
-}
-exists p.
-apply Hom_set.
-Defined.
-
-...
-
- assert
-   (H1 :
-    (λ X, fun_2_C_arr_cat_map_obj (arr_cat_fun_2_C_map_obj X)) = (λ X, X)). {
-   apply fun_ext.
-   now intros (XA & XB & Xf).
- }
+ exists H1; cbn.
 ...
