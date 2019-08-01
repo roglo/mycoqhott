@@ -967,9 +967,15 @@ exists
      f_id_prop := fun_2_C_arr_cat_id_prop |}.
 -unfold functor_comp; cbn.
  unfold functor_id; cbn.
+ assert ((λ x : Arr_Ob C, fun_2_C_arr_cat_map_obj (arr_cat_fun_2_C_map_obj x)) =
+         (λ x : Arr_Ob C, x)). {
+   apply fun_ext; intros (XA & XB & Xf).
+   unfold fun_2_C_arr_cat_map_obj.
+   now unfold arr_cat_fun_2_C_map_obj; cbn.
+ }
  unfold functor_comp_id_prop; cbn.
- unfold fun_2_C_arr_cat_map_hom at 2.
 ...
+ unfold fun_2_C_arr_cat_map_hom at 2.
  apply functor_eq_of_dep_pair.
  apply eq_existT_uncurried.
  transparent assert
