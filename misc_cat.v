@@ -965,7 +965,8 @@ exists
 -unfold functor_comp; cbn.
  unfold functor_id; cbn.
  unfold functor_eq; cbn.
- assert (p
+(*
+ assert (pppp
   : (λ x : Arr_Ob C, fun_2_C_arr_cat_map_obj (arr_cat_fun_2_C_map_obj x)) =
     (λ x : Arr_Ob C, x)). {
    apply fun_ext; intros X.
@@ -974,6 +975,69 @@ exists
    unfold arr_cat_fun_2_C_map_obj; cbn.
    now exists eq_refl.
  }
+*)
+ set (p :=
+(
+           fun_ext (Arr_Ob C) (λ _ : Arr_Ob C, Ob (ArrCat C))
+             (λ x : Arr_Ob C,
+                @fun_2_C_arr_cat_map_obj C (@arr_cat_fun_2_C_map_obj C x))
+             (λ x : Arr_Ob C, x)
+             (λ X : Arr_Ob C,
+                let
+                  (XA, s) as s
+                   return
+                     (@fun_2_C_arr_cat_map_obj C (@arr_cat_fun_2_C_map_obj C s) =
+                      s) := X in
+                let
+                  (XB, Xf) as s0
+                   return
+                     (@fun_2_C_arr_cat_map_obj C
+                        (@arr_cat_fun_2_C_map_obj C
+                           (@existT (Ob C)
+                              (λ A : Ob C, {B : Ob C & @Hom C A B}) XA s0)) =
+                      @existT (Ob C) (λ A : Ob C, {B : Ob C & @Hom C A B}) XA
+                        s0) := s in
+                @h4c.pair_transport_eq_existT (Ob C)
+                  (λ A : Ob C, {B : Ob C & @Hom C A B})
+                  (@f_map_obj Cat_2 C
+                     (@arr_cat_fun_2_C_map_obj C
+                        (@existT (Ob C) (λ A : Ob C, {B : Ob C & @Hom C A B})
+                           XA (@existT (Ob C) (λ B : Ob C, @Hom C XA B) XB Xf)))
+                     false) XA
+                  (@existT (Ob C)
+                     (λ B : Ob C,
+                        @Hom C
+                          (@f_map_obj Cat_2 C
+                             (@arr_cat_fun_2_C_map_obj C
+                                (@existT (Ob C)
+                                   (λ A : Ob C, {B0 : Ob C & @Hom C A B0}) XA
+                                   (@existT (Ob C) (λ B0 : Ob C, @Hom C XA B0)
+                                      XB Xf))) false) B)
+                     (@f_map_obj Cat_2 C
+                        (@arr_cat_fun_2_C_map_obj C
+                           (@existT (Ob C)
+                              (λ A : Ob C, {B : Ob C & @Hom C A B}) XA
+                              (@existT (Ob C) (λ B : Ob C, @Hom C XA B) XB Xf)))
+                        true)
+                     (@f_map_hom Cat_2 C
+                        (@arr_cat_fun_2_C_map_obj C
+                           (@existT (Ob C)
+                              (λ A : Ob C, {B : Ob C & @Hom C A B}) XA
+                              (@existT (Ob C) (λ B : Ob C, @Hom C XA B) XB Xf)))
+                        false true I))
+                  (@existT (Ob C) (λ B : Ob C, @Hom C XA B) XB Xf)
+                  (@existT (XA = XA)
+                     (λ p : XA = XA,
+                        @h4c.transport (Ob C)
+                          (λ A : Ob C, {B : Ob C & @Hom C A B}) XA XA p
+                          (@existT (Ob C) (λ B : Ob C, @Hom C XA B) XB Xf) =
+                        @existT (Ob C) (λ B : Ob C, @Hom C XA B) XB Xf)
+                     (@eq_refl (Ob C) XA)
+                     (@eq_refl {B : Ob C & @Hom C XA B}
+                        (@existT (Ob C) (λ B : Ob C, @Hom C XA B) XB Xf)))))
+:
+           (λ x : Arr_Ob C, fun_2_C_arr_cat_map_obj (arr_cat_fun_2_C_map_obj x)) =
+           (λ x : Arr_Ob C, x)).
  exists p.
  apply fun_ext; intros X.
  apply fun_ext; intros Y.
