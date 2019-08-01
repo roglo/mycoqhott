@@ -965,8 +965,8 @@ exists
 -unfold functor_comp; cbn.
  unfold functor_id; cbn.
  unfold functor_eq; cbn.
-(*
- assert (pppp
+(**)
+ assert (p
   : (λ x : Arr_Ob C, fun_2_C_arr_cat_map_obj (arr_cat_fun_2_C_map_obj x)) =
     (λ x : Arr_Ob C, x)). {
    apply fun_ext; intros X.
@@ -975,7 +975,7 @@ exists
    unfold arr_cat_fun_2_C_map_obj; cbn.
    now exists eq_refl.
  }
-*)
+(*
  set (p :=
 (
            fun_ext (Arr_Ob C) (λ _ : Arr_Ob C, Ob (ArrCat C))
@@ -1038,6 +1038,7 @@ exists
 :
            (λ x : Arr_Ob C, fun_2_C_arr_cat_map_obj (arr_cat_fun_2_C_map_obj x)) =
            (λ x : Arr_Ob C, x)).
+*)
  exists p.
  apply fun_ext; intros X.
  apply fun_ext; intros Y.
