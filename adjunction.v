@@ -118,22 +118,37 @@ Theorem fc_map_obj_comp_prop {A B C} (F : functor (A × B) C)
   fc_map_obj_map_hom F X (g ◦ f) =
   fc_map_obj_map_hom F X g ◦ fc_map_obj_map_hom F X f.
 Proof.
-...
+specialize (@f_comp_prop _ _ F (X, Y) (X, Y') (X, Y'')) as H1.
+specialize (H1 (idc _, f) (idc _, g)); cbn in H1.
+now rewrite unit_l in H1.
+Qed.
+
+Theorem fc_map_obj_id_prop {A B C} (F : functor (A × B) C)
+  (X : Ob A) (Y : Ob B) :
+  fc_map_obj_map_hom F X (idc Y) = idc (fc_map_obj_map_obj F X Y).
+Proof.
+apply (@f_id_prop _ _ F (X, Y)).
+Qed.
 
 Definition fc_map_obj {A B C} (F : functor (A × B) C) (X : Ob A) :
-  Ob (FunCat B C).
-Proof.
-apply
+  Ob (FunCat B C) :=
   {| f_map_obj := fc_map_obj_map_obj F X;
      f_map_hom _ _ := fc_map_obj_map_hom F X;
-     f_comp_prop _ _ _ := fc_map_obj_comp_prop F X |}.
+     f_comp_prop _ _ _ := fc_map_obj_comp_prop F X;
+     f_id_prop := fc_map_obj_id_prop F X |}.
+
+Definition fc_map_hom {A B C} (F : functor (A × B) C) {X X' : Ob A}
+  (f : Hom X X') :
+  Hom (fc_map_obj F X) (fc_map_obj F X').
+Proof.
 ...
 
 Definition functor_curry {A B C} (F : functor (A × B) C) :
   functor A (FunCat B C).
 Proof.
 apply
-  {| f_map_obj := fc_map_obj F |}.
+  {| f_map_obj := fc_map_obj F;
+     f_map_hom _ _ := fc_map_hom F |}.
 ...
 
 (**)
