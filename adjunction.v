@@ -97,23 +97,41 @@ Definition is_right_adjoint2 {C D} (R : functor C D) :=
 Definition is_left_adjoint2 {C D} (L : functor D C) :=
   ∃ R η ε, adjunction2 R L η ε.
 
-(* equivalence between both definitions of adjunction *)
+(**)
 
-(*
-Definition curry {A B C} (f : A * B → C) (X : A) (Y : B) := f (X, Y).
+Definition fc_map_obj_map_obj {A B C} (F : functor (A × B) C)
+  (X : Ob A) (Y : Ob B) : Ob C.
+Proof.
+now apply F.
+Defined.
+
+Definition fc_map_obj_map_hom {A B C} (F : functor (A × B) C)
+  (X : Ob A) {Y Y' : Ob B} (f : Hom Y Y') :
+  Hom (fc_map_obj_map_obj F X Y) (fc_map_obj_map_obj F X Y').
+Proof.
+unfold fc_map_obj_map_obj.
+...
+
+Definition fc_map_obj {A B C} (F : functor (A × B) C) (X : Ob A) :
+  Ob (FunCat B C).
+Proof.
+apply
+  {| f_map_obj := fc_map_obj_map_obj F X;
+     f_map_hom _ _ := fc_map_obj_map_hom F X |}.
+...
 
 Definition functor_curry {A B C} (F : functor (A × B) C) :
-  Ob A → functor B C.
+  functor A (FunCat B C).
 Proof.
-intros X.
 apply
-  {| f_map_obj (Y : Ob B) := f_map_obj F (X, Y) : Ob C;
-     f_map_hom (Y Y' : Ob B) (f : Hom Y Y') :=
-       @f_map_hom (A × B) _ _ (X, Y) (X, Y') (idc X, f) |}.
+  {| f_map_obj := fc_map_obj F |}.
 ...
-*)
 
-(*
+(**)
+
+(* equivalence between both definitions of adjunction *)
+
+(**)
 Theorem adj_adj {C D} (R : functor C D) (L : functor D C) :
   (are_adjoint R L → are_adjoint2 R L) *
   (are_adjoint2 R L → are_adjoint R L).
@@ -190,4 +208,4 @@ faire C^op→[C,Set] à la place C^op×C→Set
  unfold are_adjoint, adjunction.
  destruct Ha as (η & ε & Hr & Hl).
 ...
-*)
+(**)

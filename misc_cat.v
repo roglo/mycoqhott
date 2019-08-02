@@ -942,4 +942,4 @@ exists
     to the equality requires ext_fun. Probable solution: remove ArrCat
     and define it as C^2. I don't like that but perhaps there is no
     better solution *)
-...
+Abort.
