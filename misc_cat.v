@@ -899,9 +899,6 @@ Qed.
 
 (* *)
 
-Tactic Notation "transparent" "assert" "(" ident(H) ":" lconstr(type) ")" :=
-  unshelve (refine (let H := (_ : type) in _)).
-
 Theorem arr_cat_equiv_2_cat {C} :
   are_equivalent_categories (ArrCat C) (FunCat Cat_2 C).
 Proof.

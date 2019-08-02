@@ -18,6 +18,9 @@ Definition hProp := { A : Type & isProp A }.
 Axiom fun_ext : ∀ A B (f g : ∀ x : A, B x), (∀ x, f x = g x) → f = g.
 Axiom prop_ext : ∀ A B, (A ↔ B) → A = B.
 
+Tactic Notation "transparent" "assert" "(" ident(H) ":" lconstr(type) ")" :=
+  unshelve (refine (let H := (_ : type) in _)).
+
 Theorem proof_irrel : isSet Prop.
 intros a1 a2.
 apply (ClassicalFacts.ext_prop_dep_proof_irrel_cic prop_ext).

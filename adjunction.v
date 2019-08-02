@@ -141,21 +141,29 @@ Definition fc_map_hom {A B C} (F : functor (A × B) C) {X X' : Ob A}
   (f : Hom X X') :
   Hom (fc_map_obj F X) (fc_map_obj F X').
 Proof.
-assert
+transparent assert
   (ϑ : ∀ Y, Hom (fc_map_obj_map_obj F X Y) (fc_map_obj_map_obj F X' Y)). {
   intros.
   apply f_map_hom.
   split; [ easy | apply idc ].
 }
-exists ϑ; cbn.
+exists ϑ; unfold ϑ; cbn.
 intros Y Y' g.
 unfold fc_map_obj_map_hom; cbn.
-unfold fc_map_obj_map_obj in ϑ; cbn in ϑ.
 destruct F; cbn in *.
-specialize (@f_comp_prop (
-specialize (@f_map_hom _ _ F (X, Y) (X', Y') (f, g)) as H1.
-cbn in H1.
+specialize (f_comp_prop (X, Y) (X', Y) (X', Y')) as H1; cbn in H1.
+specialize (H1 (f, idc _) (idc _, g)); cbn in H1.
+specialize (f_comp_prop (X, Y) (X, Y') (X', Y')) as H2; cbn in H2.
+specialize (H2 (idc _, g) (f, idc _)); cbn in H2.
+rewrite unit_l, unit_r in H1.
+rewrite unit_l, unit_r in H2.
+now rewrite <- H1, H2.
+Qed.
 
+Definition fc_comp_prop {A B C} (F : functor (A × B) C)
+  {X X' X'' : Ob A} (f : Hom X X') (g : Hom X' X'') :
+  fc_map_hom F (g ◦ f) = fc_map_hom F g ◦ fc_map_hom F f.
+Proof.
 ...
 
 Definition functor_curry {A B C} (F : functor (A × B) C) :
@@ -163,7 +171,8 @@ Definition functor_curry {A B C} (F : functor (A × B) C) :
 Proof.
 apply
   {| f_map_obj := fc_map_obj F;
-     f_map_hom _ _ := fc_map_hom F |}.
+     f_map_hom _ _ := fc_map_hom F;
+     f_comp_prop _ _ _ := fc_comp_prop F |}.
 ...
 
 (**)
