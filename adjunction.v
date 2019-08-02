@@ -169,7 +169,6 @@ Theorem fc_comp_prop {A B C} (F : functor (A × B) C)
   {X X' X'' : Ob A} (f : Hom X X') (g : Hom X' X'') :
   fc_map_hom F (g ◦ f) = fc_map_hom F g ◦ fc_map_hom F f.
 Proof.
-cbn.
 apply eq_existT_uncurried.
 assert
  (p :
@@ -192,7 +191,20 @@ Qed.
 Theorem fc_id_prop {A B C} (F : functor (A × B) C) (X : Ob A) :
   fc_map_hom F (idc X) = idc (fc_map_obj F X).
 Proof.
-...
+apply eq_existT_uncurried; cbn.
+assert
+  (p :
+     (λ Y, @f_map_hom _ _ F (X, Y) (X, Y) (idc X, idc Y)) =
+     (λ Y, idc (fc_map_obj_map_obj F X Y))). {
+  apply fun_ext; intros Y.
+  apply (@f_id_prop _ _ F).
+}
+exists p; cbn.
+apply fun_ext; intros Y.
+apply fun_ext; intros Y'.
+apply fun_ext; intros f.
+apply Hom_set.
+Qed.
 
 Definition functor_curry {A B C} (F : functor (A × B) C) :
   functor A (FunCat B C) :=
@@ -200,6 +212,13 @@ Definition functor_curry {A B C} (F : functor (A × B) C) :
      f_map_hom _ _ := fc_map_hom F;
      f_comp_prop _ _ _ := fc_comp_prop F;
      f_id_prop := fc_id_prop F |}.
+
+(* perhaps I should continue to prove that the two functors are
+   equivalent? I must verify that "equivalence" exists between
+   functors.
+     Or, see if this definition is sufficient to advance in the
+   proof adj_adj below. *)
+
 ...
 
 (**)
