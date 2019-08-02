@@ -1052,7 +1052,19 @@ exists
  unfold fun_2_C_arr_cat_map_hom at 2.
  apply functor_eq_of_dep_pair.
  apply eq_existT_uncurried.
- transparent assert
+set (P := λ y, (λ x, y x) = (λ x : Arr_Ob C, x)).
+Check H.
+enough (HT : P (λ x, fun_2_C_arr_cat_map_obj (arr_cat_fun_2_C_map_obj x))).
+assert (λ p, h4c.transport P p HT).
+exists HT.
+...
+enough (H1 : HT = H).
+rename H into HHHH.
+destruct H1.
+assert (H = eq_refl).
+...
+
+ (*transparent*) assert
    (H1 : (λ x : Arr_Ob C,
      fun_2_C_arr_cat_map_obj (arr_cat_fun_2_C_map_obj x)) =
     (λ x, x)). {
@@ -1060,7 +1072,9 @@ exists
    now destruct x as (XA & XB & Xf).
  }
  exists H1; cbn.
+...
  Set Printing Depth 14.
+
 Require Eqdep_dec.
 symmetry.
 Check Eqdep_dec.eq_rect_eq_dec.
