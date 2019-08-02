@@ -173,10 +173,10 @@ cbn.
 apply eq_existT_uncurried.
 assert
  (p :
-  (λ Y : Ob B, @f_map_hom (A × B) C F (X, Y) (X'', Y) (g ◦ f, @idc B Y)) =
-  (λ x : Ob B,
-   @f_map_hom (A × B) C F (X', x) (X'', x)
-     (g, @idc B x) ◦ @f_map_hom (A × B) C F (X, x) (X', x) (f, @idc B x))). {
+  (λ Y, @f_map_hom _ _ F (X, Y) (X'', Y) (g ◦ f, idc Y)) =
+  (λ Y,
+   @f_map_hom _ _ F (X', Y) (X'', Y)
+     (g, idc Y) ◦ @f_map_hom _ _ F (X, Y) (X', Y) (f, idc Y))). {
   apply fun_ext; intros Y.
   specialize (@f_comp_prop _ _ F (X, Y) (X', Y) (X'', Y)) as H1; cbn in H1.
   specialize (H1 (f, idc _) (g, idc _)); cbn in H1.
