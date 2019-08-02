@@ -935,4 +935,11 @@ exists
    now destruct x as (XA & XB & Xf).
  }
  exists H1; cbn.
+ (* blocked: the problem comes from the definition of ArrCat because the
+    objects are not all of the same type, therefore a dependent pair is
+    required (actually a dependent triplet), and transport (or eq_rect)
+    is also necessary, which create difficulties to be simplified, due
+    to the equality requires ext_fun. Probable solution: remove ArrCat
+    and define it as C^2. I don't like that but perhaps there is no
+    better solution *)
 ...
