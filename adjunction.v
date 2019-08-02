@@ -109,7 +109,15 @@ Definition fc_map_obj_map_hom {A B C} (F : functor (A × B) C)
   (X : Ob A) {Y Y' : Ob B} (f : Hom Y Y') :
   Hom (fc_map_obj_map_obj F X Y) (fc_map_obj_map_obj F X Y').
 Proof.
-unfold fc_map_obj_map_obj.
+apply f_map_hom; cbn.
+split; [ apply idc | easy ].
+Defined.
+
+Theorem fc_map_obj_comp_prop {A B C} (F : functor (A × B) C)
+  (X : Ob A) {Y Y' Y'' : Ob B} (f : Hom Y Y') (g : Hom Y' Y'') :
+  fc_map_obj_map_hom F X (g ◦ f) =
+  fc_map_obj_map_hom F X g ◦ fc_map_obj_map_hom F X f.
+Proof.
 ...
 
 Definition fc_map_obj {A B C} (F : functor (A × B) C) (X : Ob A) :
@@ -117,7 +125,8 @@ Definition fc_map_obj {A B C} (F : functor (A × B) C) (X : Ob A) :
 Proof.
 apply
   {| f_map_obj := fc_map_obj_map_obj F X;
-     f_map_hom _ _ := fc_map_obj_map_hom F X |}.
+     f_map_hom _ _ := fc_map_obj_map_hom F X;
+     f_comp_prop _ _ _ := fc_map_obj_comp_prop F X |}.
 ...
 
 Definition functor_curry {A B C} (F : functor (A × B) C) :
