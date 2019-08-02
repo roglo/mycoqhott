@@ -150,29 +150,56 @@ transparent assert
 exists ϑ; unfold ϑ; cbn.
 intros Y Y' g.
 unfold fc_map_obj_map_hom; cbn.
-destruct F; cbn in *.
-specialize (f_comp_prop (X, Y) (X', Y) (X', Y')) as H1; cbn in H1.
+unfold fc_map_obj_map_obj.
+specialize (@f_comp_prop _ _ F (X, Y) (X', Y) (X', Y')) as H1; cbn in H1.
 specialize (H1 (f, idc _) (idc _, g)); cbn in H1.
-specialize (f_comp_prop (X, Y) (X, Y') (X', Y')) as H2; cbn in H2.
+specialize (@ f_comp_prop _ _ F (X, Y) (X, Y') (X', Y')) as H2; cbn in H2.
 specialize (H2 (idc _, g) (f, idc _)); cbn in H2.
-rewrite unit_l, unit_r in H1.
-rewrite unit_l, unit_r in H2.
-now rewrite <- H1, H2.
-Qed.
+etransitivity.
+-symmetry; apply H2.
+-etransitivity; [ | apply H1 ].
+ apply f_equal; f_equal.
+ +etransitivity; [ apply unit_l | ].
+  symmetry; apply unit_r.
+ +etransitivity; [ apply unit_r | ].
+  symmetry; apply unit_l.
+Defined.
 
-Definition fc_comp_prop {A B C} (F : functor (A × B) C)
+Theorem fc_comp_prop {A B C} (F : functor (A × B) C)
   {X X' X'' : Ob A} (f : Hom X X') (g : Hom X' X'') :
   fc_map_hom F (g ◦ f) = fc_map_hom F g ◦ fc_map_hom F f.
+Proof.
+cbn.
+apply eq_existT_uncurried.
+assert
+ (p :
+  (λ Y : Ob B, @f_map_hom (A × B) C F (X, Y) (X'', Y) (g ◦ f, @idc B Y)) =
+  (λ x : Ob B,
+   @f_map_hom (A × B) C F (X', x) (X'', x)
+     (g, @idc B x) ◦ @f_map_hom (A × B) C F (X, x) (X', x) (f, @idc B x))). {
+  apply fun_ext; intros Y.
+  specialize (@f_comp_prop _ _ F (X, Y) (X', Y) (X'', Y)) as H1; cbn in H1.
+  specialize (H1 (f, idc _) (g, idc _)); cbn in H1.
+  now rewrite unit_l in H1.
+}
+exists p; cbn.
+apply fun_ext; intros Y.
+apply fun_ext; intros Y'.
+apply fun_ext; intros h.
+apply Hom_set.
+Qed.
+
+Theorem fc_id_prop {A B C} (F : functor (A × B) C) (X : Ob A) :
+  fc_map_hom F (idc X) = idc (fc_map_obj F X).
 Proof.
 ...
 
 Definition functor_curry {A B C} (F : functor (A × B) C) :
-  functor A (FunCat B C).
-Proof.
-apply
+  functor A (FunCat B C) :=
   {| f_map_obj := fc_map_obj F;
      f_map_hom _ _ := fc_map_hom F;
-     f_comp_prop _ _ _ := fc_comp_prop F |}.
+     f_comp_prop _ _ _ := fc_comp_prop F;
+     f_id_prop := fc_id_prop F |}.
 ...
 
 (**)
