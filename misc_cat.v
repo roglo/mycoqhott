@@ -952,9 +952,75 @@ Print is_iso_betw_cat.
 Tactic Notation "transparent" "assert" "(" ident(H) ":" lconstr(type) ")" :=
   unshelve (refine (let H := (_ : type) in _)).
 
+Definition bool_Hom2 a b := if xorb a b then False else True.
+
+Definition glop2 {a b c : bool} (f : bool_Hom2 a b) (g : bool_Hom2 b c) :
+  bool_Hom2 a c.
+now destruct a, b, c.
+Show Proof.
+Defined.
+
+Definition bool_Hom a b := if Bool.bool_dec a b then True else False.
+
+Definition glop {a b c : bool} (f : bool_Hom a b) (g : bool_Hom b c) :
+  bool_Hom a c.
+now destruct a, b, c.
+Show Proof.
+Defined.
+
+Definition bool_Hom' (a b : bool) : Type :=
+  if a then if b then True else False
+  else if b then False else True.
+
+(*
+Definition glop' {a b c : bool} (f : bool_Hom' a b) (g : bool_Hom' b c) :
+  bool_Hom' a c :=
+   (if a as b0 return (bool_Hom' b0 b → bool_Hom' b0 c)
+    then
+     λ f0 : bool_Hom' true b,
+       (if b as b0
+         return (bool_Hom' true b0 → bool_Hom' b0 c → bool_Hom' true c)
+        then
+         λ (_ : bool_Hom' true true) (g0 : bool_Hom' true c),
+           (if c as b0 return (bool_Hom' true b0 → bool_Hom' true b0)
+            then λ g1 : bool_Hom' true true, g1
+            else λ g1 : bool_Hom' true false, g1) g0
+        else
+         λ (f1 : bool_Hom' true false) (g0 : bool_Hom' false c),
+           (if c as b0 return (bool_Hom' false b0 → bool_Hom' true b0)
+            then λ _ : bool_Hom' false true, I
+            else λ _ : bool_Hom' false false, f1) g0) f0 g
+    else
+     λ f0 : bool_Hom' false b,
+       (if b as b0
+         return (bool_Hom' false b0 → bool_Hom' b0 c → bool_Hom' false c)
+        then
+         λ (f1 : bool_Hom' false true) (g0 : bool_Hom' true c),
+           (if c as b0 return (bool_Hom' true b0 → bool_Hom' false b0)
+            then λ _ : bool_Hom' true true, f1
+            else λ _ : bool_Hom' true false, I) g0
+        else
+         λ (_ : bool_Hom' false false) (g0 : bool_Hom' false c),
+           (if c as b0 return (bool_Hom' false b0 → bool_Hom' false b0)
+            then λ g1 : bool_Hom' false true, g1
+            else λ g1 : bool_Hom' false false, g1) g0) f0 g) f.
+...
+
+Definition Cat_bool :=
+  {| Ob := bool;
+     Hom := bool_Hom;
+     comp a b c f g := 42;
+     idc := Cat_2_id;
+     unit_l := Cat_2_unit_l;
+     unit_r := Cat_2_unit_r;
+     assoc := Cat_2_assoc;
+     Hom_set := Cat_2_Hom_set |}.
+*)
+
 Theorem arr_cat_equiv_2_cat {C} :
   are_equivalent_categories (ArrCat C) (FunCat Cat_2 C).
 Proof.
+(*
 set (D := FunCat Cat_2 C).
 unfold FunCat, Cat_2 in D.
 cbn in D.
@@ -963,6 +1029,7 @@ cbn in D.
 destruct C.
 cbn in *.
 ...
+*)
 exists
   {| f_map_obj := arr_cat_fun_2_C_map_obj;
      f_map_hom _ _ := arr_cat_fun_2_C_map_hom;
@@ -982,7 +1049,6 @@ exists
    now unfold arr_cat_fun_2_C_map_obj; cbn.
  }
  unfold functor_comp_id_prop; cbn.
-...
  unfold fun_2_C_arr_cat_map_hom at 2.
  apply functor_eq_of_dep_pair.
  apply eq_existT_uncurried.
@@ -995,4 +1061,9 @@ exists
  }
  exists H1; cbn.
  Set Printing Depth 14.
+Require Eqdep_dec.
+symmetry.
+Check Eqdep_dec.eq_rect_eq_dec.
+Search eq_rect.
+rewrite <- Eqdep_dec.eq_rect_eq_dec.
 ...
