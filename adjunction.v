@@ -141,6 +141,21 @@ Definition fc_map_hom {A B C} (F : functor (A × B) C) {X X' : Ob A}
   (f : Hom X X') :
   Hom (fc_map_obj F X) (fc_map_obj F X').
 Proof.
+assert
+  (ϑ : ∀ Y, Hom (fc_map_obj_map_obj F X Y) (fc_map_obj_map_obj F X' Y)). {
+  intros.
+  apply f_map_hom.
+  split; [ easy | apply idc ].
+}
+exists ϑ; cbn.
+intros Y Y' g.
+unfold fc_map_obj_map_hom; cbn.
+unfold fc_map_obj_map_obj in ϑ; cbn in ϑ.
+destruct F; cbn in *.
+specialize (@f_comp_prop (
+specialize (@f_map_hom _ _ F (X, Y) (X', Y') (f, g)) as H1.
+cbn in H1.
+
 ...
 
 Definition functor_curry {A B C} (F : functor (A × B) C) :
