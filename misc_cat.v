@@ -899,137 +899,12 @@ Qed.
 
 (* *)
 
-(*
-Theorem arr_cat_isom_2_cat {C} :
-  are_isomorphic_categories (ArrCat C) (FunCat Cat_2 C).
-Proof.
-set (F :=
-  {| f_map_obj := arr_cat_fun_2_C_map_obj;
-     f_map_hom _ _ := arr_cat_fun_2_C_map_hom;
-     f_comp_prop _ _ _ := arr_cat_fun_2_C_comp_prop;
-     f_id_prop := arr_cat_fun_2_C_id_prop |}).
-set (G :=
-  {| f_map_obj := fun_2_C_arr_cat_map_obj;
-     f_map_hom _ _ := fun_2_C_arr_cat_map_hom;
-     f_comp_prop _ _ _ := fun_2_C_arr_cat_comp_prop;
-     f_id_prop := fun_2_C_arr_cat_id_prop |}).
-exists F, G.
-set (GF :=
-  λ x : Ob (ArrCat C),
-  let (XA, s) as s return (f_map_obj G (f_map_obj F s) = s) := x in
-  let (XB, Xf) as s return
-    (f_map_obj G (f_map_obj F (existT (λ A : Ob C, {B : Ob C & Hom A B}) XA s)) =
-     existT (λ A : Ob C, {B : Ob C & Hom A B}) XA s) := s in
-  eq_refl).
-exists GF.
-assert (FG : ∀ y : Ob (FunCat Cat_2 C), f_map_obj F (f_map_obj G y) = y). {
-  intros; cbn; cbn in y.
-(* here, y, the parameter of FG, is a functor and this equality should perhaps
-   replaced by an extensional equality of functors, testing it on objects and
-   and in arrows, not checking the full equality of functor records, which seems
-   not possible to prove *)
-Print are_isomorphic_categories.
-Print is_iso_betw_cat.
-(*
-   {FG : ∀ y : Ob D, f_map_obj F (f_map_obj G y) = y &
-   here, objects of D are functors... this is my problem
-*)
-...
-  destruct y as (fo, fh, fc, fi).
-  unfold arr_cat_fun_2_C_map_obj.
-  unfold fun_2_C_arr_cat_map_obj; cbn.
-  unfold fun_arr_2_C_map_obj; cbn.
-  apply functor_eq_of_dep_pair.
-  apply h4c.pair_transport_eq_existT.
-  assert (p : (λ b : bool, if b then fo true else fo false) = fo). {
-    apply fun_ext; intros b.
-    now destruct b.
-  }
-  exists p.
-...
-*)
-
 Tactic Notation "transparent" "assert" "(" ident(H) ":" lconstr(type) ")" :=
   unshelve (refine (let H := (_ : type) in _)).
-
-Definition bool_Hom2 a b := if xorb a b then False else True.
-
-Definition glop2 {a b c : bool} (f : bool_Hom2 a b) (g : bool_Hom2 b c) :
-  bool_Hom2 a c.
-now destruct a, b, c.
-Show Proof.
-Defined.
-
-Definition bool_Hom a b := if Bool.bool_dec a b then True else False.
-
-Definition glop {a b c : bool} (f : bool_Hom a b) (g : bool_Hom b c) :
-  bool_Hom a c.
-now destruct a, b, c.
-Show Proof.
-Defined.
-
-Definition bool_Hom' (a b : bool) : Type :=
-  if a then if b then True else False
-  else if b then False else True.
-
-(*
-Definition glop' {a b c : bool} (f : bool_Hom' a b) (g : bool_Hom' b c) :
-  bool_Hom' a c :=
-   (if a as b0 return (bool_Hom' b0 b → bool_Hom' b0 c)
-    then
-     λ f0 : bool_Hom' true b,
-       (if b as b0
-         return (bool_Hom' true b0 → bool_Hom' b0 c → bool_Hom' true c)
-        then
-         λ (_ : bool_Hom' true true) (g0 : bool_Hom' true c),
-           (if c as b0 return (bool_Hom' true b0 → bool_Hom' true b0)
-            then λ g1 : bool_Hom' true true, g1
-            else λ g1 : bool_Hom' true false, g1) g0
-        else
-         λ (f1 : bool_Hom' true false) (g0 : bool_Hom' false c),
-           (if c as b0 return (bool_Hom' false b0 → bool_Hom' true b0)
-            then λ _ : bool_Hom' false true, I
-            else λ _ : bool_Hom' false false, f1) g0) f0 g
-    else
-     λ f0 : bool_Hom' false b,
-       (if b as b0
-         return (bool_Hom' false b0 → bool_Hom' b0 c → bool_Hom' false c)
-        then
-         λ (f1 : bool_Hom' false true) (g0 : bool_Hom' true c),
-           (if c as b0 return (bool_Hom' true b0 → bool_Hom' false b0)
-            then λ _ : bool_Hom' true true, f1
-            else λ _ : bool_Hom' true false, I) g0
-        else
-         λ (_ : bool_Hom' false false) (g0 : bool_Hom' false c),
-           (if c as b0 return (bool_Hom' false b0 → bool_Hom' false b0)
-            then λ g1 : bool_Hom' false true, g1
-            else λ g1 : bool_Hom' false false, g1) g0) f0 g) f.
-...
-
-Definition Cat_bool :=
-  {| Ob := bool;
-     Hom := bool_Hom;
-     comp a b c f g := 42;
-     idc := Cat_2_id;
-     unit_l := Cat_2_unit_l;
-     unit_r := Cat_2_unit_r;
-     assoc := Cat_2_assoc;
-     Hom_set := Cat_2_Hom_set |}.
-*)
 
 Theorem arr_cat_equiv_2_cat {C} :
   are_equivalent_categories (ArrCat C) (FunCat Cat_2 C).
 Proof.
-(*
-set (D := FunCat Cat_2 C).
-unfold FunCat, Cat_2 in D.
-cbn in D.
-unfold Cat_2_Hom in D.
-cbn in D.
-destruct C.
-cbn in *.
-...
-*)
 exists
   {| f_map_obj := arr_cat_fun_2_C_map_obj;
      f_map_hom _ _ := arr_cat_fun_2_C_map_hom;
@@ -1052,19 +927,7 @@ exists
  unfold fun_2_C_arr_cat_map_hom at 2.
  apply functor_eq_of_dep_pair.
  apply eq_existT_uncurried.
-set (P := λ y, (λ x, y x) = (λ x : Arr_Ob C, x)).
-Check H.
-enough (HT : P (λ x, fun_2_C_arr_cat_map_obj (arr_cat_fun_2_C_map_obj x))).
-assert (λ p, h4c.transport P p HT).
-exists HT.
-...
-enough (H1 : HT = H).
-rename H into HHHH.
-destruct H1.
-assert (H = eq_refl).
-...
-
- (*transparent*) assert
+ assert
    (H1 : (λ x : Arr_Ob C,
      fun_2_C_arr_cat_map_obj (arr_cat_fun_2_C_map_obj x)) =
     (λ x, x)). {
@@ -1072,12 +935,4 @@ assert (H = eq_refl).
    now destruct x as (XA & XB & Xf).
  }
  exists H1; cbn.
-...
- Set Printing Depth 14.
-
-Require Eqdep_dec.
-symmetry.
-Check Eqdep_dec.eq_rect_eq_dec.
-Search eq_rect.
-rewrite <- Eqdep_dec.eq_rect_eq_dec.
 ...
