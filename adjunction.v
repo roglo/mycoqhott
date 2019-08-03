@@ -213,16 +213,6 @@ Definition functor_curry {A B C} (F : functor (A × B) C) :
      f_comp_prop _ _ _ := fc_comp_prop F;
      f_id_prop := fc_id_prop F |}.
 
-(* perhaps I should continue to prove that the two functors are
-   equivalent? I must verify that "equivalence" exists between
-   functors.
-     Or, see if this definition is sufficient to advance in the
-   proof adj_adj below. *)
-
-...
-
-(**)
-
 (* equivalence between both definitions of adjunction *)
 
 (**)
@@ -235,6 +225,9 @@ split.
  unfold are_adjoint, adjunction in Ha.
  unfold are_adjoint2, adjunction2.
  destruct Ha as (ϑ, Hiso).
+ assert (η : natural_transformation (1 C) (L ◦ R)). {
+
+...
 (*
  assert (α : ∀ X, Hom (f_map_obj (1 C) X) (f_map_obj (L ◦ R) X)). {
    intros; cbn.
@@ -253,8 +246,6 @@ split.
    specialize (α X) as fX; cbn in fX.
    specialize (α Y) as fY; cbn in fY.
    do 2 rewrite f_id_prop.
-Check (nt_component ϑ).
-...
    destruct ϑ as (ϑ & Hϑ).
    cbn in ϑ, Hiso, α; cbn.
    specialize (Hϑ (Y, f_map_obj R Y) (X, f_map_obj R Y)) as H1.
