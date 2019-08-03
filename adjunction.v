@@ -231,71 +231,11 @@ split.
      apply (nt_component ϑ (X, f_map_obj R X)), idc.
    }
    exists α.
-   intros X Y f; cbn.
-...
-(*
- assert (α : ∀ X, Hom (f_map_obj (1 C) X) (f_map_obj (L ◦ R) X)). {
-   intros; cbn.
-   now specialize (nt_component ϑ (X, f_map_obj R X) (idc _)) as f.
- }
-*)
- set (α := λ X, nt_component ϑ (X, f_map_obj R X) (f_map_hom R (idc X))).
-(*
- set (α := λ X, nt_component ϑ (X, f_map_obj R X) (idc (f_map_obj R X))).
-*)
- cbn in α.
- assert (Hα : ∀ X Y (f : Hom X Y),
-   α Y ◦ f_map_hom (1 C)%Fun f = f_map_hom (L ◦ R)%Fun f ◦ α X). {
-   intros X Y f; cbn.
-   unfold α; cbn.
-   specialize (α X) as fX; cbn in fX.
-   specialize (α Y) as fY; cbn in fY.
-   do 2 rewrite f_id_prop.
-   destruct ϑ as (ϑ & Hϑ).
-   cbn in ϑ, Hiso, α; cbn.
-   specialize (Hϑ (Y, f_map_obj R Y) (X, f_map_obj R Y)) as H1.
+   intros X Y f; cbn; cbn in α.
+   destruct ϑ as (ϑ, Hϑ).
+   cbn in ϑ, Hϑ.
+   specialize (Hϑ (Y, f_map_obj R Y) (X, f_map_obj R Y)) as H1; cbn in H1.
    specialize (H1 (f, idc _)); cbn in H1.
    specialize (@h4c.happly _ _ _ _ H1) as H2; cbn in H2; clear H1.
-   specialize (H2 (idc _)).
-   unfold hom_functor_map_hom in H2; cbn in H2.
-   rewrite <- f_id_prop in H2.
+   specialize (H2 (idc _)); cbn in H2.
 ...
-   specialize (α X) as fX; cbn in fX.
-   specialize (α Y) as fY; cbn in fY.
-   specialize (Hiso (X, f_map_obj R X)) as H1.
-   destruct H1 as (g & Hg1 & Hg2).
-   cbn in g, Hg1, Hg2.
-   specialize (@h4c.happly _ _ _ _ Hg1) as H1; cbn in H1; clear Hg1.
-   specialize (@h4c.happly _ _ _ _ Hg2) as H2; cbn in H2; clear Hg2.
-   specialize (H2 fX).
-...
- }
-...
- exists (existT _ α Hα).
-...
-   specialize (Hiso (X, f_map_obj R Y)) as H1.
-   destruct H1 as (g & Hg1 & Hg2).
-   cbn in g, Hg1, Hg2.
-   specialize (@h4c.happly _ _ _ _ Hg1) as H1; cbn in H1; clear Hg1.
-   specialize (@h4c.happly _ _ _ _ Hg2) as H2; cbn in H2; clear Hg2.
-...
-   destruct ϑ as (ϑ, Hϑ); cbn in *.
-   specialize (Hϑ (Y, f_map_obj R Y) (X, f_map_obj R Y)) as H1.
-   unfold hom_functor_map_hom in H1; cbn in H1.
-   specialize (H1 (f, idc _)).
-   specialize (@h4c.happly _ _ _ _ H1) as H2; clear H1; cbn in H2.
-   specialize (H2 (idc _)).
-   rewrite <- f_id_prop in H2.
-...
- }
- exists (existT _ α Hα).
-...
-  ηC : c → RLc
-faire C^op→[C,Set] à la place C^op×C→Set
-...
--intros Ha.
- unfold are_adjoint2, adjunction2 in Ha.
- unfold are_adjoint, adjunction.
- destruct Ha as (η & ε & Hr & Hl).
-...
-(**)
