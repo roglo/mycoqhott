@@ -226,7 +226,12 @@ split.
  unfold are_adjoint2, adjunction2.
  destruct Ha as (ϑ, Hiso).
  assert (η : natural_transformation (1 C) (L ◦ R)). {
-
+   assert (α : ∀ x : Ob C, Hom (f_map_obj (1 C) x) (f_map_obj (L ◦ R) x)). {
+     intros X; cbn.
+     apply (nt_component ϑ (X, f_map_obj R X)), idc.
+   }
+   exists α.
+   intros X Y f; cbn.
 ...
 (*
  assert (α : ∀ X, Hom (f_map_obj (1 C) X) (f_map_obj (L ◦ R) X)). {
