@@ -236,16 +236,29 @@ split.
    subst α; cbn.
    destruct ϑ as (ϑ, Hϑ).
    cbn in ϑ, Hϑ |-*.
+
    specialize (Hϑ (X', f_map_obj R X') (X, f_map_obj R X')) as H; cbn in H.
    specialize (H (f, idc _)); cbn in H.
    specialize (@h4c.happly _ _ _ _ H) as H1; cbn in H1; clear H.
    specialize (H1 (idc _)); cbn in H1.
+
    specialize (Hϑ (X, f_map_obj R X) (X, f_map_obj R X')) as H; cbn in H.
    specialize (H (idc _, f_map_hom R f)); cbn in H.
    specialize (@h4c.happly _ _ _ _ H) as H2; cbn in H2; clear H.
    specialize (H2 (idc _)); cbn in H2.
+
+   unfold is_natural_isomorphism in Hiso; cbn in Hiso.
+   unfold is_isomorphism in Hiso; cbn in Hiso.
+
    unfold hom_functor_map_hom in H1, H2; cbn in H1, H2.
    do 2 rewrite assoc in H1.
+
+   specialize (Hiso (X', f_map_obj R X')) as H; cbn in H.
+   destruct H as (g & Hg1 & Hg2).
+   specialize (@h4c.happly _ _ _ _ Hg1) as H3; cbn in H3; clear Hg1.
+   specialize (@h4c.happly _ _ _ _ Hg2) as H4; cbn in H4; clear Hg2.
+   specialize (H3 (idc _)).
+...
    remember
      (@comp _ _ _ (f_map_obj L (f_map_obj R X')) f
               (ϑ (X', f_map_obj R X') (idc (f_map_obj R X'))))
