@@ -232,9 +232,11 @@ split.
      apply (nt_component ϑ (X, f_map_obj R X)), idc.
    }
    exists α; cbn in α.
-   intros X Y f; cbn; cbn in α.
+   intros X X' f; cbn; cbn in α.
+   subst α; cbn.
    destruct ϑ as (ϑ, Hϑ).
-   cbn in ϑ, Hϑ.
+   cbn in ϑ, Hϑ |-*.
+...
    specialize (Hϑ (Y, f_map_obj R Y) (X, f_map_obj R Y)) as H; cbn in H.
    specialize (H (f, idc _)); cbn in H.
    specialize (@h4c.happly _ _ _ _ H) as H1; cbn in H1; clear H.
