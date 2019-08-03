@@ -226,16 +226,26 @@ split.
  unfold are_adjoint2, adjunction2.
  destruct Ha as (ϑ, Hiso).
  assert (η : natural_transformation (1 C) (L ◦ R)). {
-   assert (α : ∀ x : Ob C, Hom (f_map_obj (1 C) x) (f_map_obj (L ◦ R) x)). {
+   transparent assert
+      (α : ∀ x : Ob C, Hom (f_map_obj (1 C) x) (f_map_obj (L ◦ R) x)). {
      intros X; cbn.
      apply (nt_component ϑ (X, f_map_obj R X)), idc.
    }
-   exists α.
+   exists α; cbn in α.
    intros X Y f; cbn; cbn in α.
    destruct ϑ as (ϑ, Hϑ).
    cbn in ϑ, Hϑ.
-   specialize (Hϑ (Y, f_map_obj R Y) (X, f_map_obj R Y)) as H1; cbn in H1.
-   specialize (H1 (f, idc _)); cbn in H1.
-   specialize (@h4c.happly _ _ _ _ H1) as H2; cbn in H2; clear H1.
+   specialize (Hϑ (Y, f_map_obj R Y) (X, f_map_obj R Y)) as H; cbn in H.
+   specialize (H (f, idc _)); cbn in H.
+   specialize (@h4c.happly _ _ _ _ H) as H1; cbn in H1; clear H.
+   specialize (H1 (idc _)); cbn in H1.
+   specialize (Hϑ (X, f_map_obj R X) (X, f_map_obj R Y)) as H; cbn in H.
+   specialize (H (idc _, f_map_hom R f)); cbn in H.
+   specialize (@h4c.happly _ _ _ _ H) as H2; cbn in H2; clear H.
    specialize (H2 (idc _)); cbn in H2.
+   unfold α; cbn.
+   unfold hom_functor_map_hom in H1, H2; cbn in H1, H2.
+...
+   unfold is_natural_isomorphism in Hiso; cbn in Hiso.
+   unfold is_isomorphism in Hiso; cbn in Hiso.
 ...
