@@ -236,17 +236,26 @@ split.
    subst α; cbn.
    destruct ϑ as (ϑ, Hϑ).
    cbn in ϑ, Hϑ |-*.
-...
-   specialize (Hϑ (Y, f_map_obj R Y) (X, f_map_obj R Y)) as H; cbn in H.
+   specialize (Hϑ (X', f_map_obj R X') (X, f_map_obj R X')) as H; cbn in H.
    specialize (H (f, idc _)); cbn in H.
    specialize (@h4c.happly _ _ _ _ H) as H1; cbn in H1; clear H.
    specialize (H1 (idc _)); cbn in H1.
-   specialize (Hϑ (X, f_map_obj R X) (X, f_map_obj R Y)) as H; cbn in H.
+   specialize (Hϑ (X, f_map_obj R X) (X, f_map_obj R X')) as H; cbn in H.
    specialize (H (idc _, f_map_hom R f)); cbn in H.
    specialize (@h4c.happly _ _ _ _ H) as H2; cbn in H2; clear H.
    specialize (H2 (idc _)); cbn in H2.
-   unfold α; cbn.
    unfold hom_functor_map_hom in H1, H2; cbn in H1, H2.
+   do 2 rewrite assoc in H1.
+   remember
+     (@comp _ _ _ (f_map_obj L (f_map_obj R X')) f
+              (ϑ (X', f_map_obj R X') (idc (f_map_obj R X'))))
+     as g eqn:Hg.
+   assert (H :
+     f_map_hom L (idc (f_map_obj R X')) ◦ g =
+     f_map_hom L (idc (f_map_obj R X')) ◦
+     f_map_hom L (f_map_hom R f) ◦
+     ϑ (X, f_map_obj R X) (idc (f_map_obj R X))). {
+     rewrite <- H1.
 ...
    unfold is_natural_isomorphism in Hiso; cbn in Hiso.
    unfold is_isomorphism in Hiso; cbn in Hiso.
