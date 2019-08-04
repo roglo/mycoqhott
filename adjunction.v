@@ -258,13 +258,13 @@ split.
    specialize (@h4c.happly _ _ _ _ Hg1) as H3; cbn in H3; clear Hg1.
    specialize (@h4c.happly _ _ _ _ Hg2) as H4; cbn in H4; clear Hg2.
    specialize (H3 (idc _)).
-...
+
    remember
      (@comp _ _ _ (f_map_obj L (f_map_obj R X')) f
               (ϑ (X', f_map_obj R X') (idc (f_map_obj R X'))))
-     as g eqn:Hg.
+     as h eqn:Hh.
    assert (H :
-     f_map_hom L (idc (f_map_obj R X')) ◦ g =
+     f_map_hom L (idc (f_map_obj R X')) ◦ h =
      f_map_hom L (idc (f_map_obj R X')) ◦
      f_map_hom L (f_map_hom R f) ◦
      ϑ (X, f_map_obj R X) (idc (f_map_obj R X))). {
