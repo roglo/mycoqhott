@@ -225,6 +225,15 @@ split.
  unfold are_adjoint, adjunction in Ha.
  unfold are_adjoint2, adjunction2.
  destruct Ha as (ϑ, Hiso).
+ unfold is_natural_isomorphism in Hiso.
+ unfold is_isomorphism in Hiso.
+(*
+ remember (@comp SetCat) as f.
+ remember idc as g.
+ cbn in Hiso; subst f g.
+*)
+ cbn in Hiso.
+...
  assert (η : natural_transformation (1 C) (L ◦ R)). {
    transparent assert (α : ∀ X, Hom X (f_map_obj (L ◦ R) X)). {
      intros X; cbn.
