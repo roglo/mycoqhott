@@ -229,12 +229,13 @@ Record SetsStar_Hom A B :=
     ss_prop : ss_fun (ss_elem A) = ss_elem B }.
 
 Arguments ss_fun {_} {_}.
+Arguments ss_prop {_} {_}.
 
 Theorem SetsStar_comp_prop {A B C} (f : SetsStar_Hom A B)
         (g : SetsStar_Hom B C) :
   ss_fun g (ss_fun f (ss_elem A)) = ss_elem C.
 Proof.
-etransitivity; [ | apply ss_prop ].
+etransitivity; [ | apply @ss_prop ].
 apply f_equal, ss_prop.
 Defined.
 
@@ -272,6 +273,28 @@ Theorem SetsStar_assoc {A B C D : SetsStar_Ob}
   (f : SetsStar_Hom A B) (g : SetsStar_Hom B C) (h : SetsStar_Hom C D) :
   SetsStar_comp f (SetsStar_comp g h) = SetsStar_comp (SetsStar_comp f g) h.
 Proof.
+unfold SetsStar_comp.
+apply f_equal; cbn.
+unfold SetsStar_comp_prop; cbn.
+unfold eq_trans; cbn.
+destruct (ss_prop h); cbn.
+unfold f_equal; cbn.
+destruct (ss_prop g).
+now destruct (ss_prop f).
+Defined.
+
+Theorem SetsStar_Hom_set (A B : SetsStar_Ob) :
+  isSet (SetsStar_Hom A B).
+Proof.
+Check @h4c.is_set_is_set_sigT.
+Print SetsStar_Hom.
+...
+intros a b p q.
+destruct a, b.
+cbn in *.
+Set Keep Proof Equalities.
+injection p; intros H1 H2.
+destruct H2.
 ...
 
 Definition SetsStarCat :=
@@ -281,7 +304,8 @@ Definition SetsStarCat :=
      idc := SetsStar_idc;
      unit_l _ _ := SetsStar_unit_l;
      unit_r _ _ := SetsStar_unit_r;
-     assoc _ _ _ _ := SetsStar_assoc |}.
+     assoc _ _ _ _ := SetsStar_assoc;
+     Hom_set := SetsStar_Hom_set |}.
 ...
 
 (* category 1 *)
