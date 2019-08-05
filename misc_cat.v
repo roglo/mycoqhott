@@ -228,15 +228,31 @@ Record SetsStar_Hom A B :=
   { ss_fun : ss_type A → ss_type B;
     ss_prop : ss_fun (ss_elem A) = ss_elem B }.
 
+Arguments ss_fun {_} {_}.
+
+Theorem SetsStar_comp_prop {A B C} (f : SetsStar_Hom A B)
+        (g : SetsStar_Hom B C) :
+  ss_fun g (ss_fun f (ss_elem A)) = ss_elem C.
+Proof.
+etransitivity; [ | apply ss_prop ].
+apply f_equal, ss_prop.
+Defined.
+
 Definition SetsStar_comp {A B C} (f : SetsStar_Hom A B)
-  (g : SetsStar_Hom B C) : SetsStar_Hom A C.
+  (g : SetsStar_Hom B C) : SetsStar_Hom A C
+:=
+  {| ss_fun x := ss_fun g (ss_fun f x);
+     ss_prop := SetsStar_comp_prop f g |}.
+
+Definition SetsStar_idc (A : SetsStar_Ob) : SetsStar_Hom A A.
 Proof.
 ...
 
 Definition SetsStarCat :=
   {| Ob := SetsStar_Ob;
      Hom := SetsStar_Hom;
-     comp _ _ _ := SetsStar_comp |}.
+     comp _ _ _ := SetsStar_comp;
+     idc := SetsStar_idc |}.
 ...
 
 (* category 1 *)
