@@ -139,65 +139,65 @@ Definition ArrCat C :=
    (Awodey)
  *)
 
-Definition SliceCat_Ob {C} (B : Ob C) := { A & Hom A B }.
-Definition SC_arr {C} {B : Ob C} (f : SliceCat_Ob B) := projT2 f.
+Definition Slice_Ob {C} (B : Ob C) := { A & Hom A B }.
+Definition SC_arr {C} {B : Ob C} (f : Slice_Ob B) := projT2 f.
 
-Definition SliceCat_Hom {C} {B : Ob C} (f f' : SliceCat_Ob B) :=
+Definition Slice_Hom {C} {B : Ob C} (f f' : Slice_Ob B) :=
   { g & SC_arr f' ◦ g = SC_arr f }.
-Definition SC_hom {C} {B : Ob C} {f f' : SliceCat_Ob B}
-  (g : SliceCat_Hom f f') := projT1 g.
-Definition SC_prop {C} {B : Ob C} {f f' : SliceCat_Ob B}
-  (g : SliceCat_Hom f f') := projT2 g.
+Definition SC_hom {C} {B : Ob C} {f f' : Slice_Ob B}
+  (g : Slice_Hom f f') := projT1 g.
+Definition SC_prop {C} {B : Ob C} {f f' : Slice_Ob B}
+  (g : Slice_Hom f f') := projT2 g.
 
-Definition SliceCat_comp {C} {B : Ob C} {f f' f'' : SliceCat_Ob B}
-  (g : SliceCat_Hom f f') (g' : SliceCat_Hom f' f'') : SliceCat_Hom f f''.
+Definition Slice_comp {C} {B : Ob C} {f f' f'' : Slice_Ob B}
+  (g : Slice_Hom f f') (g' : Slice_Hom f' f'') : Slice_Hom f f''.
 Proof.
 exists (SC_hom g' ◦ SC_hom g).
 rewrite <- assoc.
 unfold SC_hom; rewrite SC_prop; apply SC_prop.
 Defined.
 
-Definition SliceCat_id {C} {B : Ob C} (f : SliceCat_Ob B) : SliceCat_Hom f f.
+Definition Slice_id {C} {B : Ob C} (f : Slice_Ob B) : Slice_Hom f f.
 Proof.
 exists (idc _).
 apply unit_l.
 Defined.
 
-Theorem SliceCat_unit_l {C} {B : Ob C} {f f' : SliceCat_Ob B}
-  (g : SliceCat_Hom f f') : SliceCat_comp (SliceCat_id f) g = g.
+Theorem Slice_unit_l {C} {B : Ob C} {f f' : Slice_Ob B}
+  (g : Slice_Hom f f') : Slice_comp (Slice_id f) g = g.
 Proof.
 destruct g as (g & Hg).
-unfold SliceCat_comp; cbn.
+unfold Slice_comp; cbn.
 apply eq_existT_uncurried.
 exists (unit_l _).
 apply Hom_set.
 Defined.
 
-Theorem SliceCat_unit_r {C} {B : Ob C} {f f' : SliceCat_Ob B}
-  (g : SliceCat_Hom f f') : SliceCat_comp g (SliceCat_id f') = g.
+Theorem Slice_unit_r {C} {B : Ob C} {f f' : Slice_Ob B}
+  (g : Slice_Hom f f') : Slice_comp g (Slice_id f') = g.
 Proof.
 destruct g as (g & Hg).
-unfold SliceCat_comp; cbn.
+unfold Slice_comp; cbn.
 apply eq_existT_uncurried.
 exists (unit_r _).
 apply Hom_set.
 Defined.
 
-Theorem SliceCat_assoc {C} {B : Ob C} {f f' f'' f''' : SliceCat_Ob B}
-  (g : SliceCat_Hom f f') (h : SliceCat_Hom f' f'')
-  (i : SliceCat_Hom f'' f''') :
-  SliceCat_comp g (SliceCat_comp h i) = SliceCat_comp (SliceCat_comp g h) i.
+Theorem Slice_assoc {C} {B : Ob C} {f f' f'' f''' : Slice_Ob B}
+  (g : Slice_Hom f f') (h : Slice_Hom f' f'')
+  (i : Slice_Hom f'' f''') :
+  Slice_comp g (Slice_comp h i) = Slice_comp (Slice_comp g h) i.
 Proof.
-unfold SliceCat_comp at 1 3.
+unfold Slice_comp at 1 3.
 apply eq_existT_uncurried.
 exists (assoc _ _ _).
 apply Hom_set.
 Defined.
 
-Theorem SliceCat_Hom_set {C} {B : Ob C} (f f' : SliceCat_Ob B) :
-  isSet (SliceCat_Hom f f').
+Theorem Slice_Hom_set {C} {B : Ob C} (f f' : Slice_Ob B) :
+  isSet (Slice_Hom f f').
 Proof.
-unfold SliceCat_Hom.
+unfold Slice_Hom.
 apply h4c.is_set_is_set_sigT; [ | apply Hom_set ].
 intros g.
 unfold h4c.isProp.
@@ -205,14 +205,106 @@ apply Hom_set.
 Defined.
 
 Definition SliceCat {C} (B : Ob C) :=
-  {| Ob := SliceCat_Ob B;
-     Hom := SliceCat_Hom;
-     comp _ _ _ := SliceCat_comp;
-     idc := SliceCat_id;
-     unit_l _ _ := SliceCat_unit_l;
-     unit_r _ _ := SliceCat_unit_r;
-     assoc _ _ _ _ := SliceCat_assoc;
-     Hom_set := SliceCat_Hom_set |}.
+  {| Ob := Slice_Ob B;
+     Hom := Slice_Hom;
+     comp _ _ _ := Slice_comp;
+     idc := Slice_id;
+     unit_l _ _ := Slice_unit_l;
+     unit_r _ _ := Slice_unit_r;
+     assoc _ _ _ _ := Slice_assoc;
+     Hom_set := Slice_Hom_set |}.
+
+(* coslice category *)
+
+(* The coslice category 𝒞/C of a category 𝒞 under an object C of 𝒞 has
+   as objects all arrows f of 𝒞 such that dom(f)=C, and an arrow from
+   f : C → X to f′ : C → X′ is an arrow h : X → X′ such that h ◦ f= f′.
+   (Awodey)
+ *)
+
+Definition Coslice_Ob {C} (A : Ob C) := { B & Hom A B }.
+Definition CC_arr {C} {A : Ob C} (f : Coslice_Ob A) := projT2 f.
+
+Definition Coslice_Hom {C} {A : Ob C} (f f' : Coslice_Ob A) :=
+  { h & h ◦ CC_arr f = CC_arr f' }.
+Definition CC_hom {C} {B : Ob C} {f f' : Coslice_Ob B}
+  (g : Coslice_Hom f f') := projT1 g.
+Definition CC_prop {C} {B : Ob C} {f f' : Coslice_Ob B}
+  (g : Coslice_Hom f f') := projT2 g.
+
+Definition Coslice_comp {C} {A : Ob C} {f f' f'' : Coslice_Ob A}
+  (g : Coslice_Hom f f') (g' : Coslice_Hom f' f'') : Coslice_Hom f f''.
+Proof.
+exists (CC_hom g' ◦ CC_hom g).
+rewrite assoc.
+unfold CC_hom; rewrite CC_prop; apply CC_prop.
+Defined.
+
+Definition Coslice_id {C} {A : Ob C} (f : Coslice_Ob A) : Coslice_Hom f f.
+Proof.
+exists (idc _).
+apply unit_r.
+Defined.
+
+Theorem Coslice_unit_l {C} {A : Ob C} {f f' : Coslice_Ob A}
+  (g : Coslice_Hom f f') : Coslice_comp (Coslice_id f) g = g.
+Proof.
+destruct g as (g & Hg).
+unfold Coslice_comp; cbn.
+apply eq_existT_uncurried.
+exists (unit_l _).
+apply Hom_set.
+Defined.
+
+Theorem Coslice_unit_r {C} {A : Ob C} {f f' : Coslice_Ob A}
+  (g : Coslice_Hom f f') : Coslice_comp g (Coslice_id f') = g.
+Proof.
+destruct g as (g & Hg).
+unfold Coslice_comp; cbn.
+apply eq_existT_uncurried.
+exists (unit_r _).
+apply Hom_set.
+Defined.
+
+Theorem Coslice_assoc {C} {A : Ob C} {f f' f'' f''' : Coslice_Ob A}
+  (g : Coslice_Hom f f') (h : Coslice_Hom f' f'')
+  (i : Coslice_Hom f'' f''') :
+  Coslice_comp g (Coslice_comp h i) = Coslice_comp (Coslice_comp g h) i.
+Proof.
+unfold Coslice_comp at 1 3.
+apply eq_existT_uncurried.
+exists (assoc _ _ _).
+apply Hom_set.
+Defined.
+
+Theorem Coslice_Hom_set {C} {A : Ob C} (f f' : Coslice_Ob A) :
+  isSet (Coslice_Hom f f').
+Proof.
+unfold Coslice_Hom.
+apply h4c.is_set_is_set_sigT; [ | apply Hom_set ].
+intros g.
+unfold h4c.isProp.
+apply Hom_set.
+Defined.
+
+Definition CosliceCat {C} (A : Ob C) :=
+  {| Ob := Coslice_Ob A;
+     Hom := Coslice_Hom;
+     comp _ _ _ := Coslice_comp;
+     idc := Coslice_id;
+     unit_l _ _ := Coslice_unit_l;
+     unit_r _ _ := Coslice_unit_r;
+     assoc _ _ _ _ := Coslice_assoc;
+     Hom_set := Coslice_Hom_set |}.
+
+(* attempt to prove that Coslice C A is equivalent to Slice C^op A *)
+(* I guess so *)
+
+Theorem coslice_slice {C} (A : Ob C) :
+  are_equivalent_categories (CosliceCat A) (@SliceCat C⁰ A).
+Proof.
+unfold are_equivalent_categories.
+...
 
 (*  The category Sets∗ of pointed sets consists of sets A with a distinguished
     element a ∈ A, and arrows f:(A, a)→(B, b) are functions f:A→B that
