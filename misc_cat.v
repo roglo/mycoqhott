@@ -328,7 +328,9 @@ assert (G : functor (@SliceCat C⁰ A)⁰ (CosliceCat A)). {
   apply
     {| f_obj (X : Ob (@SliceCat C⁰ A)⁰) :=
          X : Ob (CosliceCat A);
-       f_hom := 42 |}.
+       f_hom X Y (f : @Hom (@SliceCat C⁰ A)⁰ X Y) :=
+         id f : @Hom (CosliceCat A) X Y;
+       f_comp_prop := 42 |}.
 ...
 
 (*  The category Sets∗ of pointed sets consists of sets A with a distinguished
