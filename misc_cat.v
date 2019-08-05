@@ -251,6 +251,27 @@ Definition SetsStar_idc (A : SetsStar_Ob) : SetsStar_Hom A A :=
 Theorem SetsStar_unit_l {A B : SetsStar_Ob} (f : SetsStar_Hom A B) :
   SetsStar_comp (SetsStar_idc A) f = f.
 Proof.
+destruct f as (f & Hf); cbn.
+unfold SetsStar_comp; cbn.
+apply f_equal.
+unfold SetsStar_comp_prop; cbn.
+now destruct Hf.
+Defined.
+
+Theorem SetsStar_unit_r {A B : SetsStar_Ob} (f : SetsStar_Hom A B) :
+  SetsStar_comp f (SetsStar_idc B) = f.
+Proof.
+destruct f as (f & Hf); cbn.
+unfold SetsStar_comp; cbn.
+apply f_equal.
+unfold SetsStar_comp_prop; cbn.
+now destruct Hf.
+Defined.
+
+Theorem SetsStar_assoc {A B C D : SetsStar_Ob}
+  (f : SetsStar_Hom A B) (g : SetsStar_Hom B C) (h : SetsStar_Hom C D) :
+  SetsStar_comp f (SetsStar_comp g h) = SetsStar_comp (SetsStar_comp f g) h.
+Proof.
 ...
 
 Definition SetsStarCat :=
@@ -258,7 +279,9 @@ Definition SetsStarCat :=
      Hom := SetsStar_Hom;
      comp _ _ _ := SetsStar_comp;
      idc := SetsStar_idc;
-     unit_l _ _ := SetsStar_unit_l |}.
+     unit_l _ _ := SetsStar_unit_l;
+     unit_r _ _ := SetsStar_unit_r;
+     assoc _ _ _ _ := SetsStar_assoc |}.
 ...
 
 (* category 1 *)
