@@ -297,12 +297,24 @@ Definition CosliceCat {C} (A : Ob C) :=
      assoc _ _ _ _ := Coslice_assoc;
      Hom_set := Coslice_Hom_set |}.
 
-(* attempt to prove that Coslice C A is equivalent to (Slice C^op A)^op *)
-(* I guess so *)
+(* Coslice C A is equivalent to (Slice C^op A)^op *)
 
 Theorem coslice_slice_comp_prop {C} {A : Ob C} {X Y Z : Ob (CosliceCat A)}
         (f : Hom X Y) (g : Hom Y Z) :
   id (g ◦ f) = @comp (@SliceCat C⁰ A)⁰ _ _ _ (id f) (id g).
+Proof.
+apply eq_existT_uncurried.
+exists eq_refl; cbn.
+apply Hom_set.
+Defined.
+
+Theorem slice_coslice_comp_prop {C} {A : Ob C}
+  {X Y Z : Ob (op (@SliceCat (op C) A))}
+  (f : @Hom (op (@SliceCat (op C) A)) X Y)
+  (g : @Hom (op (@SliceCat (op C) A)) Y Z) :
+  id (@comp (op (@SliceCat (op C) A)) X Y Z f g) =
+  @comp (CosliceCat A) X Y Z (@id (@Hom (op (@SliceCat (op C) A)) X Y) f)
+        (@id (@Hom (op (@SliceCat (op C) A)) Y Z) g).
 Proof.
 apply eq_existT_uncurried.
 exists eq_refl; cbn.
@@ -324,14 +336,37 @@ set
    functor (CosliceCat A) (@SliceCat C⁰ A)⁰).
 exists F.
 unfold is_equiv_betw_cat.
-assert (G : functor (@SliceCat C⁰ A)⁰ (CosliceCat A)). {
-  apply
+set
+  (G :=
     {| f_obj (X : Ob (@SliceCat C⁰ A)⁰) :=
          X : Ob (CosliceCat A);
        f_hom X Y (f : @Hom (@SliceCat C⁰ A)⁰ X Y) :=
          id f : @Hom (CosliceCat A) X Y;
-       f_comp_prop := 42 |}.
-...
+       f_comp_prop _ _ _ := slice_coslice_comp_prop;
+       f_id_prop _ := eq_refl |} :
+    functor (@SliceCat C⁰ A)⁰ (CosliceCat A)).
+exists G.
+-unfold F, G; cbn.
+ unfold functor_comp; cbn.
+ unfold "1"; cbn.
+ unfold id; f_equal.
+ apply fun_ext; intros X.
+ apply fun_ext; intros Y.
+ apply fun_ext; intros Z.
+ apply fun_ext; intros f.
+ apply fun_ext; intros g.
+ apply Hom_set.
+-unfold F, G; cbn.
+ unfold functor_comp; cbn.
+ unfold "1"; cbn.
+ unfold id; f_equal.
+ apply fun_ext; intros X.
+ apply fun_ext; intros Y.
+ apply fun_ext; intros Z.
+ apply fun_ext; intros f.
+ apply fun_ext; intros g.
+ apply Hom_set.
+Qed.
 
 (*  The category Sets∗ of pointed sets consists of sets A with a distinguished
     element a ∈ A, and arrows f:(A, a)→(B, b) are functions f:A→B that
