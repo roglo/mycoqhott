@@ -283,12 +283,12 @@ destruct (ss_prop g).
 now destruct (ss_prop f).
 Defined.
 
-Print SetsStar_Hom.
+(*
+Definition SetsStar_Hom_td A B :=
+  { f : ss_type A → ss_type B & f (ss_elem A) = ss_elem B }.
 
-...
-
-Theorem SetsStar_Hom_of_dep_pair {C D} :
-  existT _ f pf = (existT _ g pg : functor_td C D))
+Theorem SetsStar_Hom_of_dep_pair A B : ∀ f g pf pg,
+  existT _ f pf = (existT _ g pg : SetsStar_Hom_td A B)
   → {| ss_fun := f; ss_prop := pf |} = {| ss_fun := g; ss_prop := pg |}.
 Proof.
 ...
@@ -304,14 +304,30 @@ injection Hp.
 intros H1 H2.
 now destruct H1, H2.
 Qed.
-
 ...
 
 Theorem SetsStar_Hom_set (A B : SetsStar_Ob) :
   isSet (SetsStar_Hom A B).
 Proof.
-Check @h4c.is_set_is_set_sigT.
-Print SetsStar_Hom.
+specialize (@h4c.is_set_is_set_sigT (ss_type A → ss_type B)) as H1.
+specialize (H1 (λ f, f (ss_elem A) = ss_elem B)).
+cbn in H1.
+assert (H : ∀ f, h4c.isProp (f (ss_elem A) = ss_elem B)). {
+  intros f.
+  admit.
+}
+specialize (H1 H); clear H.
+assert (H : h4c.isSet (ss_type A → ss_type B)). {
+  apply h4c.isSet_forall.
+  intros a.
+  admit.
+}
+specialize (H1 H); clear H.
+intros f g p q.
+destruct f as (f, Hf).
+destruct g as (g, Hg).
+move g before f.
+specialize (H1 (existT _ f Hf) (existT _ g Hg)).
 ...
 intros a b p q.
 destruct a, b.
@@ -319,6 +335,11 @@ cbn in *.
 Set Keep Proof Equalities.
 injection p; intros H1 H2.
 destruct H2.
+...
+*)
+
+Theorem SetsStar_Hom_set (A B : SetsStar_Ob) :
+  isSet (SetsStar_Hom A B).
 ...
 
 Definition SetsStarCat :=
