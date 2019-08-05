@@ -244,7 +244,12 @@ Definition SetsStar_comp {A B C} (f : SetsStar_Hom A B)
   {| ss_fun x := ss_fun g (ss_fun f x);
      ss_prop := SetsStar_comp_prop f g |}.
 
-Definition SetsStar_idc (A : SetsStar_Ob) : SetsStar_Hom A A.
+Definition SetsStar_idc (A : SetsStar_Ob) : SetsStar_Hom A A :=
+  {| ss_fun := id;
+     ss_prop := eq_refl |}.
+
+Theorem SetsStar_unit_l {A B : SetsStar_Ob} (f : SetsStar_Hom A B) :
+  SetsStar_comp (SetsStar_idc A) f = f.
 Proof.
 ...
 
@@ -252,7 +257,8 @@ Definition SetsStarCat :=
   {| Ob := SetsStar_Ob;
      Hom := SetsStar_Hom;
      comp _ _ _ := SetsStar_comp;
-     idc := SetsStar_idc |}.
+     idc := SetsStar_idc;
+     unit_l _ _ := SetsStar_unit_l |}.
 ...
 
 (* category 1 *)
