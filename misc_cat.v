@@ -297,13 +297,37 @@ Definition CosliceCat {C} (A : Ob C) :=
      assoc _ _ _ _ := Coslice_assoc;
      Hom_set := Coslice_Hom_set |}.
 
-(* attempt to prove that Coslice C A is equivalent to Slice C^op A *)
+(* attempt to prove that Coslice C A is equivalent to (Slice C^op A)^op *)
 (* I guess so *)
 
+Theorem glop {C} {A : Ob C} {X Y Z : Ob (CosliceCat A)}
+        (f : Hom X Y) (g : Hom Y Z) :
+  (@id (@Hom (@CosliceCat C A) X Z) (@comp (@CosliceCat C A) X Y Z f g)) =
+  (@comp (op (@SliceCat (op C) A)) X Y Z (@id (@Hom (@CosliceCat C A) X Y) f)
+       (@id (@Hom (@CosliceCat C A) Y Z) g)).
+Proof.
+apply eq_existT_uncurried.
+exists eq_refl; cbn.
+unfold eq_ind_r, eq_ind; cbn.
+unfold id.
+unfold CC_arr, SC_arr.
+unfold CC_hom, SC_hom.
+unfold eq_sym; cbn.
+unfold CC_prop, SC_prop.
+cbn.
+...
+
 Theorem coslice_slice {C} (A : Ob C) :
-  are_equivalent_categories (CosliceCat A) (@SliceCat C⁰ A).
+  are_equivalent_categories (CosliceCat A) (@SliceCat C⁰ A)⁰.
 Proof.
 unfold are_equivalent_categories.
+assert (F : functor (CosliceCat A) (@SliceCat C⁰ A)⁰). {
+  apply
+    {| f_map_obj (X : Ob (@CosliceCat C A)) :=
+         X : Ob (@SliceCat C⁰ A)⁰;
+       f_map_hom X Y (f : @Hom (@CosliceCat C A) X Y) :=
+         id f : @Hom (@SliceCat C⁰ A)⁰ X Y;
+       f_comp_prop _ _ _ := glop |}.
 ...
 
 (*  The category Sets∗ of pointed sets consists of sets A with a distinguished
