@@ -283,6 +283,30 @@ destruct (ss_prop g).
 now destruct (ss_prop f).
 Defined.
 
+Print SetsStar_Hom.
+
+...
+
+Theorem SetsStar_Hom_of_dep_pair {C D} :
+  existT _ f pf = (existT _ g pg : functor_td C D))
+  → {| ss_fun := f; ss_prop := pf |} = {| ss_fun := g; ss_prop := pg |}.
+Proof.
+...
+intros * Hp.
+apply h4c.eq_existT_pair_transport in Hp.
+destruct Hp as (p, Hp).
+destruct p; cbn in Hp.
+apply h4c.eq_existT_pair_transport in Hp.
+destruct Hp as (p, Hp).
+destruct p; cbn in Hp.
+Set Keep Proof Equalities.
+injection Hp.
+intros H1 H2.
+now destruct H1, H2.
+Qed.
+
+...
+
 Theorem SetsStar_Hom_set (A B : SetsStar_Ob) :
   isSet (SetsStar_Hom A B).
 Proof.
