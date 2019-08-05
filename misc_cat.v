@@ -340,6 +340,13 @@ destruct H2.
 
 Theorem SetsStar_Hom_set (A B : SetsStar_Ob) :
   isSet (SetsStar_Hom A B).
+Proof.
+intros (f, Hf) (g, Hg) p q.
+move g before f.
+Set Keep Proof Equalities.
+injection p; intros H1 H2.
+destruct H2.
+Check @h4c.is_set_is_set_sigT.
 ...
 
 Definition SetsStarCat :=
