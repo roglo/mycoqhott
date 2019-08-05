@@ -214,6 +214,31 @@ Definition SliceCat {C} (B : Ob C) :=
      assoc _ _ _ _ := SliceCat_assoc;
      Hom_set := SliceCat_Hom_set |}.
 
+(*  The category Sets∗ of pointed sets consists of sets A with a distinguished
+    element a ∈ A, and arrows f:(A, a)→(B, b) are functions f:A→B that
+    preserves the “points” f(a)=b. This is isomorphic to the coslice category,
+        Sets∗∼=1\Sets
+    of Sets “under” any singleton 1 ={∗}
+
+    (Awodey)
+*)
+
+Record SetsStar_Ob := { ss_type : Type; ss_elem : ss_type }.
+Record SetsStar_Hom A B :=
+  { ss_fun : ss_type A → ss_type B;
+    ss_prop : ss_fun (ss_elem A) = ss_elem B }.
+
+Definition SetsStar_comp {A B C} (f : SetsStar_Hom A B)
+  (g : SetsStar_Hom B C) : SetsStar_Hom A C.
+Proof.
+...
+
+Definition SetsStarCat :=
+  {| Ob := SetsStar_Ob;
+     Hom := SetsStar_Hom;
+     comp _ _ _ := SetsStar_comp |}.
+...
+
 (* category 1 *)
 
 Theorem Cat_1_unit (A B : unit) (f : unit → unit) : (λ x : unit, x) = f.
