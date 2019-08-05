@@ -216,20 +216,26 @@ Definition SliceCat {C} (B : Ob C) :=
 
 (*  The category Sets∗ of pointed sets consists of sets A with a distinguished
     element a ∈ A, and arrows f:(A, a)→(B, b) are functions f:A→B that
-    preserves the “points” f(a)=b. This is isomorphic to the coslice category,
-        Sets∗∼=1\Sets
-    of Sets “under” any singleton 1 ={∗}
-
+    preserves the “points” f(a)=b.
     (Awodey)
-*)
+ *)
 
 Record SetsStar_Ob := { ss_type : Set_type; ss_elem : st_type ss_type }.
+
+(*
+Record SetsStar_Hom A B := mk_ss_hom
+  { ss_fun : st_type (ss_type A) → st_type (ss_type B);
+    ss_prop : h4c.PT (ss_fun (ss_elem A) = ss_elem B) }.
+Arguments ss_fun {_} {_}.
+Arguments ss_prop {_} {_}.
+Arguments mk_ss_hom {_} {_}.
+*)
 Definition SetsStar_Hom A B :=
   { f : st_type (ss_type A) → st_type (ss_type B) & f (ss_elem A) = ss_elem B }.
-
 Definition ss_fun {A B} (ss : SetsStar_Hom A B) := projT1 ss.
 Definition ss_prop {A B} (ss : SetsStar_Hom A B) := projT2 ss.
 Definition mk_ss_hom {A B} ssf ssp : SetsStar_Hom A B := existT _ ssf ssp.
+(**)
 
 Theorem SetsStar_comp_prop {A B C} (f : SetsStar_Hom A B)
         (g : SetsStar_Hom B C) :
@@ -281,58 +287,15 @@ destruct (ss_prop g).
 now destruct (ss_prop f).
 Defined.
 
-(*
 Definition SetsStar_Hom_td A B :=
-  { f : ss_type A → ss_type B & f (ss_elem A) = ss_elem B }.
+  { f : st_type (ss_type A) → st_type (ss_type B) &
+    f (ss_elem A) = ss_elem B }.
 
+(*
 Theorem SetsStar_Hom_of_dep_pair A B : ∀ f g pf pg,
   existT _ f pf = (existT _ g pg : SetsStar_Hom_td A B)
   → {| ss_fun := f; ss_prop := pf |} = {| ss_fun := g; ss_prop := pg |}.
 Proof.
-...
-intros * Hp.
-apply h4c.eq_existT_pair_transport in Hp.
-destruct Hp as (p, Hp).
-destruct p; cbn in Hp.
-apply h4c.eq_existT_pair_transport in Hp.
-destruct Hp as (p, Hp).
-destruct p; cbn in Hp.
-Set Keep Proof Equalities.
-injection Hp.
-intros H1 H2.
-now destruct H1, H2.
-Qed.
-...
-
-Theorem SetsStar_Hom_set (A B : SetsStar_Ob) :
-  isSet (SetsStar_Hom A B).
-Proof.
-specialize (@h4c.is_set_is_set_sigT (ss_type A → ss_type B)) as H1.
-specialize (H1 (λ f, f (ss_elem A) = ss_elem B)).
-cbn in H1.
-assert (H : ∀ f, h4c.isProp (f (ss_elem A) = ss_elem B)). {
-  intros f.
-  admit.
-}
-specialize (H1 H); clear H.
-assert (H : h4c.isSet (ss_type A → ss_type B)). {
-  apply h4c.isSet_forall.
-  intros a.
-  admit.
-}
-specialize (H1 H); clear H.
-intros f g p q.
-destruct f as (f, Hf).
-destruct g as (g, Hg).
-move g before f.
-specialize (H1 (existT _ f Hf) (existT _ g Hg)).
-...
-intros a b p q.
-destruct a, b.
-cbn in *.
-Set Keep Proof Equalities.
-injection p; intros H1 H2.
-destruct H2.
 ...
 *)
 
@@ -357,6 +320,15 @@ Definition SetsStarCat :=
      unit_r _ _ := SetsStar_unit_r;
      assoc _ _ _ _ := SetsStar_assoc;
      Hom_set := SetsStar_Hom_set |}.
+
+(*
+    The category Set* is isomorphic to the coslice category,
+        Sets∗∼=1\Sets
+    of Sets “under” any singleton 1 ={∗}
+
+    (Awodey)
+*)
+
 ...
 
 (* category 1 *)
