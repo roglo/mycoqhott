@@ -223,13 +223,13 @@ Definition SliceCat {C} (B : Ob C) :=
     (Awodey)
 *)
 
-Record SetsStar_Ob := { ss_type : Type; ss_elem : ss_type }.
-Record SetsStar_Hom A B :=
-  { ss_fun : ss_type A → ss_type B;
-    ss_prop : ss_fun (ss_elem A) = ss_elem B }.
+Record SetsStar_Ob := { ss_type : Set_type; ss_elem : st_type ss_type }.
+Definition SetsStar_Hom A B :=
+  { f : st_type (ss_type A) → st_type (ss_type B) & f (ss_elem A) = ss_elem B }.
 
-Arguments ss_fun {_} {_}.
-Arguments ss_prop {_} {_}.
+Definition ss_fun {A B} (ss : SetsStar_Hom A B) := projT1 ss.
+Definition ss_prop {A B} (ss : SetsStar_Hom A B) := projT2 ss.
+Definition mk_ss_hom {A B} ssf ssp : SetsStar_Hom A B := existT _ ssf ssp.
 
 Theorem SetsStar_comp_prop {A B C} (f : SetsStar_Hom A B)
         (g : SetsStar_Hom B C) :
@@ -242,12 +242,10 @@ Defined.
 Definition SetsStar_comp {A B C} (f : SetsStar_Hom A B)
   (g : SetsStar_Hom B C) : SetsStar_Hom A C
 :=
-  {| ss_fun x := ss_fun g (ss_fun f x);
-     ss_prop := SetsStar_comp_prop f g |}.
+  mk_ss_hom (λ x, ss_fun g (ss_fun f x)) (SetsStar_comp_prop f g).
 
 Definition SetsStar_idc (A : SetsStar_Ob) : SetsStar_Hom A A :=
-  {| ss_fun := id;
-     ss_prop := eq_refl |}.
+  mk_ss_hom id eq_refl.
 
 Theorem SetsStar_unit_l {A B : SetsStar_Ob} (f : SetsStar_Hom A B) :
   SetsStar_comp (SetsStar_idc A) f = f.
@@ -341,13 +339,14 @@ destruct H2.
 Theorem SetsStar_Hom_set (A B : SetsStar_Ob) :
   isSet (SetsStar_Hom A B).
 Proof.
-intros (f, Hf) (g, Hg) p q.
-move g before f.
-Set Keep Proof Equalities.
-injection p; intros H1 H2.
-destruct H2.
-Check @h4c.is_set_is_set_sigT.
-...
+apply h4c.is_set_is_set_sigT. 2: {
+  apply h4c.isSet_forall.
+  intros a.
+  apply st_is_set.
+}
+intros f p q.
+apply st_is_set.
+Defined.
 
 Definition SetsStarCat :=
   {| Ob := SetsStar_Ob;
