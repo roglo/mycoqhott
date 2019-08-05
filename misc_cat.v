@@ -309,23 +309,26 @@ exists eq_refl; cbn.
 apply Hom_set.
 Defined.
 
-Theorem coslice_slice_id_prop {C} {A : Ob C} (X : Ob (CosliceCat A)) :
-  @id (@Hom (@CosliceCat C A) X X) (@idc (@CosliceCat C A) X) = @idc (@SliceCat C⁰ A)⁰ X.
-Proof.
-...
-
 Theorem coslice_slice {C} (A : Ob C) :
   are_equivalent_categories (CosliceCat A) (@SliceCat C⁰ A)⁰.
 Proof.
 unfold are_equivalent_categories.
-assert (F : functor (CosliceCat A) (@SliceCat C⁰ A)⁰). {
-  apply
-    {| f_obj (X : Ob (@CosliceCat C A)) :=
+set
+  (F :=
+    {| f_obj (X : Ob (CosliceCat A)) :=
          X : Ob (@SliceCat C⁰ A)⁰;
-       f_hom X Y (f : @Hom (@CosliceCat C A) X Y) :=
+       f_hom X Y (f : @Hom (CosliceCat A) X Y) :=
          id f : @Hom (@SliceCat C⁰ A)⁰ X Y;
        f_comp_prop _ _ _ := coslice_slice_comp_prop;
-       f_id_prop := coslice_slice_id_prop |}.
+       f_id_prop _ := eq_refl |} :
+   functor (CosliceCat A) (@SliceCat C⁰ A)⁰).
+exists F.
+unfold is_equiv_betw_cat.
+assert (G : functor (@SliceCat C⁰ A)⁰ (CosliceCat A)). {
+  apply
+    {| f_obj (X : Ob (@SliceCat C⁰ A)⁰) :=
+         X : Ob (CosliceCat A);
+       f_hom := 42 |}.
 ...
 
 (*  The category Sets∗ of pointed sets consists of sets A with a distinguished
