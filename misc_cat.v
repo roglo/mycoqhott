@@ -315,9 +315,9 @@ Proof.
 unfold are_equivalent_categories.
 assert (F : functor (CosliceCat A) (@SliceCat C⁰ A)⁰). {
   apply
-    {| f_map_obj (X : Ob (@CosliceCat C A)) :=
+    {| f_obj (X : Ob (@CosliceCat C A)) :=
          X : Ob (@SliceCat C⁰ A)⁰;
-       f_map_hom X Y (f : @Hom (@CosliceCat C A) X Y) :=
+       f_hom X Y (f : @Hom (@CosliceCat C A) X Y) :=
          id f : @Hom (@SliceCat C⁰ A)⁰ X Y;
        f_comp_prop _ _ _ := coslice_slice_comp_prop |}.
 ...
@@ -813,8 +813,8 @@ Definition RelCat :=
 Theorem CatCat_comp_prop {C C' C'' : category}
   {F : functor C C'} {G : functor C' C''} :
   ∀ (X Y Z : Ob C) (f : Hom X Y) (g : Hom Y Z),
-  f_map_hom G (f_map_hom F (g ◦ f)) =
-  f_map_hom G (f_map_hom F g) ◦ f_map_hom G (f_map_hom F f).
+  f_hom G (f_hom F (g ◦ f)) =
+  f_hom G (f_hom F g) ◦ f_hom G (f_hom F f).
 Proof.
 intros.
 etransitivity; [ | apply f_comp_prop ].
@@ -824,7 +824,7 @@ Defined.
 Theorem CatCat_id_prop {C C' C'' : category}
   {F : functor C C'} {G : functor C' C''} :
   ∀ X : Ob C,
-  f_map_hom G (f_map_hom F (idc X)) = idc (f_map_obj G (f_map_obj F X)).
+  f_hom G (f_hom F (idc X)) = idc (f_obj G (f_obj F X)).
 Proof.
 intros.
 etransitivity; [ | apply f_id_prop ].
@@ -833,8 +833,8 @@ Defined.
 
 Definition CatCat_comp {C C' C'' : category}
   (F : functor C C') (G : functor C' C'') : functor C C'' :=
-  {| f_map_obj X := f_map_obj G (f_map_obj F X);
-     f_map_hom X Y f := f_map_hom G (f_map_hom F f);
+  {| f_obj X := f_obj G (f_obj F X);
+     f_hom X Y f := f_hom G (f_hom F f);
      f_comp_prop := CatCat_comp_prop;
      f_id_prop := CatCat_id_prop |}.
 
@@ -884,8 +884,8 @@ f_equal.
  apply fun_ext; intros g; cbn.
  unfold eq_trans, f_equal.
  destruct
-   (f_comp_prop (f_map_hom G (f_map_hom F f)) (f_map_hom G (f_map_hom F g))).
- destruct (f_comp_prop (f_map_hom F f) (f_map_hom F g)).
+   (f_comp_prop (f_hom G (f_hom F f)) (f_hom G (f_hom F g))).
+ destruct (f_comp_prop (f_hom F f) (f_hom F g)).
  now destruct (f_comp_prop f g).
 -unfold CatCat_id_prop.
  apply fun_ext; intros X.
@@ -971,8 +971,8 @@ Defined.
 Definition arr_cat_fun_2_C_map_obj {C} (X : Ob (ArrCat C)) :
      Ob (FunCat Cat_2 C)
 :=
-  {| f_map_obj := fun_arr_2_C_map_obj X;
-     f_map_hom _ _ := fun_arr_2_C_map_hom X;
+  {| f_obj := fun_arr_2_C_map_obj X;
+     f_hom _ _ := fun_arr_2_C_map_hom X;
      f_comp_prop _ _ _ := fun_arr_2_C_comp_prop X;
      f_id_prop := fun_arr_2_C_id_prop X |}.
 
@@ -1055,9 +1055,9 @@ Qed.
 Definition fun_2_C_arr_cat_map_obj {C} (X : Ob (FunCat Cat_2 C)) :
   Ob (ArrCat C).
 Proof.
-exists (f_map_obj X false).
-exists (f_map_obj X true).
-now apply f_map_hom.
+exists (f_obj X false).
+exists (f_obj X true).
+now apply f_hom.
 Defined.
 
 Definition fun_2_C_arr_cat_map_hom {C} {X Y : Ob (FunCat Cat_2 C)}
@@ -1104,9 +1104,9 @@ Theorem functor_eq_of_dep_pair {C D} :
   ∀ (mo1 mo2 : Ob C → Ob D) mh1 mh2 mc1 mc2 mi1 mi2,
   (existT _ mo1 (existT _ mh1 (mc1, mi1)) : functor_td C D) =
   (existT _ mo2 (existT _ mh2 (mc2, mi2)) : functor_td C D)
-  → {| f_map_obj := mo1; f_map_hom := mh1; f_comp_prop := mc1;
+  → {| f_obj := mo1; f_hom := mh1; f_comp_prop := mc1;
         f_id_prop := mi1 |} =
-     {| f_map_obj := mo2; f_map_hom := mh2; f_comp_prop := mc2;
+     {| f_obj := mo2; f_hom := mh2; f_comp_prop := mc2;
         f_id_prop := mi2 |}.
 Proof.
 intros * Hp.
@@ -1128,13 +1128,13 @@ Theorem arr_cat_equiv_2_cat {C} :
   are_equivalent_categories (ArrCat C) (FunCat Cat_2 C).
 Proof.
 exists
-  {| f_map_obj := arr_cat_fun_2_C_map_obj;
-     f_map_hom _ _ := arr_cat_fun_2_C_map_hom;
+  {| f_obj := arr_cat_fun_2_C_map_obj;
+     f_hom _ _ := arr_cat_fun_2_C_map_hom;
      f_comp_prop _ _ _ := arr_cat_fun_2_C_comp_prop;
      f_id_prop := arr_cat_fun_2_C_id_prop |}.
 exists
-  {| f_map_obj := fun_2_C_arr_cat_map_obj;
-     f_map_hom _ _ := fun_2_C_arr_cat_map_hom;
+  {| f_obj := fun_2_C_arr_cat_map_obj;
+     f_hom _ _ := fun_2_C_arr_cat_map_hom;
      f_comp_prop _ _ _ := fun_2_C_arr_cat_comp_prop;
      f_id_prop := fun_2_C_arr_cat_id_prop |}.
 -unfold functor_comp; cbn.

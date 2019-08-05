@@ -11,13 +11,13 @@ Require Import category.
 
 Record cone {J C} (D : functor J C) :=
   { cn_top : Ob C;
-    cn_fam : ∀ j, Hom cn_top (f_map_obj D j);
-    cn_commute : ∀ i j (α : Hom i j), cn_fam j = f_map_hom D α ◦ cn_fam i }.
+    cn_fam : ∀ j, Hom cn_top (f_obj D j);
+    cn_commute : ∀ i j (α : Hom i j), cn_fam j = f_hom D α ◦ cn_fam i }.
 
 Record co_cone {J C} (D : functor J C) :=
   { cc_top : Ob C;
-    cc_fam : ∀ j, Hom (f_map_obj D j) cc_top;
-    cc_commute : ∀ i j (α : Hom i j), cc_fam i = cc_fam j ◦ f_map_hom D α }.
+    cc_fam : ∀ j, Hom (f_obj D j) cc_top;
+    cc_commute : ∀ i j (α : Hom i j), cc_fam i = cc_fam j ◦ f_hom D α }.
 
 Arguments cn_top [_] [_] [_].
 Arguments cn_fam [_] [_] [_].
@@ -256,14 +256,14 @@ Definition cone_fop_of_co_cone {J C} {D : functor J C} :
     co_cone D → cone (fop D) :=
   λ cc,
   {| cn_top := cc_top cc : Ob (op C);
-     cn_fam j := cc_fam cc j : @Hom (op C) (cc_top cc) (f_map_obj (fop D) j);
+     cn_fam j := cc_fam cc j : @Hom (op C) (cc_top cc) (f_obj (fop D) j);
      cn_commute i j := cc_commute cc j i |}.
 
 Definition co_cone_of_cone_fop {J C} {D : functor J C} :
     cone (fop D) → co_cone D :=
   λ cn,
   {| cc_top := cn_top cn : Ob C;
-     cc_fam j := cn_fam cn j : @Hom (op C) (cn_top cn) (f_map_obj D j);
+     cc_fam j := cn_fam cn j : @Hom (op C) (cn_top cn) (f_obj D j);
      cc_commute i j := cn_commute cn j i |}.
 
 Definition F_CoConeCat_CoConeCat2_comp_prop {J C} {D : functor J C}
@@ -298,28 +298,28 @@ Defined.
 
 Definition F_CoConeCat_CoConeCat2 {J C} {D : functor J C} :
     functor (CoConeCat D) (CoConeCat2 D) :=
-  {| f_map_obj :=
+  {| f_obj :=
        cone_fop_of_co_cone : Ob (CoConeCat D) → Ob (CoConeCat2 D);
-     f_map_hom _ _ f := f;
+     f_hom _ _ f := f;
      f_comp_prop _ _ _ := F_CoConeCat_CoConeCat2_comp_prop;
      f_id_prop _ := eq_refl |}.
 
 Definition F_CoConeCat2_CoConeCat {J C} {D : functor J C} :
     functor (CoConeCat2 D) (CoConeCat D) :=
-  {| f_map_obj :=
+  {| f_obj :=
        co_cone_of_cone_fop : Ob (CoConeCat2 D) → Ob (CoConeCat D);
-     f_map_hom _ _ f := f;
+     f_hom _ _ f := f;
      f_comp_prop _ _ _ := F_CoConeCat2_CoConeCat_comp_prop;
      f_id_prop _ := eq_refl |}.
 
 Theorem F_CoConeCat_CoConeCat2_id {J C} {D : functor J C} :
   ∀ cc,
-  f_map_obj F_CoConeCat2_CoConeCat (f_map_obj F_CoConeCat_CoConeCat2 cc) = cc.
+  f_obj F_CoConeCat2_CoConeCat (f_obj F_CoConeCat_CoConeCat2 cc) = cc.
 Proof. now intros; destruct cc. Defined.
 
 Theorem F_CoConeCat2_CoConeCat_id {J C} {D : functor J C} :
   ∀ cc,
-  f_map_obj F_CoConeCat_CoConeCat2 (f_map_obj F_CoConeCat2_CoConeCat cc) = cc.
+  f_obj F_CoConeCat_CoConeCat2 (f_obj F_CoConeCat2_CoConeCat cc) = cc.
 Proof. now intros; destruct cc. Defined.
 
 Theorem CoConeCat_CoConeCat2_iso J C {D : functor J C} :
@@ -338,13 +338,13 @@ Qed.
 
 Definition cone_image_fam {J C D} {X : functor J C} {cn : cone X}
     (F : functor C D) (j : Ob J) :
-    Hom (f_map_obj F (cn_top cn)) (f_map_obj (F ◦ X) j) :=
-  f_map_hom F (cn_fam cn j).
+    Hom (f_obj F (cn_top cn)) (f_obj (F ◦ X) j) :=
+  f_hom F (cn_fam cn j).
 
 Theorem cone_image_commute {J C D} {X : functor J C} (F : functor C D)
     {cn : cone X} (i j : Ob J) (f : Hom i j) :
-  f_map_hom F (cn_fam cn j) =
-  f_map_hom (F ◦ X)%Fun f ◦ f_map_hom F (cn_fam cn i).
+  f_hom F (cn_fam cn j) =
+  f_hom (F ◦ X)%Fun f ◦ f_hom F (cn_fam cn i).
 Proof.
 cbn.
 rewrite (cn_commute cn i j f).
@@ -354,7 +354,7 @@ Qed.
 Definition cone_image {J C D} {X : functor J C} (F : functor C D) :
     cone X → cone (F ◦ X) :=
   λ cn,
-  {| cn_top := f_map_obj F (cn_top cn);
+  {| cn_top := f_obj F (cn_top cn);
      cn_fam := cone_image_fam F;
      cn_commute := cone_image_commute F |}.
 

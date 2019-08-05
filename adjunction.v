@@ -8,13 +8,13 @@ Require Import category.
 
 Definition left_whiskering_nt_component {C D E} {G H : functor D E}
   (α : natural_transformation G H) (F : functor C D) X :=
-  nt_component α (f_map_obj F X).
+  nt_component α (f_obj F X).
 
 Definition left_whiskering_nt_commute {C D E} {G H : functor D E}
   (α : natural_transformation G H) (F : functor C D) X Y f :
-    left_whiskering_nt_component α F Y ◦ f_map_hom G (f_map_hom F f) =
-    f_map_hom H (f_map_hom F f) ◦ left_whiskering_nt_component α F X :=
-  nt_commute α (f_map_obj F X) (f_map_obj F Y) (f_map_hom F f).
+    left_whiskering_nt_component α F Y ◦ f_hom G (f_hom F f) =
+    f_hom H (f_hom F f) ◦ left_whiskering_nt_component α F X :=
+  nt_commute α (f_obj F X) (f_obj F Y) (f_hom F f).
 
 Definition left_whiskering {C D E} {G H : functor D E} :
   natural_transformation G H → ∀ (F : functor C D),
@@ -28,12 +28,12 @@ Definition left_whiskering {C D E} {G H : functor D E} :
 
 Definition right_whiskering_nt_component {D E F} {G H : functor D E}
   (I : functor E F) (α : natural_transformation G H) Y :=
-  f_map_hom I (nt_component α Y).
+  f_hom I (nt_component α Y).
 
 Definition right_whiskering_nt_commute {D E F} {G H : functor D E}
   (I : functor E F) (α : natural_transformation G H) X Y f :
-    right_whiskering_nt_component I α Y ◦ f_map_hom (functor_comp G I) f =
-    f_map_hom (functor_comp H I) f ◦ right_whiskering_nt_component I α X.
+    right_whiskering_nt_component I α Y ◦ f_hom (functor_comp G I) f =
+    f_hom (functor_comp H I) f ◦ right_whiskering_nt_component I α X.
 Proof.
 unfold right_whiskering_nt_component, nt_component; cbn.
 do 2 rewrite <- f_comp_prop.
@@ -109,7 +109,7 @@ Definition fc_map_obj_map_hom {A B C} (F : functor (A × B) C)
   (X : Ob A) {Y Y' : Ob B} (f : Hom Y Y') :
   Hom (fc_map_obj_map_obj F X Y) (fc_map_obj_map_obj F X Y').
 Proof.
-apply f_map_hom; cbn.
+apply f_hom; cbn.
 split; [ apply idc | easy ].
 Defined.
 
@@ -132,8 +132,8 @@ Qed.
 
 Definition fc_map_obj {A B C} (F : functor (A × B) C) (X : Ob A) :
   Ob (FunCat B C) :=
-  {| f_map_obj := fc_map_obj_map_obj F X;
-     f_map_hom _ _ := fc_map_obj_map_hom F X;
+  {| f_obj := fc_map_obj_map_obj F X;
+     f_hom _ _ := fc_map_obj_map_hom F X;
      f_comp_prop _ _ _ := fc_map_obj_comp_prop F X;
      f_id_prop := fc_map_obj_id_prop F X |}.
 
@@ -144,7 +144,7 @@ Proof.
 transparent assert
   (ϑ : ∀ Y, Hom (fc_map_obj_map_obj F X Y) (fc_map_obj_map_obj F X' Y)). {
   intros.
-  apply f_map_hom.
+  apply f_hom.
   split; [ easy | apply idc ].
 }
 exists ϑ; unfold ϑ; cbn.
@@ -172,10 +172,10 @@ Proof.
 apply eq_existT_uncurried.
 assert
  (p :
-  (λ Y, @f_map_hom _ _ F (X, Y) (X'', Y) (g ◦ f, idc Y)) =
+  (λ Y, @f_hom _ _ F (X, Y) (X'', Y) (g ◦ f, idc Y)) =
   (λ Y,
-   @f_map_hom _ _ F (X', Y) (X'', Y)
-     (g, idc Y) ◦ @f_map_hom _ _ F (X, Y) (X', Y) (f, idc Y))). {
+   @f_hom _ _ F (X', Y) (X'', Y)
+     (g, idc Y) ◦ @f_hom _ _ F (X, Y) (X', Y) (f, idc Y))). {
   apply fun_ext; intros Y.
   specialize (@f_comp_prop _ _ F (X, Y) (X', Y) (X'', Y)) as H1; cbn in H1.
   specialize (H1 (f, idc _) (g, idc _)); cbn in H1.
@@ -194,7 +194,7 @@ Proof.
 apply eq_existT_uncurried; cbn.
 assert
   (p :
-     (λ Y, @f_map_hom _ _ F (X, Y) (X, Y) (idc X, idc Y)) =
+     (λ Y, @f_hom _ _ F (X, Y) (X, Y) (idc X, idc Y)) =
      (λ Y, idc (fc_map_obj_map_obj F X Y))). {
   apply fun_ext; intros Y.
   apply (@f_id_prop _ _ F).
@@ -208,8 +208,8 @@ Qed.
 
 Definition functor_curry {A B C} (F : functor (A × B) C) :
   functor A (FunCat B C) :=
-  {| f_map_obj := fc_map_obj F;
-     f_map_hom _ _ := fc_map_hom F;
+  {| f_obj := fc_map_obj F;
+     f_hom _ _ := fc_map_hom F;
      f_comp_prop _ _ _ := fc_comp_prop F;
      f_id_prop := fc_id_prop F |}.
 
@@ -235,24 +235,25 @@ split.
  cbn in Hiso.
 *)
  assert (η : natural_transformation (1 C) (L ◦ R)). {
-   transparent assert (α : ∀ X, Hom X (f_map_obj (L ◦ R) X)). {
+   transparent assert (α : ∀ X, Hom X (f_obj (L ◦ R) X)). {
      intros X; cbn.
-     apply (nt_component ϑ (X, f_map_obj R X)), idc.
+     apply (nt_component ϑ (X, f_obj R X)), idc.
    }
    exists α; cbn in α.
    intros X X' f; cbn; cbn in α.
    subst α; cbn.
+Abort. (* j'y arrive pas... à reessayer plus tard...
 ...
    destruct ϑ as (ϑ, Hϑ).
    cbn in ϑ, Hϑ |-*.
 
-   specialize (Hϑ (X', f_map_obj R X') (X, f_map_obj R X')) as H; cbn in H.
+   specialize (Hϑ (X', f_obj R X') (X, f_obj R X')) as H; cbn in H.
    specialize (H (f, idc _)); cbn in H.
    specialize (@h4c.happly _ _ _ _ H) as H1; cbn in H1; clear H.
    specialize (H1 (idc _)); cbn in H1.
 
-   specialize (Hϑ (X, f_map_obj R X) (X, f_map_obj R X')) as H; cbn in H.
-   specialize (H (idc _, f_map_hom R f)); cbn in H.
+   specialize (Hϑ (X, f_obj R X) (X, f_obj R X')) as H; cbn in H.
+   specialize (H (idc _, f_hom R f)); cbn in H.
    specialize (@h4c.happly _ _ _ _ H) as H2; cbn in H2; clear H.
    specialize (H2 (idc _)); cbn in H2.
 
@@ -262,23 +263,24 @@ split.
    unfold hom_functor_map_hom in H1, H2; cbn in H1, H2.
    do 2 rewrite assoc in H1.
 
-   specialize (Hiso (X', f_map_obj R X')) as H; cbn in H.
+   specialize (Hiso (X', f_obj R X')) as H; cbn in H.
    destruct H as (g & Hg1 & Hg2).
    specialize (@h4c.happly _ _ _ _ Hg1) as H3; cbn in H3; clear Hg1.
    specialize (@h4c.happly _ _ _ _ Hg2) as H4; cbn in H4; clear Hg2.
    specialize (H3 (idc _)).
 
    remember
-     (@comp _ _ _ (f_map_obj L (f_map_obj R X')) f
-              (ϑ (X', f_map_obj R X') (idc (f_map_obj R X'))))
+     (@comp _ _ _ (f_obj L (f_obj R X')) f
+              (ϑ (X', f_obj R X') (idc (f_obj R X'))))
      as h eqn:Hh.
    assert (H :
-     f_map_hom L (idc (f_map_obj R X')) ◦ h =
-     f_map_hom L (idc (f_map_obj R X')) ◦
-     f_map_hom L (f_map_hom R f) ◦
-     ϑ (X, f_map_obj R X) (idc (f_map_obj R X))). {
+     f_hom L (idc (f_obj R X')) ◦ h =
+     f_hom L (idc (f_obj R X')) ◦
+     f_hom L (f_hom R f) ◦
+     ϑ (X, f_obj R X) (idc (f_obj R X))). {
      rewrite <- H1.
 ...
    unfold is_natural_isomorphism in Hiso; cbn in Hiso.
    unfold is_isomorphism in Hiso; cbn in Hiso.
 ...
+*)

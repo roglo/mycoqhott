@@ -18,18 +18,18 @@ Require Import category.
 *)
 
 Definition Yoneda_NT_FA {C} (F : functor C SetCat) (A : Ob C) :
-  natural_transformation (cov_hom_functor A) F → st_type (f_map_obj F A) :=
-  λ Φ, nt_component Φ A (idc A) : st_type (f_map_obj F A).
+  natural_transformation (cov_hom_functor A) F → st_type (f_obj F A) :=
+  λ Φ, nt_component Φ A (idc A) : st_type (f_obj F A).
 
 Definition Yoneda_FA_NT {C} (F : functor C SetCat) (A : Ob C) :
-  st_type (f_map_obj F A) → natural_transformation (cov_hom_functor A) F.
+  st_type (f_obj F A) → natural_transformation (cov_hom_functor A) F.
 Proof.
 intros u.
-set (ϑ := λ (X : Ob C) (f : Hom A X), f_map_hom F f u).
+set (ϑ := λ (X : Ob C) (f : Hom A X), f_hom F f u).
 assert (Hϑ :
   ∀ (X Y : Ob C) (f : Hom X Y),
   (λ g : Hom A X, ϑ Y (f ◦ g)) =
-  (λ g : Hom A X, f_map_hom F f (ϑ X g))). {
+  (λ g : Hom A X, f_hom F f (ϑ X g))). {
   intros.
   apply fun_ext; intros g.
   unfold ϑ; cbn.
@@ -40,7 +40,7 @@ Defined.
 
 Lemma Yoneda {C} (F : functor C SetCat) (A : Ob C) :
   let NT := natural_transformation (cov_hom_functor A) F in
-  let FA := st_type (f_map_obj F A) in
+  let FA := st_type (f_obj F A) in
   ∃ f : NT → FA, ∃ g : FA → NT,
   (∀ x : NT, g (f x) = x) ∧ (∀ y : FA, f (g y) = y).
 Proof.
@@ -50,7 +50,7 @@ exists (Yoneda_FA_NT F A).
 split.
 -intros (η, Hη); cbn.
  apply eq_existT_uncurried.
- assert (p : (λ X f, f_map_hom F f (η A (idc A))) = η). {
+ assert (p : (λ X f, f_hom F f (η A (idc A))) = η). {
    apply fun_ext; intros X.
    apply fun_ext; intros f.
    specialize (Hη A X f) as H1; cbn in H1.
@@ -82,14 +82,14 @@ Qed.
 Definition SetC_C (C : category) := cat_prod (FunCat C SetCat) C.
 
 Definition functor_SetC_C_Set1_map_hom {C} (D := SetC_C C) (X Y : Ob D)
-  (f : Hom X Y) : Hom (f_map_obj (fst X) (snd X)) (f_map_obj (fst Y) (snd Y)).
+  (f : Hom X Y) : Hom (f_obj (fst X) (snd X)) (f_obj (fst Y) (snd Y)).
 Proof.
 cbn in X, Y, f.
 intros T.
 destruct X as (F, A).
 destruct Y as (G, B).
 destruct f as (f, g).
-now apply f, (f_map_hom F g).
+now apply f, (f_hom F g).
 Defined.
 
 Theorem functor_SetC_C_Set1_comp_prop {C} (D := SetC_C C) (X Y Z : Ob D)
@@ -111,11 +111,11 @@ destruct η as (η, η_prop).
 cbn in *.
 apply f_equal.
 specialize (η_prop Y Z g) as H1.
-now specialize (@h4c.happly _ _ _ _ H1 (f_map_hom F f T)) as H2.
+now specialize (@h4c.happly _ _ _ _ H1 (f_hom F f T)) as H2.
 Qed.
 
 Theorem functor_SetC_C_Set1_id_prop {C} (D := SetC_C C) (X : Ob D) :
-  functor_SetC_C_Set1_map_hom X X (idc X) = idc (f_map_obj (fst X) (snd X)).
+  functor_SetC_C_Set1_map_hom X X (idc X) = idc (f_obj (fst X) (snd X)).
 Proof.
 cbn in *.
 destruct X as (F, X); cbn.
@@ -124,8 +124,8 @@ now rewrite f_id_prop.
 Qed.
 
 Definition functor_SetC_C_Set1 C : functor (SetC_C C) SetCat :=
-  {| f_map_obj (X : Ob (SetC_C C)) := f_map_obj (fst X) (snd X);
-     f_map_hom := functor_SetC_C_Set1_map_hom;
+  {| f_obj (X : Ob (SetC_C C)) := f_obj (fst X) (snd X);
+     f_hom := functor_SetC_C_Set1_map_hom;
      f_comp_prop := functor_SetC_C_Set1_comp_prop;
      f_id_prop := functor_SetC_C_Set1_id_prop |}.
 
@@ -200,7 +200,7 @@ apply fun_ext; intros B.
 apply fun_ext; intros h.
 apply h4c.isSet_forall.
 intros i.
-now destruct (f_map_obj H B).
+now destruct (f_obj H B).
 Qed.
 
 Theorem functor_SetC_C_Set2_id_prop {C} (X : Ob (SetC_C C)) :
@@ -221,12 +221,12 @@ apply fun_ext; intros Z.
 apply fun_ext; intros f.
 apply h4c.isSet_forall.
 intros i.
-now destruct (f_map_obj (fst X) Z).
+now destruct (f_obj (fst X) Z).
 Qed.
 
 Definition functor_SetC_C_Set2 C : functor (SetC_C C) SetCat :=
-  {| f_map_obj := functor_SetC_C_Set2_map_obj;
-     f_map_hom := functor_SetC_C_Set2_map_hom;
+  {| f_obj := functor_SetC_C_Set2_map_obj;
+     f_hom := functor_SetC_C_Set2_map_hom;
      f_comp_prop := functor_SetC_C_Set2_comp_prop;
      f_id_prop := functor_SetC_C_Set2_id_prop |}.
 
@@ -238,20 +238,20 @@ set (ϑ :=
   λ F : functor C SetCat * Ob C,
   let (F, A) as p
     return
-      (st_type (f_map_obj (fst p) (snd p))
+      (st_type (f_obj (fst p) (snd p))
       → natural_transformation (cov_hom_functor (snd p)) (fst p)) := F
   in
-  λ T : st_type (f_map_obj F A),
-  let ϑ := λ (X : Ob C) (f : Hom A X), f_map_hom F f T in
+  λ T : st_type (f_obj F A),
+  let ϑ := λ (X : Ob C) (f : Hom A X), f_hom F f T in
   existT _ ϑ
     (λ (X Y : Ob C) (f : Hom X Y),
      fun_ext _
-       (λ _ : Hom A X, st_type (f_map_obj F Y)) (λ HA : Hom A X, ϑ Y (f ◦ HA))
-       (λ HA : Hom A X, f_map_hom F f (ϑ X HA))
+       (λ _ : Hom A X, st_type (f_obj F Y)) (λ HA : Hom A X, ϑ Y (f ◦ HA))
+       (λ HA : Hom A X, f_hom F f (ϑ X HA))
        (λ g : Hom A X,
         eq_ind_r
-          (λ h : Hom (f_map_obj F A) (f_map_obj F Y),
-           h T = f_map_hom F f (f_map_hom F g T))
+          (λ h : Hom (f_obj F A) (f_obj F Y),
+           h T = f_hom F f (f_hom F g T))
           eq_refl (f_comp_prop g f)))).
 exists ϑ.
 intros F G η.
@@ -263,9 +263,9 @@ unfold functor_SetC_C_Set2_map_hom; cbn.
 apply eq_existT_uncurried; cbn.
 assert (p :
    (λ (X : Ob C) (f1 : Hom B X),
-    f_map_hom G f1 (let (f2, g) := η in (projT1 f2) B (f_map_hom F g T))) =
+    f_hom G f1 (let (f2, g) := η in (projT1 f2) B (f_hom F g T))) =
    (λ (A : Ob C) (g : Hom B A),
-    projT1 (fst η) A (f_map_hom F (g ◦ snd η) T))). {
+    projT1 (fst η) A (f_hom F (g ◦ snd η) T))). {
   apply fun_ext; intros X.
   apply fun_ext; intros f.
   destruct η as (η, g); cbn in *.
@@ -282,5 +282,5 @@ apply fun_ext; intros Y.
 apply fun_ext; intros g.
 apply h4c.isSet_forall.
 intros h.
-now destruct (f_map_obj G Y).
+now destruct (f_obj G Y).
 Qed.
