@@ -638,11 +638,40 @@ Definition SetsStarCat :=
     (Awodey)
 *)
 
+Definition setsstar_coslice_ob_obj {C} (A : Ob C) :
+  Ob (CosliceCat A) := existT _ A (idc _).
+
+Definition setsstar_coslice_ob_hom {C} (A : Ob C) :
+  Hom (setsstar_coslice_ob_obj A) (setsstar_coslice_ob_obj A) :=
+  existT _ (idc A) (unit_l (idc A)).
+
+Theorem setsstar_coslice_ob_comp_prop {C} (A : Ob C) (X : Ob SetsStarCat)
+  {U U' U'' : Ob Cat_1} (f : Hom U U') (g : Hom U' U'') :
+  setsstar_coslice_ob_hom A =
+  setsstar_coslice_ob_hom A ◦ setsstar_coslice_ob_hom A.
+Proof.
+apply eq_existT_uncurried; cbn.
+exists (eq_sym (unit_l _)).
+apply Hom_set.
+Defined.
+
+Definition setsstar_coslice_ob {C} (A : Ob C) (X : Ob SetsStarCat) :
+  Ob (FunCat Cat_1 (CosliceCat A)).
+Proof.
+apply
+  {| f_obj _ := setsstar_coslice_ob_obj A;
+     f_hom _ _ _ := setsstar_coslice_ob_hom A;
+     f_comp_prop _ _ _ := setsstar_coslice_ob_comp_prop A X;
+     f_id_prop U := 42 |}.
+...
+
 Theorem setsstar_coslice {C} (A : Ob C):
   are_equivalent_categories SetsStarCat (FunCat Cat_1 (CosliceCat A)).
 Proof.
 unfold are_equivalent_categories.
-
+assert (F : functor SetsStarCat (FunCat Cat_1 (CosliceCat A))). {
+  apply
+    {| f_obj := setsstar_coslice_ob A |}.
 ...
 
 (* category of finite sets *)
