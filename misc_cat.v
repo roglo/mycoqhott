@@ -681,7 +681,50 @@ exists eq_refl.
 apply Hom_set.
 Defined.
 
-Theorem setsstar_coslice {C} (A : Ob C):
+(*
+Definition setsstar_coslice_comop_prop {C} (A : Ob C) (X Y Z : Ob SetsStarCat)
+           (f : Hom X Y) (g : Hom Y Z) :
+  setsstar_coslice_hom A X Z (g ◦ f) =
+  setsstar_coslice_hom A Y Z g ◦ setsstar_coslice_hom A X Y f.
+Proof.
+cbn in *.
+unfold nat_transf_comp.
+unfold setsstar_coslice_hom; cbn.
+apply eq_existT_uncurried; cbn.
+assert (p :
+          @eq (forall _ : unit, @Coslice_Hom C A (@setsstar_coslice_ob_obj C A) (@setsstar_coslice_ob_obj C A))
+             (fun _ : unit =>
+              @existT (@Hom C A A)
+                (fun h : @Hom C A A => @eq (@Hom C A A) (@comp C A A A (@idc C A) h) (@idc C A))
+                (@idc C A) (@unit_l C A A (@idc C A)))
+             (fun _ : unit =>
+              @Coslice_comp C A (@setsstar_coslice_ob_obj C A) (@setsstar_coslice_ob_obj C A)
+                (@setsstar_coslice_ob_obj C A)
+                (@existT (@Hom C A A)
+                   (fun h : @Hom C A A => @eq (@Hom C A A) (@comp C A A A (@idc C A) h) (@idc C A))
+                   (@idc C A) (@unit_l C A A (@idc C A)))
+                (@existT (@Hom C A A)
+                   (fun h : @Hom C A A => @eq (@Hom C A A) (@comp C A A A (@idc C A) h) (@idc C A))
+                   (@idc C A) (@unit_l C A A (@idc C A))))). {
+  apply fun_ext.
+  intros _.
+  unfold Coslice_comp.
+  apply eq_existT_uncurried; cbn.
+  assert (p : idc A = idc A ◦ idc A). {
+    symmetry; apply unit_l.
+  }
+  exists p.
+  apply Hom_set.
+}
+exists p; cbn.
+apply fun_ext; intros U; destruct U.
+apply fun_ext; intros U; destruct U.
+apply fun_ext; intros h.
+unfold nat_transf_comp_nt_commute; cbn.
+(* prise de tête ; je laisse béton *)
+Abort.
+
+Theorem setsstar_1_coslice {C} (A : Ob C):
   are_equivalent_categories SetsStarCat (FunCat Cat_1 (CosliceCat A)).
 Proof.
 unfold are_equivalent_categories.
@@ -691,6 +734,7 @@ assert (F : functor SetsStarCat (FunCat Cat_1 (CosliceCat A))). {
        f_hom := setsstar_coslice_hom A;
        f_comp_prop X Y Z f g := 42 |}.
 ...
+*)
 
 (* category of finite sets *)
 
