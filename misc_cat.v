@@ -645,7 +645,7 @@ Definition setsstar_coslice_ob_hom {C} (A : Ob C) :
   Hom (setsstar_coslice_ob_obj A) (setsstar_coslice_ob_obj A) :=
   existT _ (idc A) (unit_l (idc A)).
 
-Theorem setsstar_coslice_ob_comp_prop {C} (A : Ob C) (X : Ob SetsStarCat)
+Theorem setsstar_coslice_ob_comp_prop {C} (A : Ob C)
   {U U' U'' : Ob Cat_1} (f : Hom U U') (g : Hom U' U'') :
   setsstar_coslice_ob_hom A =
   setsstar_coslice_ob_hom A ◦ setsstar_coslice_ob_hom A.
@@ -655,15 +655,31 @@ exists (eq_sym (unit_l _)).
 apply Hom_set.
 Defined.
 
-Definition setsstar_coslice_ob {C} (A : Ob C) (X : Ob SetsStarCat) :
-  Ob (FunCat Cat_1 (CosliceCat A)).
+Theorem setsstar_coslice_ob_id_prop {C} (A : Ob C) (X : Ob SetsStarCat) :
+  setsstar_coslice_ob_hom A = idc (setsstar_coslice_ob_obj A).
 Proof.
-apply
+apply eq_existT_uncurried; cbn.
+exists eq_refl.
+apply Hom_set.
+Defined.
+
+Definition setsstar_coslice_ob {C} (A : Ob C) (X : Ob SetsStarCat) :
+  Ob (FunCat Cat_1 (CosliceCat A)) :=
   {| f_obj _ := setsstar_coslice_ob_obj A;
      f_hom _ _ _ := setsstar_coslice_ob_hom A;
-     f_comp_prop _ _ _ := setsstar_coslice_ob_comp_prop A X;
-     f_id_prop U := 42 |}.
-...
+     f_comp_prop _ _ _ := setsstar_coslice_ob_comp_prop A;
+     f_id_prop _ := setsstar_coslice_ob_id_prop A X |}.
+
+Definition setsstar_coslice_hom {C} (A : Ob C) (X Y : Ob SetsStarCat)
+  (f : Hom X Y) :
+  Hom (setsstar_coslice_ob A X) (setsstar_coslice_ob A Y).
+Proof.
+exists (λ _, existT (λ h, h ◦ idc A = idc A) (idc A) (unit_l (idc A))).
+intros U U' g; cbn.
+apply eq_existT_uncurried; cbn.
+exists eq_refl.
+apply Hom_set.
+Defined.
 
 Theorem setsstar_coslice {C} (A : Ob C):
   are_equivalent_categories SetsStarCat (FunCat Cat_1 (CosliceCat A)).
@@ -671,7 +687,9 @@ Proof.
 unfold are_equivalent_categories.
 assert (F : functor SetsStarCat (FunCat Cat_1 (CosliceCat A))). {
   apply
-    {| f_obj := setsstar_coslice_ob A |}.
+    {| f_obj := setsstar_coslice_ob A;
+       f_hom := setsstar_coslice_hom A;
+       f_comp_prop X Y Z f g := 42 |}.
 ...
 
 (* category of finite sets *)
