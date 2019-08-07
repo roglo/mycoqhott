@@ -1330,3 +1330,9 @@ Definition MonCat M :=
      unit_r _ _ := m_unit_r M;
      assoc _ _ _ _ := m_assoc M;
      Hom_set _ _ := st_is_set (m_set M) |}.
+
+(* for any object C in any category 𝒞, the set of arrows from C to C,
+   written as Hom_𝒞 (C, C), is a monoid under the composition operation
+   of 𝒞. *)
+
+...
