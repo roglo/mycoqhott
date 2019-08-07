@@ -1430,6 +1430,9 @@ f_equal.
  now destruct f_unit_prop.
 Defined.
 
+Theorem Mon_Hom_set M N : isSet (Mon_Hom M N).
+...
+
 Definition MonCat :=
   {| Ob := monoid;
      Hom := Mon_Hom;
@@ -1438,5 +1441,4 @@ Definition MonCat :=
      unit_l _ _ := Mon_unit_l;
      unit_r _ _ := Mon_unit_r;
      assoc _ _ _ _ := Mon_assoc;
-     Hom_set := 42 |}.
-...
+     Hom_set := Mon_Hom_set |}.
