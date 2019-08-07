@@ -1356,10 +1356,29 @@ Defined.
    (Awodey)
  *)
 
+(*
 Definition Mon_Hom (M N : monoid) :=
   { h : st_type (m_set M) → st_type (m_set N) &
     ((∀ m n, h (m_op m n) = m_op (h m) (h n)) *
      (h (m_unit _) = m_unit _))%type }.
+*)
+Record Mon_Hom_prop {M N} (h : st_type (m_set M) → st_type (m_set N)) :=
+  { mh_op_prop : ∀ m n, h (m_op m n) = m_op (h m) (h n);
+     mh_unit_prop : h (m_unit _) = m_unit _ }.
+Record Mon_Hom (M N : monoid) :=
+  { mh_hom : st_type (m_set M) → st_type (m_set N);
+    mh_prop : Mon_Hom_prop mh_hom }.
+
+Theorem eq_Mon_Hom_uncurried (M N : monoid) :
+  ∀ (mh1 mh2 : st_type (m_set M) → st_type (m_set N))
+     (mp1 : Mon_Hom_prop mh1) (mp2 : Mon_Hom_prop mh2),
+  {p : mh1 = mh2 & eq_rect mh1 Mon_Hom_prop mp1 mh2 p = mp2}
+  → {| mh_hom := mh1; mh_prop := mp1 |} =
+     {| mh_hom := mh2; mh_prop := mp2 |}.
+Proof.
+intros * (p, Hp).
+now destruct p, Hp.
+Defined.
 
 Definition Mon_comp {M N P : monoid}
   (f : Mon_Hom M N) (g : Mon_Hom N P) : Mon_Hom M P.
@@ -1387,7 +1406,7 @@ Theorem Mon_unit_l {M N : monoid} (f : Mon_Hom M N) :
   Mon_comp (Mon_id M) f = f.
 Proof.
 destruct f as (hf & f_op_prop & f_unit_prop).
-apply eq_existT_uncurried; unfold id; cbn.
+apply eq_Mon_Hom_uncurried; unfold id.
 exists eq_refl; cbn.
 f_equal; [ | now destruct f_unit_prop ].
 apply fun_ext; intros m.
@@ -1399,7 +1418,7 @@ Theorem Mon_unit_r {M N : monoid} (f : Mon_Hom M N) :
   Mon_comp f (Mon_id N) = f.
 Proof.
 destruct f as (hf & f_op_prop & f_unit_prop).
-apply eq_existT_uncurried; unfold id; cbn.
+apply eq_Mon_Hom_uncurried; unfold id; cbn.
 exists eq_refl; cbn.
 f_equal; [ | now destruct f_unit_prop ].
 apply fun_ext; intros m.
@@ -1414,7 +1433,7 @@ Proof.
 destruct f as (hf & f_op_prop & f_unit_prop).
 destruct g as (hg & g_op_prop & g_unit_prop).
 destruct h as (hh & h_op_prop & h_unit_prop).
-apply eq_existT_uncurried.
+apply eq_Mon_Hom_uncurried.
 exists eq_refl; cbn.
 f_equal.
 -apply fun_ext; intros a.
@@ -1432,6 +1451,7 @@ Defined.
 
 Theorem Mon_Hom_set M N : isSet (Mon_Hom M N).
 Proof.
+...
 apply h4c.isSet_isSet_sigT.
 -intros f.
  intros (p1, p2) (q1, q2).
