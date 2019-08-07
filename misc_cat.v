@@ -1319,7 +1319,10 @@ Record monoid :=
     m_unit_l : ∀ x, m_op x m_unit = x;
     m_unit_r : ∀ x, m_op m_unit x = x }.
 
-Definition MonCat :=
+Arguments m_op {_}.
+
+Definition MonCat M :=
   {| Ob := unit;
-     Hom _ _ := monoid;
-     comp := 42 |}.
+     Hom _ _ := m_set M;
+     comp X Y Z a b := m_op a b;
+     idc := 42 |}.
