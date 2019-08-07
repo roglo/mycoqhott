@@ -1312,18 +1312,21 @@ Abort.
 (* Monoid *)
 
 Record monoid :=
-  { m_set : Type;
-    m_op : m_set → m_set → m_set;
-    m_unit : m_set;
+  { m_set : Set_type;
+    m_op : st_type m_set → st_type m_set → st_type m_set;
+    m_unit : st_type m_set;
     m_assoc : ∀ x y z, m_op x (m_op y z) = m_op (m_op x y) z;
-    m_unit_l : ∀ x, m_op x m_unit = x;
-    m_unit_r : ∀ x, m_op m_unit x = x }.
+    m_unit_l : ∀ x, m_op m_unit x = x;
+    m_unit_r : ∀ x, m_op x m_unit = x }.
 
 Arguments m_op {_}.
 
 Definition MonCat M :=
   {| Ob := unit;
-     Hom _ _ := m_set M;
-     comp X Y Z a b := m_op a b;
+     Hom _ _ := st_type (m_set M);
+     comp _ _ _ := m_op;
      idc _ := m_unit M;
-     unit_l := 42 |}.
+     unit_l _ _ := m_unit_l M;
+     unit_r _ _ := m_unit_r M;
+     assoc _ _ _ _ := m_assoc M;
+     Hom_set _ _ := st_is_set (m_set M) |}.
