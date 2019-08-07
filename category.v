@@ -455,6 +455,7 @@ Notation "C × D" := (functor_prod C D) (at level 40) : functor_scope.
 
 Definition Set_type := { A : Type & isSet A }.
 
+Definition mk_Set_type A P : Set_type := existT _ A P.
 Definition st_type (st : Set_type) := projT1 st.
 Definition st_is_set (st : Set_type) := projT2 st.
 

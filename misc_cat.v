@@ -1321,7 +1321,7 @@ Record monoid :=
 
 Arguments m_op {_}.
 
-Definition MonCat M :=
+Definition cat_of_monoid M :=
   {| Ob := unit;
      Hom _ _ := st_type (m_set M);
      comp _ _ _ := m_op;
@@ -1331,8 +1331,112 @@ Definition MonCat M :=
      assoc _ _ _ _ := m_assoc M;
      Hom_set _ _ := st_is_set (m_set M) |}.
 
-(* for any object C in any category 𝒞, the set of arrows from C to C,
+(* For any object C in any category 𝒞, the set of arrows from C to C,
    written as Hom_𝒞 (C, C), is a monoid under the composition operation
-   of 𝒞. *)
+   of 𝒞. (Awodey) *)
 
+Theorem arrow_set_is_monoid {𝒞} (C : Ob 𝒞) : monoid.
+refine
+  {| m_set := mk_Set_type (Hom C C) (Hom_set _ _);
+     m_op a b := b ◦ a;
+     m_unit := idc _;
+     m_assoc := assoc;
+     m_unit_l := unit_l;
+     m_unit_r := unit_r |}.
+Defined.
+
+(* Since monoids are structured sets, there is a category Mon whose
+   objects are monoids and whose arrows are functions that preserve
+   the monoid structure. In detail, a homomorphism from a monoid M to
+   a monoid N is a function h : M → N such that for all m, n ∈ M,
+      h (m ._M n) = h(m) ·_N h(n)
+   and
+      h (u_M) = u_N.
+
+   (Awodey)
+ *)
+
+Definition Mon_Hom (M N : monoid) :=
+  { h : st_type (m_set M) → st_type (m_set N) &
+    ((∀ m n, h (m_op m n) = m_op (h m) (h n)) *
+     (h (m_unit _) = m_unit _))%type }.
+
+Definition Mon_comp {M N P : monoid}
+  (f : Mon_Hom M N) (g : Mon_Hom N P) : Mon_Hom M P.
+Proof.
+destruct f as (hf & f_op_prop & f_unit_prop).
+destruct g as (hg & g_op_prop & g_unit_prop).
+move hg before hf.
+move g_op_prop before f_op_prop.
+exists (λ m, (hg (hf m))).
+split.
+-intros m n.
+ etransitivity; [ | apply g_op_prop ].
+ apply f_equal, f_op_prop.
+-etransitivity; [ | apply g_unit_prop ].
+ apply f_equal, f_unit_prop.
+Defined.
+
+Definition Mon_id (M : monoid) : Mon_Hom M M.
+Proof.
+exists id; unfold id.
+split; [ now intros | easy ].
+Defined.
+
+Theorem Mon_unit_l {M N : monoid} (f : Mon_Hom M N) :
+  Mon_comp (Mon_id M) f = f.
+Proof.
+destruct f as (hf & f_op_prop & f_unit_prop).
+apply eq_existT_uncurried; unfold id; cbn.
+exists eq_refl; cbn.
+f_equal; [ | now destruct f_unit_prop ].
+apply fun_ext; intros m.
+apply fun_ext; intros n.
+now destruct (f_op_prop m n).
+Defined.
+
+Theorem Mon_unit_r {M N : monoid} (f : Mon_Hom M N) :
+  Mon_comp f (Mon_id N) = f.
+Proof.
+destruct f as (hf & f_op_prop & f_unit_prop).
+apply eq_existT_uncurried; unfold id; cbn.
+exists eq_refl; cbn.
+f_equal; [ | now destruct f_unit_prop ].
+apply fun_ext; intros m.
+apply fun_ext; intros n.
+now destruct (f_op_prop m n).
+Defined.
+
+Theorem Mon_assoc {M N P Q : monoid}
+        (f : Mon_Hom M N) (g : Mon_Hom N P) (h : Mon_Hom P Q) :
+  Mon_comp f (Mon_comp g h) = Mon_comp (Mon_comp f g) h.
+Proof.
+destruct f as (hf & f_op_prop & f_unit_prop).
+destruct g as (hg & g_op_prop & g_unit_prop).
+destruct h as (hh & h_op_prop & h_unit_prop).
+apply eq_existT_uncurried.
+exists eq_refl; cbn.
+f_equal.
+-apply fun_ext; intros a.
+ apply fun_ext; intros b.
+ unfold eq_trans.
+ destruct (h_op_prop (hg (hf a)) (hg (hf b))).
+ unfold f_equal.
+ destruct (g_op_prop (hf a) (hf b)).
+ now destruct (f_op_prop a b).
+-unfold eq_trans; cbn.
+ destruct h_unit_prop; cbn.
+ destruct g_unit_prop; cbn.
+ now destruct f_unit_prop.
+Defined.
+
+Definition MonCat :=
+  {| Ob := monoid;
+     Hom := Mon_Hom;
+     comp _ _ _ := Mon_comp;
+     idc := Mon_id;
+     unit_l _ _ := Mon_unit_l;
+     unit_r _ _ := Mon_unit_r;
+     assoc _ _ _ _ := Mon_assoc;
+     Hom_set := 42 |}.
 ...
