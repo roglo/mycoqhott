@@ -164,7 +164,7 @@ Theorem Cone_Hom_set {J C} {D : functor J C} :
 Proof.
 intros.
 unfold Cone_Hom.
-apply h4c.is_set_is_set_sigT; [ | apply Hom_set ].
+apply h4c.isSet_isSet_sigT; [ | apply Hom_set ].
 intros f.
 intros p q.
 apply fun_ext.
@@ -177,7 +177,7 @@ Theorem CoCone_Hom_set {J C} {D : functor J C} :
 Proof.
 intros.
 unfold CoCone_Hom.
-apply h4c.is_set_is_set_sigT; [ | apply Hom_set ].
+apply h4c.isSet_isSet_sigT; [ | apply Hom_set ].
 intros f.
 intros p q.
 apply fun_ext.

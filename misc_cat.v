@@ -262,7 +262,7 @@ Theorem Arr_Hom_set {C} (X Y : Arr_Ob C) :
   isSet (Arr_Hom X Y).
 Proof.
 unfold Arr_Hom.
-apply h4c.is_set_is_set_sigT. 2: {
+apply h4c.isSet_isSet_sigT. 2: {
   apply h4c.isSet_pair; apply Hom_set.
 }
 intros (f, g); cbn.
@@ -352,7 +352,7 @@ Theorem Slice_Hom_set {C} {B : Ob C} (f f' : Slice_Ob B) :
   isSet (Slice_Hom f f').
 Proof.
 unfold Slice_Hom.
-apply h4c.is_set_is_set_sigT; [ | apply Hom_set ].
+apply h4c.isSet_isSet_sigT; [ | apply Hom_set ].
 intros g.
 unfold h4c.isProp.
 apply Hom_set.
@@ -435,7 +435,7 @@ Theorem Coslice_Hom_set {C} {A : Ob C} (f f' : Coslice_Ob A) :
   isSet (Coslice_Hom f f').
 Proof.
 unfold Coslice_Hom.
-apply h4c.is_set_is_set_sigT; [ | apply Hom_set ].
+apply h4c.isSet_isSet_sigT; [ | apply Hom_set ].
 intros g.
 unfold h4c.isProp.
 apply Hom_set.
@@ -611,7 +611,7 @@ Proof.
 Theorem SetsStar_Hom_set (A B : SetsStar_Ob) :
   isSet (SetsStar_Hom A B).
 Proof.
-apply h4c.is_set_is_set_sigT. 2: {
+apply h4c.isSet_isSet_sigT. 2: {
   apply h4c.isSet_forall.
   intros a.
   apply st_is_set.
@@ -840,7 +840,7 @@ Defined.
 
 Theorem Pos_Hom_set A B : isSet (Pos_Hom A B).
 Proof.
-apply h4c.is_set_is_set_sigT. {
+apply h4c.isSet_isSet_sigT. {
   intros f.
   unfold is_monotone.
   intros g h.
@@ -1431,7 +1431,18 @@ f_equal.
 Defined.
 
 Theorem Mon_Hom_set M N : isSet (Mon_Hom M N).
-...
+Proof.
+apply h4c.isSet_isSet_sigT.
+-intros f.
+ intros (p1, p2) (q1, q2).
+ move q1 before p1.
+ f_equal; [ | apply st_is_set ].
+ apply fun_ext; intros m.
+ apply fun_ext; intros n.
+ apply st_is_set.
+-apply h4c.isSet_forall.
+ intros; apply st_is_set.
+Defined.
 
 Definition MonCat :=
   {| Ob := monoid;
@@ -1442,3 +1453,49 @@ Definition MonCat :=
      unit_r _ _ := Mon_unit_r;
      assoc _ _ _ _ := Mon_assoc;
      Hom_set := Mon_Hom_set |}.
+
+(* The reader should check that a monoid homomorphism from M to N is
+   the same thing as a functor from M regarded as a category to N
+   regarded as a category. In this sense, categories are also
+   generalized monoids, and functors are generalized homomorphisms.
+   (Awodey)
+ *)
+
+(* what does he mean by "same thing"? one is a specific definition
+   (a "monoid homomorphism") and the other is a functor, differently
+   defined *)
+
+Check Mon_Hom.
+Check functor.
+
+...
+
+Mon_Hom
+     : monoid → monoid → Type
+functor
+     : category → category → Type
+
+...
+
+Print Mon_Hom.
+Print functor.
+
+...
+
+Mon_Hom =
+λ M N : monoid,
+  {h : st_type (m_set M) → st_type (m_set N) &
+  (∀ m n : st_type (m_set M), h (m_op m n) = m_op (h m) (h n)) *
+  (h (m_unit M) = m_unit N)}
+     : monoid → monoid → Type
+
+Record functor (C D : category) : Type := Build_functor
+  { f_obj : Ob C → Ob D;
+    f_hom : ∀ a b : Ob C, Hom a b → Hom (f_obj a) (f_obj b);
+    f_comp_prop : ∀ (a b c : Ob C) (f : Hom a b) (g : Hom b c),
+                    f_hom a c (g ◦ f) = f_hom b c g ◦ f_hom a b f;
+    f_id_prop : ∀ a : Ob C, f_hom a a (idc a) = idc (f_obj a) }
+
+For functor: Argument scopes are [category_scope category_scope]
+For Build_functor: Argument scopes are [_ _ function_scope function_scope
+                     function_scope function_scope]

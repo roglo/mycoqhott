@@ -388,7 +388,7 @@ eapply isnType_if_equiv; [ | apply H4 ].
 now apply pair_transport_equiv_eq_existT.
 Qed.
 
-Theorem is_set_is_set_sigT {A} {P : A → Type} :
+Theorem isSet_isSet_sigT {A} {P : A → Type} :
   (∀ x, isProp (P x)) → isSet A → isSet (@sigT A P).
 Proof.
 intros * HP HS.

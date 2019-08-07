@@ -298,7 +298,7 @@ Theorem Fun_Hom_set {C D} : ∀ F G : functor C D,
 Proof.
 intros.
 intros a b c d.
-apply h4c.is_set_is_set_sigT. {
+apply h4c.isSet_isSet_sigT. {
   intros ϑ f g.
   apply fun_ext; intros x.
   apply fun_ext; intros y.
