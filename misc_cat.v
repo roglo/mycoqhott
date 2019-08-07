@@ -1308,3 +1308,18 @@ exists
     and define it as C^2. I don't like that but perhaps there is no
     better solution *)
 Abort.
+
+(* Monoid *)
+
+Record monoid :=
+  { m_set : Type;
+    m_op : m_set → m_set → m_set;
+    m_unit : m_set;
+    m_assoc : ∀ x y z, m_op x (m_op y z) = m_op (m_op x y) z;
+    m_unit_l : ∀ x, m_op x m_unit = x;
+    m_unit_r : ∀ x, m_op m_unit x = x }.
+
+Definition MonCat :=
+  {| Ob := unit;
+     Hom _ _ := monoid;
+     comp := 42 |}.
