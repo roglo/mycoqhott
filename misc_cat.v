@@ -1325,4 +1325,5 @@ Definition MonCat M :=
   {| Ob := unit;
      Hom _ _ := m_set M;
      comp X Y Z a b := m_op a b;
-     idc := 42 |}.
+     idc _ := m_unit M;
+     unit_l := 42 |}.
