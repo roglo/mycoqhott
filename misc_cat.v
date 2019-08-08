@@ -1401,6 +1401,7 @@ split. {
   destruct H2.
   unfold eq_any_rec_uncurried, eq_uncurried_any_rec.
 (* shit: work on type sigT but refuses to work on type any_rec *)
+Abort. (*
 ...
   inversion_sigma.
   destruct p0.
@@ -1414,6 +1415,7 @@ now destruct p, Hp.
 Qed.
 
 ...
+*)
 
 Theorem isnType_isnType_any_rec (A : Type) : ∀ n P,
   (∀ x, isProp (P x)) → h4c.isnType A n → h4c.isnType (any_rec A P) n.
@@ -1450,9 +1452,10 @@ assert (H : ∀ p : a = b, isProp (Q p)). {
   apply H2.
 }
 specialize (H4 H); clear H.
-cbn in Hn.
 specialize (H4 (Hn a b)).
+...
 subst Q.
+...
 eapply h4c.isnType_if_equiv; [ | apply H4 ].
 Check @h4c.pair_transport_equiv_eq_existT.
 ...
