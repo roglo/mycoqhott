@@ -1453,10 +1453,24 @@ assert (H : ∀ p : a = b, isProp (Q p)). {
 }
 specialize (H4 H); clear H.
 specialize (H4 (Hn a b)).
-...
-subst Q.
-...
 eapply h4c.isnType_if_equiv; [ | apply H4 ].
+(*
+unfold h4c.equivalence.
+assert (f
+  : any_rec (a = b) Q
+    → {| a_def := a; a_dep := Ha |} = {| a_def := b; a_dep := Hb |}). {
+  intros x.
+  destruct x as (H1, H2).
+  destruct H1.
+  apply f_equal, HP.
+}
+exists f.
+unfold h4c.isequiv.
+split.
+-assert (g
+  : {| a_def := a; a_dep := Ha |} = {| a_def := b; a_dep := Hb |}). {
+...
+*)
 Check @h4c.pair_transport_equiv_eq_existT.
 ...
 now apply h4c.pair_transport_equiv_eq_existT.
