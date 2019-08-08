@@ -1400,6 +1400,7 @@ split. {
   specialize (H a Ha Hb) as H2.
   destruct H2.
   unfold eq_any_rec_uncurried, eq_uncurried_any_rec.
+(* shit: work on type sigT but refuses to work on type any_rec *)
 ...
   inversion_sigma.
   destruct p0.
