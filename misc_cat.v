@@ -1363,14 +1363,61 @@ Record any_rec A (P : A → Type) :=
     a_dep : P a_def }.
 
 Theorem eq_any_rec_uncurried A P :
-  ∀ (a b : A) (ad : P a) (bd : P b),
-  {p : a = b & eq_rect a P ad b p = bd}
-  → {| a_def := a; a_dep := ad |} =
-     {| a_def := b; a_dep := bd |}.
+  ∀ (a b : A) (Ha : P a) (Hb : P b),
+  {p : a = b & eq_rect a P Ha b p = Hb}
+  → {| a_def := a; a_dep := Ha |} = {| a_def := b; a_dep := Hb |}.
 Proof.
 intros * (p, Hp).
 now destruct p, Hp.
 Defined.
+
+Theorem eq_uncurried_any_rec {A} {P : A → Type} :
+  ∀ a b (Ha : P a) (Hb : P b),
+  {| a_def := a; a_dep := Ha |} = {| a_def := b; a_dep := Hb |}
+  → {p : a = b & eq_rect a P Ha b p = Hb}.
+Proof.
+intros * Hee.
+inversion Hee.
+destruct H0.
+now exists eq_refl.
+Defined.
+
+Theorem pair_transport_equiv_eq_any_rec {A : Type} : ∀ (P : A → Type),
+  (∀ x, isProp (P x))
+  → ∀ a b (Ha : P a) (Hb : P b),
+  h4c.equivalence
+    {p : a = b & eq_rect a P Ha b p = Hb}
+    ({| a_def := a; a_dep := Ha |} = {| a_def := b; a_dep := Hb |}).
+Proof.
+intros.
+unfold h4c.equivalence.
+exists (eq_any_rec_uncurried A P a b Ha Hb).
+split. {
+  exists (eq_uncurried_any_rec a b Ha Hb).
+  unfold h4c.homotopy, h4c.composite, h4c.mid.
+  intros p.
+(*
+  inversion p.
+  destruct H1.
+  destruct H2.
+*)
+  unfold eq_any_rec_uncurried, eq_uncurried_any_rec.
+  cbn.
+...
+
+
+  inversion_sigma.
+  destruct p0.
+  cbn in p1; cbn.
+  now destruct p1.
+}
+exists (eq_existT_pair_transport a b Ha Hb).
+unfold "◦◦", "∼", mid.
+intros (p, Hp).
+now destruct p, Hp.
+Qed.
+
+...
 
 Theorem isnType_isnType_any_rec (A : Type) : ∀ n P,
   (∀ x, isProp (P x)) → h4c.isnType A n → h4c.isnType (any_rec A P) n.
