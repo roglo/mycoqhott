@@ -1465,22 +1465,11 @@ Definition MonCat :=
    (a "monoid homomorphism") and the other is a functor, differently
    defined *)
 
-Check Mon_Hom.
-Check functor.
-
-...
-
+(*
 Mon_Hom
      : monoid → monoid → Type
 functor
      : category → category → Type
-
-...
-
-Print Mon_Hom.
-Print functor.
-
-...
 
 Mon_Hom =
 λ M N : monoid,
@@ -1495,7 +1484,4 @@ Record functor (C D : category) : Type := Build_functor
     f_comp_prop : ∀ (a b c : Ob C) (f : Hom a b) (g : Hom b c),
                     f_hom a c (g ◦ f) = f_hom b c g ◦ f_hom a b f;
     f_id_prop : ∀ a : Ob C, f_hom a a (idc a) = idc (f_obj a) }
-
-For functor: Argument scopes are [category_scope category_scope]
-For Build_functor: Argument scopes are [_ _ function_scope function_scope
-                     function_scope function_scope]
+*)
