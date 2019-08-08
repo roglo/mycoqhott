@@ -1356,200 +1356,10 @@ Defined.
    (Awodey)
  *)
 
-Print sigT.
-
-Record any_rec A (P : A → Type) :=
-  { a_def : A;
-    a_dep : P a_def }.
-
-Theorem eq_any_rec_uncurried A P :
-  ∀ (a b : A) (Ha : P a) (Hb : P b),
-  {p : a = b & eq_rect a P Ha b p = Hb}
-  → {| a_def := a; a_dep := Ha |} = {| a_def := b; a_dep := Hb |}.
-Proof.
-intros * (p, Hp).
-now destruct p, Hp.
-Defined.
-
-Theorem eq_uncurried_any_rec {A} {P : A → Type} :
-  ∀ a b (Ha : P a) (Hb : P b),
-  {| a_def := a; a_dep := Ha |} = {| a_def := b; a_dep := Hb |}
-  → {p : a = b & eq_rect a P Ha b p = Hb}.
-Proof.
-intros * Hee.
-inversion_clear Hee.
-now exists eq_refl.
-Defined.
-
-Theorem pair_transport_equiv_eq_any_rec {A : Type} : ∀ (P : A → Type),
-  (∀ x, isProp (P x))
-  → ∀ a b (Ha : P a) (Hb : P b),
-  h4c.equivalence
-    {p : a = b & eq_rect a P Ha b p = Hb}
-    ({| a_def := a; a_dep := Ha |} = {| a_def := b; a_dep := Hb |}).
-Proof.
-intros.
-unfold h4c.equivalence.
-exists (eq_any_rec_uncurried A P a b Ha Hb).
-split. {
-  exists (eq_uncurried_any_rec a b Ha Hb).
-  unfold h4c.homotopy, h4c.composite, h4c.mid.
-  intros p.
-  injection p; intros H1 H2.
-  destruct H2.
-  specialize (H a Ha Hb) as H2.
-  destruct H2.
-  unfold eq_any_rec_uncurried, eq_uncurried_any_rec.
-(* shit: work on type sigT but refuses to work on type any_rec *)
-Abort. (*
-...
-  inversion_sigma.
-  destruct p0.
-  cbn in p1; cbn.
-  now destruct p1.
-}
-exists (eq_existT_pair_transport a b Ha Hb).
-unfold "◦◦", "∼", mid.
-intros (p, Hp).
-now destruct p, Hp.
-Qed.
-
-...
-*)
-
-Theorem isnType_isnType_any_rec (A : Type) : ∀ n P,
-  (∀ x, isProp (P x)) → h4c.isnType A n → h4c.isnType (any_rec A P) n.
-Proof.
-intros * HP Hn.
-revert A P HP Hn.
-induction n; intros. {
-  cbn in Hn; cbn.
-  unfold isProp in Hn |-*.
-  intros H1 H2.
-  destruct H1 as (a & Ha).
-  destruct H2 as (b & Hb).
-  move b before a.
-  apply eq_any_rec_uncurried.
-  assert (p : a = b) by apply Hn.
-  exists p.
-  apply HP.
-}
-intros Ha Hb.
-destruct Ha as (a, Ha).
-destruct Hb as (b, Hb).
-move b before a.
-specialize (IHn (a = b)) as H4.
-remember (λ p : a = b, h4c.transport P p Ha = Hb) as Q.
-specialize (H4 Q).
-assert (H : ∀ p : a = b, isProp (Q p)). {
-  intros p.
-  subst Q.
-  destruct p.
-  cbn.
-  specialize (HP a) as H1.
-  specialize (h4c.isProp_isSet H1 Ha Hb) as H2.
-  intros r s.
-  apply H2.
-}
-specialize (H4 H); clear H.
-specialize (H4 (Hn a b)).
-eapply h4c.isnType_if_equiv; [ | apply H4 ].
-(*
-unfold h4c.equivalence.
-assert (f
-  : any_rec (a = b) Q
-    → {| a_def := a; a_dep := Ha |} = {| a_def := b; a_dep := Hb |}). {
-  intros x.
-  destruct x as (H1, H2).
-  destruct H1.
-  apply f_equal, HP.
-}
-exists f.
-unfold h4c.isequiv.
-split.
--assert (g
-  : {| a_def := a; a_dep := Ha |} = {| a_def := b; a_dep := Hb |}). {
-...
-*)
-Check @h4c.pair_transport_equiv_eq_existT.
-...
-now apply h4c.pair_transport_equiv_eq_existT.
-Qed.
-
-...
-
-(*
 Definition Mon_Hom (M N : monoid) :=
   { h : st_type (m_set M) → st_type (m_set N) &
     ((∀ m n, h (m_op m n) = m_op (h m) (h n)) *
      (h (m_unit _) = m_unit _))%type }.
-*)
-Definition Mon_Hom_hom M N := st_type (m_set M) → st_type (m_set N).
-Record Mon_Hom (M N : monoid) P :=
-  { mh_hom : Mon_Hom_hom M N;
-    mh_prop : P mh_hom }.
-(*
-Record Mon_Hom_prop {M N} (h : Mon_Hom_hom M N) :=
-  { mh_op_prop : ∀ m n, h (m_op m n) = m_op (h m) (h n);
-     mh_unit_prop : h (m_unit _) = m_unit _ }.
-*)
-
-Theorem eq_Mon_Hom_uncurried (M N : monoid) P :
-  ∀ (mh1 mh2 : Mon_Hom_hom M N) (mp1 : P mh1) (mp2 : P mh2),
-  {p : mh1 = mh2 & eq_rect mh1 P mp1 mh2 p = mp2}
-  → {| mh_hom := mh1; mh_prop := mp1 |} =
-     {| mh_hom := mh2; mh_prop := mp2 |}.
-Proof.
-intros * (p, Hp).
-now destruct p, Hp.
-Defined.
-
-Theorem isnType_isnType_dep (M N : monoid) : ∀ n P,
-  (∀ x, isProp (P x))
-  → h4c.isnType (Mon_Hom_hom M N) n
-  → h4c.isnType (@Mon_Hom M N P) n.
-Proof.
-intros * HP Hn.
-revert P HP Hn.
-induction n; intros. {
-  cbn in Hn; cbn.
-  unfold isProp in Hn |-*.
-  intros H1 H2.
-  destruct H1 as (a & Ha).
-  destruct H2 as (b & Hb).
-  move b before a.
-  apply eq_Mon_Hom_uncurried.
-  assert (p : a = b) by apply Hn.
-  exists p.
-  apply HP.
-}
-intros Ha Hb.
-destruct Ha as (a, Ha).
-destruct Hb as (b, Hb).
-move b before a.
-...
-specialize (IHn (a = b)) as H4.
-remember (λ p : a = b, h4c.transport P p Ha = Hb) as Q.
-specialize (H4 Q).
-assert (H : ∀ p : a = b, isProp (Q p)). {
-  intros p.
-  subst Q.
-  destruct p.
-  cbn.
-  specialize (HP a) as H1.
-  specialize (h4c.isProp_isSet H1 Ha Hb) as H2.
-  intros r s.
-  apply H2.
-}
-specialize (H4 H); clear H.
-cbn in Hn.
-specialize (H4 (Hn a b)).
-subst Q.
-eapply h4c.isnType_if_equiv; [ | apply H4 ].
-now apply h4c.pair_transport_equiv_eq_existT.
-Qed.
-
-...
 
 Definition Mon_comp {M N P : monoid}
   (f : Mon_Hom M N) (g : Mon_Hom N P) : Mon_Hom M P.
@@ -1577,7 +1387,7 @@ Theorem Mon_unit_l {M N : monoid} (f : Mon_Hom M N) :
   Mon_comp (Mon_id M) f = f.
 Proof.
 destruct f as (hf & f_op_prop & f_unit_prop).
-apply eq_Mon_Hom_uncurried; unfold id.
+apply eq_existT_uncurried; unfold id.
 exists eq_refl; cbn.
 f_equal; [ | now destruct f_unit_prop ].
 apply fun_ext; intros m.
@@ -1589,7 +1399,7 @@ Theorem Mon_unit_r {M N : monoid} (f : Mon_Hom M N) :
   Mon_comp f (Mon_id N) = f.
 Proof.
 destruct f as (hf & f_op_prop & f_unit_prop).
-apply eq_Mon_Hom_uncurried; unfold id; cbn.
+apply eq_existT_uncurried; unfold id.
 exists eq_refl; cbn.
 f_equal; [ | now destruct f_unit_prop ].
 apply fun_ext; intros m.
@@ -1604,7 +1414,7 @@ Proof.
 destruct f as (hf & f_op_prop & f_unit_prop).
 destruct g as (hg & g_op_prop & g_unit_prop).
 destruct h as (hh & h_op_prop & h_unit_prop).
-apply eq_Mon_Hom_uncurried.
+apply eq_existT_uncurried.
 exists eq_refl; cbn.
 f_equal.
 -apply fun_ext; intros a.
@@ -1620,56 +1430,8 @@ f_equal.
  now destruct f_unit_prop.
 Defined.
 
-Check Mon_Hom.
-Check @sigT.
-
-Theorem isnType_isnType_dep (A : Type) : ∀ n P,
-  (∀ x, isProp (P x)) → h4c.isnType A n → h4c.isnType (@sigT A P) n.
-Proof.
-intros * HP Hn.
-revert A P HP Hn.
-induction n; intros. {
-  cbn in Hn; cbn.
-  unfold isProp in Hn |-*.
-  intros H1 H2.
-  destruct H1 as (a & Ha).
-  destruct H2 as (b & Hb).
-  move b before a.
-  apply eq_existT_uncurried.
-  assert (p : a = b) by apply Hn.
-  exists p.
-  apply HP.
-}
-intros Ha Hb.
-destruct Ha as (a, Ha).
-destruct Hb as (b, Hb).
-move b before a.
-specialize (IHn (a = b)) as H4.
-remember (λ p : a = b, h4c.transport P p Ha = Hb) as Q.
-specialize (H4 Q).
-assert (H : ∀ p : a = b, isProp (Q p)). {
-  intros p.
-  subst Q.
-  destruct p.
-  cbn.
-  specialize (HP a) as H1.
-  specialize (h4c.isProp_isSet H1 Ha Hb) as H2.
-  intros r s.
-  apply H2.
-}
-specialize (H4 H); clear H.
-cbn in Hn.
-specialize (H4 (Hn a b)).
-subst Q.
-eapply h4c.isnType_if_equiv; [ | apply H4 ].
-now apply h4c.pair_transport_equiv_eq_existT.
-Qed.
-
-...
-
 Theorem Mon_Hom_set M N : isSet (Mon_Hom M N).
 Proof.
-...
 apply h4c.isSet_isSet_sigT.
 -intros f.
  intros (p1, p2) (q1, q2).
