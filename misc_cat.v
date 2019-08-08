@@ -1491,10 +1491,23 @@ Record functor (C D : category) : Type := Build_functor
 Theorem isSet_list A : isSet A → isSet (list A).
 Proof.
 intros H x y p q.
+clear H.
+(*
 unfold isSet, h4c.isSet in H.
-destruct x as [| x].
--destruct y as [| y].
-Search list.
+*)
+revert y p q.
+induction x as [| x lx]; intros.
+-destruct y as [| y ly]; [ | easy ].
+ refine (match p with eq_refl => _ end).
+ refine (match q with eq_refl => _ end).
+ easy.
+-destruct y as [| y ly]; [ easy | ].
+ injection p; intros H1 H2.
+...
+ destruct H1, H2.
+ refine (match p with eq_refl => _ end).
+ refine (match q with eq_refl => _ end).
+ easy.
 ...
 
 Definition free_monoid (A : Type) :=
