@@ -1377,8 +1377,7 @@ Theorem eq_uncurried_any_rec {A} {P : A → Type} :
   → {p : a = b & eq_rect a P Ha b p = Hb}.
 Proof.
 intros * Hee.
-inversion Hee.
-destruct H0.
+inversion_clear Hee.
 now exists eq_refl.
 Defined.
 
@@ -1396,16 +1395,12 @@ split. {
   exists (eq_uncurried_any_rec a b Ha Hb).
   unfold h4c.homotopy, h4c.composite, h4c.mid.
   intros p.
-(*
-  inversion p.
-  destruct H1.
+  injection p; intros H1 H2.
   destruct H2.
-*)
+  specialize (H a Ha Hb) as H2.
+  destruct H2.
   unfold eq_any_rec_uncurried, eq_uncurried_any_rec.
-  cbn.
 ...
-
-
   inversion_sigma.
   destruct p0.
   cbn in p1; cbn.
