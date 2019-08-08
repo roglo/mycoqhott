@@ -1485,3 +1485,27 @@ Record functor (C D : category) : Type := Build_functor
                     f_hom a c (g ◦ f) = f_hom b c g ◦ f_hom a b f;
     f_id_prop : ∀ a : Ob C, f_hom a a (idc a) = idc (f_obj a) }
 *)
+
+(* Free monoid *)
+
+Theorem isSet_list A : isSet A → isSet (list A).
+Proof.
+intros H x y p q.
+unfold isSet, h4c.isSet in H.
+destruct x as [| x].
+-destruct y as [| y].
+Search list.
+...
+
+Definition free_monoid (A : Type) :=
+  {| m_set := list A |}.
+
+...
+
+Record monoid :=
+  { m_set : Set_type;
+    m_op : st_type m_set → st_type m_set → st_type m_set;
+    m_unit : st_type m_set;
+    m_assoc : ∀ x y z, m_op x (m_op y z) = m_op (m_op x y) z;
+    m_unit_l : ∀ x, m_op m_unit x = x;
+    m_unit_r : ∀ x, m_op x m_unit = x }.
