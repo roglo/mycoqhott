@@ -186,18 +186,18 @@ Defined.
 Require Import List.
 Import List.ListNotations.
 
-Fixpoint list_code {A} (a b : list A) : Type :=
-  match (a, b) with
+Fixpoint list_code {A} (la lb : list A) : Type :=
+  match (la, lb) with
   | ([], []) => True
   | (_ :: _, []) => False
   | ([], _ :: _) => False
-  | (a :: al, b :: bl) => ((a = b) * list_code al bl)%type
+  | (a :: la, b :: lb) => ((a = b) * list_code la lb)%type
   end.
 
-Theorem list_r {A} (n : list A) : @list_code A n n.
+Theorem list_r {A} (l : list A) : @list_code A l l.
 Proof.
-now induction n.
+now induction l.
 Defined.
 
-Definition list_encode {A} (m n : list A) : m = n → list_code m n :=
-  λ p, transport (list_code m) p (list_r m).
+Definition list_encode {A} (la lb : list A) : la = lb → list_code la lb :=
+  λ p, transport (list_code la) p (list_r la).
