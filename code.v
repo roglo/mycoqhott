@@ -194,10 +194,11 @@ Fixpoint list_code {A} (la lb : list A) : Type :=
   | (a :: la, b :: lb) => ((a = b) * list_code la lb)%type
   end.
 
-Theorem list_r {A} (l : list A) : @list_code A l l.
-Proof.
-now induction l.
-Defined.
+Fixpoint list_r {A} (l : list A) : list_code l l :=
+  match l with
+  | [] => I
+  | a :: l => (eq_refl, list_r l)
+  end.
 
 Definition list_encode {A} (la lb : list A) : la = lb → list_code la lb :=
   λ p, transport (list_code la) p (list_r la).
@@ -226,19 +227,21 @@ induction la; [ reflexivity | simpl ].
 now rewrite IHla.
 Defined.
 
-Theorem list_encode_decode {A} {la lb : list A} :
-  ∀ lc, list_encode la lb (list_decode la lb lc) = lc.
+Theorem list_encode_decode {A} {m n : list A} :
+  ∀ c, list_encode m n (list_decode m n c) = c.
 Proof.
-intros lc.
-revert lb lc; induction la; intros.
- simpl in lc.
- destruct lb, lc; reflexivity.
+intros c.
+revert n c; induction m; intros.
+ simpl in c.
+ destruct n, c; reflexivity.
 
- simpl in lc.
- destruct lb; [ refine (match lc with end) | simpl ].
- destruct lc as (p, q); cbn.
- destruct p; cbn.
- destruct (list_decode la lb q); cbn.
- apply f_equal.
- specialize (IHla la q) as H1.
+ simpl in c.
+ destruct n; [ refine (match c with end) | simpl ].
+ unfold list_encode.
+ destruct c as (pa, pl).
+ destruct pa.
+Check hott_2_3_10.
 ...
+ rewrite <- (hott_2_3_10 S (nat_code (S m)) (nat_decode m n c)).
+ apply IHm.
+Defined.
