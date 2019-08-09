@@ -214,8 +214,7 @@ destruct m.
  destruct n; [ refine (match p with end) | simpl in p ].
  destruct p as (pa, pl).
  destruct pa.
- specialize (IHn m n pl) as H1.
- now destruct H1.
+ now destruct (IHn m n pl).
 Defined.
 
 Theorem list_decode_encode {A} {la lb : list A} :
@@ -236,11 +235,11 @@ revert n c; induction m; intros.
  destruct n, c; reflexivity.
 
  simpl in c.
- destruct n; [ refine (match c with end) | simpl ].
- unfold list_encode.
+ destruct n; [ refine (match c with end) | ].
+ simpl.
  destruct c as (pa, pl).
  destruct pa.
-Check hott_2_3_10.
+Check @hott_2_3_10.
 ...
  rewrite <- (hott_2_3_10 S (nat_code (S m)) (nat_decode m n c)).
  apply IHm.
