@@ -216,3 +216,29 @@ destruct m.
  specialize (IHn m n pl) as H1.
  now destruct H1.
 Defined.
+
+Theorem list_decode_encode {A} {la lb : list A} :
+  ∀ lc, list_decode la lb (list_encode la lb lc) = lc.
+Proof.
+intros lc.
+destruct lc; simpl; unfold id; simpl.
+induction la; [ reflexivity | simpl ].
+now rewrite IHla.
+Defined.
+
+Theorem list_encode_decode {A} {la lb : list A} :
+  ∀ lc, list_encode la lb (list_decode la lb lc) = lc.
+Proof.
+intros lc.
+revert lb lc; induction la; intros.
+ simpl in lc.
+ destruct lb, lc; reflexivity.
+
+ simpl in lc.
+ destruct lb; [ refine (match lc with end) | simpl ].
+ destruct lc as (p, q); cbn.
+ destruct p; cbn.
+ destruct (list_decode la lb q); cbn.
+ apply f_equal.
+ specialize (IHla la q) as H1.
+...
