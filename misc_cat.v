@@ -1503,8 +1503,10 @@ induction x as [| x lx]; intros.
  easy.
 -destruct y as [| y ly]; [ easy | ].
  injection p; intros H1 H2.
+ injection q; intros H3 H4.
+move H3 before H1.
+specialize (IHlx _ H1 H3) as H5.
 ...
- destruct H1, H2.
  refine (match p with eq_refl => _ end).
  refine (match q with eq_refl => _ end).
  easy.
