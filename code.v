@@ -177,11 +177,18 @@ Fixpoint list_code {A} (a b : list A) : Type :=
   | (a :: al, b :: bl) => ((a = b) * list_code al bl)%type
   end.
 
+Definition list_encode1 {A} (m n : list A) : m = n → _ :=
+  λ p, transport (list_code m) p.
+
+Print list_encode1.
+
+(**)
 Fixpoint list_r {A} (n : list A) : @list_code A n n :=
   match n with
   | [] => I
   | b :: l => list_r l
   end.
+(**)
 
 (*
 Fixpoint nat_r n : nat_code n n :=
