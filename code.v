@@ -201,3 +201,18 @@ Defined.
 
 Definition list_encode {A} (la lb : list A) : la = lb → list_code la lb :=
   λ p, transport (list_code la) p (list_r la).
+
+Definition list_decode {A} (la lb : list A) : list_code la lb → la = lb.
+Proof.
+revert la lb.
+fix IHn 1.
+intros m n p.
+destruct m.
+ destruct n; [ reflexivity | refine (match p with end) ].
+
+ destruct n; [ refine (match p with end) | simpl in p ].
+ destruct p as (pa, pl).
+ destruct pa.
+ specialize (IHn m n pl) as H1.
+ now destruct H1.
+Defined.
