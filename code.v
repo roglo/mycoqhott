@@ -64,24 +64,24 @@ Definition hott_2_3_10 {A B x y} :
 
 (* proof nat is hset *)
 
-Fixpoint N_code m n : Type :=
+Fixpoint nat_code m n : Type :=
   match (m, n) with
   | (0, 0) => True
   | (S m, 0) => False
   | (0, S n) => False
-  | (S m, S n) => N_code m n
+  | (S m, S n) => nat_code m n
   end.
 
-Fixpoint N_r n : N_code n n :=
+Fixpoint nat_r n : nat_code n n :=
   match n with
   | 0 => I
-  | S m => N_r m
+  | S m => nat_r m
   end.
 
-Definition N_encode (m n : nat) : m = n → N_code m n :=
-  λ p, transport (N_code m) p (N_r m).
+Definition nat_encode (m n : nat) : m = n → nat_code m n :=
+  λ p, transport (nat_code m) p (nat_r m).
 
-Definition N_decode (m n : nat) : N_code m n → m = n.
+Definition nat_decode (m n : nat) : nat_code m n → m = n.
 Proof.
 revert m n.
 fix IHn 1.
@@ -93,7 +93,7 @@ destruct m.
  apply ap, IHn, p.
 Defined.
 
-Theorem N_decode_encode {m n} : ∀ p, N_decode m n (N_encode m n p) = p.
+Theorem nat_decode_encode {m n} : ∀ p, nat_decode m n (nat_encode m n p) = p.
 Proof.
 intros p.
 destruct p; simpl; unfold id; simpl.
@@ -101,7 +101,7 @@ induction m; [ reflexivity | simpl ].
 apply (ap (ap S)) in IHm; assumption.
 Defined.
 
-Theorem N_encode_decode {m n} : ∀ c, N_encode m n (N_decode m n c) = c.
+Theorem nat_encode_decode {m n} : ∀ c, nat_encode m n (nat_decode m n c) = c.
 Proof.
 intros c.
 revert n c; induction m; intros.
@@ -110,46 +110,46 @@ revert n c; induction m; intros.
 
  simpl in c.
  destruct n; [ refine (match c with end) | simpl ].
- unfold N_encode.
- rewrite <- (hott_2_3_10 S (N_code (S m)) (N_decode m n c)).
+ unfold nat_encode.
+ rewrite <- (hott_2_3_10 S (nat_code (S m)) (nat_decode m n c)).
  apply IHm.
 Defined.
 
-Theorem N_hott_2_13_1 : ∀ m n, equivalence (m = n) (N_code m n).
+Theorem nat_hott_2_13_1 : ∀ m n, equivalence (m = n) (nat_code m n).
 Proof.
 intros.
-exists (N_encode m n); apply qinv_isequiv.
-exists (N_decode m n).
+exists (nat_encode m n); apply qinv_isequiv.
+exists (nat_decode m n).
 unfold composite, homotopy, id; simpl.
-split; intros p; [ apply N_encode_decode | apply N_decode_encode ].
+split; intros p; [ apply nat_encode_decode | apply nat_decode_encode ].
 Defined.
 
 Require Import Arith.
 
-Definition N_code_equiv_1_or_0 m n :
-  (equivalence (N_code m n) True) + (equivalence (N_code m n) False).
+Definition nat_code_equiv_1_or_0 m n :
+  (equivalence (nat_code m n) True) + (equivalence (nat_code m n) False).
 Proof.
 destruct (eq_nat_dec m n) as [H1| H1].
  left; subst m.
  exists (λ c, I); apply qinv_isequiv.
- exists (λ _, N_r n).
+ exists (λ _, nat_r n).
  unfold composite, homotopy, id; simpl.
  split; [ intros u; destruct u; reflexivity | intros c ].
  induction n; [ destruct c; reflexivity | apply IHn ].
 
  right.
- exists (λ c, H1 (N_decode m n c)); apply qinv_isequiv.
+ exists (λ c, H1 (nat_decode m n c)); apply qinv_isequiv.
  exists (λ p : False, match p with end).
  unfold composite, homotopy, id.
  split; [ intros p; destruct p | ].
- intros c; destruct (H1 (N_decode m n c)).
+ intros c; destruct (H1 (nat_decode m n c)).
 Defined.
 
 Definition isSet_nat : isSet nat.
 Proof.
 intros m n p q.
-pose proof N_hott_2_13_1 m n as r.
-pose proof N_code_equiv_1_or_0 m n as s.
+pose proof nat_hott_2_13_1 m n as r.
+pose proof nat_code_equiv_1_or_0 m n as s.
 destruct s as [s| s].
  eapply equiv_compose in s; [ | apply r ].
  destruct s as (f, ((g, Hg), (h, Hh))).
@@ -169,21 +169,27 @@ Defined.
 Require Import List.
 Import List.ListNotations.
 
-Fixpoint list_code a b : Type :=
+Fixpoint list_code {A} (a b : list A) : Type :=
   match (a, b) with
   | ([], []) => True
   | (_ :: _, []) => False
   | ([], _ :: _) => False
-  | (a :: al, b :: bl) => (a = b * list_code al bl)%type
+  | (a :: al, b :: bl) => ((a = b) * list_code al bl)%type
   end.
 
-Check list_code.
-
-Fixpoint list_r n : list_code n n :=
+Fixpoint list_r {A} (n : list A) : @list_code A n n :=
   match n with
   | [] => I
-  | a :: l => list_r l
+  | b :: l => list_r l
   end.
 
-Definition N_encode (m n : nat) : m = n → N_code m n :=
-  λ p, transport (N_code m) p (N_r m).
+(*
+Fixpoint nat_r n : nat_code n n :=
+  match n with
+  | 0 => I
+  | S m => nat_r m
+  end.
+*)
+
+Definition list_encode {A} (m n : list A) : m = n → list_code m n :=
+  λ p, transport (list_code m) p (list_r m).
