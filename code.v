@@ -1,6 +1,8 @@
 (* proving nat and list are hset *)
 
 Set Universe Polymorphism.
+Set Nested Proofs Allowed.
+
 Require Import Utf8.
 
 Definition isSet A := ∀ (x y : A) (p q : x = y), p = q.
@@ -36,7 +38,7 @@ destruct p as (g, (α, β)).
 split; exists g; assumption.
 Defined.
 
-Lemma equiv_compose {A B C} :
+Theorem equiv_compose {A B C} :
   ∀ (f : equivalence A B) (g : equivalence B C), equivalence A C.
 Proof.
 intros eqf eqg.
@@ -164,6 +166,21 @@ destruct s as [s| s].
  exfalso; apply f, p.
 Defined.
 
+(* proof bool is hset *)
+
+Definition isSet_bool : isSet bool.
+Proof.
+intros x y p q.
+destruct x, y; try discriminate p.
+ refine (match p with eq_refl _ => _ end).
+ refine (match q with eq_refl _ => _ end).
+ reflexivity.
+
+ refine (match p with eq_refl _ => _ end).
+ refine (match q with eq_refl _ => _ end).
+ reflexivity.
+Defined.
+
 (* proof list is hset *)
 
 Require Import List.
@@ -177,26 +194,10 @@ Fixpoint list_code {A} (a b : list A) : Type :=
   | (a :: al, b :: bl) => ((a = b) * list_code al bl)%type
   end.
 
-Definition list_encode1 {A} (m n : list A) : m = n → _ :=
-  λ p, transport (list_code m) p.
-
-Print list_encode1.
-
-(**)
-Fixpoint list_r {A} (n : list A) : @list_code A n n :=
-  match n with
-  | [] => I
-  | b :: l => list_r l
-  end.
-(**)
-
-(*
-Fixpoint nat_r n : nat_code n n :=
-  match n with
-  | 0 => I
-  | S m => nat_r m
-  end.
-*)
+Theorem list_r {A} (n : list A) : @list_code A n n.
+Proof.
+now induction n.
+Defined.
 
 Definition list_encode {A} (m n : list A) : m = n → list_code m n :=
   λ p, transport (list_code m) p (list_r m).
