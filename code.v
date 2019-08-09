@@ -186,24 +186,42 @@ Defined.
 Require Import List.
 Import List.ListNotations.
 
-Fixpoint list_code {A} (la lb : list A) : Type :=
+Fixpoint list_code {A} (eq_dec : ∀ a b : A, {a = b} + {a ≠ b})
+         (la lb : list A) : Type :=
   match (la, lb) with
   | ([], []) => True
   | (_ :: _, []) => False
   | ([], _ :: _) => False
-  | (a :: la, b :: lb) => ((a = b) * list_code la lb)%type
+  | (a :: la, b :: lb) => if eq_dec a b then list_code eq_dec la lb else False
   end.
 
-Fixpoint list_r {A} (l : list A) : list_code l l :=
+Fixpoint list_r {A} eq_dec (l : list A) : list_code eq_dec l l :=
   match l with
   | [] => I
-  | a :: l => (eq_refl, list_r l)
+  | a :: l =>
+      let s := eq_dec a a in
+      match
+        s return (if s then list_code eq_dec l l else False)
+      with
+      | left _ => list_r eq_dec l
+      | right H => match H eq_refl with end
+      end
   end.
 
-Definition list_encode {A} (la lb : list A) : la = lb → list_code la lb :=
-  λ p, transport (list_code la) p (list_r la).
+(*
+Fixpoint list_r {A} eq_dec (l : list A) : list_code eq_dec l l :=
+  match l with
+  | [] => I
+  | a :: l => list_r eq_dec l
+  end.
+*)
 
-Definition list_decode {A} (la lb : list A) : list_code la lb → la = lb.
+Definition list_encode {A} eq_dec (la lb : list A) :
+    la = lb → list_code eq_dec la lb :=
+  λ p, transport (list_code eq_dec la) p (list_r eq_dec la).
+
+Definition list_decode {A} eq_dec (la lb : list A) :
+  list_code eq_dec la lb → la = lb.
 Proof.
 revert la lb.
 fix IHn 1.
@@ -212,17 +230,22 @@ destruct m.
  destruct n; [ reflexivity | refine (match p with end) ].
 
  destruct n; [ refine (match p with end) | simpl in p ].
- destruct p as (pa, pl).
- destruct pa.
- now destruct (IHn m n pl).
+ destruct (eq_dec a a0); [ | easy ].
+ destruct e.
+ now destruct (IHn m n p).
 Defined.
 
-Theorem list_decode_encode {A} {la lb : list A} :
-  ∀ lc, list_decode la lb (list_encode la lb lc) = lc.
+Theorem list_decode_encode {A} eq_dec {la lb : list A} :
+  ∀ lc, list_decode eq_dec la lb (list_encode eq_dec la lb lc) = lc.
 Proof.
 intros lc.
 destruct lc; simpl; unfold id; simpl.
 induction la; [ reflexivity | simpl ].
+destruct (eq_dec a a); [ | easy ].
+rewrite IHla.
+...
+destruct e.
+
 now rewrite IHla.
 Defined.
 
