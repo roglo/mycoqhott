@@ -117,7 +117,7 @@ revert n c; induction m; intros.
  apply IHm.
 Defined.
 
-Theorem nat_hott_2_13_1 : ∀ m n, equivalence (m = n) (nat_code m n).
+Theorem equiv_eq_nat_code : ∀ m n, equivalence (m = n) (nat_code m n).
 Proof.
 intros.
 exists (nat_encode m n); apply qinv_isequiv.
@@ -150,7 +150,7 @@ Defined.
 Definition isSet_nat : isSet nat.
 Proof.
 intros m n p q.
-pose proof nat_hott_2_13_1 m n as r.
+pose proof equiv_eq_nat_code m n as r.
 pose proof nat_code_equiv_1_or_0 m n as s.
 destruct s as [s| s].
  eapply equiv_compose in s; [ | apply r ].
@@ -247,6 +247,109 @@ remember (list_decode la lb lc) as d eqn:Hd.
 destruct d; cbn.
 rewrite <- H1.
 now unfold id.
+Defined.
+
+Theorem equiv_eq_list_code {A} : ∀ la lb : list A,
+  equivalence (la = lb) (list_code la lb).
+Proof.
+intros.
+exists (list_encode la lb); apply qinv_isequiv.
+exists (list_decode la lb).
+unfold composite, homotopy, id; simpl.
+split; intros p; [ apply list_encode_decode | apply list_decode_encode ].
+Defined.
+
+Tactic Notation "transparent" "assert" "(" ident(H) ":" lconstr(type) ")" :=
+  unshelve (refine (let H := (_ : type) in _)).
+
+Definition list_code_equiv_1_or_0 {A} (la lb : list A)
+    (eq_dec : ∀ a b : A, {a = b} + {a ≠ b}) :
+  equivalence (list_code la lb) True + equivalence (list_code la lb) False.
+Proof.
+revert lb.
+induction la as [| a la]; intros. {
+  destruct lb as [| b lb]. {
+    left; cbn.
+    unfold equivalence, isequiv, homotopy, composite, id.
+    exists id; unfold id.
+    now split; exists id; unfold id.
+  }
+  right; cbn.
+  unfold equivalence, isequiv, homotopy, composite, id.
+  exists id; unfold id.
+  now split; exists id; unfold id.
+}
+destruct lb as [| b lb]. {
+  right; cbn.
+  unfold equivalence, isequiv, homotopy, composite, id.
+  exists id; unfold id.
+  now split; exists id; unfold id.
+}
+cbn.
+specialize (IHla lb) as H1.
+unfold equivalence in H1 |-*.
+destruct H1 as [H1| H1].
+-destruct (eq_dec a b) as [p| p]. {
+   destruct H1 as (f & Hf).
+   left.
+   exists (λ _, I).
+   apply qinv_isequiv.
+   unfold qinv.
+   unfold homotopy, composite, id; cbn.
+   transparent assert (g : True → (a = b) * list_code la lb). {
+     intros _.
+     split; [ easy | ].
+     unfold isequiv in Hf.
+     destruct Hf as ((g, Hg) & (h, Hh)).
+     now apply g.
+   }
+   exists g.
+   subst g; cbn.
+   split; [ now intros; destruct x | ].
+   intros (q, Hq).
+   destruct Hf as ((g, Hg) & (h, Hh)).
+...
+-destruct H1 as (f & (g, Hg) & (h, Hh)).
+ move h before g.
+ unfold
+
+
+Check list_decode.
+Check list_encode.
+...
+destruct (eq_nat_dec m n) as [H1| H1].
+ left; subst m.
+ exists (λ c, I); apply qinv_isequiv.
+ exists (λ _, nat_r n).
+ unfold composite, homotopy, id; simpl.
+ split; [ intros u; destruct u; reflexivity | intros c ].
+ induction n; [ destruct c; reflexivity | apply IHn ].
+
+ right.
+ exists (λ c, H1 (nat_decode m n c)); apply qinv_isequiv.
+ exists (λ p : False, match p with end).
+ unfold composite, homotopy, id.
+ split; [ intros p; destruct p | ].
+ intros c; destruct (H1 (nat_decode m n c)).
+Defined.
+
+Definition isSet_nat : isSet nat.
+Proof.
+intros m n p q.
+pose proof equiv_eq_nat_code m n as r.
+pose proof nat_code_equiv_1_or_0 m n as s.
+destruct s as [s| s].
+ eapply equiv_compose in s; [ | apply r ].
+ destruct s as (f, ((g, Hg), (h, Hh))).
+ unfold composite, homotopy, id in Hg, Hh.
+ pose proof Hh p as Hp.
+ pose proof Hh q as Hq.
+ destruct (f p), (f q).
+ subst p q; reflexivity.
+
+ eapply equiv_compose in s; [ | apply r ].
+ destruct s as (f, ((g, Hg), (h, Hh))).
+ exfalso; apply f, p.
 Defined.
 
 ...
