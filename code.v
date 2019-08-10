@@ -292,6 +292,38 @@ destruct H1 as [H1| H1].
 -destruct (eq_dec a b) as [p| p]. {
    destruct H1 as (f & Hf).
    left.
+   exists (λ X, f (snd X)).
+   apply qinv_isequiv.
+   unfold qinv.
+   unfold homotopy, composite, id; cbn.
+   transparent assert (g : True → (a = b) * list_code la lb). {
+     intros _.
+     split; [ easy | ].
+     unfold isequiv in Hf.
+     destruct Hf as ((g, Hg) & (h, Hh)).
+     now apply g.
+   }
+   exists g; subst g; cbn.
+   split. {
+     intros x.
+     destruct Hf as ((g, Hg) & (h, Hh)).
+     now destruct (f (g I)), x.
+   }
+   intros (q, Hq).
+   destruct Hf as ((g, Hg) & (h, Hh)).
+   move h before g.
+   unfold homotopy, composite, id in Hg, Hh.
+   specialize (list_decode la lb Hq) as H1.
+   destruct H1.
+Search list_code.
+...
+   assert (g I = Hq). {
+Search list_code.
+...
+   split; [ now intros; destruct x | ].
+   intros (q, Hq).
+   destruct Hf as ((g, Hg) & (h, Hh)).
+...
    exists (λ _, I).
    apply qinv_isequiv.
    unfold qinv.
