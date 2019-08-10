@@ -263,9 +263,11 @@ Tactic Notation "transparent" "assert" "(" ident(H) ":" lconstr(type) ")" :=
   unshelve (refine (let H := (_ : type) in _)).
 
 Definition list_code_equiv_1_or_0 {A}
-    (eq_dec : ∀ a b : A, {a = b} + {a ≠ b}) (la lb : list A) :
+    (eq_dec : ∀ a b : A, {a = b} + {a ≠ b}) :
+  isSet A → ∀ (la lb : list A),
   equivalence (list_code la lb) True + equivalence (list_code la lb) False.
 Proof.
+intros HA *.
 revert lb.
 induction la as [| a la]; intros. {
   destruct lb as [| b lb]. {
@@ -300,6 +302,37 @@ destruct (eq_dec a b) as [p| p]. 2: {
 left.
 transparent assert (f : (a = b) * list_code la lb → True). {
   intros (q, Hq).
+  destruct H1 as [H1| H1]. {
+    apply (projT1 H1), Hq.
+  }
+  now specialize (projT1 H1 Hq).
+}
+exists f; subst f; cbn.
+apply qinv_isequiv.
+unfold qinv.
+destruct H1 as [H1| H1]. {
+  specialize (projT2 H1) as H2; cbn in H2.
+  unfold isequiv in H2.
+  destruct H2 as ((g, Hg), (h, Hh)).
+  move h before g.
+  transparent assert (g' : True → (a = b) * list_code la lb). {
+    intros H.
+    split; [ apply p | apply g, H ].
+  }
+  exists g'; subst g'.
+  unfold homotopy, composite, id; cbn.
+  split. {
+    intros H.
+    now destruct (projT1 H1 (g H)), H.
+  }
+  intros (i, Hi).
+  move i before p.
+  destruct (HA _ _ p i).
+  apply f_equal.
+  unfold homotopy, composite, id in Hg, Hh; cbn in Hg, Hh.
+  rewrite <- Hh.
+  destruct H1.
+  cbn in *.
 ...
 destruct H1 as [H1| H1].
 -destruct (eq_dec a b) as [p| p]. {
