@@ -1492,13 +1492,28 @@ Require Import List.
 Import List.ListNotations.
 Require areSet.
 
-Definition fm_set {A} eq_dec (HA : h4c.isSet A) : Set_type :=
-  existT _ (list A) (areSet.isSet_list eq_dec HA).
+Definition free_monoid_type :=
+  { A & ((∀ a b : A, {a = b} + {a ≠ b}) * h4c.isSet A)%type }.
 
-Definition free_monoid (A : Type) eq_rec (A_set : h4c.isSet A) :=
-  {| m_set := fm_set eq_rec A_set;
+Definition fm_type (fmt : free_monoid_type) := projT1 fmt.
+Definition fm_eq_refl (fmt : free_monoid_type) := fst (projT2 fmt).
+Definition fm_is_set (fmt : free_monoid_type) := snd (projT2 fmt).
+
+Definition fm_set (fmt : free_monoid_type) :=
+  existT _ (list (fm_type fmt))
+    (areSet.isSet_list (fm_eq_refl fmt) (fm_is_set fmt)).
+
+Definition free_monoid (fmt : free_monoid_type) :=
+  {| m_set := fm_set fmt;
      m_op a b := a ++ b;
      m_unit := [];
      m_assoc a b c := List.app_assoc a b c;
      m_unit_l a := app_nil_l a;
      m_unit_r a := app_nil_r a |}.
+
+Definition ins_gen {fmt} (a : fm_type fmt) := [a] : list (fm_type fmt).
+Print m_unit.
+Check (λ fmt, m_unit fmt : list (fm_type fmt)).
+
+Print m_assoc.
+Definition ins_gen2 fmt (a : m_set fmt) : st_type (m_set m).
