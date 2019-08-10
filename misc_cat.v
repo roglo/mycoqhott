@@ -1488,27 +1488,17 @@ Record functor (C D : category) : Type := Build_functor
 
 (* Free monoid *)
 
+Require Import List.
+Import List.ListNotations.
 Require areSet.
 
 Definition fm_set {A} eq_dec (HA : h4c.isSet A) : Set_type :=
   existT _ (list A) (areSet.isSet_list eq_dec HA).
 
-Definition fm_op {A} eq_rec (A_set : h4c.isSet A)
-  (a b : st_type (fm_set eq_rec A_set)) :
-  st_type (fm_set eq_rec A_set).
-Proof.
-...
-
 Definition free_monoid (A : Type) eq_rec (A_set : h4c.isSet A) :=
   {| m_set := fm_set eq_rec A_set;
-     m_op := fm_op eq_rec A_set |}.
-
-...
-
-Record monoid :=
-  { m_set : Set_type;
-    m_op : st_type m_set → st_type m_set → st_type m_set;
-    m_unit : st_type m_set;
-    m_assoc : ∀ x y z, m_op x (m_op y z) = m_op (m_op x y) z;
-    m_unit_l : ∀ x, m_op m_unit x = x;
-    m_unit_r : ∀ x, m_op x m_unit = x }.
+     m_op a b := a ++ b;
+     m_unit := [];
+     m_assoc a b c := List.app_assoc a b c;
+     m_unit_l a := app_nil_l a;
+     m_unit_r a := app_nil_r a |}.
