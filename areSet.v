@@ -1,4 +1,4 @@
-(* proving nat and list are hset *)
+(* proving nat and list are hSets *)
 
 Set Universe Polymorphism.
 Set Nested Proofs Allowed.
