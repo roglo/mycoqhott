@@ -196,6 +196,59 @@ Fixpoint list_code {A} (la lb : list A) : Type :=
   | (a :: la, b :: lb) => ((a = b) * list_code la lb)
   end.
 
+Fixpoint list_r {A} (l : list A) : list_code l l :=
+  match l with
+  | [] => I
+  | a :: l => (eq_refl, list_r l)
+  end.
+
+Definition list_encode {A} (la lb : list A) :
+    la = lb → list_code la lb :=
+  λ p, transport (list_code la) p (list_r la).
+
+Definition list_decode {A} (la lb : list A) :
+  list_code la lb → la = lb.
+Proof.
+revert la lb.
+fix IHn 1.
+intros la lb lc.
+destruct la as [| a la]; [ now destruct lb | ].
+destruct lb as [| b lb]; [ easy | ].
+destruct lc as (p, lc).
+destruct p.
+specialize (IHn la lb lc) as H1.
+now destruct H1.
+Defined.
+
+
+Theorem list_decode_encode {A} {la lb : list A} :
+  ∀ lc, list_decode la lb (list_encode la lb lc) = lc.
+Proof.
+intros lc.
+destruct lc; simpl; unfold id; simpl.
+induction la; [ reflexivity | simpl ].
+now rewrite IHla.
+Defined.
+
+Theorem list_encode_decode {A} {la lb : list A} :
+  ∀ lc, list_encode la lb (list_decode la lb lc) = lc.
+Proof.
+intros.
+revert lb lc.
+induction la as [| a la]; intros. {
+  destruct lb; [ now destruct lc | easy ].
+}
+destruct lb as [| b lb]; [ easy | ].
+cbn in lc.
+destruct lc as (p, lc).
+destruct p.
+specialize (IHla lb lc) as H1; simpl.
+remember (list_decode la lb lc) as d eqn:Hd.
+destruct d; cbn.
+rewrite <- H1.
+now unfold id.
+Defined.
+
 ...
 
 Fixpoint list_code {A} (eq_dec : ∀ a b : A, {a = b} + {a ≠ b})
