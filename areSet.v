@@ -4,52 +4,7 @@ Set Universe Polymorphism.
 Set Nested Proofs Allowed.
 
 Require Import Utf8.
-
-Definition isSet A := ∀ (x y : A) (p q : x = y), p = q.
-
-Definition homotopy {A B} (f g : A → B) := ∀ x : A, f x = g x.
-Definition composite {A B C} (f : A → B) (g : B → C) x := g (f x).
-
-Definition isequiv {A B : Type} f :=
-  ({ g : B → A & homotopy (composite g f) (@id _) } *
-   { h : B → A & homotopy (composite f h) (@id _) })%type.
-
-Definition equivalence (A B : Type) := { f : A → B & isequiv f }.
-
-Definition transport {A} P {x y : A} (p : x = y) : P x → P y :=
-  match p with
-  | eq_refl _ => @id _
-  end.
-
-Definition ap {A B x y} (f : A → B) (p : x = y) : f x = f y :=
-  match p with
-  | eq_refl _ => eq_refl (f x)
-  end.
-
-Definition qinv {A B} (f : A → B) :=
-  { g : B → A &
-    (homotopy (composite g f) (@id _) *
-     homotopy (composite f g) (@id _))%type }.
-
-Definition qinv_isequiv {A B} (f : A → B) : qinv f → isequiv f.
-Proof.
-intros p.
-destruct p as (g, (α, β)).
-split; exists g; assumption.
-Defined.
-
-Definition isequiv_qinv {A B} (f : A → B) : isequiv f → qinv f.
-Proof.
-intros p.
-destruct p as ((g, Hg), (h, Hh)).
-econstructor; split; [ eassumption | idtac ].
-intros x.
-unfold composite, homotopy, id in Hg, Hh.
-unfold composite, homotopy, id.
-symmetry.
-rewrite <- Hh, Hg.
-symmetry; apply Hh.
-Defined.
+Require Import h4c.
 
 Theorem equiv_compose {A B C} :
   ∀ (f : equivalence A B) (g : equivalence B C), equivalence A C.
@@ -199,8 +154,6 @@ Defined.
 Require Import List.
 Import List.ListNotations.
 
-(**)
-
 Fixpoint list_code {A} (la lb : list A) : Type :=
   match (la, lb) with
   | ([], []) => True
@@ -232,7 +185,6 @@ destruct p.
 specialize (IHn la lb lc) as H1.
 now destruct H1.
 Defined.
-
 
 Theorem list_decode_encode {A} {la lb : list A} :
   ∀ lc, list_decode la lb (list_encode la lb lc) = lc.
