@@ -4,7 +4,7 @@ Trying to implement the HoTT book in Coq (files chap1.v to chap4.v):
 not terminated.
 
 File h4c.v holds specific hott tools needed for categories, borrowed
-from chap*.v above.
+from chap*.v above. Other useful file: areSet.v.
 
 Work in progress:
 
