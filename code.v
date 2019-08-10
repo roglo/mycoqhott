@@ -275,7 +275,6 @@ Defined.
 Tactic Notation "transparent" "assert" "(" ident(H) ":" lconstr(type) ")" :=
   unshelve (refine (let H := (_ : type) in _)).
 
-(* probable simpler proof to do; to be cleaned up *)
 Definition list_code_equiv_1_or_0 {A}
     (eq_dec : ∀ a b : A, {a = b} + {a ≠ b}) :
   isSet A → ∀ (la lb : list A),
@@ -353,19 +352,13 @@ destruct H1 as [H1| H1].
  unfold homotopy, composite, id in H2.
  destruct H2 as (g & Hg1 & Hg2).
  transparent assert (g' : False → (a = b) * list_code la lb). {
-   intros H.
-   split; [ apply p | apply g, H ].
+   now intros H.
  }
  exists g'; subst g'.
  unfold homotopy, composite, id; cbn.
- split. {
-   intros H.
-   now destruct (projT1 H1 (g H)), H.
- }
+ split; [ now intros H | ].
  intros (i, Hi).
- move i before p.
- destruct (HA _ _ p i).
- apply f_equal, Hg2.
+ destruct (projT1 H1 Hi).
 Defined.
 
 Definition isSet_list {A} : (∀ a b : A, {a = b} + {a ≠ b}) →
