@@ -38,6 +38,19 @@ destruct p as (g, (α, β)).
 split; exists g; assumption.
 Defined.
 
+Definition isequiv_qinv {A B} (f : A → B) : isequiv f → qinv f.
+Proof.
+intros p.
+destruct p as ((g, Hg), (h, Hh)).
+econstructor; split; [ eassumption | idtac ].
+intros x.
+unfold composite, homotopy, id in Hg, Hh.
+unfold composite, homotopy, id.
+symmetry.
+rewrite <- Hh, Hg.
+symmetry; apply Hh.
+Defined.
+
 Theorem equiv_compose {A B C} :
   ∀ (f : equivalence A B) (g : equivalence B C), equivalence A C.
 Proof.
@@ -262,6 +275,7 @@ Defined.
 Tactic Notation "transparent" "assert" "(" ident(H) ":" lconstr(type) ")" :=
   unshelve (refine (let H := (_ : type) in _)).
 
+(* probable simpler proof to do; to be cleaned up *)
 Definition list_code_equiv_1_or_0 {A}
     (eq_dec : ∀ a b : A, {a = b} + {a ≠ b}) :
   isSet A → ∀ (la lb : list A),
@@ -299,125 +313,67 @@ destruct (eq_dec a b) as [p| p]. 2: {
   split; [ now intros | ].
   now intros (q, Hq).
 }
-left.
-transparent assert (f : (a = b) * list_code la lb → True). {
-  intros (q, Hq).
-  destruct H1 as [H1| H1]. {
-    apply (projT1 H1), Hq.
-  }
-  now specialize (projT1 H1 Hq).
-}
-exists f; subst f; cbn.
-apply qinv_isequiv.
-unfold qinv.
-destruct H1 as [H1| H1]. {
-  specialize (projT2 H1) as H2; cbn in H2.
-  unfold isequiv in H2.
-  destruct H2 as ((g, Hg), (h, Hh)).
-  move h before g.
-  transparent assert (g' : True → (a = b) * list_code la lb). {
-    intros H.
-    split; [ apply p | apply g, H ].
-  }
-  exists g'; subst g'.
-  unfold homotopy, composite, id; cbn.
-  split. {
-    intros H.
-    now destruct (projT1 H1 (g H)), H.
-  }
-  intros (i, Hi).
-  move i before p.
-  destruct (HA _ _ p i).
-  apply f_equal.
-  unfold homotopy, composite, id in Hg, Hh; cbn in Hg, Hh.
-  rewrite <- Hh.
-  destruct H1.
-  cbn in *.
-...
 destruct H1 as [H1| H1].
--destruct (eq_dec a b) as [p| p]. {
-   destruct H1 as (f & Hf).
-   destruct p.
-...
-   left.
-   exists (λ X, f (snd X)).
-   apply qinv_isequiv.
-   unfold qinv.
-   unfold homotopy, composite, id; cbn.
-   transparent assert (g : True → (a = b) * list_code la lb). {
-     intros _.
-     split; [ easy | ].
-     unfold isequiv in Hf.
-     destruct Hf as ((g, Hg) & (h, Hh)).
-     now apply g.
-   }
-   exists g; subst g; cbn.
-   split. {
-     intros x.
-     destruct Hf as ((g, Hg) & (h, Hh)).
-     now destruct (f (g I)), x.
-   }
+-left.
+ transparent assert (f : (a = b) * list_code la lb → True). {
    intros (q, Hq).
-   destruct Hf as ((g, Hg) & (h, Hh)).
-   move h before g.
-   unfold homotopy, composite, id in Hg, Hh.
-   specialize (list_decode la lb Hq) as H1.
-   destruct H1.
-   assert (g I = Hq). {
-Search list_code.
-Print list_r.
-...
-   split; [ now intros; destruct x | ].
+   apply (projT1 H1), Hq.
+ }
+ exists f; subst f; cbn.
+ apply qinv_isequiv.
+ unfold qinv.
+ specialize (projT2 H1) as H2; cbn in H2.
+ apply isequiv_qinv in H2; unfold qinv in H2.
+ unfold homotopy, composite, id in H2.
+ destruct H2 as (g & Hg1 & Hg2).
+ transparent assert (g' : True → (a = b) * list_code la lb). {
+   intros H.
+   split; [ apply p | apply g, H ].
+ }
+ exists g'; subst g'.
+ unfold homotopy, composite, id; cbn.
+ split. {
+   intros H.
+   now destruct (projT1 H1 (g H)), H.
+ }
+ intros (i, Hi).
+ move i before p.
+ destruct (HA _ _ p i).
+ apply f_equal, Hg2.
+-right.
+ transparent assert (f : (a = b) * list_code la lb → False). {
    intros (q, Hq).
-   destruct Hf as ((g, Hg) & (h, Hh)).
-...
-   exists (λ _, I).
-   apply qinv_isequiv.
-   unfold qinv.
-   unfold homotopy, composite, id; cbn.
-   transparent assert (g : True → (a = b) * list_code la lb). {
-     intros _.
-     split; [ easy | ].
-     unfold isequiv in Hf.
-     destruct Hf as ((g, Hg) & (h, Hh)).
-     now apply g.
-   }
-   exists g.
-
-   subst g; cbn.
-   split; [ now intros; destruct x | ].
-   intros (q, Hq).
-   destruct Hf as ((g, Hg) & (h, Hh)).
-...
--destruct H1 as (f & (g, Hg) & (h, Hh)).
- move h before g.
-Check list_decode.
-Check list_encode.
-...
-destruct (eq_nat_dec m n) as [H1| H1].
- left; subst m.
- exists (λ c, I); apply qinv_isequiv.
- exists (λ _, nat_r n).
- unfold composite, homotopy, id; simpl.
- split; [ intros u; destruct u; reflexivity | intros c ].
- induction n; [ destruct c; reflexivity | apply IHn ].
-
- right.
- exists (λ c, H1 (nat_decode m n c)); apply qinv_isequiv.
- exists (λ p : False, match p with end).
- unfold composite, homotopy, id.
- split; [ intros p; destruct p | ].
- intros c; destruct (H1 (nat_decode m n c)).
+   apply (projT1 H1), Hq.
+ }
+ exists f; subst f; cbn.
+ apply qinv_isequiv.
+ unfold qinv.
+ specialize (projT2 H1) as H2; cbn in H2.
+ apply isequiv_qinv in H2; unfold qinv in H2.
+ unfold homotopy, composite, id in H2.
+ destruct H2 as (g & Hg1 & Hg2).
+ transparent assert (g' : False → (a = b) * list_code la lb). {
+   intros H.
+   split; [ apply p | apply g, H ].
+ }
+ exists g'; subst g'.
+ unfold homotopy, composite, id; cbn.
+ split. {
+   intros H.
+   now destruct (projT1 H1 (g H)), H.
+ }
+ intros (i, Hi).
+ move i before p.
+ destruct (HA _ _ p i).
+ apply f_equal, Hg2.
 Defined.
 
-...
-
-Definition isSet_list {A} : (∀ a b : A, {a = b} + {a ≠ b})
-  → isSet (list A).
+Definition isSet_list {A} : (∀ a b : A, {a = b} + {a ≠ b}) →
+  isSet A → isSet (list A).
 Proof.
-intros eq_dec la lb p q.
+intros eq_dec HA la lb p q.
 specialize (equiv_eq_list_code la lb) as r.
-specialize (list_code_equiv_1_or_0 eq_dec la lb) as s.
+specialize (list_code_equiv_1_or_0 eq_dec HA la lb) as s.
 destruct s as [s| s].
 -eapply equiv_compose in s; [ | apply r ].
  destruct s as (f, ((g, Hg), (h, Hh))).
@@ -429,88 +385,4 @@ destruct s as [s| s].
 -eapply equiv_compose in s; [ | apply r ].
  destruct s as (f, ((g, Hg), (h, Hh))).
  exfalso; apply f, p.
-Defined.
-
-...
-
-Fixpoint list_code {A} (eq_dec : ∀ a b : A, {a = b} + {a ≠ b})
-         (la lb : list A) : Type :=
-  match (la, lb) with
-  | ([], []) => True
-  | (_ :: _, []) => False
-  | ([], _ :: _) => False
-  | (a :: la, b :: lb) => if eq_dec a b then list_code eq_dec la lb else False
-  end.
-
-(*
-Fixpoint list_r {A} eq_dec (l : list A) : list_code eq_dec l l :=
-  match l with
-  | [] => I
-  | a :: l => list_r eq_dec l
-  end.
-*)
-
-Fixpoint list_r {A} eq_dec (l : list A) : list_code eq_dec l l :=
-  match l with
-  | [] => I
-  | a :: l =>
-      let s := eq_dec a a in
-      match
-        s return (if s then list_code eq_dec l l else False)
-      with
-      | left _ => list_r eq_dec l
-      | right H => match H eq_refl with end
-      end
-  end.
-
-Definition list_encode {A} eq_dec (la lb : list A) :
-    la = lb → list_code eq_dec la lb :=
-  λ p, transport (list_code eq_dec la) p (list_r eq_dec la).
-
-Definition list_decode {A} eq_dec (la lb : list A) :
-  list_code eq_dec la lb → la = lb.
-Proof.
-revert la lb.
-fix IHn 1.
-intros m n p.
-destruct m.
- destruct n; [ reflexivity | refine (match p with end) ].
-
- destruct n; [ refine (match p with end) | simpl in p ].
- destruct (eq_dec a a0); [ | easy ].
- destruct e.
- now destruct (IHn m n p).
-Defined.
-
-Theorem list_decode_encode {A} eq_dec {la lb : list A} :
-  ∀ lc, list_decode eq_dec la lb (list_encode eq_dec la lb lc) = lc.
-Proof.
-intros lc.
-destruct lc; simpl; unfold id; simpl.
-induction la; [ reflexivity | simpl ].
-destruct (eq_dec a a); [ | easy ].
-rewrite IHla.
-...
-destruct e.
-
-now rewrite IHla.
-Defined.
-
-Theorem list_encode_decode {A} {m n : list A} :
-  ∀ c, list_encode m n (list_decode m n c) = c.
-Proof.
-intros c.
-revert n c; induction m; intros.
- simpl in c.
- destruct n, c; reflexivity.
-
- simpl in c.
- destruct n; [ refine (match c with end) | ].
- simpl.
- destruct c as (pa, pl).
- destruct pa.
-Check @hott_2_3_10.
-...
- rewrite <- (hott_2_3_10 S (nat_code (S m)) (nat_decode m n c)).
- apply IHm.
 Defined.
