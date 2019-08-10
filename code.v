@@ -186,6 +186,18 @@ Defined.
 Require Import List.
 Import List.ListNotations.
 
+(**)
+
+Fixpoint list_code {A} (la lb : list A) : Type :=
+  match (la, lb) with
+  | ([], []) => True
+  | (_ :: _, []) => False
+  | ([], _ :: _) => False
+  | (a :: la, b :: lb) => ((a = b) * list_code la lb)
+  end.
+
+...
+
 Fixpoint list_code {A} (eq_dec : ∀ a b : A, {a = b} + {a ≠ b})
          (la lb : list A) : Type :=
   match (la, lb) with
@@ -194,6 +206,14 @@ Fixpoint list_code {A} (eq_dec : ∀ a b : A, {a = b} + {a ≠ b})
   | ([], _ :: _) => False
   | (a :: la, b :: lb) => if eq_dec a b then list_code eq_dec la lb else False
   end.
+
+(*
+Fixpoint list_r {A} eq_dec (l : list A) : list_code eq_dec l l :=
+  match l with
+  | [] => I
+  | a :: l => list_r eq_dec l
+  end.
+*)
 
 Fixpoint list_r {A} eq_dec (l : list A) : list_code eq_dec l l :=
   match l with
@@ -207,14 +227,6 @@ Fixpoint list_r {A} eq_dec (l : list A) : list_code eq_dec l l :=
       | right H => match H eq_refl with end
       end
   end.
-
-(*
-Fixpoint list_r {A} eq_dec (l : list A) : list_code eq_dec l l :=
-  match l with
-  | [] => I
-  | a :: l => list_r eq_dec l
-  end.
-*)
 
 Definition list_encode {A} eq_dec (la lb : list A) :
     la = lb → list_code eq_dec la lb :=
