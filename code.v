@@ -262,8 +262,8 @@ Defined.
 Tactic Notation "transparent" "assert" "(" ident(H) ":" lconstr(type) ")" :=
   unshelve (refine (let H := (_ : type) in _)).
 
-Definition list_code_equiv_1_or_0 {A} (la lb : list A)
-    (eq_dec : ∀ a b : A, {a = b} + {a ≠ b}) :
+Definition list_code_equiv_1_or_0 {A}
+    (eq_dec : ∀ a b : A, {a = b} + {a ≠ b}) (la lb : list A) :
   equivalence (list_code la lb) True + equivalence (list_code la lb) False.
 Proof.
 revert lb.
@@ -288,9 +288,24 @@ destruct lb as [| b lb]. {
 cbn.
 specialize (IHla lb) as H1.
 unfold equivalence in H1 |-*.
+destruct (eq_dec a b) as [p| p]. 2: {
+  right.
+  exists (λ X, match p (fst X) with end).
+  apply qinv_isequiv.
+  exists (λ H : False, match H with end).
+  unfold homotopy, composite, id.
+  split; [ now intros | ].
+  now intros (q, Hq).
+}
+left.
+transparent assert (f : (a = b) * list_code la lb → True). {
+  intros (q, Hq).
+...
 destruct H1 as [H1| H1].
 -destruct (eq_dec a b) as [p| p]. {
    destruct H1 as (f & Hf).
+   destruct p.
+...
    left.
    exists (λ X, f (snd X)).
    apply qinv_isequiv.
@@ -315,10 +330,9 @@ destruct H1 as [H1| H1].
    unfold homotopy, composite, id in Hg, Hh.
    specialize (list_decode la lb Hq) as H1.
    destruct H1.
-Search list_code.
-...
    assert (g I = Hq). {
 Search list_code.
+Print list_r.
 ...
    split; [ now intros; destruct x | ].
    intros (q, Hq).
@@ -336,6 +350,7 @@ Search list_code.
      now apply g.
    }
    exists g.
+
    subst g; cbn.
    split; [ now intros; destruct x | ].
    intros (q, Hq).
@@ -343,9 +358,6 @@ Search list_code.
 ...
 -destruct H1 as (f & (g, Hg) & (h, Hh)).
  move h before g.
- unfold
-
-
 Check list_decode.
 Check list_encode.
 ...
@@ -365,21 +377,23 @@ destruct (eq_nat_dec m n) as [H1| H1].
  intros c; destruct (H1 (nat_decode m n c)).
 Defined.
 
-Definition isSet_nat : isSet nat.
+...
+
+Definition isSet_list {A} : (∀ a b : A, {a = b} + {a ≠ b})
+  → isSet (list A).
 Proof.
-intros m n p q.
-pose proof equiv_eq_nat_code m n as r.
-pose proof nat_code_equiv_1_or_0 m n as s.
+intros eq_dec la lb p q.
+specialize (equiv_eq_list_code la lb) as r.
+specialize (list_code_equiv_1_or_0 eq_dec la lb) as s.
 destruct s as [s| s].
- eapply equiv_compose in s; [ | apply r ].
+-eapply equiv_compose in s; [ | apply r ].
  destruct s as (f, ((g, Hg), (h, Hh))).
  unfold composite, homotopy, id in Hg, Hh.
  pose proof Hh p as Hp.
  pose proof Hh q as Hq.
  destruct (f p), (f q).
  subst p q; reflexivity.
-
- eapply equiv_compose in s; [ | apply r ].
+-eapply equiv_compose in s; [ | apply r ].
  destruct s as (f, ((g, Hg), (h, Hh))).
  exfalso; apply f, p.
 Defined.
