@@ -1488,32 +1488,20 @@ Record functor (C D : category) : Type := Build_functor
 
 (* Free monoid *)
 
-Theorem isSet_list A : isSet A → isSet (list A).
+Require areSet.
+
+Definition fm_set {A} eq_dec (HA : h4c.isSet A) : Set_type :=
+  existT _ (list A) (areSet.isSet_list eq_dec HA).
+
+Definition fm_op {A} eq_rec (A_set : h4c.isSet A)
+  (a b : st_type (fm_set eq_rec A_set)) :
+  st_type (fm_set eq_rec A_set).
 Proof.
-intros H x y p q.
-clear H.
-(*
-unfold isSet, h4c.isSet in H.
-*)
-revert y p q.
-induction x as [| x lx]; intros.
--destruct y as [| y ly]; [ | easy ].
- refine (match p with eq_refl => _ end).
- refine (match q with eq_refl => _ end).
- easy.
--destruct y as [| y ly]; [ easy | ].
- injection p; intros H1 H2.
- injection q; intros H3 H4.
-move H3 before H1.
-specialize (IHlx _ H1 H3) as H5.
-...
- refine (match p with eq_refl => _ end).
- refine (match q with eq_refl => _ end).
- easy.
 ...
 
-Definition free_monoid (A : Type) :=
-  {| m_set := list A |}.
+Definition free_monoid (A : Type) eq_rec (A_set : h4c.isSet A) :=
+  {| m_set := fm_set eq_rec A_set;
+     m_op := fm_op eq_rec A_set |}.
 
 ...
 
