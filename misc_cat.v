@@ -1511,9 +1511,5 @@ Definition free_monoid (fmt : free_monoid_type) :=
      m_unit_l a := app_nil_l a;
      m_unit_r a := app_nil_r a |}.
 
-Definition ins_gen {fmt} (a : fm_type fmt) := [a] : list (fm_type fmt).
-Print m_unit.
-Check (λ fmt, m_unit fmt : list (fm_type fmt)).
-
-Print m_assoc.
-Definition ins_gen2 fmt (a : m_set fmt) : st_type (m_set m).
+Definition ins_gen {fmt} : fm_type fmt → st_type (m_set (free_monoid fmt)) :=
+  λ a, [a].
