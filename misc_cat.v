@@ -1492,14 +1492,15 @@ Require Import List.
 Import List.ListNotations.
 Require areSet.
 
-Definition free_monoid_type :=
-  { A & ((∀ a b : A, {a = b} + {a ≠ b}) * h4c.isSet A)%type }.
+Record free_monoid_type :=
+  { fm : { A & ((∀ a b : A, {a = b} + {a ≠ b}) * h4c.isSet A)%type } }.
 
-Definition fm_type (fmt : free_monoid_type) := projT1 fmt.
-Definition fm_eq_refl (fmt : free_monoid_type) := fst (projT2 fmt).
-Definition fm_is_set (fmt : free_monoid_type) := snd (projT2 fmt).
+Definition fm_type fmt := projT1 (fm fmt).
+Definition fm_eq_refl fmt := fst (projT2 (fm fmt)).
+Definition fm_is_set fmt := snd (projT2 (fm fmt)).
 
-Definition fm_set (fmt : free_monoid_type) :=
+Definition fm_set : free_monoid_type → Set_type :=
+  λ fmt,
   existT _ (list (fm_type fmt))
     (areSet.isSet_list (fm_eq_refl fmt) (fm_is_set fmt)).
 
