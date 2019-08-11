@@ -1603,10 +1603,13 @@ Definition forgetful_functor : functor MonCat SetCat.
    diagram:
 
    In Mon:
-             ¯f
-       M(A) -----> N
+              ¯f
+       M(A) ------> N
 
    In Sets:
+             |¯f|
+     |M(A)| ------> |N|
+        \           /
 ...
 
  *)
