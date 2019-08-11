@@ -638,17 +638,17 @@ Definition SetsStarCat :=
     (Awodey)
 *)
 
-Definition setsstar_coslice_ob_obj {C} (A : Ob C) :
+Definition setsstar_coslice_ob_map_obj {C} (A : Ob C) :
   Ob (CosliceCat A) := existT _ A (idc _).
 
-Definition setsstar_coslice_ob_hom {C} (A : Ob C) :
-  Hom (setsstar_coslice_ob_obj A) (setsstar_coslice_ob_obj A) :=
+Definition setsstar_coslice_ob_map_hom {C} (A : Ob C) :
+  Hom (setsstar_coslice_ob_map_obj A) (setsstar_coslice_ob_map_obj A) :=
   existT _ (idc A) (unit_l (idc A)).
 
 Theorem setsstar_coslice_ob_comp_prop {C} (A : Ob C)
   {U U' U'' : Ob Cat_1} (f : Hom U U') (g : Hom U' U'') :
-  setsstar_coslice_ob_hom A =
-  setsstar_coslice_ob_hom A ◦ setsstar_coslice_ob_hom A.
+  setsstar_coslice_ob_map_hom A =
+  setsstar_coslice_ob_map_hom A ◦ setsstar_coslice_ob_map_hom A.
 Proof.
 apply eq_existT_uncurried; cbn.
 exists (eq_sym (unit_l _)).
@@ -656,7 +656,7 @@ apply Hom_set.
 Defined.
 
 Theorem setsstar_coslice_ob_id_prop {C} (A : Ob C) (X : Ob SetsStarCat) :
-  setsstar_coslice_ob_hom A = idc (setsstar_coslice_ob_obj A).
+  setsstar_coslice_ob_map_hom A = idc (setsstar_coslice_ob_map_obj A).
 Proof.
 apply eq_existT_uncurried; cbn.
 exists eq_refl.
@@ -665,8 +665,8 @@ Defined.
 
 Definition setsstar_coslice_ob {C} (A : Ob C) (X : Ob SetsStarCat) :
   Ob (FunCat Cat_1 (CosliceCat A)) :=
-  {| f_obj _ := setsstar_coslice_ob_obj A;
-     f_hom _ _ _ := setsstar_coslice_ob_hom A;
+  {| f_obj _ := setsstar_coslice_ob_map_obj A;
+     f_hom _ _ _ := setsstar_coslice_ob_map_hom A;
      f_comp_prop _ _ _ := setsstar_coslice_ob_comp_prop A;
      f_id_prop _ := setsstar_coslice_ob_id_prop A X |}.
 
@@ -1079,12 +1079,12 @@ Definition CatCat :=
 
 (* arrow category is equivalent to [2, C] *)
 
-Definition fun_arr_2_C_map_obj {C} (X : Ob (ArrCat C)) (b : Ob Cat_2) :
+Definition fun_arr_2_C_map_obj_map_obj {C} (X : Ob (ArrCat C)) (b : Ob Cat_2) :
     Ob C := if b then AC_B X else AC_A X.
 
-Definition fun_arr_2_C_map_hom {C} (X : Ob (ArrCat C))
+Definition fun_arr_2_C_map_obj_map_hom {C} (X : Ob (ArrCat C))
     {b1 b2 : Ob Cat_2} (f : Hom b1 b2) :
-  Hom (fun_arr_2_C_map_obj X b1) (fun_arr_2_C_map_obj X b2).
+  Hom (fun_arr_2_C_map_obj_map_obj X b1) (fun_arr_2_C_map_obj_map_obj X b2).
 Proof.
 intros.
 destruct b1.
@@ -1092,10 +1092,10 @@ destruct b1.
 -destruct b2; [ now destruct X as (XA & XB & Xf) | apply idc ].
 Defined.
 
-Theorem fun_arr_2_C_comp_prop {C} (X : Ob (ArrCat C))
+Theorem fun_arr_2_C_map_obj_comp_prop {C} (X : Ob (ArrCat C))
         {b1 b2 b3 : Ob Cat_2} (f : Hom b1 b2) (g : Hom b2 b3) :
-  fun_arr_2_C_map_hom X (g ◦ f) =
-  fun_arr_2_C_map_hom X g ◦ fun_arr_2_C_map_hom X f.
+  fun_arr_2_C_map_obj_map_hom X (g ◦ f) =
+  fun_arr_2_C_map_obj_map_hom X g ◦ fun_arr_2_C_map_obj_map_hom X f.
 Proof.
 destruct X as (XA & XB & Xf); symmetry.
 destruct b1, b2, b3; cbn; try easy.
@@ -1105,8 +1105,8 @@ destruct b1, b2, b3; cbn; try easy.
 -apply unit_r.
 Defined.
 
-Theorem fun_arr_2_C_id_prop {C} (X : Ob (ArrCat C)) (b : Ob Cat_2) :
-  fun_arr_2_C_map_hom X (idc b) = idc (if b then AC_B X else AC_A X).
+Theorem fun_arr_2_C_map_obj_id_prop {C} (X : Ob (ArrCat C)) (b : Ob Cat_2) :
+  fun_arr_2_C_map_obj_map_hom X (idc b) = idc (if b then AC_B X else AC_A X).
 Proof.
 now destruct b.
 Defined.
@@ -1114,10 +1114,10 @@ Defined.
 Definition arr_cat_fun_2_C_map_obj {C} (X : Ob (ArrCat C)) :
      Ob (FunCat Cat_2 C)
 :=
-  {| f_obj := fun_arr_2_C_map_obj X;
-     f_hom _ _ := fun_arr_2_C_map_hom X;
-     f_comp_prop _ _ _ := fun_arr_2_C_comp_prop X;
-     f_id_prop := fun_arr_2_C_id_prop X |}.
+  {| f_obj := fun_arr_2_C_map_obj_map_obj X;
+     f_hom _ _ := fun_arr_2_C_map_obj_map_hom X;
+     f_comp_prop _ _ _ := fun_arr_2_C_map_obj_comp_prop X;
+     f_id_prop := fun_arr_2_C_map_obj_id_prop X |}.
 
 Definition arr_cat_fun_2_C_map_hom {C} {X Y : Ob (ArrCat C)}
    (f : Hom X Y) :
@@ -1127,13 +1127,14 @@ cbn; unfold natural_transformation; cbn.
 destruct f as ((g1 & g2) & Hgg); cbn in Hgg.
 exists
   (λ b : bool,
-   if b return Hom (fun_arr_2_C_map_obj X b) (fun_arr_2_C_map_obj Y b)
+   if b return
+      Hom (fun_arr_2_C_map_obj_map_obj X b) (fun_arr_2_C_map_obj_map_obj Y b)
    then g2 else g1).
 intros b1 b2 f.
 destruct X as (XA & XB & Xf).
 destruct Y as (YA & YB & Yf).
 move Xf before Yf.
-unfold fun_arr_2_C_map_hom.
+unfold fun_arr_2_C_map_obj_map_hom.
 cbn in *.
 destruct b1, b2; cbn.
 -now rewrite unit_l, unit_r.
@@ -1156,13 +1157,19 @@ apply eq_existT_uncurried.
 assert
   (p
   : (λ b : bool,
-       if b return (Hom (fun_arr_2_C_map_obj X b) (fun_arr_2_C_map_obj Z b))
+       if b return
+          (Hom (fun_arr_2_C_map_obj_map_obj X b)
+               (fun_arr_2_C_map_obj_map_obj Z b))
        then g2 ◦ f2 else g1 ◦ f1) =
     (λ b : bool,
-       (if b return (Hom (fun_arr_2_C_map_obj Y b) (fun_arr_2_C_map_obj Z b))
+       (if b return
+           (Hom (fun_arr_2_C_map_obj_map_obj Y b)
+                (fun_arr_2_C_map_obj_map_obj Z b))
         then g2 else g1)
        ◦
-       (if b return (Hom (fun_arr_2_C_map_obj X b) (fun_arr_2_C_map_obj Y b))
+       (if b return
+           (Hom (fun_arr_2_C_map_obj_map_obj X b)
+                (fun_arr_2_C_map_obj_map_obj Y b))
         then f2 else f1))). {
   apply fun_ext; intros b.
   now destruct b.
@@ -1182,9 +1189,13 @@ apply eq_existT_uncurried.
 assert
   (p
   : (λ b : bool,
-       if b return (Hom (fun_arr_2_C_map_obj X b) (fun_arr_2_C_map_obj X b))
+       if b return
+          (Hom (fun_arr_2_C_map_obj_map_obj X b)
+               (fun_arr_2_C_map_obj_map_obj X b))
        then idc (projT1 (projT2 X))
-       else idc (projT1 X)) = (λ b : bool, idc (fun_arr_2_C_map_obj X b))). {
+       else
+         idc (projT1 X)) =
+         (λ b : bool, idc (fun_arr_2_C_map_obj_map_obj X b))). {
   apply fun_ext; intros b.
   now destruct b.
 }
@@ -1558,3 +1569,28 @@ Abort. (*
 exists {| fm := X |}.
 ...
 *)
+
+(* First, every monoid N has an underlying set |N|, and every monoid
+   homomorphism f : N → M has an underlying function |f| : |N|→|M|. It
+   is easy to see that this is a functor, called the “forgetful
+   functor.” (Awodey) *)
+
+Definition forgetful_map_obj : Ob MonCat → Ob SetCat := m_set.
+
+Definition forgetful_map_hom {N M : monoid} (f : Mon_Hom N M) :
+  Hom (forgetful_map_obj N) (forgetful_map_obj M) := projT1 f.
+
+Theorem forgetful_comp_prop {N M P : Ob MonCat} (f : Hom N M) (g : Hom M P) :
+  forgetful_map_hom (g ◦ f) = forgetful_map_hom g ◦ forgetful_map_hom f.
+Proof.
+destruct f as (f & Hf1 & Hf2).
+destruct g as (g & Hg1 & Hg2).
+reflexivity.
+Defined.
+
+Definition forgetful_functor : functor MonCat SetCat.
+  apply
+    {| f_obj := forgetful_map_obj;
+       f_hom _ _ := forgetful_map_hom;
+       f_comp_prop _ _ _ := forgetful_comp_prop;
+       f_id_prop _ := eq_refl |}.
