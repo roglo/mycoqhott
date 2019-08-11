@@ -1595,7 +1595,10 @@ Definition forgetful_functor : functor MonCat SetCat.
        f_comp_prop _ _ _ := forgetful_comp_prop;
        f_id_prop _ := eq_refl |}.
 
-(* Universal Mapping Property of M(A)
+(* The free monoid M(A) on a set A is by definition “the” monoid with
+   the following so called universal mapping property, or UMP!
+
+   Universal Mapping Property of M(A)
 
    There is a function i : A → |M(A)|, and given any monoid N and any
    function f : A → |N|, there is a *unique* monoid homomorphism ¯f :
