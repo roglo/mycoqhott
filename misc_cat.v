@@ -1594,3 +1594,19 @@ Definition forgetful_functor : functor MonCat SetCat.
        f_hom _ _ := forgetful_map_hom;
        f_comp_prop _ _ _ := forgetful_comp_prop;
        f_id_prop _ := eq_refl |}.
+
+(* Universal Mapping Property of M(A)
+
+   There is a function i : A → |M(A)|, and given any monoid N and any
+   function f : A → |N|, there is a *unique* monoid homomorphism ¯f :
+   M(A) → N such that |¯f| ◦ i = f, all as indicated in the following
+   diagram:
+
+   In Mon:
+             ¯f
+       M(A) -----> N
+
+   In Sets:
+...
+
+ *)
