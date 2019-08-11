@@ -1604,12 +1604,17 @@ Definition forgetful_functor : functor MonCat SetCat.
 
    In Mon:
               ¯f
-       M(A) ------> N
+       M(A) ------⟶ N
 
    In Sets:
              |¯f|
      |M(A)| ------> |N|
-        \           /
-...
+        ↑         ↗
+        |       ⋰
+      i |     ⋰ f
+        |   ⋰
+        | ⋰
+        A
 
+   (Awodey)
  *)
