@@ -1524,14 +1524,25 @@ Definition ins_gen {fmt} : fm_type fmt → st_type (m_set (free_monoid fmt)) :=
    2. No “nontrivial” relations hold in M, that is, if a1 ...aj = a'1
       ...a'k, then this is required by the axioms for monoids.
 
+
+   The first condition is sometimes called “no junk,” while the second
+   condition is sometimes called “no noise.”
+
    (Awodey)
  *)
 
-Theorem is_freely_generated_by (M : monoid) (A : st_type (m_set M) → Prop) :
+Definition no_junk M (A : _ → Prop) :=
   (∀ m : st_type (m_set M),
    ∃ ai : list (st_type (m_set M)),
-   (∀ a, List.In a ai → A a) ∧ List.fold_right (@m_op M) (m_unit M) ai = m)
+   (∀ a, List.In a ai → A a) ∧
+   List.fold_right (@m_op M) (m_unit M) ai = m).
+
+Definition no_noise M (A : _ → Prop) :=
+...
+
+Theorem is_freely_generated_by (M : monoid) (A : st_type (m_set M) → Prop) :
+  no_junk M A ∧ no_noise M A
   → ∃ fmt, M = free_monoid fmt.
 Proof.
-intros H.
+intros H1.
 ...
