@@ -222,7 +222,7 @@ Definition is_colimit {J C} {D : functor J C} (cc : co_cone D) :=
 
 Theorem limit_UMP {J C} {D : functor J C} :
   ∀ l : cone D, is_limit l →
-  ∀ c : cone D, exists! u, ∀ j, cn_fam l j ◦ u = cn_fam c j.
+  ∀ c : cone D, ∃! u, ∀ j, cn_fam l j ◦ u = cn_fam c j.
 Proof.
 intros * Hlim c.
 unfold unique.
