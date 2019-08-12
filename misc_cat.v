@@ -1625,15 +1625,13 @@ Definition forgetful_functor : functor MonCat SetCat.
  *)
 
 Theorem UMP_of_free_monoid :
-  ∀ (A : free_monoid_type) (MA : monoid),
-  MA = free_monoid A
-  → ∃ i : fm_type A → m_type MA,
-     ∀ (N : monoid) (f : fm_type A → m_type N),
-     exists! f' : m_type MA → m_type N,
-     ∀ x, f' (i x) = f x.
+  ∀ (A : free_monoid_type),
+  ∃ i : fm_type A → m_type (free_monoid A),
+  ∀ (N : monoid) (f : fm_type A → m_type N),
+  exists! f' : m_type (free_monoid A) → m_type N,
+  ∀ x, f' (i x) = f x.
 Proof.
-intros * HMA.
-rewrite HMA.
+intros.
 exists (λ a, [a]).
 intros *.
 exists (List.fold_right (λ s, m_op (f s)) (m_unit N)).
