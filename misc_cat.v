@@ -503,7 +503,7 @@ set
 exists G.
 -unfold F, G; cbn.
  unfold functor_comp; cbn.
- unfold "1"; cbn.
+ unfold "¹"; cbn.
  unfold id; f_equal.
  apply fun_ext; intros X.
  apply fun_ext; intros Y.
@@ -513,7 +513,7 @@ exists G.
  apply Hom_set.
 -unfold F, G; cbn.
  unfold functor_comp; cbn.
- unfold "1"; cbn.
+ unfold "¹"; cbn.
  unfold id; f_equal.
  apply fun_ext; intros X.
  apply fun_ext; intros Y.

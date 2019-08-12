@@ -65,8 +65,8 @@ Definition right_whiskering {D E F} {G H : functor D E} :
 Definition adjunction {C D} (R : functor C D) (L : functor D C)
   (ϑ :
     natural_transformation
-      (hom_functor D ◦ (fop R × 1 D))%Fun
-      (hom_functor C ◦ (1 (op C) × L))%Fun) :=
+      (hom_functor D ◦ (fop R × ¹D))%Fun
+      (hom_functor C ◦ (¹ (op C) × L))%Fun) :=
   is_natural_isomorphism ϑ.
 
 Definition are_adjoint {C D} (R : functor C D) (L : functor D C) :=
@@ -83,8 +83,8 @@ Notation "L ⊣ R" := (are_adjoint R L) (at level 70).
 (* adjunction: 2nd definition *)
 
 Definition adjunction2 {C D} (R : functor C D) (L : functor D C)
-    (η : natural_transformation (1 C) (L ◦ R))
-    (ε : natural_transformation (R ◦ L) (1 D)) :=
+    (η : natural_transformation (¹ C) (L ◦ R))
+    (ε : natural_transformation (R ◦ L) (¹ D)) :=
   (right_whiskering L ε ◦ left_whiskering η L = nat_transf_id L)%NT ∧
   (left_whiskering ε R ◦ right_whiskering R η = nat_transf_id R)%NT.
 
@@ -234,7 +234,7 @@ split.
 (*
  cbn in Hiso.
 *)
- assert (η : natural_transformation (1 C) (L ◦ R)). {
+ assert (η : natural_transformation (¹ C) (L ◦ R)). {
    transparent assert (α : ∀ X, Hom X (f_obj (L ◦ R) X)). {
      intros X; cbn.
      apply (nt_component ϑ (X, f_obj R X)), idc.

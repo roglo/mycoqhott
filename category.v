@@ -134,7 +134,7 @@ Definition functor_id C : functor C C :=
 
 Notation "g '◦' f" := (functor_comp f g) (at level 40, left associativity) :
   functor_scope.
-Notation "1 C" := (functor_id C) (at level 10) :
+Notation "¹ C" := (functor_id C) (at level 10, format "¹ C") :
   functor_scope.
 
 (* *)
@@ -168,7 +168,7 @@ Definition is_functor_injective_on_arrows {C D} (F : functor C D) :=
 (* *)
 
 Definition is_equiv_betw_cat {C D} (F : functor C D) :=
-  { G : functor D C & (G ◦ F = 1 C)%Fun & (F ◦ G = 1 D)%Fun }.
+  { G : functor D C & (G ◦ F = ¹C)%Fun & (F ◦ G = ¹D)%Fun }.
 
 Definition are_equivalent_categories (C D : category) :=
   { F : functor C D & is_equiv_betw_cat F }.
