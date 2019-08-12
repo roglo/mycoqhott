@@ -1628,7 +1628,7 @@ Theorem UMP_of_free_monoid :
   ∀ (A : free_monoid_type),
   ∃ i : fm_type A → m_type (free_monoid A),
   ∀ (N : monoid) (f : fm_type A → m_type N),
-  exists! f' : m_type (free_monoid A) → m_type N,
+  ∃! f' : m_type (free_monoid A) → m_type N,
   ∀ x, f' (i x) = f x.
 Proof.
 intros.
