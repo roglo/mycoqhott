@@ -1643,4 +1643,12 @@ intros f' Hff; cbn.
 apply fun_ext; intros a.
 destruct a as [| a la]. {
   cbn.
+(* ça va pas, ça; ça devrait pas arriver; comment l'en empêcher ? *)
+...
+}
+destruct la as [| b la]. {
+  rewrite Hff.
+  apply m_unit_r.
+}
+cbn.
 ...
