@@ -1624,6 +1624,10 @@ Definition forgetful_functor : functor MonCat SetCat.
    (Awodey)
  *)
 
+(* my thoughts: in fact ¯f as a function from M(A) to N is *not* unique;
+   what is unique is ¯f restricted to the subset of |M(A)| having one only
+   element *)
+
 Theorem UMP_of_free_monoid :
   ∀ (A : free_monoid_type),
   ∃ i : fm_type A → m_type (free_monoid A),
@@ -1641,7 +1645,6 @@ intros f' Hff; cbn.
 apply fun_ext; intros a.
 destruct a as [| a la]. {
   cbn.
-(* ça va pas, ça; ça devrait pas arriver; comment l'en empêcher ? *)
 ...
 }
 destruct la as [| b la]. {
