@@ -1633,4 +1633,14 @@ Theorem UMP_of_free_monoid :
      ∀ x, f' (i x) = f x.
 Proof.
 intros * HMA.
+rewrite HMA.
+exists (λ a, [a]).
+intros *.
+exists (List.fold_right (λ s, m_op (f s)) (m_unit N)).
+cbn; unfold unique.
+split; [ intros; apply m_unit_r | ].
+intros f' Hff; cbn.
+apply fun_ext; intros a.
+destruct a as [| a la]. {
+  cbn.
 ...
