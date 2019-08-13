@@ -1649,7 +1649,10 @@ exists f'; subst f'.
 cbn; unfold unique; cbn.
 split; [ intros; apply m_unit_r | ].
 intros (f' & Hf1 & Hf2) Hff; cbn in Hf1, Hf2, Hff.
+apply h4c.pair_transport_eq_existT.
+(*
 apply eq_existT_uncurried.
+*)
 transparent assert (p : fold_right (λ s : fm_type A, m_op (f s)) (m_unit N) = f'). {
   apply fun_ext; intros la.
   induction la as [| a la]; [ easy | cbn ].
@@ -1659,5 +1662,8 @@ transparent assert (p : fold_right (λ s : fm_type A, m_op (f s)) (m_unit N) = f
   now rewrite Hff.
 }
 exists p; subst p; cbn.
-(* blocked *)
+rewrite h4c.transport_pair.
+f_equal.
+-apply fun_ext; intros la.
+ apply fun_ext; intros lb.
 ...

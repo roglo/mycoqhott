@@ -349,6 +349,14 @@ intros (p, Hp).
 now destruct p, Hp.
 Qed.
 
+Theorem transport_pair : ∀ A B C (x y : A) (p : x = y) b c,
+  h4c.transport (λ z, (B z * C z)%type) p (b, c) =
+  (h4c.transport B p b, h4c.transport C p c).
+Proof.
+intros.
+destruct p; reflexivity.
+Qed.
+
 Theorem isnType_isnType_sigT (A : Type) : ∀ n P,
   (∀ x, isProp (P x)) → isnType A n → isnType (@sigT A P) n.
 Proof.
