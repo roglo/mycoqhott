@@ -1636,11 +1636,11 @@ Proof.
 intros.
 exists (λ a, [a]).
 intros *.
+cbn.
 transparent assert (f' : Hom (free_monoid A : Ob MonCat) N). {
   exists (List.fold_right (λ s, m_op (f s)) (m_unit N)); cbn.
   split; [ | easy ].
   intros la lb.
-  revert lb.
   induction la as [| a la]; intros; [ symmetry; apply m_unit_l | ].
   cbn; rewrite IHla.
   apply m_assoc.
@@ -1659,7 +1659,5 @@ transparent assert (p : fold_right (λ s : fm_type A, m_op (f s)) (m_unit N) = f
   now rewrite Hff.
 }
 exists p; subst p; cbn.
-Check prop_ext.
-Check Hom_set.
-Check proof_irrel.
+(* blocked *)
 ...
