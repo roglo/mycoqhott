@@ -1636,7 +1636,7 @@ Proof.
 intros.
 exists (λ a, [a]).
 intros *.
-(**)
+(*
 unfold unique.
 assert (H :
   ∃ g : Hom (free_monoid A : Ob MonCat) N,
@@ -1667,7 +1667,29 @@ split; [ easy | ].
 intros h Hh1.
 move h before g.
 specialize (Hg2 h Hh1) as H1.
+destruct g as (g & Hg'1 & Hg'2).
+destruct h as (h & Hh'1 & Hh'2).
+cbn in *.
+apply h4c.pair_transport_eq_existT.
+transparent assert (p1 : g = h). {
+  apply fun_ext; intros la.
+  induction la as [| a la]; [ now rewrite Hg'2, Hh'2 | ].
+  specialize (Hg'1 [a] la) as H2.
+  specialize (Hh'1 [a] la) as H3.
+  cbn in H2, H3.
+  rewrite H2, H3.
+  now rewrite Hg1, Hh1, IHla.
+}
+exists p1; subst p1; cbn.
+rewrite h4c.transport_pair.
+f_equal.
+-apply fun_ext; intros la.
+ apply fun_ext; intros lb.
+ (* marche pas mieux que ci-dessous *)
+ (* Hh'1 : ∀ m n : list (fm_type A), h (m ++ n) = m_op (h m) (h n) *)
+ (* ... = Hh'1 la lb *)
 ...
+*)
 cbn.
 transparent assert (f' : Hom (free_monoid A : Ob MonCat) N). {
   exists (List.fold_right (λ s, m_op (f s)) (m_unit N)); cbn.
@@ -1698,5 +1720,6 @@ rewrite h4c.transport_pair.
 f_equal.
 -apply fun_ext; intros la.
  apply fun_ext; intros lb.
+ cbn.
  (* marche pas *)
 ...
