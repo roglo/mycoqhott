@@ -1626,7 +1626,7 @@ Definition forgetful_functor : functor MonCat SetCat.
    (Awodey)
  *)
 
-(* addendum: unique modulo equality in monoid homomorphisms *)
+(* addendum: *unique* up to equality in monoid homomorphisms *)
 
 Definition Mon_Hom_eq {M N : monoid} (f g : Mon_Hom M N) :=
   ∀ a, mh_fun f a = mh_fun g a.

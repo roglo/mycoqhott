@@ -15,7 +15,7 @@ Notation "∃! x .. y , p" :=
     (at level 200, x binder, right associativity)
   : type_scope.
 
-(* exists unique in setoid (i.e. modulo equivalence) *)
+(* exists unique in setoid (i.e. up to equivalence) *)
 
 Definition setoid_unique {A : Type} (equ : A → A → Prop) (P : A → Prop) :=
   λ (x : A), P x ∧ (∀ x' : A, P x' → equ x x').
