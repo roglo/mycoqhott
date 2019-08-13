@@ -1374,6 +1374,8 @@ Definition Mon_Hom (M N : monoid) :=
     ((∀ m n, h (m_op m n) = m_op (h m) (h n)) *
      (h (m_unit _) = m_unit _))%type }.
 
+Definition mh_fun {M N} (f : Mon_Hom M N) : m_type M → m_type N := projT1 f.
+
 Definition Mon_comp {M N P : monoid}
   (f : Mon_Hom M N) (g : Mon_Hom N P) : Mon_Hom M P.
 Proof.
@@ -1624,32 +1626,29 @@ Definition forgetful_functor : functor MonCat SetCat.
    (Awodey)
  *)
 
-(* my thoughts: in fact ¯f as a function from M(A) to N is *not* unique;
-   what is unique is ¯f restricted to the subset of |M(A)| having one only
-   element *)
-
 Theorem UMP_of_free_monoid :
   ∀ (A : free_monoid_type),
   ∃ i : fm_type A → m_type (free_monoid A),
   ∀ (N : monoid) (f : fm_type A → m_type N),
-  ∃! f' : m_type (free_monoid A) → m_type N,
-  ∀ x, f' (i x) = f x.
+  ∃! f' : Hom (free_monoid A : Ob MonCat) (N : Ob MonCat),
+  ∀ x, mh_fun f' (i x) = f x.
 Proof.
 intros.
 exists (λ a, [a]).
 intros *.
-exists (List.fold_right (λ s, m_op (f s)) (m_unit N)).
-cbn; unfold unique.
+transparent assert (f' : Hom (free_monoid A : Ob MonCat) N). {
+  exists (List.fold_right (λ s, m_op (f s)) (m_unit N)); cbn.
+  split; [ | easy ].
+  intros la lb.
+  revert lb.
+  induction la as [| a la]; intros; [ symmetry; apply m_unit_l | ].
+  cbn; rewrite IHla.
+  apply m_assoc.
+}
+exists f'; subst f'.
+cbn; unfold unique; cbn.
 split; [ intros; apply m_unit_r | ].
-intros f' Hff; cbn.
-apply fun_ext; intros a.
-destruct a as [| a la]. {
-  cbn.
-...
-}
-destruct la as [| b la]. {
-  rewrite Hff.
-  apply m_unit_r.
-}
-cbn.
+intros (f' & Hf1 & Hf2) Hff.
+apply eq_existT_uncurried.
+assert (p : fold_right (λ s : fm_type A, m_op (f s)) (m_unit N) = f'). {
 ...
