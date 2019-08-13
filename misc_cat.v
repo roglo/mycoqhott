@@ -1633,10 +1633,10 @@ Definition Mon_Hom_eq {M N : monoid} (f g : Mon_Hom M N) :=
 
 Theorem UMP_of_free_monoid :
   ∀ (A : free_monoid_type),
-  ∃ i : fm_type A → m_type (free_monoid A),
-  ∀ (N : monoid) (f : fm_type A → m_type N),
-  ∃!! (Mon_Hom_eq) f' : Hom (free_monoid A : Ob MonCat) (N : Ob MonCat),
-  ∀ x, mh_fun f' (i x) = f x.
+  { i : fm_type A → m_type (free_monoid A) &
+    ∀ (N : monoid) (f : fm_type A → m_type N),
+    ∃!! (Mon_Hom_eq) f' : Hom (free_monoid A : Ob MonCat) (N : Ob MonCat),
+    ∀ x, mh_fun f' (i x) = f x }.
 Proof.
 intros.
 exists (λ a, [a]).
@@ -1678,6 +1678,27 @@ Definition mi_fun {M N} (f : Mon_iso M N) :=
 Definition mi_fun_inv {M N} (f : Mon_iso M N) :=
   mh_fun (projT1 (projT2 (mi f))).
 
+Check UMP_of_free_monoid.
+
+Definition toto {A : free_monoid_type} {M N}
+  (i : fm_type A → m_type M) (j : fm_type A → m_type N) :
+  {f : Mon_Hom M N &
+   {g : Mon_Hom N M &
+    (∀ x : m_type M, mh_fun g (mh_fun f x) = x)
+    ∧ (∀ y : m_type N, mh_fun f (mh_fun g y) = y)}}.
+Proof.
+assert (f : Mon_Hom M N). {
+  unfold Mon_Hom.
+  assert (h : m_type M → m_type N). {
+    intros a.
+    specialize (UMP_of_free_monoid A) as H1.
+    cbn in H1.
+    destruct H1 as (k & Hk).
+    specialize (Hk N j).
+...
+    apply j.
+...
+
 Theorem proposition_1_10 :
   ∀ A (M N : monoid) (i : A → m_type M) (j : A → m_type N),
   ∃! h : Mon_iso M N,
@@ -1685,4 +1706,6 @@ Theorem proposition_1_10 :
   (∀ a, mi_fun_inv h (j a) = i a).
 Proof.
 intros *.
+assert (h : Mon_iso M N). {
+  apply {| mi := 42 |}.
 ...
