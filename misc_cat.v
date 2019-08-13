@@ -1629,7 +1629,7 @@ Definition forgetful_functor : functor MonCat SetCat.
 (* addendum: *unique* up to equality in monoid homomorphisms *)
 
 Definition Mon_Hom_eq {M N : monoid} (f g : Mon_Hom M N) :=
-  ∀ a, mh_fun f a = mh_fun g a.
+  mh_fun f = mh_fun g.
 
 Theorem UMP_of_free_monoid :
   ∀ (A : free_monoid_type),
@@ -1651,7 +1651,9 @@ transparent assert (f' : Hom (free_monoid A : Ob MonCat) N). {
 }
 exists f'; subst f'.
 split; [ intros; apply m_unit_r | ].
-intros (f' & Hf1 & Hf2) Hff la; cbn in Hf1, Hf2, Hff; cbn.
+intros (f' & Hf1 & Hf2) Hff.
+apply fun_ext; intros la.
+cbn in Hf1, Hf2, Hff, la; cbn.
 induction la as [| a la]; [ easy | ].
 cbn; rewrite IHla.
 specialize (Hf1 [a] la) as H1.
