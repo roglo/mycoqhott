@@ -1666,4 +1666,5 @@ rewrite h4c.transport_pair.
 f_equal.
 -apply fun_ext; intros la.
  apply fun_ext; intros lb.
-...
+ (* marche pas *)
+Abort.
