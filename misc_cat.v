@@ -1684,4 +1684,5 @@ Theorem proposition_1_10 :
   (∀ a, mi_fun h (i a) = j a) ∧
   (∀ a, mi_fun_inv h (j a) = i a).
 Proof.
+intros *.
 ...
