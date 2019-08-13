@@ -1636,6 +1636,38 @@ Proof.
 intros.
 exists (λ a, [a]).
 intros *.
+(**)
+unfold unique.
+assert (H :
+  ∃ g : Hom (free_monoid A : Ob MonCat) N,
+    (∀ a : fm_type A, mh_fun g [a] = f a)
+    ∧ (∀ h : Hom (free_monoid A : Ob MonCat) N,
+       (∀ a : fm_type A, mh_fun h [a] = f a)
+       → ∀ a, mh_fun g a = mh_fun h a)). {
+  transparent assert (f' : Hom (free_monoid A : Ob MonCat) N). {
+    exists (List.fold_right (λ s, m_op (f s)) (m_unit N)); cbn.
+    split; [ | easy ].
+    intros la lb.
+    induction la as [| a la]; intros; [ symmetry; apply m_unit_l | ].
+    cbn; rewrite IHla.
+    apply m_assoc.
+  }
+  exists f'; subst f'.
+  cbn; unfold unique; cbn.
+  split; [ intros; apply m_unit_r | ].
+  intros (f' & Hf1 & Hf2) Hff la; cbn in Hf1, Hf2, Hff; cbn.
+  induction la as [| a la]; [ easy | ].
+  cbn; rewrite IHla.
+  specialize (Hf1 [a] la) as H1.
+  now cbn in H1; rewrite Hff in H1.
+}
+destruct H as (g & Hg1 & Hg2).
+exists g.
+split; [ easy | ].
+intros h Hh1.
+move h before g.
+specialize (Hg2 h Hh1) as H1.
+...
 cbn.
 transparent assert (f' : Hom (free_monoid A : Ob MonCat) N). {
   exists (List.fold_right (λ s, m_op (f s)) (m_unit N)); cbn.
@@ -1667,4 +1699,4 @@ f_equal.
 -apply fun_ext; intros la.
  apply fun_ext; intros lb.
  (* marche pas *)
-Abort.
+...
