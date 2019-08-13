@@ -1648,7 +1648,18 @@ transparent assert (f' : Hom (free_monoid A : Ob MonCat) N). {
 exists f'; subst f'.
 cbn; unfold unique; cbn.
 split; [ intros; apply m_unit_r | ].
-intros (f' & Hf1 & Hf2) Hff.
+intros (f' & Hf1 & Hf2) Hff; cbn in Hf1, Hf2, Hff.
 apply eq_existT_uncurried.
-assert (p : fold_right (λ s : fm_type A, m_op (f s)) (m_unit N) = f'). {
+transparent assert (p : fold_right (λ s : fm_type A, m_op (f s)) (m_unit N) = f'). {
+  apply fun_ext; intros la.
+  induction la as [| a la]; [ easy | cbn ].
+  rewrite IHla.
+  specialize (Hf1 [a] la) as H1.
+  cbn in H1; rewrite H1.
+  now rewrite Hff.
+}
+exists p; subst p; cbn.
+Check prop_ext.
+Check Hom_set.
+Check proof_irrel.
 ...
