@@ -8,10 +8,24 @@ Require Import Utf8.
 Require ClassicalFacts.
 Require h4c.
 
+(* exists unique *)
+
 Notation "∃! x .. y , p" :=
   (ex (unique (λ x, .. (ex (unique (λ y, p))) ..)))
     (at level 200, x binder, right associativity)
   : type_scope.
+
+(* exists unique in setoid (i.e. modulo equivalence) *)
+
+Definition setoid_unique {A : Type} (equ : A → A → Prop) (P : A → Prop) :=
+  λ (x : A), P x ∧ (∀ x' : A, P x' → equ x x').
+
+Notation "∃!! ( equ ) x .. y , p" :=
+  (ex (setoid_unique equ (λ x, .. (ex (setoid_unique equ (λ y, p))) ..)))
+    (at level 200, x binder, right associativity)
+  : type_scope.
+
+(* *)
 
 Definition isSet := h4c.isSet.
 Definition isProp := h4c.isProp.

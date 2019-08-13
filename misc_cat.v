@@ -1626,49 +1626,21 @@ Definition forgetful_functor : functor MonCat SetCat.
    (Awodey)
  *)
 
+(* addendum: unique modulo equality in monoid homomorphisms *)
+
+Definition Mon_Hom_eq {M N : monoid} (f g : Mon_Hom M N) :=
+  ∀ a, mh_fun f a = mh_fun g a.
+
 Theorem UMP_of_free_monoid :
   ∀ (A : free_monoid_type),
   ∃ i : fm_type A → m_type (free_monoid A),
   ∀ (N : monoid) (f : fm_type A → m_type N),
-  ∃! f' : Hom (free_monoid A : Ob MonCat) (N : Ob MonCat),
+  ∃!! (Mon_Hom_eq) f' : Hom (free_monoid A : Ob MonCat) (N : Ob MonCat),
   ∀ x, mh_fun f' (i x) = f x.
 Proof.
 intros.
 exists (λ a, [a]).
 intros *.
-(**)
-unfold unique.
-assert (H :
-  ∃ g : Hom (free_monoid A : Ob MonCat) N,
-    (∀ a : fm_type A, mh_fun g [a] = f a)
-    ∧ (∀ h : Hom (free_monoid A : Ob MonCat) N,
-       (∀ a : fm_type A, mh_fun h [a] = f a)
-       → ∀ a, mh_fun g a = mh_fun h a)). {
-  transparent assert (f' : Hom (free_monoid A : Ob MonCat) N). {
-    exists (List.fold_right (λ s, m_op (f s)) (m_unit N)); cbn.
-    split; [ | easy ].
-    intros la lb.
-    induction la as [| a la]; intros; [ symmetry; apply m_unit_l | ].
-    cbn; rewrite IHla.
-    apply m_assoc.
-  }
-  exists f'; subst f'.
-  cbn; unfold unique; cbn.
-  split; [ intros; apply m_unit_r | ].
-  intros (f' & Hf1 & Hf2) Hff la; cbn in Hf1, Hf2, Hff; cbn.
-  induction la as [| a la]; [ easy | ].
-  cbn; rewrite IHla.
-  specialize (Hf1 [a] la) as H1.
-  now cbn in H1; rewrite Hff in H1.
-}
-destruct H as (g & Hg1 & Hg2).
-exists g.
-split; [ easy | ].
-intros h Hh1.
-move h before g.
-specialize (Hg2 h Hh1) as H1.
-...
-cbn.
 transparent assert (f' : Hom (free_monoid A : Ob MonCat) N). {
   exists (List.fold_right (λ s, m_op (f s)) (m_unit N)); cbn.
   split; [ | easy ].
@@ -1678,25 +1650,10 @@ transparent assert (f' : Hom (free_monoid A : Ob MonCat) N). {
   apply m_assoc.
 }
 exists f'; subst f'.
-cbn; unfold unique; cbn.
 split; [ intros; apply m_unit_r | ].
-intros (f' & Hf1 & Hf2) Hff; cbn in Hf1, Hf2, Hff.
-apply h4c.pair_transport_eq_existT.
-(*
-apply eq_existT_uncurried.
-*)
-transparent assert (p : fold_right (λ s : fm_type A, m_op (f s)) (m_unit N) = f'). {
-  apply fun_ext; intros la.
-  induction la as [| a la]; [ easy | cbn ].
-  rewrite IHla.
-  specialize (Hf1 [a] la) as H1.
-  cbn in H1; rewrite H1.
-  now rewrite Hff.
-}
-exists p; subst p; cbn.
-rewrite h4c.transport_pair.
-f_equal.
--apply fun_ext; intros la.
- apply fun_ext; intros lb.
- (* marche pas *)
-...
+intros (f' & Hf1 & Hf2) Hff la; cbn in Hf1, Hf2, Hff; cbn.
+induction la as [| a la]; [ easy | ].
+cbn; rewrite IHla.
+specialize (Hf1 [a] la) as H1.
+now cbn in H1; rewrite Hff in H1.
+Qed.
