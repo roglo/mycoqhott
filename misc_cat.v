@@ -1659,3 +1659,15 @@ cbn; rewrite IHla.
 specialize (Hf1 [a] la) as H1.
 now cbn in H1; rewrite Hff in H1.
 Qed.
+
+(* Given monoids M and N with functions i : A → |M| and j : A → |N|,
+   each with the UMP of the free monoid on A, there is a (unique)
+   monoid isomorphismh : h : M ≃ N such that |h| i = j and
+   |h⁻¹| j = i. (Awodey) *)
+
+...
+
+Theorem proposition_1_10 :
+  ∀ A (M N : monoid) (i : A → m_type M) (j : A → m_type N),
+  ∃! h : h4c.equivalence (m_type M) (m_type N),
+    projT1 h i = j ∧ h j = i.
