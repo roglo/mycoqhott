@@ -1662,12 +1662,26 @@ Qed.
 
 (* Given monoids M and N with functions i : A → |M| and j : A → |N|,
    each with the UMP of the free monoid on A, there is a (unique)
-   monoid isomorphismh : h : M ≃ N such that |h| i = j and
+   monoid isomorphism : h : M ≅ N such that |h| i = j and
    |h⁻¹| j = i. (Awodey) *)
 
-...
+Record Mon_iso (M N : monoid) :=
+  { mi :
+    { f : Mon_Hom M N &
+      { g : Mon_Hom N M &
+        (∀ x, mh_fun g (mh_fun f x) = x) ∧
+        (∀ y, mh_fun f (mh_fun g y) = y) } } }.
+
+Arguments mi {_} {_}.
+Definition mi_fun {M N} (f : Mon_iso M N) :=
+  mh_fun (projT1 (mi f)).
+Definition mi_fun_inv {M N} (f : Mon_iso M N) :=
+  mh_fun (projT1 (projT2 (mi f))).
 
 Theorem proposition_1_10 :
   ∀ A (M N : monoid) (i : A → m_type M) (j : A → m_type N),
-  ∃! h : h4c.equivalence (m_type M) (m_type N),
-    projT1 h i = j ∧ h j = i.
+  ∃! h : Mon_iso M N,
+  (∀ a, mi_fun h (i a) = j a) ∧
+  (∀ a, mi_fun_inv h (j a) = i a).
+Proof.
+...
