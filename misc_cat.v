@@ -1631,12 +1631,15 @@ Definition forgetful_functor : functor MonCat SetCat.
 Definition Mon_Hom_eq {M N : monoid} (f g : Mon_Hom M N) :=
   mh_fun f = mh_fun g.
 
+Notation "{! ( eq ) x : A  & P }" := (sigT (setoid_unique eq (fun x : A => P)))
+  (at level 0, x at level 99) : type_scope.
+
 Theorem UMP_of_free_monoid :
   ∀ (A : free_monoid_type),
   { i : fm_type A → m_type (free_monoid A) &
     ∀ (N : monoid) (f : fm_type A → m_type N),
-    ∃!! (Mon_Hom_eq) f' : Hom (free_monoid A : Ob MonCat) (N : Ob MonCat),
-    ∀ x, mh_fun f' (i x) = f x }.
+    {! (Mon_Hom_eq) f' : Hom (free_monoid A : Ob MonCat) (N : Ob MonCat) &
+     ∀ x, mh_fun f' (i x) = f x } }.
 Proof.
 intros.
 exists (λ a, [a]).
@@ -1678,9 +1681,6 @@ Definition mi_fun {M N} (f : Mon_iso M N) :=
 Definition mi_fun_inv {M N} (f : Mon_iso M N) :=
   mh_fun (projT1 (projT2 (mi f))).
 
-Check UMP_of_free_monoid.
-
-(*
 Definition toto {A : free_monoid_type} {M N}
   (i : fm_type A → m_type M) (j : fm_type A → m_type N) :
   {f : Mon_Hom M N &
@@ -1696,15 +1696,9 @@ assert (f : Mon_Hom M N). {
     cbn in H1.
     destruct H1 as (k & Hk).
     specialize (Hk N j).
-(* I should change this ∃!! into a { .. & .. }, but how do I express
-   the unicity? *)
-...
     apply j.
+    destruct Hk as (f' & Hf'1 & Hf'2).
 ...
-*)
-
-Notation "{! x : A  & P }" := (sigT (unique (fun x : A => P)))
-  (at level 0, x at level 99) : type_scope.
 
 Theorem proposition_1_10 :
   ∀ A (M N : monoid) (i : A → m_type M) (j : A → m_type N),
@@ -1714,7 +1708,7 @@ Theorem proposition_1_10 :
 Proof.
 intros *.
 set (aaa := {x : nat & unique (λ y, y = 0) x}).
-set (ccc := {!x : nat & x = 0}).
+set (ccc := {! (Mon_Hom_eq) x : Mon_Hom M N & x = x}).
 Unset Printing Notations.
 ...
 assert (h : Mon_iso M N). {
