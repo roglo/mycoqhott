@@ -1691,7 +1691,12 @@ Proof.
 assert (f : Mon_Hom M N). {
   unfold Mon_Hom.
   assert (h : m_type M → m_type N). {
-    intros a.
+    intros la.
+    subst M.
+    cbn in i, la.
+    destruct la as [| a la]. {
+      apply j.
+...
     apply j.
     subst M.
     cbn in i, a.
