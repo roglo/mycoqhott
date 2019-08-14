@@ -1681,7 +1681,7 @@ Definition mi_fun {M N} (f : Mon_iso M N) :=
 Definition mi_fun_inv {M N} (f : Mon_iso M N) :=
   mh_fun (projT1 (projT2 (mi f))).
 
-Definition toto {A : free_monoid_type} (M := free_monoid A) (N : monoid)
+Definition toto {A} M N
   (i : fm_type A → m_type M) (j : fm_type A → m_type N) :
   {f : Mon_Hom M N &
    {g : Mon_Hom N M &
@@ -1691,19 +1691,13 @@ Proof.
 assert (f : Mon_Hom M N). {
   unfold Mon_Hom.
   assert (h : m_type M → m_type N). {
-    intros la.
-    subst M.
-    cbn in i, la.
-    destruct la as [| a la]. {
-      apply j.
-...
-    apply j.
-    subst M.
-    cbn in i, a.
+    intros a.
+    assert (H : { la : list (fm_type A) & List.fold_right (@m_op M) (m_unit M) (List.map i la) = a }).
+(* ou pas: tiers exclu *)
 ...
 
 Theorem proposition_1_10 :
-  ∀ (A : free_monoid_type) (M := free_monoid A) (N : monoid)
+  ∀ (A : free_monoid_type) (M N : monoid)
      (i : fm_type A → m_type M) (j : fm_type A → m_type N),
   ∃! h : Mon_iso M N,
   (∀ a, mi_fun h (i a) = j a) ∧
