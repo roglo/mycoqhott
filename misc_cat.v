@@ -1680,6 +1680,7 @@ Definition mi_fun_inv {M N} (f : Mon_iso M N) :=
 
 Check UMP_of_free_monoid.
 
+(*
 Definition toto {A : free_monoid_type} {M N}
   (i : fm_type A → m_type M) (j : fm_type A → m_type N) :
   {f : Mon_Hom M N &
@@ -1700,6 +1701,7 @@ assert (f : Mon_Hom M N). {
 ...
     apply j.
 ...
+*)
 
 Theorem proposition_1_10 :
   ∀ A (M N : monoid) (i : A → m_type M) (j : A → m_type N),
