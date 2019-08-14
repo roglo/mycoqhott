@@ -1681,38 +1681,30 @@ Definition mi_fun {M N} (f : Mon_iso M N) :=
 Definition mi_fun_inv {M N} (f : Mon_iso M N) :=
   mh_fun (projT1 (projT2 (mi f))).
 
-Definition toto {A : free_monoid_type} {M N}
+Definition toto {A : free_monoid_type} (M := free_monoid A) (N : monoid)
   (i : fm_type A → m_type M) (j : fm_type A → m_type N) :
   {f : Mon_Hom M N &
    {g : Mon_Hom N M &
-    (∀ x : m_type M, mh_fun g (mh_fun f x) = x)
-    ∧ (∀ y : m_type N, mh_fun f (mh_fun g y) = y)}}.
+    (∀ x : m_type M, mh_fun g (mh_fun f x) = x) ∧
+    (∀ y : m_type N, mh_fun f (mh_fun g y) = y)}}.
 Proof.
 assert (f : Mon_Hom M N). {
   unfold Mon_Hom.
   assert (h : m_type M → m_type N). {
     intros a.
-    specialize (UMP_of_free_monoid A) as H1.
-    cbn in H1.
-    destruct H1 as (k & Hk).
-    specialize (Hk N j).
     apply j.
-    destruct Hk as (f' & Hf'1 & Hf'2).
+    subst M.
+    cbn in i, a.
 ...
 
 Theorem proposition_1_10 :
-  ∀ A (M N : monoid) (i : A → m_type M) (j : A → m_type N),
+  ∀ (A : free_monoid_type) (M := free_monoid A) (N : monoid)
+     (i : fm_type A → m_type M) (j : fm_type A → m_type N),
   ∃! h : Mon_iso M N,
   (∀ a, mi_fun h (i a) = j a) ∧
   (∀ a, mi_fun_inv h (j a) = i a).
 Proof.
 intros *.
-set (aaa := {x : nat & unique (λ y, y = 0) x}).
-set (ccc := {! (Mon_Hom_eq) x : Mon_Hom M N & x = x}).
-Unset Printing Notations.
-...
 assert (h : Mon_iso M N). {
   apply {| mi := 42 |}.
 ...
-"{ x : A  & P }" := sigT (fun x => P)
-"{! x : A  & P }" := sigT (unique (fun x => P))
