@@ -1710,6 +1710,8 @@ Theorem proposition_1_10 :
   (∀ a, mi_fun_inv h (j a) = i a).
 Proof.
 intros *.
+set (aaa := {x : nat & unique (λ y, y = 0) x}).
+...
 assert (h : Mon_iso M N). {
   apply {| mi := 42 |}.
 ...
