@@ -1703,6 +1703,9 @@ assert (f : Mon_Hom M N). {
 ...
 *)
 
+Notation "{! x : A  & P }" := (sigT (unique (fun x : A => P)))
+  (at level 0, x at level 99) : type_scope.
+
 Theorem proposition_1_10 :
   ∀ A (M N : monoid) (i : A → m_type M) (j : A → m_type N),
   ∃! h : Mon_iso M N,
@@ -1711,7 +1714,11 @@ Theorem proposition_1_10 :
 Proof.
 intros *.
 set (aaa := {x : nat & unique (λ y, y = 0) x}).
+set (ccc := {!x : nat & x = 0}).
+Unset Printing Notations.
 ...
 assert (h : Mon_iso M N). {
   apply {| mi := 42 |}.
 ...
+"{ x : A  & P }" := sigT (fun x => P)
+"{! x : A  & P }" := sigT (unique (fun x => P))
