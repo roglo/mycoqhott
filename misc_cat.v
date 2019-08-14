@@ -1695,6 +1695,8 @@ assert (f : Mon_Hom M N). {
     cbn in H1.
     destruct H1 as (k & Hk).
     specialize (Hk N j).
+(* I should change this ∃!! into a { .. & .. }, but how do I express
+   the unicity? *)
 ...
     apply j.
 ...
