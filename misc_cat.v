@@ -1555,6 +1555,8 @@ Definition no_junk M (A : _ → Prop) :=
 Definition no_noise (M : monoid) (A : m_type M → Prop) :=
   True.
 
+...
+
 Theorem is_freely_generated_by (M : monoid) (A : m_type M → Prop) :
   no_junk M A ∧ no_noise M A
   → ∃ fmt, M = free_monoid fmt.
