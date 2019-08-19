@@ -1555,8 +1555,6 @@ Definition no_junk M (A : _ → Prop) :=
 Definition no_noise (M : monoid) (A : m_type M → Prop) :=
   True.
 
-...
-
 Theorem is_freely_generated_by (M : monoid) (A : m_type M → Prop) :
   no_junk M A ∧ no_noise M A
   → ∃ fmt, M = free_monoid fmt.
@@ -1594,12 +1592,11 @@ destruct g as (g & Hg1 & Hg2).
 reflexivity.
 Defined.
 
-Definition forgetful_functor : functor MonCat SetCat.
-  apply
-    {| f_obj := forgetful_map_obj;
-       f_hom _ _ := forgetful_map_hom;
-       f_comp_prop _ _ _ := forgetful_comp_prop;
-       f_id_prop _ := eq_refl |}.
+Definition forgetful_functor : functor MonCat SetCat :=
+  {| f_obj := forgetful_map_obj;
+     f_hom _ _ := forgetful_map_hom;
+     f_comp_prop _ _ _ := forgetful_comp_prop;
+     f_id_prop _ := eq_refl |}.
 
 (* The free monoid M(A) on a set A is by definition “the” monoid with
    the following so called universal mapping property, or UMP!
