@@ -1695,6 +1695,14 @@ assert (f : Mon_Hom M N). {
   unfold Mon_Hom.
   assert (h : m_type M → m_type N). {
     intros a.
+    destruct HM as (f, Hf).
+    destruct HN as (g, Hg).
+    specialize (Hg M f) as (f' & Hf').
+    specialize (Hf N g) as (g' & Hg').
+    move g' before f'.
+    cbn in Hf', Hg'.
+    destruct Hf' as (Hf'1, Hf'2).
+    destruct Hg' as (Hg'1, Hg'2).
 ...
 
 Theorem proposition_1_10 :
