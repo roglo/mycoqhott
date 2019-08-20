@@ -1633,14 +1633,14 @@ Definition Mon_Hom_eq {M N : monoid} (f g : Mon_Hom M N) :=
 Notation "{! ( eq ) x : A  & P }" := (sigT (setoid_unique eq (fun x : A => P)))
   (at level 0, x at level 99) : type_scope.
 
-Definition has_free_monoid_UMP (A : alphabet) (M : monoid) :=
+Definition is_free_monoid (A : alphabet) (M : monoid) :=
   { i : a_type A → m_type M &
     ∀ (N : monoid) (f : a_type A → m_type N),
     {! (Mon_Hom_eq) f' : Hom (M : Ob MonCat) (N : Ob MonCat) &
      ∀ x, mh_fun f' (i x) = f x } }.
 
 Theorem kleene_closure_has_free_monoid_UMP (A : alphabet) :
-  has_free_monoid_UMP A (kleene_closure A).
+  is_free_monoid A (kleene_closure A).
 Proof.
 exists (λ a, [a]).
 intros *.
@@ -1683,8 +1683,8 @@ Definition mi_fun_inv {M N} (f : Mon_iso M N) :=
 
 Definition toto {A} M N
   (i : a_type A → m_type M) (j : a_type A → m_type N) :
-  has_free_monoid_UMP A M
-  → has_free_monoid_UMP A N
+  is_free_monoid A M
+  → is_free_monoid A N
   → {f : Mon_Hom M N &
       {g : Mon_Hom N M &
        (∀ x : m_type M, mh_fun g (mh_fun f x) = x) ∧
@@ -1708,8 +1708,8 @@ assert (f : Mon_Hom M N). {
 Theorem proposition_1_10 :
   ∀ (A : alphabet) (M N : monoid)
      (i : a_type A → m_type M) (j : a_type A → m_type N),
-  has_free_monoid_UMP A M
-  → has_free_monoid_UMP A N
+  is_free_monoid A M
+  → is_free_monoid A N
   → ∃! h : Mon_iso M N,
      (∀ a, mi_fun h (i a) = j a) ∧
      (∀ a, mi_fun_inv h (j a) = i a).
