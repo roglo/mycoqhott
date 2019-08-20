@@ -1693,22 +1693,12 @@ Proof.
 intros HM HN.
 assert (f : Mon_Hom M N). {
   unfold Mon_Hom.
-  assert (h : m_type M → m_type N). {
+  destruct HM as (f, Hf).
+  transparent assert (h : m_type M → m_type N). {
     intros a.
-    destruct HM as (f, Hf).
-    destruct HN as (g, Hg).
-    specialize (Hg M f) as (f' & Hf').
-    specialize (Hf N g) as (g' & Hg').
-    move g' before f'.
-    cbn in Hf', Hg'.
-    destruct Hf' as (Hf'1, Hf'2).
-    destruct Hg' as (Hg'1, Hg'2).
-unfold Mon_Hom in f', g'.
-destruct f' as (f' & Hf'3 & Hf'4).
-destruct g' as (g' & Hg'3 & Hg'4).
-cbn in *.
-unfold Mon_Hom_eq, Mon_Hom in *.
-cbn in *.
+    apply Hf; [ apply j | apply a ].
+  }
+  exists h; subst h; cbn.
 ...
 
 Theorem proposition_1_10 :
