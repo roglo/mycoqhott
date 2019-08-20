@@ -1633,14 +1633,15 @@ Definition Mon_Hom_eq {M N : monoid} (f g : Mon_Hom M N) :=
 Notation "{! ( eq ) x : A  & P }" := (sigT (setoid_unique eq (fun x : A => P)))
   (at level 0, x at level 99) : type_scope.
 
-Theorem UMP_of_free_monoid :
-  ∀ (A : alphabet),
-  { i : a_type A → m_type (kleene_closure A) &
+Definition has_free_monoid_UMP (A : alphabet) (M : monoid) :=
+  { i : a_type A → m_type M &
     ∀ (N : monoid) (f : a_type A → m_type N),
-    {! (Mon_Hom_eq) f' : Hom (kleene_closure A : Ob MonCat) (N : Ob MonCat) &
+    {! (Mon_Hom_eq) f' : Hom (M : Ob MonCat) (N : Ob MonCat) &
      ∀ x, mh_fun f' (i x) = f x } }.
+
+Theorem kleene_closure_has_free_monoid_UMP (A : alphabet) :
+  has_free_monoid_UMP A (kleene_closure A).
 Proof.
-intros.
 exists (λ a, [a]).
 intros *.
 transparent assert (f' : Hom (kleene_closure A : Ob MonCat) N). {
