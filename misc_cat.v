@@ -1703,6 +1703,12 @@ assert (f : Mon_Hom M N). {
     cbn in Hf', Hg'.
     destruct Hf' as (Hf'1, Hf'2).
     destruct Hg' as (Hg'1, Hg'2).
+unfold Mon_Hom in f', g'.
+destruct f' as (f' & Hf'3 & Hf'4).
+destruct g' as (g' & Hg'3 & Hg'4).
+cbn in *.
+unfold Mon_Hom_eq, Mon_Hom in *.
+cbn in *.
 ...
 
 Theorem proposition_1_10 :
