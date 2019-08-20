@@ -1696,8 +1696,6 @@ assert (f : Mon_Hom M N). {
   assert (h : m_type M → m_type N). {
     intros a.
 ...
-    assert (H : { la : list (a_type A) & List.fold_right (@m_op M) (m_unit M) (List.map i la) = a }).
-(* ou pas: tiers exclu *)
 
 Theorem proposition_1_10 :
   ∀ (A : alphabet) (M N : monoid)
