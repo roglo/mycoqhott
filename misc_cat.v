@@ -1700,7 +1700,6 @@ split; [ | easy ].
 apply Hf'1.
 Defined.
 
-(*
 Definition toto {A} M N :
   is_free_monoid A M
   → is_free_monoid A N
@@ -1718,20 +1717,21 @@ destruct (Hf N g) as ((f' & Hf'1 & Hf'2), Hf'3).
 destruct (Hg M f) as ((g' & Hg'1 & Hg'2), Hg'3).
 split.
 -unfold setoid_unique in Hf'3, Hg'3.
+Set Printing Width 109.
  cbn in Hf'3, Hg'3.
  unfold Mon_Hom_eq in Hf'3, Hg'3.
  cbn in Hf'3, Hg'3.
  destruct Hf'3 as (Hf'3, Hf'4).
  destruct Hg'3 as (Hg'3, Hg'4).
- specialize (Hf N ) as H1.
+ specialize (Hf N) as H1.
  specialize (H1 (h4c.composite f f')).
  cbn in H1.
  destruct H1 as (h & Hh).
  unfold setoid_unique in Hh; cbn in Hh.
  unfold h4c.composite in Hh; cbn in Hh.
 ...
-*)
 
+(*
 Theorem proposition_1_10 :
   ∀ (A : alphabet) (M N : monoid)
      (HM : is_free_monoid A M)
@@ -1799,18 +1799,20 @@ assert (H : ∀ a, i a = i a) by easy.
 specialize (H2 H); clear H.
 unfold Mon_Hom_eq in H2.
 cbn in H2.
+assert (h1 : Mon_iso M N). {
+  apply {| mi := 42 |}.
 ...
+*)
 
 Theorem proposition_1_10 :
   ∀ (A : alphabet) (M N : monoid)
-     (i : a_type A → m_type M) (j : a_type A → m_type N),
-  is_free_monoid A M
-  → is_free_monoid A N
-  → ∃! h : Mon_iso M N,
-     (∀ a, mi_fun h (i a) = j a) ∧
-     (∀ a, mi_fun_inv h (j a) = i a).
+     (HM : is_free_monoid A M)
+     (HN : is_free_monoid A N),
+  ∃! h : Mon_iso M N,
+   (∀ a, mi_fun h (projT1 HM a) = projT1 HN a) ∧
+   (∀ a, mi_fun_inv h (projT1 HN a) = projT1 HM a).
 Proof.
-intros * HM HN.
+intros *.
 assert (h : Mon_iso M N). {
   apply {| mi := 42 |}.
 ...
