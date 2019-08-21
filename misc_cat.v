@@ -1796,4 +1796,19 @@ unfold unique; cbn.
 split; [ easy | ].
 intros (j) Hj.
 apply f_equal.
+destruct j as (f & g & Hfg).
+apply eq_existT_uncurried.
+assert (p
+  : existT
+      (λ h : m_type M → m_type N,
+         ((∀ m n : st_type (m_set M), h (m_op m n) = m_op (h m) (h n)) * (h (m_unit M) = m_unit N))%type) j'
+      (Hj'1, Hj'2) = f). {
+  admit.
+}
+exists p.
+...
+Check (  existT
+    (λ g0 : Mon_Hom N M,
+       (∀ x : m_type M, mh_fun g0 (mh_fun f x) = x) ∧ (∀ y : m_type N, mh_fun f (mh_fun g0 y) = y)) g Hfg
+).
 ...
