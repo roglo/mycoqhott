@@ -1757,7 +1757,7 @@ unfold Mon_Hom_eq in H2.
 cbn in H2.
 rewrite H1 in H2.
 now specialize (@h4c.happly _ _ _ _ H2) as H3.
-Qed.
+Defined.
 
 Theorem proposition_1_10 :
   ∀ (A : alphabet) (M N : monoid)
