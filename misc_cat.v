@@ -1700,68 +1700,23 @@ split; [ | easy ].
 apply Hf'1.
 Defined.
 
-(*
-Definition toto {A} M N :
-  is_free_monoid A M
-  → is_free_monoid A N
-  → {f : Mon_Hom M N &
-      {g : Mon_Hom N M &
-       (∀ x : m_type M, mh_fun g (mh_fun f x) = x) ∧
-       (∀ y : m_type N, mh_fun f (mh_fun g y) = y)}}.
+Theorem toto {A M N} : ∀ i' j'
+  (HM : is_free_monoid A M) (HN : is_free_monoid A N),
+  (∀ m n, i' (m_op m n) = m_op (i' m) (i' n))
+  → (∀ m n, j' (m_op m n) = m_op (j' m) (j' n))
+  → i' (m_unit N) = m_unit M
+  → j' (m_unit M) = m_unit N
+  → (∀ x, i' (projT1 HN x) = projT1 HM x)
+  → (∀ x, j' (projT1 HM x) = projT1 HN x)
+  → ∀ x, i' (j' x) = x.
 Proof.
-intros HM HN.
-exists (glop HM HN).
-exists (glop HN HM).
-destruct HM as (f, Hf).
-destruct HN as (g, Hg); cbn.
-destruct (Hf N g) as ((f' & Hf'1 & Hf'2), Hf'3).
-destruct (Hg M f) as ((g' & Hg'1 & Hg'2), Hg'3).
-split.
--unfold setoid_unique in Hf'3, Hg'3.
-Set Printing Width 109.
- cbn in Hf'3, Hg'3.
- unfold Mon_Hom_eq in Hf'3, Hg'3.
- cbn in Hf'3, Hg'3.
- destruct Hf'3 as (Hf'3, Hf'4).
- destruct Hg'3 as (Hg'3, Hg'4).
- specialize (Hf N) as H1.
- specialize (H1 (h4c.composite f f')).
- cbn in H1.
- destruct H1 as (h & Hh).
- unfold setoid_unique in Hh; cbn in Hh.
- unfold h4c.composite in Hh; cbn in Hh.
-...
-*)
-
-Theorem proposition_1_10 :
-  ∀ (A : alphabet) (M N : monoid)
-     (HM : is_free_monoid A M)
-     (HN : is_free_monoid A N),
-  ∃! h : Mon_iso M N,
-   (∀ a, mi_fun h (projT1 HM a) = projT1 HN a) ∧
-   (∀ a, mi_fun_inv h (projT1 HN a) = projT1 HM a).
-Proof.
-intros *.
-destruct HM as (i, Hi).
-destruct HN as (j, Hj).
-cbn in *.
-move j before i.
-move Hi after Hj.
-destruct (Hi N j) as ((j' & Hj'1 & Hj'2), (Hj'3, Hj'4)).
-cbn in Hj'3, Hj'4.
-destruct (Hj M i) as ((i' & Hi'1 & Hi'2), (Hi'3, Hi'4)).
-cbn in Hi'3, Hi'4.
-move i' after j'.
-move Hj'3 before j'.
-move Hi'3 before j'.
-unfold Mon_Hom_eq in Hj'4, Hi'4.
-cbn in Hj'4, Hi'4.
-assert (Hij : ∀ a, i' (j' (i a)) = i a). {
+intros * Hi1 Hj1 Hi2 Hj2 Hi3 Hj3.
+assert (Hij : ∀ a, i' (j' (projT1 HM a)) = projT1 HM a). {
   intros a.
-  etransitivity; [ | apply Hi'3 ].
-  apply f_equal, Hj'3.
+  etransitivity; [ | apply Hi3 ].
+  apply f_equal, Hj3.
 }
-specialize (Hi M i) as H1.
+specialize (projT2 HM M (projT1 HM)) as H1.
 destruct H1 as (h & Hh1 & Hh2).
 unfold Mon_Hom in Hh2.
 cbn in Hh2.
@@ -1775,10 +1730,10 @@ transparent assert
   exists h'; subst h'; cbn.
   split.
   -intros a b.
-   rewrite Hj'1.
-   apply Hi'1.
-  -rewrite Hj'2.
-   apply Hi'2.
+   rewrite Hj1.
+   apply Hi1.
+  -rewrite Hj2.
+   apply Hi2.
 }
 specialize (Hh2 h') as H1.
 subst h'; cbn in H1.
@@ -1796,13 +1751,13 @@ transparent assert
 }
 specialize (Hh2 h'') as H2.
 subst h''; cbn in H2.
-assert (H : ∀ a, i a = i a) by easy.
+assert (H : ∀ a, projT1 HM a = projT1 HM a) by easy.
 specialize (H2 H); clear H.
 unfold Mon_Hom_eq in H2.
 cbn in H2.
-assert (h1 : Mon_iso M N). {
-  split.
-...
+rewrite H1 in H2.
+now specialize (@h4c.happly _ _ _ _ H2) as H3.
+Qed.
 
 Theorem proposition_1_10 :
   ∀ (A : alphabet) (M N : monoid)
@@ -1813,8 +1768,32 @@ Theorem proposition_1_10 :
    (∀ a, mi_fun_inv h (projT1 HN a) = projT1 HM a).
 Proof.
 intros *.
-assert (h : Mon_iso M N). {
-  apply {| mi := 42 |}.
-...
-  apply {| mi := toto M N i j HM HN |}.
+destruct (projT2 HM N (projT1 HN)) as ((j' & Hj'1 & Hj'2), (Hj'3, Hj'4)).
+cbn in Hj'3, Hj'4.
+destruct (projT2 HN M (projT1 HM)) as ((i' & Hi'1 & Hi'2), (Hi'3, Hi'4)).
+cbn in Hi'3, Hi'4.
+move i' after j'.
+move Hj'3 before j'.
+move Hi'3 before j'.
+unfold Mon_Hom_eq in Hj'4, Hi'4.
+cbn in Hj'4, Hi'4.
+transparent assert (h1 : Mon_iso M N). {
+  split.
+  transparent assert (j'' : Mon_Hom M N). {
+    exists j'.
+    split; [ apply Hj'1 | apply Hj'2 ].
+  }
+  exists j''; subst j''; cbn.
+  transparent assert (i'' : Mon_Hom N M). {
+    exists i'.
+    split; [ apply Hi'1 | apply Hi'2 ].
+  }
+  exists i''; subst i''; cbn.
+  split; [ now apply (toto _ _ HM HN) | now apply (toto _ _ HN HM) ].
+}
+exists h1; subst h1; cbn.
+unfold unique; cbn.
+split; [ easy | ].
+intros (j) Hj.
+apply f_equal.
 ...
