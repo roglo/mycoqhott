@@ -1681,8 +1681,26 @@ Definition mi_fun {M N} (f : Mon_iso M N) :=
 Definition mi_fun_inv {M N} (f : Mon_iso M N) :=
   mh_fun (projT1 (projT2 (mi f))).
 
-Definition toto {A} M N
-  (i : a_type A → m_type M) (j : a_type A → m_type N) :
+Theorem glop {A M N} :
+  is_free_monoid A M
+  → is_free_monoid A N
+  → Mon_Hom M N.
+Proof.
+intros HM HN.
+unfold Mon_Hom.
+destruct HM as (f, Hf).
+destruct HN as (g, Hg).
+transparent assert (h : m_type M → m_type N). {
+  intros a.
+  apply Hf; [ apply g | apply a ].
+}
+exists h; subst h; cbn.
+destruct (Hf N g) as ((f' & Hf'1 & Hf'2), Hf'3).
+split; [ | easy ].
+apply Hf'1.
+Defined.
+
+Definition toto {A} M N :
   is_free_monoid A M
   → is_free_monoid A N
   → {f : Mon_Hom M N &
@@ -1691,14 +1709,14 @@ Definition toto {A} M N
        (∀ y : m_type N, mh_fun f (mh_fun g y) = y)}}.
 Proof.
 intros HM HN.
-assert (f : Mon_Hom M N). {
-  unfold Mon_Hom.
-  destruct HM as (f, Hf).
-  transparent assert (h : m_type M → m_type N). {
-    intros a.
-    apply Hf; [ apply j | apply a ].
-  }
-  exists h; subst h; cbn.
+exists (glop HM HN).
+exists (glop HN HM).
+destruct HM as (f, Hf).
+destruct HN as (g, Hg); cbn.
+destruct (Hf N g) as ((f' & Hf'1 & Hf'2), Hf'3).
+destruct (Hg M f) as ((g' & Hg'1 & Hg'2), Hg'3).
+split.
+-idtac.
 ...
 
 Theorem proposition_1_10 :
