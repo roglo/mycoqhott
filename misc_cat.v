@@ -1700,6 +1700,7 @@ split; [ | easy ].
 apply Hf'1.
 Defined.
 
+(*
 Definition toto {A} M N :
   is_free_monoid A M
   → is_free_monoid A N
@@ -1716,8 +1717,20 @@ destruct HN as (g, Hg); cbn.
 destruct (Hf N g) as ((f' & Hf'1 & Hf'2), Hf'3).
 destruct (Hg M f) as ((g' & Hg'1 & Hg'2), Hg'3).
 split.
--idtac.
+-unfold setoid_unique in Hf'3, Hg'3.
+ cbn in Hf'3, Hg'3.
+ unfold Mon_Hom_eq in Hf'3, Hg'3.
+ cbn in Hf'3, Hg'3.
+ destruct Hf'3 as (Hf'3, Hf'4).
+ destruct Hg'3 as (Hg'3, Hg'4).
+ specialize (Hf N ) as H1.
+ specialize (H1 (h4c.composite f f')).
+ cbn in H1.
+ destruct H1 as (h & Hh).
+ unfold setoid_unique in Hh; cbn in Hh.
+ unfold h4c.composite in Hh; cbn in Hh.
 ...
+*)
 
 Theorem proposition_1_10 :
   ∀ (A : alphabet) (M N : monoid)
@@ -1730,5 +1743,7 @@ Theorem proposition_1_10 :
 Proof.
 intros * HM HN.
 assert (h : Mon_iso M N). {
+  apply {| mi := 42 |}.
+...
   apply {| mi := toto M N i j HM HN |}.
 ...
