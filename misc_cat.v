@@ -1700,6 +1700,7 @@ split; [ | easy ].
 apply Hf'1.
 Defined.
 
+(*
 Definition toto {A} M N :
   is_free_monoid A M
   → is_free_monoid A N
@@ -1730,8 +1731,8 @@ Set Printing Width 109.
  unfold setoid_unique in Hh; cbn in Hh.
  unfold h4c.composite in Hh; cbn in Hh.
 ...
+*)
 
-(*
 Theorem proposition_1_10 :
   ∀ (A : alphabet) (M N : monoid)
      (HM : is_free_monoid A M)
@@ -1800,9 +1801,8 @@ specialize (H2 H); clear H.
 unfold Mon_Hom_eq in H2.
 cbn in H2.
 assert (h1 : Mon_iso M N). {
-  apply {| mi := 42 |}.
+  split.
 ...
-*)
 
 Theorem proposition_1_10 :
   ∀ (A : alphabet) (M N : monoid)
