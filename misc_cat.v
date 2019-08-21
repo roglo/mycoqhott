@@ -1753,6 +1753,37 @@ cbn in Hi'3, Hi'4.
 move i' after j'.
 move Hj'3 before j'.
 move Hi'3 before j'.
+unfold Mon_Hom_eq in Hj'4, Hi'4.
+cbn in Hj'4, Hi'4.
+assert (Hij : ∀ a, i' (j' (i a)) = i a). {
+  intros a.
+  etransitivity; [ | apply Hi'3 ].
+  apply f_equal, Hj'3.
+}
+specialize (Hi M i) as H1.
+destruct H1 as (h & Hh1 & Hh2).
+unfold Mon_Hom in Hh2.
+cbn in Hh2.
+transparent assert
+  (h' : {h : m_type M → m_type M &
+         ((∀ m n : st_type (m_set M), h (m_op m n) = m_op (h m) (h n)) * (h (m_unit M) = m_unit M))%type}). {
+  transparent assert (h' : m_type M → m_type M). {
+    intros a.
+    apply i', j', a.
+  }
+  exists h'; subst h'; cbn.
+  split.
+  -intros a b.
+   rewrite Hj'1.
+   apply Hi'1.
+  -rewrite Hj'2.
+   apply Hi'2.
+}
+specialize (Hh2 h').
+subst h'; cbn in Hh2.
+specialize (Hh2 Hij).
+unfold Mon_Hom_eq in Hh2.
+cbn in Hh2.
 ...
 
 Theorem proposition_1_10 :
