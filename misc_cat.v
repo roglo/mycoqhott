@@ -1779,11 +1779,26 @@ transparent assert
   -rewrite Hj'2.
    apply Hi'2.
 }
-specialize (Hh2 h').
-subst h'; cbn in Hh2.
-specialize (Hh2 Hij).
-unfold Mon_Hom_eq in Hh2.
-cbn in Hh2.
+specialize (Hh2 h') as H1.
+subst h'; cbn in H1.
+specialize (H1 Hij).
+unfold Mon_Hom_eq in H1.
+cbn in H1.
+transparent assert
+  (h'' : {h : m_type M → m_type M &
+         ((∀ m n : st_type (m_set M), h (m_op m n) = m_op (h m) (h n)) * (h (m_unit M) = m_unit M))%type}). {
+  transparent assert (h' : m_type M → m_type M). {
+    intros a; apply a.
+  }
+  exists h'; subst h'; cbn.
+  easy.
+}
+specialize (Hh2 h'') as H2.
+subst h''; cbn in H2.
+assert (H : ∀ a, i a = i a) by easy.
+specialize (H2 H); clear H.
+unfold Mon_Hom_eq in H2.
+cbn in H2.
 ...
 
 Theorem proposition_1_10 :
