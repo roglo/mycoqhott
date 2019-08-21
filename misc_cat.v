@@ -1734,6 +1734,29 @@ split.
 
 Theorem proposition_1_10 :
   ∀ (A : alphabet) (M N : monoid)
+     (HM : is_free_monoid A M)
+     (HN : is_free_monoid A N),
+  ∃! h : Mon_iso M N,
+   (∀ a, mi_fun h (projT1 HM a) = projT1 HN a) ∧
+   (∀ a, mi_fun_inv h (projT1 HN a) = projT1 HM a).
+Proof.
+intros *.
+destruct HM as (i, Hi).
+destruct HN as (j, Hj).
+cbn in *.
+move j before i.
+move Hi after Hj.
+destruct (Hi N j) as ((j' & Hj'1 & Hj'2), (Hj'3, Hj'4)).
+cbn in Hj'3, Hj'4.
+destruct (Hj M i) as ((i' & Hi'1 & Hi'2), (Hi'3, Hi'4)).
+cbn in Hi'3, Hi'4.
+move i' after j'.
+move Hj'3 before j'.
+move Hi'3 before j'.
+...
+
+Theorem proposition_1_10 :
+  ∀ (A : alphabet) (M N : monoid)
      (i : a_type A → m_type M) (j : a_type A → m_type N),
   is_free_monoid A M
   → is_free_monoid A N
