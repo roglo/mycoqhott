@@ -1771,6 +1771,7 @@ Theorem proposition_1_10 :
    (∀ a, mi_fun_inv h (projT1 HN a) = projT1 HM a).
 Proof.
 intros *.
+(*
 transparent assert (h1 : Mon_iso M N). {
   destruct (projT2 HN M (projT1 HM)) as ((i' & Hi'1 & Hi'2), (Hi'3, Hi'4)).
   destruct (projT2 HM N (projT1 HN)) as ((j' & Hj'1 & Hj'2), (Hj'3, Hj'4)).
@@ -1823,6 +1824,7 @@ rewrite <- Hf'4.
 *cbn.
  apply Hf'3.
 ...
+*)
 intros *.
 destruct (projT2 HN M (projT1 HM)) as ((i' & Hi'1 & Hi'2), (Hi'3, Hi'4)).
 destruct (projT2 HM N (projT1 HN)) as ((j' & Hj'1 & Hj'2), (Hj'3, Hj'4)).
@@ -1855,21 +1857,30 @@ split; [ easy | ].
 intros (j) Hj.
 apply f_equal.
 destruct j as (f & g & Hfg).
+specialize (Hj'4 f (proj1 Hj)) as H1.
+destruct f as (f & Hf); cbn in *.
+Check H1.
+...
 apply eq_existT_uncurried.
 unfold free_monoid_fun; cbn.
-...
-assert (p
+unfold mi_fun in Hj; cbn in Hj.
+unfold mi_fun_inv in Hj; cbn in Hj.
+transparent assert (p
   : existT
       (λ h : m_type M → m_type N,
          ((∀ m n : st_type (m_set M), h (m_op m n) = m_op (h m) (h n)) * (h (m_unit M) = m_unit N))%type) j'
       (Hj'1, Hj'2) = f). {
-...
+  specialize (Hj'4 f (proj1 Hj)) as H1.
+  destruct f as (f & Hf).
+  cbn in Hfg, Hj, H1; subst f.
+  apply eq_existT_uncurried.
+  exists eq_refl; cbn.
+  destruct Hf as (Hf1, Hf2).
+  f_equal.
+  -apply fun_ext; intros a.
+   apply fun_ext; intros b.
+   apply st_is_set.
+  -apply st_is_set.
 }
-exists p.
-cbn.
-...
-Check (  existT
-    (λ g0 : Mon_Hom N M,
-       (∀ x : m_type M, mh_fun g0 (mh_fun f x) = x) ∧ (∀ y : m_type N, mh_fun f (mh_fun g0 y) = y)) g Hfg
-).
+exists p; subst p; cbn.
 ...
