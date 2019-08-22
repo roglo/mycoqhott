@@ -1771,10 +1771,10 @@ Theorem proposition_1_10 :
    (∀ a, mi_fun_inv h (projT1 HN a) = projT1 HM a).
 Proof.
 intros *.
-destruct (projT2 HM N (projT1 HN)) as ((j' & Hj'1 & Hj'2), (Hj'3, Hj'4)).
-cbn in Hj'3, Hj'4.
 destruct (projT2 HN M (projT1 HM)) as ((i' & Hi'1 & Hi'2), (Hi'3, Hi'4)).
+destruct (projT2 HM N (projT1 HN)) as ((j' & Hj'1 & Hj'2), (Hj'3, Hj'4)).
 cbn in Hi'3, Hi'4.
+cbn in Hj'3, Hj'4.
 move i' after j'.
 move Hj'3 before j'.
 move Hi'3 before j'.
@@ -1808,9 +1808,10 @@ assert (p
       (λ h : m_type M → m_type N,
          ((∀ m n : st_type (m_set M), h (m_op m n) = m_op (h m) (h n)) * (h (m_unit M) = m_unit N))%type) j'
       (Hj'1, Hj'2) = f). {
-  admit.
+...
 }
 exists p.
+cbn.
 ...
 Check (  existT
     (λ g0 : Mon_Hom N M,
