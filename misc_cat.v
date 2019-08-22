@@ -1772,27 +1772,54 @@ Theorem proposition_1_10 :
 Proof.
 intros *.
 transparent assert (h1 : Mon_iso M N). {
+  destruct (projT2 HN M (projT1 HM)) as ((i' & Hi'1 & Hi'2), (Hi'3, Hi'4)).
+  destruct (projT2 HM N (projT1 HN)) as ((j' & Hj'1 & Hj'2), (Hj'3, Hj'4)).
+  cbn in Hi'3, Hi'4.
+  cbn in Hj'3, Hj'4.
+  move i' after j'.
+  move Hj'3 before j'.
+  move Hi'3 before j'.
+  unfold Mon_Hom_eq in Hj'4, Hi'4.
+  cbn in Hj'4, Hi'4.
   split.
-  transparent assert (f : Mon_Hom M N). {
-    destruct (projT2 HM N (projT1 HN)) as ((j' & Hj'1 & Hj'2), (Hj'3, Hj'4)).
+  transparent assert (j'' : Mon_Hom M N). {
     exists j'.
     split; [ apply Hj'1 | apply Hj'2 ].
   }
-  exists f; subst f; cbn.
-  transparent assert (g : Mon_Hom N M). {
-    destruct (projT2 HN M (projT1 HM)) as ((i' & Hi'1 & Hi'2), (Hi'3, Hi'4)).
+  exists j''; subst j''; cbn.
+  transparent assert (i'' : Mon_Hom N M). {
     exists i'.
     split; [ apply Hi'1 | apply Hi'2 ].
   }
-  exists g; subst g; cbn.
+  exists i''; subst i''; cbn.
   split.
-  -apply (free_monoid_fun HM HN).
-   intros a b.
-Set Printing Depth 15.
-   destruct (projT2 HN M (projT1 HM)) as ((i' & Hi'1 & Hi'2), (Hi'3, Hi'4)).
-cbn.
-
-
+  -now apply (free_monoid_fun HM HN).
+  -now apply (free_monoid_fun HN HM).
+}
+exists h1; subst h1; cbn.
+unfold unique; cbn.
+split.
+-
+Set Printing Depth 14.
+split.
++
+intros a.
+unfold mi_fun.
+destruct HM as (f & HM); cbn.
+destruct HN as (g & HN); cbn.
+destruct (HM N g) as ((f' & Hf'1 & Hf'2) & Hf'3 & Hf'4); cbn.
+cbn in Hf'3.
+unfold Mon_Hom_eq in Hf'4.
+cbn in *.
+unfold Mon_Hom in Hf'4.
+etransitivity; [ | apply Hf'3 ].
+rewrite <- Hf'4; [ easy | ].
+intros b.
+...
+rewrite <- Hf'3.
+rewrite <- Hf'4.
+*cbn.
+ apply Hf'3.
 ...
 intros *.
 destruct (projT2 HN M (projT1 HM)) as ((i' & Hi'1 & Hi'2), (Hi'3, Hi'4)).
@@ -1827,6 +1854,8 @@ intros (j) Hj.
 apply f_equal.
 destruct j as (f & g & Hfg).
 apply eq_existT_uncurried.
+unfold free_monoid_fun; cbn.
+...
 assert (p
   : existT
       (λ h : m_type M → m_type N,
