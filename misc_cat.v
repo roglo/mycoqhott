@@ -1639,6 +1639,9 @@ Definition is_free_monoid (A : alphabet) (M : monoid) :=
     {! (Mon_Hom_eq) f' : Hom (M : Ob MonCat) (N : Ob MonCat) &
      ∀ x, mh_fun f' (i x) = f x } }.
 
+Definition ifm_fun {A M} (fm : is_free_monoid A M) : a_type A → m_type M :=
+  projT1 fm.
+
 Theorem kleene_closure_has_free_monoid_UMP (A : alphabet) :
   is_free_monoid A (kleene_closure A).
 Proof.
@@ -1700,18 +1703,17 @@ split; [ | easy ].
 apply Hf'1.
 Defined.
 
-Theorem toto {A M N} : ∀ i' j'
-  (HM : is_free_monoid A M) (HN : is_free_monoid A N),
+Theorem free_monoid_fun {A M N i' j'} :
+  ∀ (HM : is_free_monoid A M) (HN : is_free_monoid A N),
   (∀ m n, i' (m_op m n) = m_op (i' m) (i' n))
   → (∀ m n, j' (m_op m n) = m_op (j' m) (j' n))
   → i' (m_unit N) = m_unit M
   → j' (m_unit M) = m_unit N
-  → (∀ x, i' (projT1 HN x) = projT1 HM x)
-  → (∀ x, j' (projT1 HM x) = projT1 HN x)
+  → (∀ x, i' (ifm_fun HN x) = ifm_fun HM x)
+  → (∀ x, j' (ifm_fun HM x) = ifm_fun HN x)
   → ∀ x, i' (j' x) = x.
 Proof.
 intros * Hi1 Hj1 Hi2 Hj2 Hi3 Hj3.
-...
 assert (Hij : ∀ a, i' (j' (projT1 HM a)) = projT1 HM a). {
   intros a.
   etransitivity; [ | apply Hi3 ].
@@ -1790,7 +1792,9 @@ transparent assert (h1 : Mon_iso M N). {
     split; [ apply Hi'1 | apply Hi'2 ].
   }
   exists i''; subst i''; cbn.
-  split; [ now apply (toto _ _ HM HN) | now apply (toto _ _ HN HM) ].
+  split.
+  -now apply (free_monoid_fun HM HN).
+  -now apply (free_monoid_fun HN HM).
 }
 exists h1; subst h1; cbn.
 unfold unique; cbn.
