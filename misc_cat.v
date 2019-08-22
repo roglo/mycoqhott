@@ -1711,6 +1711,7 @@ Theorem toto {A M N} : ∀ i' j'
   → ∀ x, i' (j' x) = x.
 Proof.
 intros * Hi1 Hj1 Hi2 Hj2 Hi3 Hj3.
+...
 assert (Hij : ∀ a, i' (j' (projT1 HM a)) = projT1 HM a). {
   intros a.
   etransitivity; [ | apply Hi3 ].
