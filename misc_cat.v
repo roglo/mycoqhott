@@ -1800,7 +1800,6 @@ exists h1; subst h1; cbn.
 unfold unique; cbn.
 split.
 -
-Set Printing Depth 14.
 split.
 +
 intros a.
@@ -1815,6 +1814,9 @@ unfold Mon_Hom in Hf'4.
 etransitivity; [ | apply Hf'3 ].
 rewrite <- Hf'4; [ easy | ].
 intros b.
+Set Printing Depth 14.
+specialize (Hf'3 b) as H1.
+rewrite <- H1; clear H1.
 ...
 rewrite <- Hf'3.
 rewrite <- Hf'4.
