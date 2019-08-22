@@ -1771,6 +1771,30 @@ Theorem proposition_1_10 :
    (∀ a, mi_fun_inv h (projT1 HN a) = projT1 HM a).
 Proof.
 intros *.
+transparent assert (h1 : Mon_iso M N). {
+  split.
+  transparent assert (f : Mon_Hom M N). {
+    destruct (projT2 HM N (projT1 HN)) as ((j' & Hj'1 & Hj'2), (Hj'3, Hj'4)).
+    exists j'.
+    split; [ apply Hj'1 | apply Hj'2 ].
+  }
+  exists f; subst f; cbn.
+  transparent assert (g : Mon_Hom N M). {
+    destruct (projT2 HN M (projT1 HM)) as ((i' & Hi'1 & Hi'2), (Hi'3, Hi'4)).
+    exists i'.
+    split; [ apply Hi'1 | apply Hi'2 ].
+  }
+  exists g; subst g; cbn.
+  split.
+  -apply (free_monoid_fun HM HN).
+   intros a b.
+Set Printing Depth 15.
+   destruct (projT2 HN M (projT1 HM)) as ((i' & Hi'1 & Hi'2), (Hi'3, Hi'4)).
+cbn.
+
+
+...
+intros *.
 destruct (projT2 HN M (projT1 HM)) as ((i' & Hi'1 & Hi'2), (Hi'3, Hi'4)).
 destruct (projT2 HM N (projT1 HN)) as ((j' & Hj'1 & Hj'2), (Hj'3, Hj'4)).
 cbn in Hi'3, Hi'4.
