@@ -1860,6 +1860,7 @@ destruct j as (f & g & Hfg).
 specialize (Hj'4 f (proj1 Hj)) as H1.
 destruct f as (f & Hf); cbn in *.
 Check H1.
+Set Printing Depth 14.
 ...
 apply eq_existT_uncurried.
 unfold free_monoid_fun; cbn.
