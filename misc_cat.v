@@ -1714,18 +1714,20 @@ Theorem free_monoid_fun {A M N i' j'} :
   → ∀ x, i' (j' x) = x.
 Proof.
 intros * Hi1 Hj1 Hi2 Hj2 Hi3 Hj3.
-assert (Hij : ∀ a, i' (j' (projT1 HM a)) = projT1 HM a). {
+assert (Hij : ∀ a, i' (j' (ifm_fun HM a)) = ifm_fun HM a). {
   intros a.
   etransitivity; [ | apply Hi3 ].
   apply f_equal, Hj3.
 }
-specialize (projT2 HM M (projT1 HM)) as H1.
+specialize (projT2 HM M (ifm_fun HM)) as H1.
 destruct H1 as (h & Hh1 & Hh2).
 unfold Mon_Hom in Hh2.
 cbn in Hh2.
 transparent assert
-  (h' : {h : m_type M → m_type M &
-         ((∀ m n : st_type (m_set M), h (m_op m n) = m_op (h m) (h n)) * (h (m_unit M) = m_unit M))%type}). {
+  (h' :
+     {h : m_type M → m_type M &
+      ((∀ m n : st_type (m_set M), h (m_op m n) = m_op (h m) (h n)) *
+       (h (m_unit M) = m_unit M))%type}). {
   transparent assert (h' : m_type M → m_type M). {
     intros a.
     apply i', j', a.
@@ -1744,8 +1746,10 @@ specialize (H1 Hij).
 unfold Mon_Hom_eq in H1.
 cbn in H1.
 transparent assert
-  (h'' : {h : m_type M → m_type M &
-         ((∀ m n : st_type (m_set M), h (m_op m n) = m_op (h m) (h n)) * (h (m_unit M) = m_unit M))%type}). {
+  (h'' :
+     {h : m_type M → m_type M &
+      ((∀ m n : st_type (m_set M), h (m_op m n) = m_op (h m) (h n)) *
+       (h (m_unit M) = m_unit M))%type}). {
   transparent assert (h' : m_type M → m_type M). {
     intros a; apply a.
   }
@@ -1761,6 +1765,9 @@ cbn in H2.
 rewrite H1 in H2.
 now specialize (@h4c.happly _ _ _ _ H2) as H3.
 Defined.
+
+...
+
 
 Theorem proposition_1_10 :
   ∀ (A : alphabet) (M N : monoid)
