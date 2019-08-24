@@ -1771,12 +1771,12 @@ Theorem proposition_1_10 :
      (HM : is_free_monoid A M)
      (HN : is_free_monoid A N),
   ∃! h : Mon_iso M N,
-   (∀ a, mi_fun h (projT1 HM a) = projT1 HN a) ∧
-   (∀ a, mi_fun_inv h (projT1 HN a) = projT1 HM a).
+   (∀ a, mi_fun h (ifm_fun HM a) = ifm_fun HN a) ∧
+   (∀ a, mi_fun_inv h (ifm_fun HN a) = ifm_fun HM a).
 Proof.
 intros *.
-destruct (projT2 HN M (projT1 HM)) as ((i' & Hi'1 & Hi'2), (Hi'3, Hi'4)).
-destruct (projT2 HM N (projT1 HN)) as ((j' & Hj'1 & Hj'2), (Hj'3, Hj'4)).
+destruct (projT2 HN M (ifm_fun HM)) as ((i' & Hi'1 & Hi'2), (Hi'3, Hi'4)).
+destruct (projT2 HM N (ifm_fun HN)) as ((j' & Hj'1 & Hj'2), (Hj'3, Hj'4)).
 cbn in Hi'3, Hi'4.
 cbn in Hj'3, Hj'4.
 move i' after j'.
