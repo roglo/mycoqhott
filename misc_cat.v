@@ -1735,10 +1735,10 @@ transparent assert
   exists h'; subst h'; cbn.
   split.
   -intros a b.
-   rewrite Hj1.
-   apply Hi1.
-  -rewrite Hj2.
-   apply Hi2.
+   etransitivity; [ | apply Hi1 ].
+   apply f_equal, Hj1.
+  -etransitivity; [ | apply Hi2 ].
+   apply f_equal, Hj2.
 }
 specialize (Hh2 h') as H1.
 subst h'; cbn in H1.
@@ -1765,9 +1765,6 @@ cbn in H2.
 rewrite H1 in H2.
 now specialize (@h4c.happly _ _ _ _ H2) as H3.
 Defined.
-
-...
-
 
 Theorem proposition_1_10 :
   ∀ (A : alphabet) (M N : monoid)
