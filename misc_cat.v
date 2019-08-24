@@ -1784,6 +1784,11 @@ move Hj'3 before j'.
 move Hi'3 before j'.
 unfold Mon_Hom_eq in Hj'4, Hi'4.
 cbn in Hj'4, Hi'4.
+specialize (@free_monoid_fun A M N i' j' HM HN) as H1.
+specialize (H1 Hi'1 Hj'1 Hi'2 Hj'2 Hi'3 Hj'3).
+specialize (@free_monoid_fun A N M j' i' HN HM) as H2.
+specialize (H2 Hj'1 Hi'1 Hj'2 Hi'2 Hj'3 Hi'3).
+...
 transparent assert (h1 : Mon_iso M N). {
   split.
   transparent assert (j'' : Mon_Hom M N). {
