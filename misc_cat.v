@@ -1824,69 +1824,13 @@ transparent assert (p
   apply eq_existT_uncurried.
   exists eq_refl; cbn.
   f_equal.
-  -move Hj'1 at bottom.
-   move Hf5 at bottom.
-...
-transparent assert (h1 : Mon_iso M N). {
-  split.
-  transparent assert (j'' : Mon_Hom M N). {
-    exists j'.
-    split; [ apply Hj'1 | apply Hj'2 ].
-  }
-  exists j''; subst j''; cbn.
-  transparent assert (i'' : Mon_Hom N M). {
-    exists i'.
-    split; [ apply Hi'1 | apply Hi'2 ].
-  }
-  exists i''; subst i''; cbn.
-  split.
-  -now apply (free_monoid_fun HM HN).
-  -now apply (free_monoid_fun HN HM).
-}
-exists h1; subst h1; cbn.
-unfold unique; cbn.
-split; [ easy | ].
-intros (j) Hj.
-apply f_equal.
-destruct j as (f & g & Hfg).
-specialize (Hj'4 f (proj1 Hj)) as H1.
-destruct f as (f & Hf); cbn in *.
-apply eq_existT_uncurried.
-unfold free_monoid_fun; cbn.
-unfold mi_fun in Hj; cbn in Hj.
-unfold mi_fun_inv in Hj; cbn in Hj.
-transparent assert (p
-  : existT
-      (λ h : m_type M → m_type N,
-         ((∀ m n : st_type (m_set M), h (m_op m n) = m_op (h m) (h n)) *
-          (h (m_unit M) = m_unit N))%type) j' (Hj'1, Hj'2) =
-    existT
-      (λ h : m_type M → m_type N,
-         ((∀ m n : st_type (m_set M), h (m_op m n) = m_op (h m) (h n)) *
-          (h (m_unit M) = m_unit N))%type) f Hf). {
-  apply eq_existT_uncurried.
-  subst f.
-  exists eq_refl; cbn.
-...
-Check H1.
-Set Printing Depth 14.
-
-transparent assert (p
-  : existT
-      (λ h : m_type M → m_type N,
-         ((∀ m n : st_type (m_set M), h (m_op m n) = m_op (h m) (h n)) * (h (m_unit M) = m_unit N))%type) j'
-      (Hj'1, Hj'2) = f). {
-  specialize (Hj'4 f (proj1 Hj)) as H1.
-  destruct f as (f & Hf).
-  cbn in Hfg, Hj, H1; subst f.
-  apply eq_existT_uncurried.
-  exists eq_refl; cbn.
-  destruct Hf as (Hf1, Hf2).
-  f_equal.
   -apply fun_ext; intros a.
    apply fun_ext; intros b.
    apply st_is_set.
   -apply st_is_set.
 }
 exists p; subst p; cbn.
+destruct f as (f & Hf5 & Hf6); cbn in *.
+destruct g as (g & Hg5 & Hg6); cbn in *.
+Set Printing Depth 15.
 ...
