@@ -1842,14 +1842,13 @@ Set Printing Depth 15.
 
 Record graph :=
   { vertex : Type;
-    edge : Type;
-    source : edge → vertex;
-    target : edge → vertex }.
+    edge : vertex → vertex → Type }.
+
+Arguments edge {_}.
 
 Definition fcog_Hom {G} : vertex G → vertex G → Type.
 Proof.
-intros s t.
-(* bin, chais pas *)
+intros A B.
 ...
 
 Definition free_cat_of_graph (G : graph) : category :=
