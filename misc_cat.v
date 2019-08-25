@@ -1788,6 +1788,42 @@ specialize (@free_monoid_fun A M N i' j' HM HN) as H1.
 specialize (H1 Hi'1 Hj'1 Hi'2 Hj'2 Hi'3 Hj'3).
 specialize (@free_monoid_fun A N M j' i' HN HM) as H2.
 specialize (H2 Hj'1 Hi'1 Hj'2 Hi'2 Hj'3 Hi'3).
+transparent assert (h : Mon_iso M N). {
+  split.
+  transparent assert (f : Mon_Hom M N). {
+    exists j'.
+    split; [ apply Hj'1 | apply Hj'2 ].
+  }
+  exists f; subst f; cbn.
+  transparent assert (g : Mon_Hom N M). {
+    exists i'.
+    split; [ apply Hi'1 | apply Hi'2 ].
+  }
+  now exists g; subst g.
+}
+exists h; subst h; cbn.
+unfold unique; cbn.
+split; [ easy | ].
+intros (f) (Hf1, Hf2).
+unfold mi_fun in Hf1; cbn in Hf1.
+unfold mi_fun_inv in Hf2; cbn in Hf2.
+destruct f as (f & g & Hf3 & Hf4).
+f_equal; cbn in *.
+assert (H3 : j' = mh_fun f) by now apply Hj'4.
+assert (H4 : i' = mh_fun g) by now apply Hi'4.
+subst i' j'; cbn in *.
+apply eq_existT_uncurried.
+transparent assert (p
+  : existT
+      (λ h : m_type M → m_type N,
+         ((∀ m n : st_type (m_set M), h (m_op m n) = m_op (h m) (h n)) * (h (m_unit M) = m_unit N))%type)
+      (mh_fun f) (Hj'1, Hj'2) = f). {
+  destruct f as (f & Hf5 & Hf6); cbn in *.
+  apply eq_existT_uncurried.
+  exists eq_refl; cbn.
+  f_equal.
+  -move Hj'1 at bottom.
+   move Hf5 at bottom.
 ...
 transparent assert (h1 : Mon_iso M N). {
   split.
