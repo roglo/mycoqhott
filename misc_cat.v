@@ -1837,3 +1837,15 @@ destruct f as (f & Hf5 & Hf6); cbn in *.
 destruct g as (g & Hg5 & Hg6); cbn in *.
 Set Printing Depth 15.
 *)
+
+(* graphs *)
+
+Record graph :=
+  { vertex : Type;
+    edge : Type;
+    source : edge → vertex;
+    target : edge → vertex }.
+
+Definition free_cat_of_graph (G : graph) : category :=
+  {| Ob := vertex G;
+     Hom := 42 |}.
