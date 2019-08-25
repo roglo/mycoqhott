@@ -1846,11 +1846,20 @@ Record graph :=
 
 Arguments edge {_}.
 
+(*
 Definition fcog_Hom {G} : vertex G → vertex G → Type.
 Proof.
 intros A B.
 ...
+*)
+
+Definition fcog_comp {G} :
+  ∀ A B C : vertex G, edge A B → edge B C → edge A C.
+Proof.
+intros * EAB EBC.
+...
 
 Definition free_cat_of_graph (G : graph) : category :=
   {| Ob := vertex G;
-     Hom := 42 |}.
+     Hom := edge;
+     comp := fcog_comp |}.
