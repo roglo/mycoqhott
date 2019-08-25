@@ -1684,6 +1684,7 @@ Definition mi_fun {M N} (f : Mon_iso M N) :=
 Definition mi_fun_inv {M N} (f : Mon_iso M N) :=
   mh_fun (projT1 (projT2 (mi f))).
 
+(*
 Theorem glop {A M N} :
   is_free_monoid A M
   → is_free_monoid A N
@@ -1702,6 +1703,7 @@ destruct (Hf N g) as ((f' & Hf'1 & Hf'2), Hf'3).
 split; [ | easy ].
 apply Hf'1.
 Defined.
+*)
 
 Theorem free_monoid_fun {A M N i' j'} :
   ∀ (HM : is_free_monoid A M) (HN : is_free_monoid A N),
