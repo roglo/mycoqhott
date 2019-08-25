@@ -1805,8 +1805,8 @@ transparent assert (h : Mon_iso M N). {
 }
 exists h; subst h; cbn.
 easy.
-...
-(* unicity seems impossible to prove *)
+Qed.
+(* unicity seems impossible to prove
 unfold unique; cbn.
 split; [ easy | ].
 intros (f) (Hf1, Hf2).
@@ -1836,4 +1836,4 @@ exists p; subst p; cbn.
 destruct f as (f & Hf5 & Hf6); cbn in *.
 destruct g as (g & Hg5 & Hg6); cbn in *.
 Set Printing Depth 15.
-...
+*)
