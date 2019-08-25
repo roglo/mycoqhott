@@ -1846,6 +1846,12 @@ Record graph :=
     source : edge → vertex;
     target : edge → vertex }.
 
+Definition fcog_Hom {G} : vertex G → vertex G → Type.
+Proof.
+intros s t.
+(* bin, chais pas *)
+...
+
 Definition free_cat_of_graph (G : graph) : category :=
   {| Ob := vertex G;
      Hom := 42 |}.
