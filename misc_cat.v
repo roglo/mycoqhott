@@ -1772,7 +1772,7 @@ Theorem proposition_1_10 :
   ∀ (A : alphabet) (M N : monoid)
      (HM : is_free_monoid A M)
      (HN : is_free_monoid A N),
-  ∃! h : Mon_iso M N,
+  ∃(*!*) h : Mon_iso M N,
    (∀ a, mi_fun h (ifm_fun HM a) = ifm_fun HN a) ∧
    (∀ a, mi_fun_inv h (ifm_fun HN a) = ifm_fun HM a).
 Proof.
@@ -1804,6 +1804,9 @@ transparent assert (h : Mon_iso M N). {
   now exists g; subst g.
 }
 exists h; subst h; cbn.
+easy.
+...
+(* unicity seems impossible to prove *)
 unfold unique; cbn.
 split; [ easy | ].
 intros (f) (Hf1, Hf2).
