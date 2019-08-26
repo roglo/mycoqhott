@@ -1879,6 +1879,8 @@ Record graph :=
 
 (* category of graph *)
 
+(* does not work: no way to define Hom
+
 Fixpoint graph_paths {G} n A B :=
   match n with
   | 0 => []
@@ -1892,7 +1894,6 @@ intros A B.
 apply (graph_paths (length (edges G)) A B).
 ...
 
-(*
 Definition free_cat_of_graph (G : graph) : category :=
   {| Ob := vertex G;
      Hom := 42 |}.
@@ -1903,8 +1904,8 @@ Definition fcog_comp {G} :
 Proof.
 intros * EAB EBC.
 ...
-*)
 
 Definition free_cat_of_graph (G : graph) : category :=
   {| Ob := vertex G;
      Hom := 42 |}.
+*)
