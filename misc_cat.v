@@ -1869,8 +1869,6 @@ Record graph :=
 (* but we are restricted here to graphs whose vertices
    have a finite number of edges *)
 
-...
-
 (* category of graph *)
 
 (* how to get a path from vertex A to vertex B?
