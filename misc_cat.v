@@ -1846,12 +1846,21 @@ Record graph :=
 
 Arguments edge {_}.
 
-(*
+Fixpoint glop {G} (A B : vertex G) (L : list (vertex G)) :=
+  match L with
+  | [] =>
+...
+
 Definition fcog_Hom {G} : vertex G → vertex G → Type.
 Proof.
 intros A B.
+apply { L : list (vertex G) & glop A B L }.
 ...
-*)
+
+Definition free_cat_of_graph (G : graph) : category :=
+  {| Ob := vertex G;
+     Hom := 42 |}.
+...
 
 Definition fcog_comp {G} :
   ∀ A B C : vertex G, edge A B → edge B C → edge A C.
