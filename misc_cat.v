@@ -1846,13 +1846,27 @@ Record graph :=
     edge : vertex → vertex → Type }.
 
 Arguments edge {_}.
-*)
 
 Record graph :=
   { vertex : Type;
     edge : Type;
     source : edge → vertex;
     target : edge → vertex }.
+*)
+
+Record graph :=
+  { vertex : Type;
+    edge : Type;
+    source : edge → vertex;
+    target : edge → vertex;
+    as_source : vertex → list edge;
+    as_target : vertex → list edge;
+    graph_source_consistency :
+      ∀ v e, List.In e (as_source v) ↔ source e = v;
+    graph_target_consistency :
+      ∀ v e, List.In e (as_target v) ↔ target e = v }.
+
+...
 
 (* category of graph *)
 
