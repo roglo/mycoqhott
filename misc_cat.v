@@ -1854,13 +1854,14 @@ Record graph :=
     source : edge → vertex;
     target : edge → vertex }.
 
+(* category of graph *)
+
 (* how to get a path from vertex A to vertex B?
    sometimes, such a path does not exist!
    I need a magic function, an oracle telling
    me that. *)
 
-...
-
+(*
 Definition fcog_Hom {G} : vertex G → vertex G → Type.
 Proof.
 intros A B.
@@ -1882,3 +1883,4 @@ Definition free_cat_of_graph (G : graph) : category :=
   {| Ob := vertex G;
      Hom := edge;
      comp := fcog_comp |}.
+*)
