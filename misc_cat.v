@@ -1855,7 +1855,9 @@ Record graph :=
     target : edge → vertex }.
 
 (* how to get a path from vertex A to vertex B?
-   sometimes, such a path does not exist! *)
+   sometimes, such a path does not exist!
+   I need a magic function, an oracle telling
+   me that. *)
 
 ...
 
