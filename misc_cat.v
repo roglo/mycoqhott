@@ -1854,6 +1854,7 @@ Record graph :=
     target : edge → vertex }.
 *)
 
+(*
 Record graph :=
   { vertex : Type;
     edge : Type;
@@ -1868,21 +1869,32 @@ Record graph :=
 
 (* but we are restricted here to graphs whose vertices
    have a finite number of edges *)
+*)
+
+(* graphs having a finite number of edges *)
+
+Record graph :=
+  { vertex : Type;
+    edges : list (vertex * vertex) }.
 
 (* category of graph *)
 
-(* how to get a path from vertex A to vertex B?
-   sometimes, such a path does not exist!
-   I need a magic function, an oracle telling
-   me that. *)
+Check List.find.
+Search (list (_ * _)).
 
-(*
+Fixpoint graph_paths {G} n A B :=
+  match n with
+  | 0 => []
+  | S n' =>
+     match List.find (λ st, fst st = A) ...
+
 Definition fcog_Hom {G} : vertex G → vertex G → Type.
 Proof.
 intros A B.
-apply { L : list (vertex G) & glop A B L }.
+apply (graph_paths (length (edges G)) A B).
 ...
 
+(*
 Definition free_cat_of_graph (G : graph) : category :=
   {| Ob := vertex G;
      Hom := 42 |}.
@@ -1893,9 +1905,8 @@ Definition fcog_comp {G} :
 Proof.
 intros * EAB EBC.
 ...
+*)
 
 Definition free_cat_of_graph (G : graph) : category :=
   {| Ob := vertex G;
-     Hom := edge;
-     comp := fcog_comp |}.
-*)
+     Hom := 42 |}.
