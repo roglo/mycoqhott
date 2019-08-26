@@ -1879,14 +1879,12 @@ Record graph :=
 
 (* category of graph *)
 
-Check List.find.
-Search (list (_ * _)).
-
 Fixpoint graph_paths {G} n A B :=
   match n with
   | 0 => []
   | S n' =>
-     match List.find (λ st, fst st = A) ...
+      let l := List.map snd (List.filter (λ st, fst st = A) (edges G)) in
+...
 
 Definition fcog_Hom {G} : vertex G → vertex G → Type.
 Proof.
