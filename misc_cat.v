@@ -1861,10 +1861,13 @@ Record graph :=
     target : edge → vertex;
     as_source : vertex → list edge;
     as_target : vertex → list edge;
-    graph_source_consistency :
+    source_consistency :
       ∀ v e, List.In e (as_source v) ↔ source e = v;
-    graph_target_consistency :
+    target_consistency :
       ∀ v e, List.In e (as_target v) ↔ target e = v }.
+
+(* but we are restricted here to graphs whose vertices
+   have a finite number of edges *)
 
 ...
 
