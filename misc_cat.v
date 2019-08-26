@@ -1840,15 +1840,23 @@ Set Printing Depth 15.
 
 (* graphs *)
 
+(*
 Record graph :=
   { vertex : Type;
     edge : vertex → vertex → Type }.
 
 Arguments edge {_}.
+*)
 
-Fixpoint glop {G} (A B : vertex G) (L : list (vertex G)) :=
-  match L with
-  | [] =>
+Record graph :=
+  { vertex : Type;
+    edge : Type;
+    source : edge → vertex;
+    target : edge → vertex }.
+
+(* how to get a path from vertex A to vertex B?
+   sometimes, such a path does not exist! *)
+
 ...
 
 Definition fcog_Hom {G} : vertex G → vertex G → Type.
