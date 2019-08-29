@@ -1909,3 +1909,21 @@ Definition free_cat_of_graph (G : graph) : category :=
   {| Ob := vertex G;
      Hom := 42 |}.
 *)
+
+(* monomorphism *)
+
+Definition is_mono {𝒞} {A B : Ob 𝒞} (f : Hom A B) :=
+  ∀ C (g h : Hom C A), f ◦ g = f ◦ h → g = h.
+
+Definition is_epi {𝒞} {A B : Ob 𝒞} (f : Hom A B) :=
+  ∀ C (g h : Hom B C), g ◦ f = h ◦ f → g = h.
+
+Definition is_inj {A B} (f : A → B) :=
+  ∀ x y : A, f x = f y → x = y.
+
+Theorem is_inj_is_mono {A B : Ob SetCat} (f : Hom A B) :
+  is_inj f → is_mono f.
+Proof.
+intros Hi.
+cbn in f.
+...
