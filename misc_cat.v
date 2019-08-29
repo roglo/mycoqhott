@@ -876,13 +876,13 @@ Definition PosCat :=
    for f ⊆ A × B and g ⊆ B × C.
 *)
 
-Definition Rel_Hom A B := st_type A → st_type B → Prop.
+Definition Rel_Hom A B := st_type A → st_type B → Type.
 
 Definition Rel_comp {A B C} (f : Rel_Hom A B) (g : Rel_Hom B C) :
   Rel_Hom A C.
 Proof.
 intros a c.
-apply (∃ b, f a b ∧ g b c).
+apply { b & (f a b * g b c)%type }.
 Defined.
 
 Definition Rel_id (A : Set_type) : Rel_Hom A A.
@@ -895,6 +895,30 @@ Theorem Rel_unit_l A B (f : Rel_Hom A B) : Rel_comp (Rel_id A) f = f.
 Proof.
 apply fun_ext; intros a.
 apply fun_ext; intros b.
+(**)
+assert (h4c.equivalence (Rel_comp (Rel_id A) f a b) (f a b)). {
+  unfold Rel_comp, Rel_id; cbn.
+  unfold h4c.equivalence.
+  transparent assert (g : {x : st_type A & ((a = x) * f x b)%type} → f a b). {
+    intros (x & Hax & Hf).
+    now destruct Hax.
+  }
+  exists g; subst g; cbn.
+  apply h4c.qinv_isequiv.
+  unfold h4c.qinv.
+  transparent assert (h : f a b → {x : st_type A & ((a = x) * f x b)%type}). {
+    intros Hf.
+    now exists a.
+  }
+  exists h; subst h; cbn.
+  unfold h4c.homotopy, h4c.composite, id; cbn.
+  split; [ easy | ].
+  intros (x & Hax & Hf).
+  apply eq_existT_uncurried.
+  exists Hax; cbn.
+  now destruct Hax; cbn.
+}
+...
 apply prop_ext.
 unfold Rel_comp, Rel_id; cbn.
 split; intros H.
