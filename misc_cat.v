@@ -1937,7 +1937,15 @@ Theorem is_mono_is_inj {A B : Ob SetCat} (f : Hom A B) :
 Proof.
 intros Hm x y Hf.
 unfold is_mono in Hm.
-...
+specialize (Hm A) as H1.
+specialize (H1 (λ _, x) (λ _, y)).
+cbn in H1.
+assert (H : (λ _ : st_type A, f x) = (λ _, f y)). {
+  apply fun_ext; intros; easy.
+}
+specialize (H1 H); clear H.
+now apply @h4c.happly in H1.
+Qed.
 
 Theorem is_surj_is_epi {A B : Ob SetCat} (f : Hom A B) :
   is_surj f → is_epi f.
