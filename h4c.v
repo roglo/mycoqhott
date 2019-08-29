@@ -570,6 +570,25 @@ Axiom univalence : ∀ A B : Type, isequiv (@idtoeqv A B).
 
 Definition glop {A B} : A ≃ B ≃ (A = B).
 Proof.
+unfold "≃".
+assert (f : {f : A → B & isequiv f} → A = B). {
+  intros H1.
+  specialize (univalence A B) as H2.
+  apply isequiv_qinv in H2.
+  unfold qinv in H2.
+  destruct H2 as (g & Hg).
+  apply g, H1.
+}
+exists f.
+...
+
+Print qinv.
+exists (fst (isequiv_qinv idtoeqv (univalence A B))).
+...
+set (q := isequiv_qinv idtoeqv (univalence A B)).
+destruct q as (q1, q2).
+exists q1.
+
 ...
 
 Definition ua {A B} : A ≃ B → A = B.
