@@ -350,8 +350,8 @@ now destruct p, Hp.
 Qed.
 
 Theorem transport_pair : ∀ A B C (x y : A) (p : x = y) b c,
-  h4c.transport (λ z, (B z * C z)%type) p (b, c) =
-  (h4c.transport B p b, h4c.transport C p c).
+  transport (λ z, (B z * C z)%type) p (b, c) =
+  (transport B p b, transport C p c).
 Proof.
 intros.
 destruct p; reflexivity.
