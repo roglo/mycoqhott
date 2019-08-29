@@ -555,6 +555,8 @@ apply isProp_isSet.
 now intros x y; destruct x, y.
 Qed.
 
+(* univalence *)
+
 Definition isequiv_transport {A B} : ∀ (p : A = B),
   isequiv (transport id p).
 Proof.
@@ -566,40 +568,12 @@ Definition idtoeqv {A B : Type} : A = B → A ≃ B :=
   λ p,
   existT isequiv (transport id p) (isequiv_transport p).
 
-Axiom univalence : ∀ A B : Type, isequiv (@idtoeqv A B).
+Axiom univ : ∀ A B : Type, isequiv (@idtoeqv A B).
 
-Tactic Notation "transparent" "assert" "(" ident(H) ":" lconstr(type) ")" :=
-  unshelve (refine (let H := (_ : type) in _)).
-
-Definition glop {A B} : A ≃ B ≃ (A = B).
+Theorem univalence : ∀ A B : Type, (A ≃ B) ≃ (A = B).
 Proof.
-unfold "≃".
-transparent assert (f : {f : A → B & isequiv f} → A = B). {
-  intros H1.
-  specialize (univalence A B) as H2.
-  apply isequiv_qinv in H2.
-  unfold qinv in H2.
-  destruct H2 as (g & Hg).
-  apply g, H1.
-}
-exists f.
-...
-
-Print qinv.
-exists (fst (isequiv_qinv idtoeqv (univalence A B))).
-...
-set (q := isequiv_qinv idtoeqv (univalence A B)).
-destruct q as (q1, q2).
-exists q1.
-
-...
-
-Definition ua {A B} : A ≃ B → A = B.
-Proof.
-intros p.
-set (q := isequiv_qinv idtoeqv (univalence A B)).
-destruct q as (f, _).
-apply f, p.
+intros.
+pose proof (@univ A B) as p.
+apply quasi_inv.
+esplit; eassumption.
 Defined.
-
-...
