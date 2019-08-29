@@ -568,10 +568,13 @@ Definition idtoeqv {A B : Type} : A = B → A ≃ B :=
 
 Axiom univalence : ∀ A B : Type, isequiv (@idtoeqv A B).
 
+Tactic Notation "transparent" "assert" "(" ident(H) ":" lconstr(type) ")" :=
+  unshelve (refine (let H := (_ : type) in _)).
+
 Definition glop {A B} : A ≃ B ≃ (A = B).
 Proof.
 unfold "≃".
-assert (f : {f : A → B & isequiv f} → A = B). {
+transparent assert (f : {f : A → B & isequiv f} → A = B). {
   intros H1.
   specialize (univalence A B) as H2.
   apply isequiv_qinv in H2.
