@@ -1929,4 +1929,9 @@ apply fun_ext; intros x.
 apply Hi, (@h4c.happly _ _ _ _ Hgh).
 Qed.
 
+Theorem is_mono_is_inj {A B : Ob SetCat} (f : Hom A B) :
+  is_mono f → is_inj f.
+Proof.
+intros Hm x y Hf.
+unfold is_mono in Hm.
 ...
