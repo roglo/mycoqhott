@@ -1921,6 +1921,9 @@ Definition is_epi {𝒞} {A B : Ob 𝒞} (f : Hom A B) :=
 Definition is_inj {A B} (f : A → B) :=
   ∀ x y : A, f x = f y → x = y.
 
+Definition is_surj {A B} (f : A → B) :=
+  ∀ y : B, ∃ x : A, f x = y.
+
 Theorem is_inj_is_mono {A B : Ob SetCat} (f : Hom A B) :
   is_inj f → is_mono f.
 Proof.
@@ -1934,4 +1937,22 @@ Theorem is_mono_is_inj {A B : Ob SetCat} (f : Hom A B) :
 Proof.
 intros Hm x y Hf.
 unfold is_mono in Hm.
+...
+
+Theorem is_surj_is_epi {A B : Ob SetCat} (f : Hom A B) :
+  is_surj f → is_epi f.
+Proof.
+intros Hi C g h Hgh.
+unfold is_surj in Hi.
+apply fun_ext; intros y.
+specialize (Hi y) as (x, Hx).
+subst y.
+apply (@h4c.happly _ _ _ _ Hgh).
+Qed.
+
+Theorem is_epi_is_surj {A B : Ob SetCat} (f : Hom A B) :
+  is_epi f → is_surj f.
+Proof.
+intros He y.
+unfold is_epi in He.
 ...
