@@ -1963,4 +1963,18 @@ Theorem is_epi_is_surj {A B : Ob SetCat} (f : Hom A B) :
 Proof.
 intros He y.
 unfold is_epi in He.
+assert (not (∀ x, f x ≠ y)). {
+  intros Hf.
+  specialize (He B) as H1.
+  specialize (H1 (λ x, x) (λ x, y)).
+  cbn in H1.
+...
+
+intros He y.
+unfold is_epi in He.
+specialize (He B) as H1.
+specialize (H1 (λ x, x)).
+cbn in H1.
+specialize (H1 (λ y', y)).
+cbn in H1.
 ...
