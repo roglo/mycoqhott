@@ -895,7 +895,6 @@ Theorem Rel_unit_l A B (f : Rel_Hom A B) : Rel_comp (Rel_id A) f = f.
 Proof.
 apply fun_ext; intros a.
 apply fun_ext; intros b.
-(**)
 assert (h4c.equivalence (Rel_comp (Rel_id A) f a b) (f a b)). {
   unfold Rel_comp, Rel_id; cbn.
   unfold h4c.equivalence.
@@ -914,30 +913,36 @@ assert (h4c.equivalence (Rel_comp (Rel_id A) f a b) (f a b)). {
   unfold h4c.homotopy, h4c.composite, id; cbn.
   split; [ easy | ].
   intros (x & Hax & Hf).
-  apply eq_existT_uncurried.
-  exists Hax; cbn.
-  now destruct Hax; cbn.
+  now destruct Hax.
 }
-apply h4c.univalence.
-...
-apply prop_ext.
-unfold Rel_comp, Rel_id; cbn.
-split; intros H.
--destruct H as (a' & Ha & Hf).
- now subst a'.
--now exists a.
+now apply h4c.univalence.
 Defined.
 
 Theorem Rel_unit_r A B (f : Rel_Hom A B) : Rel_comp f (Rel_id B) = f.
 Proof.
 apply fun_ext; intros a.
 apply fun_ext; intros b.
-apply prop_ext.
-unfold Rel_comp, Rel_id; cbn.
-split; intros H.
--destruct H as (b' & Hb & Hf).
- now subst b'.
--now exists b.
+assert (h4c.equivalence (Rel_comp f (Rel_id B) a b) (f a b)). {
+  unfold Rel_comp, Rel_id; cbn.
+  unfold h4c.equivalence.
+  transparent assert (g : {y : st_type B & (f a y * (y = b))%type} → f a b). {
+    intros (x & Hax & Hf).
+    now destruct Hf.
+  }
+  exists g; subst g; cbn.
+  apply h4c.qinv_isequiv.
+  unfold h4c.qinv.
+  transparent assert (h : f a b → {y : st_type B & (f a y * (y = b))%type}). {
+    intros Hf.
+    now exists b.
+  }
+  exists h; subst h; cbn.
+  unfold h4c.homotopy, h4c.composite, id; cbn.
+  split; [ easy | ].
+  intros (x & Hax & Hf).
+  now destruct Hf.
+}
+now apply h4c.univalence.
 Defined.
 
 Theorem Rel_assoc {A B C D} (f : Rel_Hom A B) (g : Rel_Hom B C)
@@ -946,6 +951,7 @@ Theorem Rel_assoc {A B C D} (f : Rel_Hom A B) (g : Rel_Hom B C)
 Proof.
 apply fun_ext; intros a.
 apply fun_ext; intros b.
+...
 apply prop_ext.
 unfold Rel_comp.
 split.
