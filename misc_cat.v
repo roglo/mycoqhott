@@ -1959,30 +1959,28 @@ apply (@h4c.happly _ _ _ _ Hgh).
 Qed.
 
 Theorem is_epi_is_surj {A B : Ob SetCat} (f : Hom A B) :
-  (∀ P, P ∨ ¬ P)
-  → (∀ x y : st_type B, {x = y} + {x ≠ y})
+  (∀ P, P + (P → False))
   → is_epi f → is_surj f.
 Proof.
-intros excl_mid eq_dec He y.
-unfold is_epi in He.
+intros excl_mid He y.
 assert (H1 : not (∀ x, f x ≠ y)). {
   intros Hf.
   specialize (He (existT _ bool areSet.isSet_bool)) as H1.
   cbn in H1.
-  specialize (H1 (λ x, if eq_dec x y then true else false)).
+  specialize (H1 (λ x, if excl_mid (x = y) then true else false)).
   specialize (H1 (λ _, false)).
   cbn in H1.
   assert (H :
-    (λ x : st_type A, if eq_dec (f x) y then true else false) =
+    (λ x : st_type A, if excl_mid (f x = y) then true else false) =
     (λ _ : st_type A, false)). {
     apply fun_ext; intros x.
-    destruct (eq_dec (f x) y) as [H| H]; [ | easy ].
+    destruct (excl_mid (f x = y)) as [H| H]; [ | easy ].
     now specialize (Hf x).
   }
   specialize (H1 H); clear H.
   specialize (@h4c.happly _ _ _ _ H1 y) as H2.
   cbn in H2.
-  now destruct (eq_dec y y).
+  now destruct (excl_mid (y = y)).
 }
 specialize (excl_mid (∃ x, f x = y)) as H2.
 destruct H2 as [H2| H2]; [ easy | ].
