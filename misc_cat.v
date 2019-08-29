@@ -1924,10 +1924,9 @@ Definition is_inj {A B} (f : A → B) :=
 Theorem is_inj_is_mono {A B : Ob SetCat} (f : Hom A B) :
   is_inj f → is_mono f.
 Proof.
-intros Hi.
-cbn in f.
-unfold is_inj in Hi.
-unfold is_mono.
-intros C g h Hgh.
-cbn in g, h.
+intros Hi C g h Hgh.
+apply fun_ext; intros x.
+apply Hi, (@h4c.happly _ _ _ _ Hgh).
+Qed.
+
 ...
