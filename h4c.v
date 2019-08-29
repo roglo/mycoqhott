@@ -554,3 +554,26 @@ Proof.
 apply isProp_isSet.
 now intros x y; destruct x, y.
 Qed.
+
+Definition isequiv_transport {A B} : ∀ (p : A = B),
+  isequiv (transport id p).
+Proof.
+intros p; destruct p; simpl.
+split; exists id; intros x; apply eq_refl.
+Defined.
+
+Definition idtoeqv {A B : Type} : A = B → A ≃ B :=
+  λ p,
+  existT isequiv (transport id p) (isequiv_transport p).
+
+Axiom univalence : ∀ A B : Type, isequiv (@idtoeqv A B).
+
+Definition ua {A B} : A ≃ B → A = B.
+Proof.
+intros p.
+set (q := isequiv_qinv idtoeqv (univalence A B)).
+destruct q as (f, _).
+apply f, p.
+Defined.
+
+...

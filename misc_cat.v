@@ -918,6 +918,7 @@ assert (h4c.equivalence (Rel_comp (Rel_id A) f a b) (f a b)). {
   exists Hax; cbn.
   now destruct Hax; cbn.
 }
+apply h4c.univalence.
 ...
 apply prop_ext.
 unfold Rel_comp, Rel_id; cbn.
