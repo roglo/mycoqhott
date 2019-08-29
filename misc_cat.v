@@ -5,6 +5,7 @@ Set Nested Proofs Allowed.
 
 Require Import Utf8.
 Require Import category.
+Require areSet.
 
 (* category 0 *)
 
@@ -1505,7 +1506,6 @@ Record functor (C D : category) : Type := Build_functor
 
 Require Import List.
 Import List.ListNotations.
-Require areSet.
 
 Record alphabet :=
   { fm : { A & ((∀ a b : A, {a = b} + {a ≠ b}) * h4c.isSet A)%type } }.
@@ -1959,22 +1959,33 @@ apply (@h4c.happly _ _ _ _ Hgh).
 Qed.
 
 Theorem is_epi_is_surj {A B : Ob SetCat} (f : Hom A B) :
-  is_epi f → is_surj f.
+  (∀ P, P ∨ ¬ P)
+  → (∀ x y : st_type B, {x = y} + {x ≠ y})
+  → is_epi f → is_surj f.
 Proof.
-intros He y.
+intros excl_mid eq_dec He y.
 unfold is_epi in He.
-assert (not (∀ x, f x ≠ y)). {
+assert (H1 : not (∀ x, f x ≠ y)). {
   intros Hf.
-  specialize (He B) as H1.
-  specialize (H1 (λ x, x) (λ x, y)).
+  specialize (He (existT _ bool areSet.isSet_bool)) as H1.
   cbn in H1.
-...
-
-intros He y.
-unfold is_epi in He.
-specialize (He B) as H1.
-specialize (H1 (λ x, x)).
-cbn in H1.
-specialize (H1 (λ y', y)).
-cbn in H1.
-...
+  specialize (H1 (λ x, if eq_dec x y then true else false)).
+  specialize (H1 (λ _, false)).
+  cbn in H1.
+  assert (H :
+    (λ x : st_type A, if eq_dec (f x) y then true else false) =
+    (λ _ : st_type A, false)). {
+    apply fun_ext; intros x.
+    destruct (eq_dec (f x) y) as [H| H]; [ | easy ].
+    now specialize (Hf x).
+  }
+  specialize (H1 H); clear H.
+  specialize (@h4c.happly _ _ _ _ H1 y) as H2.
+  cbn in H2.
+  now destruct (eq_dec y y).
+}
+specialize (excl_mid (∃ x, f x = y)) as H2.
+destruct H2 as [H2| H2]; [ easy | ].
+exfalso; apply H1; intros x H3.
+now apply H2; exists x.
+Qed.
