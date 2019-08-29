@@ -1926,4 +1926,8 @@ Theorem is_inj_is_mono {A B : Ob SetCat} (f : Hom A B) :
 Proof.
 intros Hi.
 cbn in f.
+unfold is_inj in Hi.
+unfold is_mono.
+intros C g h Hgh.
+cbn in g, h.
 ...
