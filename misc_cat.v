@@ -879,43 +879,33 @@ Definition PosCat :=
 Definition Rel_Hom A B :=
   { f : st_type A → st_type B → Type & ∀ A B, isProp (f A B) }.
 
-(* j'aimerais bien démontrer que l'univalence implique l'extensionnalité
-   mais je n'ai jamais, dans hott, compris la preuve ; j'ai bien vu qu'on
-   y parlait de l'extensionnalité faible, mais bon, c'est tout *)
-Notation "'Σ' ( x : A ) , B" :=
-  ({ x : A & B }) (at level 0, x at level 0, B at level 100, only parsing).
-Notation "'Π' ( x : A ) , B" :=
-  (∀ x : A, B) (at level 0, x at level 0, B at level 100, only parsing).
-Definition isContr A := Σ (a : A), Π (x : A), a = x.
-Definition weak_funext A P :=
-  (Π (x : A), isContr (P x)) → isContr (Π (x : A), P x).
-Theorem weak_funext1 : ∀ {A B C} (f : A → B → C),
-(∀ a, { b & ∀ c, c = f a b })
-→ { b & ∀ a c, c = f a b }.
-Proof.
-intros * Hf.
-...
-
 Definition Rel_comp {A B C} (f : Rel_Hom A B) (g : Rel_Hom B C) :
   Rel_Hom A C.
 Proof.
 destruct f as (f & Hf).
 destruct g as (g & Hg).
-exists (λ a c, { b & (f a b * g b c)%type }).
-intros a b.
-...
+exists (λ a c, h4c.PT { b & (f a b * g b c)%type }).
 intros a c.
-apply { b & (f a b * g b c)%type }.
+apply h4c.PT_eq.
 Defined.
 
 Definition Rel_id (A : Set_type) : Rel_Hom A A.
 Proof.
-intros a1 a2.
-apply (a1 = a2).
+unfold Rel_Hom.
+exists (λ _ _, True).
+intros a1 a2 p q.
+now destruct p, q.
 Defined.
 
 Theorem Rel_unit_l A B (f : Rel_Hom A B) : Rel_comp (Rel_id A) f = f.
 Proof.
+destruct f as (f & Hf); cbn.
+apply eq_existT_uncurried.
+assert (p : (λ (_ : st_type A) (c : st_type B), h4c.PT {b : st_type A & (True * f b c)%type}) = f). {
+  apply fun_ext; intros a.
+  apply fun_ext; intros c.
+(* bof, chais pas *)
+...
 apply fun_ext; intros a.
 apply fun_ext; intros b.
 assert (h4c.equivalence (Rel_comp (Rel_id A) f a b) (f a b)). {

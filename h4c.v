@@ -406,6 +406,13 @@ intros * HP HS.
 now apply (isnType_isnType_sigT A 1 P).
 Qed.
 
+Theorem isProp_isProp_sigT {A} {P : A → Type} :
+  (∀ x, isProp (P x)) → isProp A → isProp (@sigT A P).
+Proof.
+intros * HP HS.
+now apply (isnType_isnType_sigT A 0 P).
+Qed.
+
 Definition happly {A B} (f g : Π (x : A), B x)
   : f = g → Π (x : A), f x = g x
   := λ p,
@@ -577,3 +584,22 @@ pose proof (@univ A B) as p.
 apply quasi_inv.
 esplit; eassumption.
 Defined.
+
+(* j'aimerais bien démontrer que l'univalence implique l'extensionnalité
+   mais je n'ai jamais, dans hott, compris la preuve ; j'ai bien vu qu'on
+   y parlait de l'extensionnalité faible, mais bon, c'est tout *)
+(*
+Notation "'Σ' ( x : A ) , B" :=
+  ({ x : A & B }) (at level 0, x at level 0, B at level 100, only parsing).
+Notation "'Π' ( x : A ) , B" :=
+  (∀ x : A, B) (at level 0, x at level 0, B at level 100, only parsing).
+Definition isContr A := Σ (a : A), Π (x : A), a = x.
+Definition weak_funext A P :=
+  (Π (x : A), isContr (P x)) → isContr (Π (x : A), P x).
+Theorem weak_funext1 : ∀ {A B C} (f : A → B → C),
+(∀ a, { b & ∀ c, c = f a b })
+→ { b & ∀ a c, c = f a b }.
+Proof.
+intros * Hf.
+...
+*)
