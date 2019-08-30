@@ -876,11 +876,17 @@ Definition PosCat :=
    for f ⊆ A × B and g ⊆ B × C.
 *)
 
-Definition Rel_Hom A B := st_type A → st_type B → Type.
+Definition Rel_Hom A B :=
+  { f : st_type A → st_type B → Type & ∀ A B, isProp (f A B) }.
 
 Definition Rel_comp {A B C} (f : Rel_Hom A B) (g : Rel_Hom B C) :
   Rel_Hom A C.
 Proof.
+destruct f as (f & Hf).
+destruct g as (g & Hg).
+exists (λ a c, { b & (f a b * g b c)%type }).
+intros a b.
+...
 intros a c.
 apply { b & (f a b * g b c)%type }.
 Defined.
@@ -950,23 +956,48 @@ Theorem Rel_assoc {A B C D} (f : Rel_Hom A B) (g : Rel_Hom B C)
   Rel_comp f (Rel_comp g h) = Rel_comp (Rel_comp f g) h.
 Proof.
 apply fun_ext; intros a.
-apply fun_ext; intros b.
-...
-apply prop_ext.
-unfold Rel_comp.
-split.
--intros (b' & Hb & c & Hg & Hh).
- exists c.
- split; [ | easy ].
- now exists b'.
--intros (c & (b' & Hf & Hg) & Hh).
- exists b'.
- split; [ easy | ].
- now exists c.
+apply fun_ext; intros d.
+assert
+  (h4c.equivalence (Rel_comp f (Rel_comp g h) a d)
+     (Rel_comp (Rel_comp f g) h a d)). {
+  unfold Rel_comp; cbn.
+  unfold h4c.equivalence.
+  transparent assert (i
+  : {b : st_type B & (f a b * {c : st_type C & g b c * h c d})%type}
+    → {c : st_type C & ({b : st_type B & f a b * g b c} * h c d)%type}). {
+    intros (b & Hb & c & Hg & Hh).
+    exists c.
+    split; [ | easy ].
+    now exists b.
+  }
+  exists i; subst i; cbn.
+  apply h4c.qinv_isequiv.
+  unfold h4c.qinv.
+  transparent assert (i
+  : {c : st_type C & ({b : st_type B & f a b * g b c} * h c d)%type}
+    → {b : st_type B & (f a b * {c : st_type C & g b c * h c d})%type}). {
+    intros (c & (b & Hf & Hg) & Hh).
+    exists b.
+    split; [ easy | ].
+    now exists c.
+  }
+  exists i; subst i; cbn.
+  unfold h4c.homotopy, h4c.composite, id; cbn.
+  split.
+  -intros i.
+   now destruct i as (c & (b & Hf & Hg) & Hc).
+  -intros i.
+   now destruct i as (b & Hf & (c & Hg & Hh)).
+}
+now apply h4c.univalence.
 Defined.
 
 Theorem Rel_Hom_set A B : isSet (Rel_Hom A B).
 Proof.
+unfold Rel_Hom.
+apply h4c.isSet_forall; intros a.
+apply h4c.isSet_forall; intros b.
+...
 unfold Rel_Hom.
 apply h4c.isSet_forall; intros a.
 apply h4c.isSet_forall; intros b.
@@ -981,6 +1012,7 @@ Definition RelCat :=
      unit_l := Rel_unit_l;
      unit_r := Rel_unit_r;
      assoc _ _ _ _ := Rel_assoc;
+     Hom_set := 42 |}.
      Hom_set := Rel_Hom_set |}.
 
 (* category of categories *)
