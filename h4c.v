@@ -621,10 +621,13 @@ Theorem weak_funext_th : ∀ {A} (P : A → Type),
   → {a : ∀ x : A, P x & ∀ y, a = y}.
 Proof.
 intros * Hf.
-...
-
 exists (λ a, projT1 (Hf a)).
 intros f.
+(**)
+assert ({ x & {a : P x & ∀ y, a = y} } ≃ A). {
+...
+}
+specialize (hott_4_9_2 _ _ A X) as H1.
 ...
 assert (∀ x, P x = {a : P x & ∀ y, a = y}). {
   intros x.
