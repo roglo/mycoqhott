@@ -674,114 +674,39 @@ Proof.
 intros * Hf.
 (**)
 specialize (hott_4_8_1 A P) as H1.
-Check hott_4_9_2.
-...
-exists (λ a, projT1 (Hf a)).
-intros f.
-...
-
-transparent assert (H : { x & {a : P x & ∀ y, a = y} } ≃ A). {
-...
-  apply hott_4_8_1.
-unfold fib.
-transparent assert (x : {y : Type & {x : A & {a : P x & ∀ y0 : P x, a = y0}} ≃ y}). {
-  exists ({x : A & {a : P x & ∀ y0 : P x, a = y0}}).
-  apply eqv_refl.
-}
-exists x; subst x; cbn.
-apply hott_4_8_1.
-...
-
-unfold Σ_pr₁.
-unfold fib.
-
-
-...
-clear f.
-  exists (λ x, projT1 x).
+assert (H2 : (Σ (x : A), P x) ≃ A). {
+  transparent assert (H : (Σ (x : A), P x) → A). {
+    intros (x & Hx).
+    apply x.
+  }
+  exists H; subst H; cbn.
   apply qinv_isequiv.
   unfold qinv.
-  transparent assert (g : A → {x : A & {a : P x & ∀ y : P x, a = y}}). {
-    intros a.
-(**)
-    exists a.
-    apply Hf.
+  transparent assert (H : A → Σ (x : A), P x). {
+    intros x; exists x.
+    apply H1.
+    unfold fib; cbn.
+    specialize (Hf x) as H2.
+    destruct H2 as (Hx & H2).
+    now exists (existT _ x Hx).
   }
-  exists g; subst g; cbn.
+  exists H; subst H; cbn.
   unfold "◦◦", "∼", id; cbn.
   split; [ easy | ].
-  intros (y & Ha & Hy); cbn.
+  intros (x & Hx).
   apply eq_existT_uncurried.
   exists eq_refl; cbn.
-  destruct (Hf y).
-apply eq_existT_uncurried.
-exists (e Ha).
-destruct (e Ha); cbn.
-...
-specialize (isContr_isProp (Hf y)) as H1.
-apply h4c.isProp_isSet in H1.
-unfold isSet in H1.
-...
-specialize (Hf y) as H1.
-...
-  apply eq_existT_uncurried.
-  exists (eq_sym (Hy (f y))).
-  destruct (Hf y).
-  unfold eq_sym; cbn.
-  destruct (Hy (f y)).
-  cbn.
-...
-    exists a, (f a).
-    intros y.
-    specialize (Hf a) as (t & Ht).
-    specialize (Ht y) as H1.
-    specialize (Ht (f a)) as H2.
-    now destruct H1, H2.
-  }
-  exists g; subst g; cbn.
-  unfold "◦◦", "∼", id; cbn.
-  split; [ easy | ].
-  intros (y & Ha & Hy); cbn.
-  apply eq_existT_uncurried.
-  exists eq_refl; cbn.
-  apply eq_existT_uncurried.
-  exists (eq_sym (Hy (f y))).
-  destruct (Hf y).
-  unfold eq_sym; cbn.
-  destruct (Hy (f y)).
-  cbn.
-...
-  specialize (H Ha).
-  specialize (Hy Hb) as H1.
-...
+  remember (H1 x) as H2.
+  destruct H2 as (f, H2).
+  remember (Hf x) as H3.
+  destruct H3 as (z, H3).
+  specialize (H3 Hx) as H4.
+  destruct H4.
+  symmetry.
+  apply H3.
 }
-specialize (hott_4_9_2 _ _ A X) as H1.
-...
-assert (∀ x, P x = {a : P x & ∀ y, a = y}). {
-  intros x.
-  apply univalence.
-  unfold "≃".
-  transparent assert (g : P x → {a : P x & ∀ b : P x, a = b}). {
-    intros z; exists z.
-    intros b.
-    specialize (Hf x) as (t & Ht).
-    specialize (Ht z) as H1.
-    specialize (Ht b) as H2.
-    now destruct H1, H2.
-  }
-  exists g; subst g; cbn.
-  apply qinv_isequiv.
-  unfold qinv.
-  transparent assert (g : {a : P x & ∀ b : P x, a = b} → P x). {
-    intros (a & Ha).
-    apply a.
-  }
-  exists g; subst g; cbn.
-  split.
-  -unfold "◦◦", "∼", id.
-   intros (Hx & g).
-   apply eq_existT_uncurried.
-   exists eq_refl; cbn.
-   destruct (Hf x).
-   destruct (e Hx).
+assert (H3 : ∀ a : A, (A → Σ (x : A), P x) ≃ (A → A)). {
+  intros a.
+  apply hott_4_9_2, H2.
+}
 ...
