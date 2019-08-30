@@ -588,18 +588,52 @@ Defined.
 (* j'aimerais bien démontrer que l'univalence implique l'extensionnalité
    mais je n'ai jamais, dans hott, compris la preuve ; j'ai bien vu qu'on
    y parlait de l'extensionnalité faible, mais bon, c'est tout *)
-(*
 Notation "'Σ' ( x : A ) , B" :=
   ({ x : A & B }) (at level 0, x at level 0, B at level 100, only parsing).
 Notation "'Π' ( x : A ) , B" :=
   (∀ x : A, B) (at level 0, x at level 0, B at level 100, only parsing).
+(*
 Definition isContr A := Σ (a : A), Π (x : A), a = x.
+*)
 Definition weak_funext A P :=
   (Π (x : A), isContr (P x)) → isContr (Π (x : A), P x).
-Theorem weak_funext1 : ∀ {A B C} (f : A → B → C),
-(∀ a, { b & ∀ c, c = f a b })
-→ { b & ∀ a c, c = f a b }.
+Definition weak_funext1 A P :=
+  (∀ x : A, {a : P x & ∀ y : P x, a = y}) → {a : ∀ x : A, P x & ∀ y : ∀ x : A, P x, a = y}.
+Tactic Notation "transparent" "assert" "(" ident(H) ":" lconstr(type) ")" :=
+  unshelve (refine (let H := (_ : type) in _)).
+
+Theorem weak_funext_th : ∀ {A} (P : A → Type),
+  (∀ x, {a : P x & ∀ y : P x, a = y})
+  → {a : ∀ x : A, P x & ∀ y, a = y}.
 Proof.
 intros * Hf.
+exists (λ a, projT1 (Hf a)).
+intros f.
+assert (∀ x, P x = {a : P x & ∀ y, a = y}). {
+  intros x.
+  apply univalence.
+  unfold "≃".
+  transparent assert (g : P x → {a : P x & ∀ b : P x, a = b}). {
+    intros z; exists z.
+    intros b.
+    specialize (Hf x) as (t & Ht).
+    specialize (Ht z) as H1.
+    specialize (Ht b) as H2.
+    now destruct H1, H2.
+  }
+  exists g; subst g; cbn.
+  apply qinv_isequiv.
+  unfold qinv.
+  transparent assert (g : {a : P x & ∀ b : P x, a = b} → P x). {
+    intros (a & Ha).
+    apply a.
+  }
+  exists g; subst g; cbn.
+  split.
+  -unfold "◦◦", "∼", id.
+   intros (Hx & g).
+   apply eq_existT_uncurried.
+   exists eq_refl; cbn.
+   destruct (Hf x).
+   destruct (e Hx).
 ...
-*)
