@@ -609,6 +609,7 @@ Proof.
 intros * Hf.
 exists (λ a, projT1 (Hf a)).
 intros f.
+...
 assert (∀ x, P x = {a : P x & ∀ y, a = y}). {
   intros x.
   apply univalence.
