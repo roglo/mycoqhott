@@ -585,6 +585,17 @@ apply quasi_inv.
 esplit; eassumption.
 Defined.
 
+Definition ua {A B} : A ≃ B → A = B :=
+  match isequiv_qinv idtoeqv (univ A B) with
+  | existT _ f _ => f
+  end.
+
+Definition eqv_refl A : A ≃ A.
+Proof.
+exists id; apply qinv_isequiv; exists  id.
+split; intros a; apply eq_refl.
+Defined.
+
 (* j'aimerais bien démontrer que l'univalence implique l'extensionnalité
    mais je n'ai jamais, dans hott, compris la preuve ; j'ai bien vu qu'on
    y parlait de l'extensionnalité faible, mais bon, c'est tout *)
@@ -602,11 +613,16 @@ Definition weak_funext1 A P :=
 Tactic Notation "transparent" "assert" "(" ident(H) ":" lconstr(type) ")" :=
   unshelve (refine (let H := (_ : type) in _)).
 
+Definition hott_4_9_2 A B X (e : A ≃ B) : (X → A) ≃ (X → B).
+Proof. destruct (ua e); apply eqv_refl. Defined.
+
 Theorem weak_funext_th : ∀ {A} (P : A → Type),
   (∀ x, {a : P x & ∀ y : P x, a = y})
   → {a : ∀ x : A, P x & ∀ y, a = y}.
 Proof.
 intros * Hf.
+...
+
 exists (λ a, projT1 (Hf a)).
 intros f.
 ...
