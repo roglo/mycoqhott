@@ -616,20 +616,121 @@ Tactic Notation "transparent" "assert" "(" ident(H) ":" lconstr(type) ")" :=
 Definition hott_4_9_2 A B X (e : A ≃ B) : (X → A) ≃ (X → B).
 Proof. destruct (ua e); apply eqv_refl. Defined.
 
+Definition fib {A B} (f : A → B) (y : B) := Σ (x : A), (f x = y).
+
+Definition hott_4_8_1 A (B : A → Type) (a : A) :
+  fib (Σ_pr₁ (B := B)) a ≃ B a.
+Proof.
+(* their proof...
+assert (p : fib (Σ_pr₁ (B := B)) a ≃ Σ (x : A), Σ (b : B x), x = a).
+ eapply equiv_compose; [ eapply quasi_inv, ex_2_10 | apply eqv_refl ].
+
+ eapply equiv_compose; [ apply p | clear p ].
+ assert (p : (Σ (x : A), Σ (b : B x), x = a) ≃ Σ (x : A), Σ (p : x = a), B x).
+  exists
+    (λ w, existT _ (Σ_pr₁ w) (existT _ (Σ_pr₂ (Σ_pr₂ w)) (Σ_pr₁ (Σ_pr₂ w)))).
+  apply qinv_isequiv.
+  exists
+    (λ w, existT _ (Σ_pr₁ w) (existT _ (Σ_pr₂ (Σ_pr₂ w)) (Σ_pr₁ (Σ_pr₂ w)))).
+  unfold "◦", "∼", id; simpl.
+  split; intros (x, (p, q)); apply eq_refl.
+
+  eapply equiv_compose; [ apply p | clear p ].
+  transparent assert (f : (Σ (x : A), Σ (_ : x = a), B x) → B a).
+   intros (x, (p, q)); destruct p; apply q.
+
+   exists f; unfold f; clear f; simpl.
+   apply qinv_isequiv.
+   transparent assert (f : B a → (Σ (x : A), Σ (_ : x = a), B x)).
+    intros p; apply (existT _ a (existT _ (eq_refl _) p)).
+
+    exists f; unfold f; clear f; simpl.
+    unfold "◦", "∼", id; simpl.
+    split; [ apply eq_refl | ].
+    intros (x, (p, q)); destruct p; apply eq_refl.
+*)
+(* my proof, shorter... *)
+transparent assert (f : fib (Σ_pr₁ (B := B)) a → B a).
+ intros p; unfold fib in p.
+ destruct p as ((x, p), q), q; apply p.
+
+ exists f; unfold f; clear f; simpl.
+ apply qinv_isequiv.
+ transparent assert (f : B a → fib (Σ_pr₁ (B := B)) a).
+  intros p; unfold fib.
+  exists (existT _ a p); apply eq_refl.
+
+  exists f; unfold f; clear f; simpl.
+  unfold "∼", id.
+  split; [ easy | ].
+  intros ((x, p), q); simpl in q.
+  destruct q; apply eq_refl.
+Defined.
+
 Theorem weak_funext_th : ∀ {A} (P : A → Type),
   (∀ x, {a : P x & ∀ y : P x, a = y})
   → {a : ∀ x : A, P x & ∀ y, a = y}.
 Proof.
 intros * Hf.
+(**)
+specialize (hott_4_8_1 A P) as H1.
+Check hott_4_9_2.
+...
 exists (λ a, projT1 (Hf a)).
 intros f.
-(**)
+...
+
 transparent assert (H : { x & {a : P x & ∀ y, a = y} } ≃ A). {
+...
+  apply hott_4_8_1.
+unfold fib.
+transparent assert (x : {y : Type & {x : A & {a : P x & ∀ y0 : P x, a = y0}} ≃ y}). {
+  exists ({x : A & {a : P x & ∀ y0 : P x, a = y0}}).
+  apply eqv_refl.
+}
+exists x; subst x; cbn.
+apply hott_4_8_1.
+...
+
+unfold Σ_pr₁.
+unfold fib.
+
+
+...
+clear f.
   exists (λ x, projT1 x).
   apply qinv_isequiv.
   unfold qinv.
   transparent assert (g : A → {x : A & {a : P x & ∀ y : P x, a = y}}). {
     intros a.
+(**)
+    exists a.
+    apply Hf.
+  }
+  exists g; subst g; cbn.
+  unfold "◦◦", "∼", id; cbn.
+  split; [ easy | ].
+  intros (y & Ha & Hy); cbn.
+  apply eq_existT_uncurried.
+  exists eq_refl; cbn.
+  destruct (Hf y).
+apply eq_existT_uncurried.
+exists (e Ha).
+destruct (e Ha); cbn.
+...
+specialize (isContr_isProp (Hf y)) as H1.
+apply h4c.isProp_isSet in H1.
+unfold isSet in H1.
+...
+specialize (Hf y) as H1.
+...
+  apply eq_existT_uncurried.
+  exists (eq_sym (Hy (f y))).
+  destruct (Hf y).
+  unfold eq_sym; cbn.
+  destruct (Hy (f y)).
+  cbn.
+...
     exists a, (f a).
     intros y.
     specialize (Hf a) as (t & Ht).
