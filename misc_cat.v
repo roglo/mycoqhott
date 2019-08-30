@@ -876,86 +876,43 @@ Definition PosCat :=
    for f ⊆ A × B and g ⊆ B × C.
 *)
 
-Definition Rel_Hom A B :=
-  { f : st_type A → st_type B → Type & ∀ A B, isProp (f A B) }.
+Definition Rel_Hom A B := st_type A → st_type B → Prop.
 
 Definition Rel_comp {A B C} (f : Rel_Hom A B) (g : Rel_Hom B C) :
   Rel_Hom A C.
 Proof.
-destruct f as (f & Hf).
-destruct g as (g & Hg).
-exists (λ a c, h4c.PT { b & (f a b * g b c)%type }).
 intros a c.
-apply h4c.PT_eq.
+apply (∃ b, f a b ∧ g b c).
 Defined.
 
 Definition Rel_id (A : Set_type) : Rel_Hom A A.
 Proof.
-unfold Rel_Hom.
-exists (λ _ _, True).
-intros a1 a2 p q.
-now destruct p, q.
+intros a1 a2.
+apply (a1 = a2).
 Defined.
 
 Theorem Rel_unit_l A B (f : Rel_Hom A B) : Rel_comp (Rel_id A) f = f.
 Proof.
-destruct f as (f & Hf); cbn.
-apply eq_existT_uncurried.
-assert (p : (λ (_ : st_type A) (c : st_type B), h4c.PT {b : st_type A & (True * f b c)%type}) = f). {
-  apply fun_ext; intros a.
-  apply fun_ext; intros c.
-(* bof, chais pas *)
-...
 apply fun_ext; intros a.
 apply fun_ext; intros b.
-assert (h4c.equivalence (Rel_comp (Rel_id A) f a b) (f a b)). {
-  unfold Rel_comp, Rel_id; cbn.
-  unfold h4c.equivalence.
-  transparent assert (g : {x : st_type A & ((a = x) * f x b)%type} → f a b). {
-    intros (x & Hax & Hf).
-    now destruct Hax.
-  }
-  exists g; subst g; cbn.
-  apply h4c.qinv_isequiv.
-  unfold h4c.qinv.
-  transparent assert (h : f a b → {x : st_type A & ((a = x) * f x b)%type}). {
-    intros Hf.
-    now exists a.
-  }
-  exists h; subst h; cbn.
-  unfold h4c.homotopy, h4c.composite, id; cbn.
-  split; [ easy | ].
-  intros (x & Hax & Hf).
-  now destruct Hax.
-}
-now apply h4c.univalence.
+apply prop_ext.
+unfold Rel_comp, Rel_id; cbn.
+split; intros H.
+-destruct H as (a' & Ha & Hf).
+ now subst a'.
+-now exists a.
 Defined.
 
 Theorem Rel_unit_r A B (f : Rel_Hom A B) : Rel_comp f (Rel_id B) = f.
 Proof.
 apply fun_ext; intros a.
 apply fun_ext; intros b.
-assert (h4c.equivalence (Rel_comp f (Rel_id B) a b) (f a b)). {
-  unfold Rel_comp, Rel_id; cbn.
-  unfold h4c.equivalence.
-  transparent assert (g : {y : st_type B & (f a y * (y = b))%type} → f a b). {
-    intros (x & Hax & Hf).
-    now destruct Hf.
-  }
-  exists g; subst g; cbn.
-  apply h4c.qinv_isequiv.
-  unfold h4c.qinv.
-  transparent assert (h : f a b → {y : st_type B & (f a y * (y = b))%type}). {
-    intros Hf.
-    now exists b.
-  }
-  exists h; subst h; cbn.
-  unfold h4c.homotopy, h4c.composite, id; cbn.
-  split; [ easy | ].
-  intros (x & Hax & Hf).
-  now destruct Hf.
-}
-now apply h4c.univalence.
+apply prop_ext.
+unfold Rel_comp, Rel_id; cbn.
+split; intros H.
+-destruct H as (b' & Hb & Hf).
+ now subst b'.
+-now exists b.
 Defined.
 
 Theorem Rel_assoc {A B C D} (f : Rel_Hom A B) (g : Rel_Hom B C)
@@ -963,48 +920,22 @@ Theorem Rel_assoc {A B C D} (f : Rel_Hom A B) (g : Rel_Hom B C)
   Rel_comp f (Rel_comp g h) = Rel_comp (Rel_comp f g) h.
 Proof.
 apply fun_ext; intros a.
-apply fun_ext; intros d.
-assert
-  (h4c.equivalence (Rel_comp f (Rel_comp g h) a d)
-     (Rel_comp (Rel_comp f g) h a d)). {
-  unfold Rel_comp; cbn.
-  unfold h4c.equivalence.
-  transparent assert (i
-  : {b : st_type B & (f a b * {c : st_type C & g b c * h c d})%type}
-    → {c : st_type C & ({b : st_type B & f a b * g b c} * h c d)%type}). {
-    intros (b & Hb & c & Hg & Hh).
-    exists c.
-    split; [ | easy ].
-    now exists b.
-  }
-  exists i; subst i; cbn.
-  apply h4c.qinv_isequiv.
-  unfold h4c.qinv.
-  transparent assert (i
-  : {c : st_type C & ({b : st_type B & f a b * g b c} * h c d)%type}
-    → {b : st_type B & (f a b * {c : st_type C & g b c * h c d})%type}). {
-    intros (c & (b & Hf & Hg) & Hh).
-    exists b.
-    split; [ easy | ].
-    now exists c.
-  }
-  exists i; subst i; cbn.
-  unfold h4c.homotopy, h4c.composite, id; cbn.
-  split.
-  -intros i.
-   now destruct i as (c & (b & Hf & Hg) & Hc).
-  -intros i.
-   now destruct i as (b & Hf & (c & Hg & Hh)).
-}
-now apply h4c.univalence.
+apply fun_ext; intros b.
+apply prop_ext.
+unfold Rel_comp.
+split.
+-intros (b' & Hb & c & Hg & Hh).
+ exists c.
+ split; [ | easy ].
+ now exists b'.
+-intros (c & (b' & Hf & Hg) & Hh).
+ exists b'.
+ split; [ easy | ].
+ now exists c.
 Defined.
 
 Theorem Rel_Hom_set A B : isSet (Rel_Hom A B).
 Proof.
-unfold Rel_Hom.
-apply h4c.isSet_forall; intros a.
-apply h4c.isSet_forall; intros b.
-...
 unfold Rel_Hom.
 apply h4c.isSet_forall; intros a.
 apply h4c.isSet_forall; intros b.
@@ -1019,7 +950,6 @@ Definition RelCat :=
      unit_l := Rel_unit_l;
      unit_r := Rel_unit_r;
      assoc _ _ _ _ := Rel_assoc;
-     Hom_set := 42 |}.
      Hom_set := Rel_Hom_set |}.
 
 (* category of categories *)
