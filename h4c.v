@@ -624,8 +624,7 @@ intros * Hf.
 exists (λ a, projT1 (Hf a)).
 intros f.
 (**)
-transparent assert (H : (∀ x, isContr (P x)) → { x & {a : P x & ∀ y, a = y} } ≃ A). {
-  intros Hc.
+transparent assert (H : { x & {a : P x & ∀ y, a = y} } ≃ A). {
   exists (λ x, projT1 x).
   apply qinv_isequiv.
   unfold qinv.
@@ -646,10 +645,10 @@ transparent assert (H : (∀ x, isContr (P x)) → { x & {a : P x & ∀ y, a = y
   exists eq_refl; cbn.
   apply eq_existT_uncurried.
   exists (eq_sym (Hy (f y))).
-  specialize (Hc y) as H.
-  unfold isContr in H.
-  destruct H as (Hb, H).
   destruct (Hf y).
+  unfold eq_sym; cbn.
+  destruct (Hy (f y)).
+  cbn.
 ...
   specialize (H Ha).
   specialize (Hy Hb) as H1.
