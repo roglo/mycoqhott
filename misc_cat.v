@@ -879,6 +879,16 @@ Definition PosCat :=
 Definition Rel_Hom A B :=
   { f : st_type A → st_type B → Type & ∀ A B, isProp (f A B) }.
 
+(* j'aimerais bien démontrer que l'univalence implique l'extensionnalité
+   mais je n'ai jamais, dans hott, compris la preuve ; j'ai bien vu qu'on
+   y parlait de l'extensionnalité faible, mais bon, c'est tout *)
+Theorem weak_funext : ∀ {A B C} (f : A → B → C),
+(∀ a, { b & ∀ c, c = f a b })
+→ { b & ∀ a c, c = f a b }.
+Proof.
+intros * Hf.
+...
+
 Definition Rel_comp {A B C} (f : Rel_Hom A B) (g : Rel_Hom B C) :
   Rel_Hom A C.
 Proof.
