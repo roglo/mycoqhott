@@ -624,7 +624,29 @@ intros * Hf.
 exists (λ a, projT1 (Hf a)).
 intros f.
 (**)
-assert ({ x & {a : P x & ∀ y, a = y} } ≃ A). {
+transparent assert (H : { x & {a : P x & ∀ y, a = y} } ≃ A). {
+  exists (λ x, projT1 x).
+  apply qinv_isequiv.
+  unfold qinv.
+  transparent assert (g : A → {x : A & {a : P x & ∀ y : P x, a = y}}). {
+    intros a.
+    exists a, (f a).
+    intros y.
+    specialize (Hf a) as (t & Ht).
+    specialize (Ht y) as H1.
+    specialize (Ht (f a)) as H2.
+    now destruct H1, H2.
+  }
+  exists g; subst g; cbn.
+  unfold "◦◦", "∼", id; cbn.
+  split; [ easy | ].
+  intros (y & Ha & Hy); cbn.
+  apply eq_existT_uncurried.
+  exists eq_refl; cbn.
+  apply eq_existT_uncurried.
+  exists (eq_sym (Hy (f y))).
+  destruct (Hf y).
+(* cf hott 4.9.3: there is hypothesis isContr to be added *)
 ...
 }
 specialize (hott_4_9_2 _ _ A X) as H1.
