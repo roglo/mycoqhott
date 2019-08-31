@@ -705,7 +705,10 @@ assert (H2 : (Σ (x : A), P x) ≃ A). {
   symmetry.
   apply H3.
 }
-assert (H3 : (A → Σ (x : A), P x) ≃ (A → A)). {
+assert (α : (A → Σ (x : A), P x) ≃ (A → A)). {
   now apply hott_4_9_2.
 }
+assert (φ : (Π (x : A), P x) → fib α (@id A)).
+...
+set (φ := λ f, ((λ x, (x, f x)), eq_refl (@id A))).
 ...
