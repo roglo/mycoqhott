@@ -596,6 +596,24 @@ exists id; apply qinv_isequiv; exists  id.
 split; intros a; apply eq_refl.
 Defined.
 
+Definition idtoeqv_ua {A B} : ∀ (f : A ≃ B), idtoeqv (ua f) = f.
+Proof.
+intros.
+unfold ua; simpl.
+set (q := isequiv_qinv idtoeqv (univ A B)).
+destruct q as (g, (α, β)).
+apply α.
+Defined.
+
+Definition ua_idtoeqv {A B} : ∀ (p : A = B), ua (idtoeqv p) = p.
+Proof.
+intros.
+unfold ua; simpl.
+set (q := isequiv_qinv idtoeqv (univ A B)).
+destruct q as (f, (α, β)).
+apply β.
+Defined.
+
 (* j'aimerais bien démontrer que l'univalence implique l'extensionnalité
    mais je n'ai jamais, dans hott, compris la preuve ; j'ai bien vu qu'on
    y parlait de l'extensionnalité faible, mais bon, c'est tout *)
@@ -722,39 +740,20 @@ transparent assert (H2 : (Σ (x : A), P x) ≃ A). {
   exists eq_refl; cbn.
   destruct (Hf x) as (Hx', H); apply H.
 }
-(*
-  transparent assert (H : A → Σ (x : A), P x). {
-    intros x; exists x.
-    apply H1.
-    unfold fib; cbn.
-    specialize (Hf x) as H2.
-    destruct H2 as (Hx & H2).
-    now exists (existT _ x Hx).
-  }
-  exists H; subst H; cbn.
-  unfold "◦◦", "∼", id; cbn.
-  split; [ easy | ].
-  intros (x & Hx).
-  apply eq_existT_uncurried.
-  exists eq_refl; cbn.
-  remember (H1 x) as H2.
-  destruct H2 as (f, H2).
-  remember (Hf x) as H3.
-  destruct H3 as (z, H3).
-  specialize (H3 Hx) as H4.
-  destruct H4.
-  symmetry.
-  apply H3.
-}
-*)
 transparent assert (α : (A → Σ (x : A), P x) ≃ (A → A)). {
-  now apply hott_4_9_2.
+  apply hott_4_9_2.
+  apply H2.
 }
 transparent assert (φ : (Π (x : A), P x) → fib (projT1 α) id). {
   intros f.
   exists (λ x, existT _ x (f x)).
-...
   subst α; unfold hott_4_9_2.
+  subst H2; cbn.
+Print idtoeqv.
+Check ua_idtoeqv.
+...
+
+Search ua.
 ...
   subst H2; cbn.
 
