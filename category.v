@@ -30,9 +30,7 @@ Notation "∃!! ( equ ) x .. y , p" :=
 Definition isSet := h4c.isSet.
 Definition isProp := h4c.isProp.
 
-(*
 Definition hProp := { A : Type & isProp A }.
-*)
 
 Axiom fun_ext : ∀ A B (f g : ∀ x : A, B x), (∀ x, f x = g x) → f = g.
 Axiom prop_ext : ∀ A B, (A ↔ B) → A = B.
