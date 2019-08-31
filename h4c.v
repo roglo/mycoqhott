@@ -711,6 +711,7 @@ Theorem weak_funext_th : ∀ {A} (P : A → Type),
 Proof.
 intros * Hf.
 set (H1 := hott_4_8_1 A P).
+(*
 assert (H2 : (Σ (x : A), P x) ≃ A). {
   transparent assert (H : (Σ (x : A), P x) → A). {
     intros (x & Hx).
@@ -742,8 +743,10 @@ assert (H2 : (Σ (x : A), P x) ≃ A). {
   symmetry.
   apply H3.
 }
+*)
 transparent assert (α : (A → Σ (x : A), P x) ≃ (A → A)). {
-  now apply hott_4_9_2.
+  apply hott_4_9_2.
+...
 }
 transparent assert (φ : (Π (x : A), P x) → fib (projT1 α) id). {
   intros f.
