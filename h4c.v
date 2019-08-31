@@ -632,7 +632,13 @@ Tactic Notation "transparent" "assert" "(" ident(H) ":" lconstr(type) ")" :=
   unshelve (refine (let H := (_ : type) in _)).
 
 Definition hott_4_9_2 A B X (e : A ≃ B) : (X → A) ≃ (X → B).
+Proof.
+apply idtoeqv.
+now destruct (ua e).
+Defined.
+(*
 Proof. destruct (ua e); apply eqv_refl. Defined.
+*)
 
 Definition fib {A B} (f : A → B) (y : B) := Σ (x : A), (f x = y).
 
@@ -748,9 +754,9 @@ transparent assert (φ : (Π (x : A), P x) → fib (projT1 α) id). {
   intros f.
   exists (λ x, existT _ x (f x)).
   subst α; unfold hott_4_9_2.
-  subst H2.
 ...
   subst H2; cbn.
+...
 Print idtoeqv.
 Check ua_idtoeqv.
 ...
