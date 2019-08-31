@@ -6,24 +6,6 @@ Set Nested Proofs Allowed.
 Require Import Utf8.
 Require Import h4c.
 
-Theorem equiv_compose {A B C} :
-  ∀ (f : equivalence A B) (g : equivalence B C), equivalence A C.
-Proof.
-intros eqf eqg.
-destruct eqf as (f, ((f₁, eqf₁), (f₂, eqf₂))).
-destruct eqg as (g, ((g₁, eqg₁), (g₂, eqg₂))).
-unfold equivalence.
-exists (composite f g).
-split.
- exists (composite g₁ f₁).
- intros c; unfold composite; simpl.
- transitivity (g (g₁ c)); [ apply ap, eqf₁ | apply eqg₁ ].
-
- exists (composite g₂ f₂).
- intros a; unfold composite; simpl.
- transitivity (f₂ (f a)); [ apply ap, eqg₂ | apply eqf₂ ].
-Defined.
-
 Definition hott_2_3_10 {A B x y} :
     ∀ (f : A → B) (P : B → Type) (p : x = y) (u : P (f x)),
     transport (composite f P) p u = transport P (ap f p) u

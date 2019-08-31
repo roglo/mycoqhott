@@ -618,10 +618,47 @@ Proof. destruct (ua e); apply eqv_refl. Defined.
 
 Definition fib {A B} (f : A → B) (y : B) := Σ (x : A), (f x = y).
 
+Theorem equiv_compose {A B C} :
+  ∀ (f : equivalence A B) (g : equivalence B C), equivalence A C.
+Proof.
+intros eqf eqg.
+destruct eqf as (f, ((f₁, eqf₁), (f₂, eqf₂))).
+destruct eqg as (g, ((g₁, eqg₁), (g₂, eqg₂))).
+unfold equivalence.
+exists (composite f g).
+split.
+ exists (composite g₁ f₁).
+ intros c; unfold composite; simpl.
+ transitivity (g (g₁ c)); [ apply ap, eqf₁ | apply eqg₁ ].
+
+ exists (composite g₂ f₂).
+ intros a; unfold composite; simpl.
+ transitivity (f₂ (f a)); [ apply ap, eqg₂ | apply eqf₂ ].
+Defined.
+
+Definition ex_2_10 {A B C} :
+  (Σ (x : A), Σ (y : B x), C (existT _ x y)) ≃ (Σ (p : Σ (x : A), B x), C p).
+Proof.
+exists
+  (λ xyf,
+   match xyf with
+   | existT _ x (existT _ y f) => existT C (existT B x y) f
+   end).
+apply qinv_isequiv.
+exists
+  (λ xyf : {p : {x : A & B x} & C p},
+   match xyf with
+   | existT _ (existT _ x y) f =>
+       (λ f : C (existT B x y), existT _ x (existT _ y f)) f
+   end).
+unfold "◦◦", "∼", id; simpl.
+split; [ intros ((x, y), f) | intros (x, (y, f)) ]; reflexivity.
+Defined.
+
 Definition hott_4_8_1 A (B : A → Type) (a : A) :
   fib (Σ_pr₁ (B := B)) a ≃ B a.
 Proof.
-(* their proof...
+(* their proof... *)
 assert (p : fib (Σ_pr₁ (B := B)) a ≃ Σ (x : A), Σ (b : B x), x = a).
  eapply equiv_compose; [ eapply quasi_inv, ex_2_10 | apply eqv_refl ].
 
@@ -632,7 +669,7 @@ assert (p : fib (Σ_pr₁ (B := B)) a ≃ Σ (x : A), Σ (b : B x), x = a).
   apply qinv_isequiv.
   exists
     (λ w, existT _ (Σ_pr₁ w) (existT _ (Σ_pr₂ (Σ_pr₂ w)) (Σ_pr₁ (Σ_pr₂ w)))).
-  unfold "◦", "∼", id; simpl.
+  unfold "◦◦", "∼", id; simpl.
   split; intros (x, (p, q)); apply eq_refl.
 
   eapply equiv_compose; [ apply p | clear p ].
@@ -645,10 +682,10 @@ assert (p : fib (Σ_pr₁ (B := B)) a ≃ Σ (x : A), Σ (b : B x), x = a).
     intros p; apply (existT _ a (existT _ (eq_refl _) p)).
 
     exists f; unfold f; clear f; simpl.
-    unfold "◦", "∼", id; simpl.
-    split; [ apply eq_refl | ].
+    unfold "◦◦", "∼", id; simpl.
+    split; [ easy | ].
     intros (x, (p, q)); destruct p; apply eq_refl.
-*)
+(*
 (* my proof, shorter... *)
 transparent assert (f : fib (Σ_pr₁ (B := B)) a → B a).
  intros p; unfold fib in p.
@@ -665,6 +702,7 @@ transparent assert (f : fib (Σ_pr₁ (B := B)) a → B a).
   split; [ easy | ].
   intros ((x, p), q); simpl in q.
   destruct q; apply eq_refl.
+*)
 Defined.
 
 Theorem weak_funext_th : ∀ {A} (P : A → Type),
@@ -672,7 +710,7 @@ Theorem weak_funext_th : ∀ {A} (P : A → Type),
   → {a : ∀ x : A, P x & ∀ y, a = y}.
 Proof.
 intros * Hf.
-specialize (hott_4_8_1 A P) as H1.
+set (H1 := hott_4_8_1 A P).
 assert (H2 : (Σ (x : A), P x) ≃ A). {
   transparent assert (H : (Σ (x : A), P x) → A). {
     intros (x & Hx).
@@ -710,6 +748,8 @@ transparent assert (α : (A → Σ (x : A), P x) ≃ (A → A)). {
 transparent assert (φ : (Π (x : A), P x) → fib (projT1 α) id). {
   intros f.
   exists (λ x, existT _ x (f x)).
+...
+  subst α; unfold hott_4_9_2.
 ...
   apply (λ f, ((λ x, (x, f x)), eq_refl (@id A))).
 ...
