@@ -705,8 +705,7 @@ assert (H2 : (Σ (x : A), P x) ≃ A). {
   symmetry.
   apply H3.
 }
-assert (H3 : ∀ a : A, (A → Σ (x : A), P x) ≃ (A → A)). {
-  intros a.
+assert (H3 : (A → Σ (x : A), P x) ≃ (A → A)). {
   apply hott_4_9_2, H2.
 }
 ...
