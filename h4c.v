@@ -748,6 +748,8 @@ transparent assert (φ : (Π (x : A), P x) → fib (projT1 α) id). {
   intros f.
   exists (λ x, existT _ x (f x)).
   subst α; unfold hott_4_9_2.
+  subst H2.
+...
   subst H2; cbn.
 Print idtoeqv.
 Check ua_idtoeqv.
