@@ -706,6 +706,6 @@ assert (H2 : (Σ (x : A), P x) ≃ A). {
   apply H3.
 }
 assert (H3 : (A → Σ (x : A), P x) ≃ (A → A)). {
-  apply hott_4_9_2, H2.
+  now apply hott_4_9_2.
 }
 ...
