@@ -704,7 +704,7 @@ assert (H2 : (Σ (x : A), P x) ≃ A). {
   symmetry.
   apply H3.
 }
-assert (α : (A → Σ (x : A), P x) ≃ (A → A)). {
+transparent assert (α : (A → Σ (x : A), P x) ≃ (A → A)). {
   now apply hott_4_9_2.
 }
 transparent assert (φ : (Π (x : A), P x) → fib (projT1 α) id). {
