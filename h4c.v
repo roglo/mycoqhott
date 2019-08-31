@@ -672,7 +672,6 @@ Theorem weak_funext_th : ∀ {A} (P : A → Type),
   → {a : ∀ x : A, P x & ∀ y, a = y}.
 Proof.
 intros * Hf.
-(**)
 specialize (hott_4_8_1 A P) as H1.
 assert (H2 : (Σ (x : A), P x) ≃ A). {
   transparent assert (H : (Σ (x : A), P x) → A). {
@@ -708,7 +707,9 @@ assert (H2 : (Σ (x : A), P x) ≃ A). {
 assert (α : (A → Σ (x : A), P x) ≃ (A → A)). {
   now apply hott_4_9_2.
 }
-assert (φ : (Π (x : A), P x) → fib α (@id A)).
+transparent assert (φ : (Π (x : A), P x) → fib (projT1 α) id). {
+  intros f.
+  exists (λ x, existT _ x (f x)).
 ...
-set (φ := λ f, ((λ x, (x, f x)), eq_refl (@id A))).
+  apply (λ f, ((λ x, (x, f x)), eq_refl (@id A))).
 ...
