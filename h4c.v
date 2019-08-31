@@ -631,14 +631,11 @@ Definition weak_funext1 A P :=
 Tactic Notation "transparent" "assert" "(" ident(H) ":" lconstr(type) ")" :=
   unshelve (refine (let H := (_ : type) in _)).
 
-Definition hott_4_9_2 A B X (e : A ≃ B) : (X → A) ≃ (X → B).
-Proof.
-apply idtoeqv.
-now destruct (ua e).
-Defined.
-(*
-Proof. destruct (ua e); apply eqv_refl. Defined.
-*)
+Definition hott_4_9_2 A B X (e : A ≃ B) : (X → A) ≃ (X → B) :=
+  idtoeqv
+    match ua e in (_ = y) return ((X → A) = (X → y)) with
+    | eq_refl => eq_refl
+    end.
 
 Definition fib {A B} (f : A → B) (y : B) := Σ (x : A), (f x = y).
 
@@ -729,6 +726,21 @@ transparent assert (f : fib (Σ_pr₁ (B := B)) a → B a).
 *)
 Defined.
 
+Definition ua_pup {A B}
+  : ∀ (p : A = B),
+    p = ua (existT isequiv (transport id p) (isequiv_transport p))
+  := λ (p : A = B),
+     match p return
+       (ua (idtoeqv p) = p
+        → p = ua (existT isequiv (transport id p) (isequiv_transport p)))
+     with
+     | eq_refl _ =>
+         λ q,
+         match q in (_ = r) return (r = ua (eqv_refl A)) with
+         | eq_refl _ => eq_refl _
+         end
+     end (ua_idtoeqv p).
+
 Theorem weak_funext_th : ∀ {A} (P : A → Type),
   (∀ x, {a : P x & ∀ y : P x, a = y})
   → {a : ∀ x : A, P x & ∀ y, a = y}.
@@ -754,7 +766,6 @@ transparent assert (φ : (Π (x : A), P x) → fib (projT1 α) id). {
   intros f.
   exists (λ x, existT _ x (f x)).
   subst α; unfold hott_4_9_2.
-...
   subst H2; cbn.
 ...
 Print idtoeqv.
