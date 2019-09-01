@@ -745,8 +745,7 @@ Definition hott_4_9_2 A B X (e : A ≃ B) : (X → A) ≃ (X → B) :=
     end.
 
 Theorem weak_funext_th : ∀ {A} (P : A → Type),
-  (∀ x, {a : P x & ∀ y : P x, a = y})
-  → {a : ∀ x : A, P x & ∀ y, a = y}.
+  (Π (x : A), isContr (P x)) → isContr (Π (x : A), P x).
 Proof.
 intros * Hf.
 set (H1 := hott_4_8_1 A P).
