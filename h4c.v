@@ -617,6 +617,10 @@ Defined.
 (* j'aimerais bien démontrer que l'univalence implique l'extensionnalité
    mais je n'ai jamais, dans hott, compris la preuve ; j'ai bien vu qu'on
    y parlait de l'extensionnalité faible, mais bon, c'est tout *)
+
+Tactic Notation "transparent" "assert" "(" ident(H) ":" lconstr(type) ")" :=
+  unshelve (refine (let H := (_ : type) in _)).
+
 Notation "'Σ' ( x : A ) , B" :=
   ({ x : A & B }) (at level 0, x at level 0, B at level 100, only parsing).
 Notation "'Π' ( x : A ) , B" :=
@@ -624,18 +628,6 @@ Notation "'Π' ( x : A ) , B" :=
 (*
 Definition isContr A := Σ (a : A), Π (x : A), a = x.
 *)
-Definition weak_funext A P :=
-  (Π (x : A), isContr (P x)) → isContr (Π (x : A), P x).
-Definition weak_funext1 A P :=
-  (∀ x : A, {a : P x & ∀ y : P x, a = y}) → {a : ∀ x : A, P x & ∀ y : ∀ x : A, P x, a = y}.
-Tactic Notation "transparent" "assert" "(" ident(H) ":" lconstr(type) ")" :=
-  unshelve (refine (let H := (_ : type) in _)).
-
-Definition hott_4_9_2 A B X (e : A ≃ B) : (X → A) ≃ (X → B) :=
-  idtoeqv
-    match ua e in (_ = y) return ((X → A) = (X → y)) with
-    | eq_refl => eq_refl
-    end.
 
 Definition fib {A B} (f : A → B) (y : B) := Σ (x : A), (f x = y).
 
@@ -740,6 +732,17 @@ Definition ua_pup {A B}
          | eq_refl _ => eq_refl _
          end
      end (ua_idtoeqv p).
+
+Definition weak_funext A P :=
+  (Π (x : A), isContr (P x)) → isContr (Π (x : A), P x).
+Definition weak_funext1 A P :=
+  (∀ x : A, {a : P x & ∀ y : P x, a = y}) → {a : ∀ x : A, P x & ∀ y : ∀ x : A, P x, a = y}.
+
+Definition hott_4_9_2 A B X (e : A ≃ B) : (X → A) ≃ (X → B) :=
+  idtoeqv
+    match ua e in (_ = y) return ((X → A) = (X → y)) with
+    | eq_refl => eq_refl
+    end.
 
 Theorem weak_funext_th : ∀ {A} (P : A → Type),
   (∀ x, {a : P x & ∀ y : P x, a = y})
