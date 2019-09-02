@@ -1069,8 +1069,7 @@ transparent assert (α : (A → Σ (x : A), P x) ≃ (A → A)). {
     -intros g.
      now subst f; cbn.
     -intros g.
-     subst f.
-     cbn.
+     subst f; cbn.
 ...
     split.
 ...
