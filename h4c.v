@@ -744,6 +744,241 @@ Definition hott_4_9_2 A B X (e : A ≃ B) : (X → A) ≃ (X → B) :=
     | eq_refl => eq_refl
     end.
 
+Notation "p '⁎'" := (transport _ p)
+  (at level 8, left associativity, format "'[v' p ']' ⁎", only parsing).
+
+Definition Σ_type_pair_eq {A} {P : A → Type} {x y : A} {u : P x} {v : P y} :
+  Π (p : x = y), p⁎ u = v → existT _ x u = existT _ y v
+:=
+  λ p q,
+  match p with
+  | eq_refl _ =>
+      λ (w : P x) (r : transport P (eq_refl x) u = w),
+      match r in (_ = t) return (existT P x u = existT P x t) with
+      | eq_refl _ => eq_refl (existT P x (transport P (eq_refl x) u))
+      end
+  end v q.
+
+Definition isContr_sigma_if A P :
+  isContr A → (∀ x, isContr (P x)) → isContr (Σ (x : A), P x).
+Proof.
+intros p q.
+unfold isContr.
+destruct p as (a, p).
+exists (existT _ a (Σ_pr₁ (q a))); intros (x, r).
+apply (Σ_type_pair_eq (p x)).
+destruct (p x); simpl.
+destruct (q a) as (s, t); apply t.
+Defined.
+
+Theorem hott_4_9_3 A (P : A → Type) (p : Π (x : A), isContr (P x)) :
+  (A → Σ (x : A), P x) ≃ (A → A).
+Proof.
+apply hott_4_9_2.
+exists (λ x, projT1 x).
+apply qinv_isequiv; unfold qinv.
+exists (λ x, existT _ x (projT1 (p x))).
+unfold "◦◦", "∼", id; cbn.
+split; [ easy | ].
+intros (x, Hx); cbn.
+apply eq_existT_uncurried.
+exists eq_refl; cbn.
+destruct (p x) as (Hx', H); apply H.
+Defined.
+
+Definition ishae {A B} f :=
+  Σ (g : B → A), Σ (η : g ◦◦ f ∼ id), Σ (ε : f ◦◦ g ∼ id),
+    Π (x : A), ap f (η x) = ε (f x).
+
+Definition fib_intro {A B} {f : A → B} {y} x (p : f x = y) :=
+  (existT (λ z, f z = y) x p : fib f y).
+
+Definition pr₁ {A B} := @Σ_pr₁ A B.
+Definition pr₂ {A B} := @Σ_pr₂ A B.
+
+Lemma hott_2_7_2_f {A} : ∀ P (w w' : Σ (x : A), P x),
+  w = w' → Σ (p : pr₁ w = pr₁ w'), p⁎ (pr₂ w) = pr₂ w'.
+Proof.
+intros P w w' p.
+destruct p; simpl.
+exists (eq_refl _); apply eq_refl.
+Defined.
+
+Lemma hott_2_7_2_g {A} : ∀ P (w w' : Σ (x : A), P x),
+  (Σ (p : pr₁ w = pr₁ w'), p⁎ (pr₂ w) = pr₂ w') → w = w'.
+Proof.
+intros P w w' p.
+destruct w as (w₁, w₂).
+destruct w' as (w'₁, w'₂); simpl.
+simpl in p.
+destruct p as (p, q).
+destruct p, q; apply eq_refl.
+Defined.
+
+Theorem hott_2_7_2 {A} : ∀ (P : A → Type) (w w' : Σ (x : A), P x),
+  (w = w') ≃ Σ (p : pr₁ w = pr₁ w'), p⁎ (pr₂ w) = pr₂ w'.
+Proof.
+intros.
+exists (hott_2_7_2_f P w w').
+apply qinv_isequiv.
+exists (hott_2_7_2_g P w w'); split.
+ intros r; unfold id; simpl.
+ destruct r as (p, q).
+ destruct w as (a, b).
+ destruct w' as (a', b').
+ simpl in p, q; simpl.
+ destruct p, q; simpl.
+ unfold hott_2_7_2_f; simpl.
+ unfold hott_2_7_2_g; simpl.
+ unfold "◦◦"; simpl.
+ apply eq_refl.
+
+ intros r; unfold id; simpl.
+ destruct r.
+ destruct w as (a, b); simpl.
+ unfold hott_2_7_2_f; simpl.
+ unfold hott_2_7_2_g; simpl.
+ unfold "◦◦"; simpl.
+ apply eq_refl.
+Defined.
+
+Lemma hott_2_1_4_iii A (x y : A) : ∀ (p : x = y), (p⁻¹)⁻¹ = p.
+Proof.
+intros p; destruct p; reflexivity.
+Qed.
+
+Definition Σ_equiv {A} {P Q : A → Type} :
+  P ∼ Q → {x : A & P x} ≃ {x : A & Q x}.
+Proof.
+intros p.
+exists
+  (λ (q : Σ (x : A), P x),
+   existT Q (Σ_pr₁ q)
+     match p (Σ_pr₁ q) in (_ = y) return y with
+     | eq_refl _ => Σ_pr₂ q
+     end).
+apply qinv_isequiv.
+exists
+  (λ (q : Σ (x : A), Q x),
+   existT P (Σ_pr₁ q)
+     (match p (Σ_pr₁ q) in (_ = y) return y → P (Σ_pr₁ q) with
+      | eq_refl _ => id
+      end (Σ_pr₂ q))).
+unfold "◦◦", "∼", id; simpl.
+split; intros (x, q); simpl.
+ apply (Σ_type_pair_eq (eq_refl _)).
+ simpl; unfold id.
+ destruct (p x); apply eq_refl.
+
+ apply (Σ_type_pair_eq (eq_refl _)).
+ simpl; unfold id.
+ destruct (p x); apply eq_refl.
+Defined.
+
+Definition hott_4_2_5 A B (f : A → B) y x x' (p p' : f _ = y) :
+  (fib_intro x p = fib_intro x' p')
+  ≃ (Σ (γ : x = x'), ap f γ • p' = p).
+Proof.
+eapply equiv_compose; [ apply hott_2_7_2 | simpl ].
+apply Σ_equiv; intros q.
+unfold transport.
+destruct q; simpl; unfold id.
+apply ua.
+exists invert.
+apply qinv_isequiv.
+exists invert.
+unfold "◦◦", "∼", id.
+split; intros z; apply hott_2_1_4_iii.
+Defined.
+
+Theorem ap_compose {A B} : ∀ (f : A → B) x y z (p : x = y) (q : y = z),
+  ap f (p • q) = ap f p • ap f q.
+Proof. destruct p, q; constructor. Qed.
+
+Definition hott_4_2_6 A B (f : A → B) : ishae f → ∀ y, isContr (fib f y).
+Proof.
+intros p y.
+destruct p as (g, (η, (ε, q))).
+exists (fib_intro (g y) (ε y)).
+intros (x, p).
+apply (Σ_pr₁ (fst (Σ_pr₂ (hott_4_2_5 A B f y (g y) x (ε y) p)))).
+exists (ap g p⁻¹ • η x).
+rewrite ap_compose.
+destruct p; simpl; unfold id.
+eapply compose; [ eapply invert, ru | apply q ].
+Defined.
+
+Definition hott_2_4_4 {A x} (f : A → A) (H : f ∼ id) : H (f x) = ap f (H x).
+Proof.
+intros.
+assert (ap f (H x) • H x = H (f x) • H x) as p.
+ eapply invert, compose; [ idtac | apply hott_2_4_3 ].
+ apply dotl, invert, hott_2_2_2_iv.
+
+ apply dotr with (r := (H x) ⁻¹) in p.
+ eapply compose in p; [ idtac | apply compose_assoc ].
+ eapply compose in p.
+  unfold id in p; simpl in p.
+  eapply compose in p; [ idtac | apply hott_2_1_4_i_1 ].
+  eapply invert, compose in p; [ idtac | apply compose_assoc ].
+  eapply compose in p.
+   eapply compose in p; [ eassumption | apply hott_2_1_4_i_1 ].
+
+   eapply dotl, invert.
+   eapply compose_invert_r; reflexivity.
+
+  eapply dotl, invert.
+  eapply compose_invert_r; reflexivity.
+Qed.
+
+Definition alt_τ A B (f : A → B) (g : B → A)
+    (ε : f ◦◦ g ∼ id) (η : g ◦◦ f ∼ id)
+    (ε' := ((λ b, (ε (f (g b)))⁻¹ • ap f (η (g b)) • ε b) : f ◦◦ g ∼ id)) :
+  ∀ a, ap f (η a) = ε' (f a).
+Proof.
+intros a; simpl in ε'.
+assert (p' : η (g (f a)) = ap g (ap f (η a))).
+ rewrite (ap_composite f g (η a)).
+ apply (hott_2_4_4 (g ◦◦ f) η).
+
+ apply (ap (ap f)) in p'.
+ apply (dotr (ε (f a))) in p'.
+ pose proof (hott_2_4_3 (f ◦◦ g ◦◦ f) f (λ x, ε (f x)) (η a)) as q.
+ unfold id in q; simpl in q; apply invert in q.
+ eapply compose in q; [  | eapply compose; [ eapply p' |  ] ].
+  unfold ε'.
+  rewrite <- compose_assoc.
+  unfold id, composite in q; simpl.
+  unfold id, composite; simpl.
+  rewrite q, compose_assoc, compose_invert_l.
+  apply invert, hott_2_1_4_i_2.
+
+  apply dotr.
+  eapply compose; [ apply (ap_composite g f (ap f (η a))) |  ].
+  apply (ap_composite f (f ◦◦ g) (η a)).
+Defined.
+
+Definition hott_4_2_3 A B (f : A → B) : qinv f → ishae f.
+Proof.
+intros (g, (ε, η)).
+unfold ishae.
+exists g, η.
+pose proof alt_τ A B f g ε η as τ.
+set (ε' := (λ b, (ε (f (g b)))⁻¹ • ap f (η (g b)) • ε b) : f ◦◦ g ∼ id) in τ.
+simpl in τ.
+exists ε'; intros x; apply τ.
+Defined.
+
+Definition isContr_fib_4_9_3 A (P : A → Type) (p : Π (x : A), isContr (P x)) :
+  isContr (fib (Σ_pr₁ (hott_4_9_3 A P p)) id).
+Proof.
+apply hott_4_2_6.
+apply hott_4_2_3.
+set (q := hott_4_9_3 A P p).
+destruct q as (f, q).
+apply isequiv_qinv, q.
+Defined.
+
 Theorem weak_funext_th : ∀ {A} (P : A → Type),
   (Π (x : A), isContr (P x)) → isContr (Π (x : A), P x).
 Proof.
@@ -766,6 +1001,29 @@ transparent assert (α : (A → Σ (x : A), P x) ≃ (A → A)). {
 }
 transparent assert (φ : (Π (x : A), P x) → fib (projT1 α) id). {
   intros f.
+  transparent assert (H : isContr (fib (projT1 α) id)). {
+    apply isContr_fib_4_9_3.
+  }
+  apply H.
+}
+transparent assert (r : fib (projT1 α) id → (Π (x : A), P x)). {
+  intros f.
+  apply Hf.
+}
+set
+  (r' := (λ _ : fib (projT1 α) id, let X := λ x : A, projT1 (Hf x) in X)
+   : fib (projT1 α) id → ∀ x : A, P x).
+assert (r' ◦◦ φ = id). {
+  subst r' φ.
+  unfold "◦◦".
+...
+
+assert (∀ x, (r ◦◦ φ) x = id x). {
+  intros x.
+  subst r φ.
+  unfold "◦◦".
+...
+unfold fib.
   exists (λ x, existT _ x (f x)).
   subst α; unfold hott_4_9_2.
   subst H2; cbn.
