@@ -2335,4 +2335,3 @@ destruct r as ((g', Hg), (h', Hh)).
 apply g', p.
 Defined.
 *)
-isContr_fib_4_9_3:

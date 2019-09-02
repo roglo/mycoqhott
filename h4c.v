@@ -979,6 +979,66 @@ destruct q as (f, q).
 apply isequiv_qinv, q.
 Defined.
 
+Definition hott_3_11_3_i_ii A : isContr A → isProp A * Σ (a : A), True.
+Proof.
+intros p.
+split; [ apply isContr_isProp; assumption | ].
+destruct p as (a, p).
+exists a; constructor.
+Defined.
+
+Definition hott_3_3_2 P : isProp P → ∀ x₀ : P, P ≃ True
+:=
+  λ (HP : isProp P) (x₀ : P),
+  existT isequiv (λ _, I)
+    (qinv_isequiv (λ _, I)
+       (existT _ (λ _, x₀)
+          (λ x, match x with I => eq_refl (id I) end,  λ x, HP _ x))).
+
+Definition hott_3_11_3_ii_iii A : isProp A * (Σ (a : A), True) → A ≃ True.
+Proof.
+intros (p, (a, _)).
+apply hott_3_3_2; assumption.
+Defined.
+
+Definition quasi_inv_l_eq_r {A B} (f : A → B) (g h : B → A) :
+  f ◦◦ g ∼ id
+  → h ◦◦ f ∼ id
+  → g ∼ h
+:=
+  λ Hfg Hhf x, (Hhf (g x))⁻¹ • ap h (Hfg x).
+
+Definition EqStr_equiv_fun {A B} : A ≃ B
+  → Σ (f : A → B), Σ (g : B → A), (∀ x, g (f x) = x) ∧ (∀ y, f (g y) = y).
+Proof.
+intros p.
+destruct p as (f, ((g, Hg), (h, Hh))).
+exists f, g.
+split; [ intros x | intros y; apply Hg ].
+pose proof quasi_inv_l_eq_r f g h Hg Hh as p.
+unfold "∼" in p.
+etransitivity; [ apply p | apply Hh ].
+Defined.
+
+Definition hott_3_11_3_iii_i A : A ≃ True → isContr A.
+Proof.
+intros p.
+apply EqStr_equiv_fun in p.
+destruct p as (f, (g, (Hg, Hh))).
+exists (g I); intros x.
+etransitivity; [ | apply Hg ].
+destruct (f x); reflexivity.
+Defined.
+
+Definition equiv_contr {A B} : A ≃ B → isContr A → isContr B.
+Proof.
+intros p q.
+apply hott_3_11_3_i_ii, hott_3_11_3_ii_iii in q.
+apply quasi_inv in p.
+eapply equiv_compose in q; [ | apply p ].
+apply hott_3_11_3_iii_i; assumption.
+Defined.
+
 Theorem weak_funext_th : ∀ {A} (P : A → Type),
   (Π (x : A), isContr (P x)) → isContr (Π (x : A), P x).
 Proof.
@@ -996,20 +1056,70 @@ transparent assert (H2 : (Σ (x : A), P x) ≃ A). {
   destruct (Hf x) as (Hx', H); apply H.
 }
 transparent assert (α : (A → Σ (x : A), P x) ≃ (A → A)). {
+  transparent assert (f : (A → {x : A & P x}) → (A → A)). {
+    intros f x.
+    apply (projT1 (f x)).
+  }
+  assert (isequiv f). {
+    apply qinv_isequiv.
+    unfold qinv.
+    exists (λ g x, existT _ (g x) (projT1 (Hf (g x)))).
+    unfold "◦◦", "∼", id.
+    split.
+    -intros g.
+     now subst f; cbn.
+    -intros g.
+     subst f.
+     cbn.
+...
+    split.
+...
   apply hott_4_9_2.
   apply H2.
 }
+transparent assert (Hc : isContr (fib (projT1 α) id)). {
+  apply hott_4_2_6.
+  apply hott_4_2_3.
+  apply isequiv_qinv.
+  apply (projT2 α).
+}
 transparent assert (φ : (Π (x : A), P x) → fib (projT1 α) id). {
   intros f.
-  transparent assert (H : isContr (fib (projT1 α) id)). {
-    apply isContr_fib_4_9_3.
-  }
-  apply H.
+Print ...
+
+  exists (λ x, existT _ x (f x)).
+cbn.
+...
+set (XX := projT1 α).
+unfold α in XX.
+cbn in XX.
+Search (transport id).
+unfold H2; cbn.
+ooo.
+unfold H2.
+cbn.
+...
+  cbn.
+...
+  apply Hc.
 }
+set (φ := (λ _, projT1 Hc) : (∀ x : A, P x) → fib (projT1 α) id).
 transparent assert (r : fib (projT1 α) id → (Π (x : A), P x)). {
   intros f.
+...
+  destruct f as (f & Hy).
+  apply (projT2 (f x)).
+  specialize (f x).
+  unfold fib in f.
+...
+
   apply Hf.
 }
+assert (r ◦◦ φ = id). {
+  subst r φ.
+  unfold "◦◦".
+...
+
 set
   (r' := (λ _ : fib (projT1 α) id, let X := λ x : A, projT1 (Hf x) in X)
    : fib (projT1 α) id → ∀ x : A, P x).
