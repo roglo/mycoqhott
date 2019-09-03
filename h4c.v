@@ -1064,25 +1064,21 @@ transparent assert (g : (A → A) → (A → {x : A & P x})). {
   apply (existT P (g x) (projT1 (Hf (g x)))).
 }
 transparent assert (φ : (Π (x : A), P x) → fib f id). {
+  intros h.
   subst f; cbn.
-  intros f.
   unfold fib; cbn.
   exists (g id).
   easy.
 }
 transparent assert (r : fib f id → (Π (x : A), P x)). {
   intros h x.
-  destruct h as (h, Hh).
-Check (h x).
-...
-Check (projT2 (h x)).
-
-  apply (projT1 (Hf (projT1 (h x)))).
   apply (projT1 (Hf x)).
 }
+cbn in r.
 assert (r ◦◦ φ = id). {
   subst r φ.
   unfold "◦◦".
+cbn.
 ...
 transparent assert (α : (A → Σ (x : A), P x) ≃ (A → A)). {
   transparent assert (f : (A → {x : A & P x}) → (A → A)). {
