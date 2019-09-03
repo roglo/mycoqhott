@@ -1080,6 +1080,9 @@ transparent assert (g : (A → A) → (A → {x : A & P x})). {
   apply (existT P (g x) (projT1 (Hf (g x)))).
 }
 *)
+transparent assert (α : (A → {x : A & P x}) ≃ (A → A)). {
+  now apply hott_4_9_3.
+}
 transparent assert (φ : (Π (x : A), P x) → fib f id). {
   intros h.
   now exists (λ x, existT _ x (h x)).
@@ -1100,7 +1103,6 @@ eapply hott_3_11_7; [ apply H | ].
 apply hott_4_2_6.
 apply hott_4_2_3.
 unfold qinv.
-...
 transparent assert (g : (A → A) → A → {x : A & P x}). {
   intros g x.
   apply (existT _ (g x) (projT1 (Hf (g x)))).
