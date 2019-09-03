@@ -1078,8 +1078,11 @@ easy.
 transparent assert (r : fib f id → (Π (x : A), P x)). {
   intros (g', p) x.
 (**)
+  apply ((happly (f g') id p x) ⁎ (pr₂ (g' x))).
+(*
   apply (transport P (happly (f g') id p x)).
   apply (pr₂ (g' x)).
+*)
 (*
 Check (transport _ (happly _ _ p x)).
 Check (happly _ _ p x).
