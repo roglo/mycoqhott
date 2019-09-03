@@ -1093,12 +1093,7 @@ Check (projT1 (Hf x)).
 *)
 }
 cbn in r.
-assert (r ◦◦ φ = id). {
-  subst r φ.
-  unfold "◦◦".
-cbn.
-easy.
-}
+assert (Hsr : r ◦◦ φ = id) by easy.
 ...
 transparent assert (α : (A → Σ (x : A), P x) ≃ (A → A)). {
   transparent assert (f : (A → {x : A & P x}) → (A → A)). {
