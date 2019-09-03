@@ -738,21 +738,6 @@ Definition weak_funext A P :=
 Definition weak_funext1 A P :=
   (∀ x : A, {a : P x & ∀ y : P x, a = y}) → {a : ∀ x : A, P x & ∀ y : ∀ x : A, P x, a = y}.
 
-Theorem hott_4_9_2 A B X (e : A ≃ B) : (X → A) ≃ (X → B).
-Proof.
-set (p := ua e).
-assert (e = idtoeqv p). {
-  symmetry.
-  apply idtoeqv_ua.
-}
-
-...
-Check (idtoeqv e).
-
-assert (e : isequiv f) by apply qinv_isequiv, q.
-Check hott_4_1_1.
-...
-
 Definition hott_4_9_2 A B X (e : A ≃ B) : (X → A) ≃ (X → B) :=
   idtoeqv
     match ua e in (_ = y) return ((X → A) = (X → y)) with
@@ -1072,7 +1057,7 @@ Theorem weak_funext_th : ∀ {A} (P : A → Type),
 Proof.
 intros * Hf.
 set (H1 := hott_4_8_1 A P).
-(*
+(**)
 transparent assert (H2 : (Σ (x : A), P x) ≃ A). {
   exists (λ x, projT1 x).
   apply qinv_isequiv; unfold qinv.
@@ -1084,15 +1069,17 @@ transparent assert (H2 : (Σ (x : A), P x) ≃ A). {
   exists eq_refl; cbn.
   destruct (Hf x) as (Hx', H); apply H.
 }
-*)
+(**)
 transparent assert (f : (A → {x : A & P x}) → (A → A)). {
   intros f x.
   apply (projT1 (f x)).
 }
+(*
 transparent assert (g : (A → A) → (A → {x : A & P x})). {
   intros g x.
   apply (existT P (g x) (projT1 (Hf (g x)))).
 }
+*)
 transparent assert (φ : (Π (x : A), P x) → fib f id). {
   intros h.
   now exists (λ x, existT _ x (h x)).
@@ -1110,16 +1097,17 @@ assert (H : retraction (fib f id) (Π (x : A), P x)). {
   now rewrite <- Hsr.
 }
 eapply hott_3_11_7; [ apply H | ].
-Search (isContr (fib _ _)).
-(*
-apply isContr_fib_4_9_3.
-intros h.
-*)
+subst f; cbn.
 apply hott_4_2_6.
 apply hott_4_2_3.
-exists g.
+unfold qinv.
+transparent assert (g : (A → A) → A → {x : A & P x}). {
+  intros g x.
+  apply (existT _ (g x) (projT1 (Hf (g x)))).
+}
+exists g; cbn.
+unfold "◦◦", "∼", id; cbn.
 split; [ easy | ].
-unfold "◦◦", "∼", id.
-intros h.
-unfold f, g; cbn.
+intros h; subst g.
+cbn.
 ...
