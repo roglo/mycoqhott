@@ -771,10 +771,9 @@ destruct (p x); simpl.
 destruct (q a) as (s, t); apply t.
 Defined.
 
-Theorem hott_4_9_3 A (P : A → Type) (p : Π (x : A), isContr (P x)) :
-  (A → Σ (x : A), P x) ≃ (A → A).
+Theorem pre_hott_4_9_3 A (P : A → Type) (p : Π (x : A), isContr (P x)) :
+  (Σ (x : A), P x) ≃ A.
 Proof.
-apply hott_4_9_2.
 exists (λ x, projT1 x).
 apply qinv_isequiv; unfold qinv.
 exists (λ x, existT _ x (projT1 (p x))).
@@ -784,6 +783,13 @@ intros (x, Hx); cbn.
 apply eq_existT_uncurried.
 exists eq_refl; cbn.
 destruct (p x) as (Hx', H); apply H.
+Defined.
+
+Theorem hott_4_9_3 A (P : A → Type) (p : Π (x : A), isContr (P x)) :
+  (A → Σ (x : A), P x) ≃ (A → A).
+Proof.
+apply hott_4_9_2.
+now apply pre_hott_4_9_3.
 Defined.
 
 Definition ishae {A B} f :=
@@ -1083,6 +1089,14 @@ transparent assert (g : (A → A) → (A → {x : A & P x})). {
 transparent assert (α : (A → {x : A & P x}) ≃ (A → A)). {
   now apply hott_4_9_3.
 }
+transparent assert (φ : (Π (x : A), P x) → fib (projT1 α) id). {
+  intros h.
+  exists (λ x, existT _ x (h x)).
+  unfold α.
+  unfold hott_4_9_3.
+  unfold hott_4_9_2.
+  Check (ua (pre_hott_4_9_3 A P Hf)).
+...
 transparent assert (φ : (Π (x : A), P x) → fib f id). {
   intros h.
   now exists (λ x, existT _ x (h x)).
