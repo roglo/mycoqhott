@@ -1039,6 +1039,19 @@ eapply equiv_compose in q; [ | apply p ].
 apply hott_3_11_3_iii_i; assumption.
 Defined.
 
+Definition retraction A B :=
+  Σ (r : A → B), Σ (s : B → A), Π (y : B), (r (s y) = y).
+
+Definition hott_3_11_7 A B (r : retraction A B) : isContr A → isContr B.
+Proof.
+intros p.
+destruct r as (r, (s, q)).
+destruct p as (a₀, p).
+exists (r a₀); intros b₀.
+eapply compose; [ | apply (q b₀) ].
+apply ap, p.
+Defined.
+
 Theorem weak_funext_th : ∀ {A} (P : A → Type),
   (Π (x : A), isContr (P x)) → isContr (Π (x : A), P x).
 Proof.
@@ -1059,19 +1072,60 @@ transparent assert (f : (A → {x : A & P x}) → (A → A)). {
   intros f x.
   apply (projT1 (f x)).
 }
-(*
 transparent assert (g : (A → A) → (A → {x : A & P x})). {
   intros g x.
   apply (existT P (g x) (projT1 (Hf (g x)))).
 }
-*)
 transparent assert (φ : (Π (x : A), P x) → fib f id). {
   intros h.
   now exists (λ x, existT _ x (h x)).
 }
 transparent assert (r : fib f id → (Π (x : A), P x)). {
-  intros (g, p) x.
-  apply ((happly _ _ p x) ⁎ (pr₂ (g x))).
+  intros (g', p) x.
+  apply ((happly _ _ p x) ⁎ (pr₂ (g' x))).
 }
 assert (Hsr : r ◦◦ φ = id) by easy.
+assert (H : retraction (fib f id) (Π (x : A), P x)). {
+  unfold retraction.
+  exists r, φ.
+  intros y.
+  replace y with (id y) by easy.
+  now rewrite <- Hsr.
+}
+eapply hott_3_11_7; [ apply H | ].
+(**)
+unfold f.
+unfold fib.
+unfold isContr.
+transparent assert (a : {x : A → {x : A & P x} & (λ x0 : A, projT1 (x x0)) = id}). {
+  transparent assert (x : A → {x : A & P x}). {
+    intros x.
+    exists x.
+    apply Hf.
+  }
+  now exists x; subst x; cbn.
+}
+exists a.
+intros h.
 ...
+exists a; subst a.
+intros x.
+cbn.
+destruct x.
+apply eq_existT_uncurried.
+cbn.
+...
+apply hott_4_2_6.
+Print Assumptions hott_4_2_6.
+apply hott_4_2_3.
+unfold qinv.
+exists g.
+unfold "◦◦", "∼", id.
+split.
+-intros h.
+ now subst f g.
+-intros h.
+ subst f g.
+ cbn.
+...
+*)
