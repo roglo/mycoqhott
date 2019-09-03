@@ -1073,12 +1073,18 @@ transparent assert (φ : (Π (x : A), P x) → fib f id). {
 transparent assert (r : fib f id → (Π (x : A), P x)). {
   intros (g', p) x.
 (**)
+  apply (transport _ (happly _ _ p x)).
+  apply (pr₂ (g' x)).
+(*
+Check (transport _ (happly _ _ p x)).
+Check (happly _ _ p x).
 specialize (transport P (happly Σ_pr₁ Σ_pr₁ eq_refl (g' x)) (pr₂ (g' x))) as H.
 Check (projT1 (Hf x)).
 ...
 (*
   intros h x.
   apply (projT1 (Hf x)).
+*)
 *)
 }
 cbn in r.
