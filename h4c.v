@@ -1057,6 +1057,7 @@ Theorem weak_funext_th : ∀ {A} (P : A → Type),
 Proof.
 intros * Hf.
 set (H1 := hott_4_8_1 A P).
+(*
 transparent assert (H2 : (Σ (x : A), P x) ≃ A). {
   exists (λ x, projT1 x).
   apply qinv_isequiv; unfold qinv.
@@ -1068,6 +1069,7 @@ transparent assert (H2 : (Σ (x : A), P x) ≃ A). {
   exists eq_refl; cbn.
   destruct (Hf x) as (Hx', H); apply H.
 }
+*)
 transparent assert (f : (A → {x : A & P x}) → (A → A)). {
   intros f x.
   apply (projT1 (f x)).
@@ -1094,13 +1096,15 @@ assert (H : retraction (fib f id) (Π (x : A), P x)). {
 }
 eapply hott_3_11_7; [ apply H | ].
 Search (isContr (fib _ _)).
+(*
 apply isContr_fib_4_9_3.
--intros h.
-unfold isContr.
- Search (isContr (∀ _, _)).
-...
-eapply equiv_contr; [ | apply Hf ].
-apply quasi_inv.
-eapply equiv_compose; [ | apply H1 ].
-unfold fib.
+intros h.
+*)
+apply hott_4_2_6.
+apply hott_4_2_3.
+exists g.
+split; [ easy | ].
+unfold "◦◦", "∼", id.
+intros h.
+unfold f, g; cbn.
 ...
