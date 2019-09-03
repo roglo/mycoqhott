@@ -1057,7 +1057,7 @@ Theorem weak_funext_th : ∀ {A} (P : A → Type),
 Proof.
 intros * Hf.
 set (H1 := hott_4_8_1 A P).
-(**)
+(*
 transparent assert (H2 : (Σ (x : A), P x) ≃ A). {
   exists (λ x, projT1 x).
   apply qinv_isequiv; unfold qinv.
@@ -1069,7 +1069,7 @@ transparent assert (H2 : (Σ (x : A), P x) ≃ A). {
   exists eq_refl; cbn.
   destruct (Hf x) as (Hx', H); apply H.
 }
-(**)
+*)
 transparent assert (f : (A → {x : A & P x}) → (A → A)). {
   intros f x.
   apply (projT1 (f x)).
@@ -1084,23 +1084,23 @@ transparent assert (φ : (Π (x : A), P x) → fib f id). {
   intros h.
   now exists (λ x, existT _ x (h x)).
 }
-transparent assert (r : fib f id → (Π (x : A), P x)). {
+transparent assert (ψ : fib f id → (Π (x : A), P x)). {
   intros (g', p) x.
   apply ((happly _ _ p x) ⁎ (pr₂ (g' x))).
 }
-assert (Hsr : r ◦◦ φ = id) by easy.
+assert (Hsr : ψ ◦◦ φ = id) by easy.
 assert (H : retraction (fib f id) (Π (x : A), P x)). {
   unfold retraction.
-  exists r, φ.
+  exists ψ, φ.
   intros y.
   replace y with (id y) by easy.
   now rewrite <- Hsr.
 }
 eapply hott_3_11_7; [ apply H | ].
-subst f; cbn.
 apply hott_4_2_6.
 apply hott_4_2_3.
 unfold qinv.
+...
 transparent assert (g : (A → A) → A → {x : A & P x}). {
   intros g x.
   apply (existT _ (g x) (projT1 (Hf (g x)))).
