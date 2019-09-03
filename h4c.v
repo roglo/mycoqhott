@@ -1094,38 +1094,8 @@ assert (H : retraction (fib f id) (Π (x : A), P x)). {
 }
 eapply hott_3_11_7; [ apply H | ].
 (**)
-unfold f.
+eapply equiv_contr; [ | apply Hf ].
+apply quasi_inv.
+eapply equiv_compose; [ | apply H1 ].
 unfold fib.
-unfold isContr.
-transparent assert (a : {x : A → {x : A & P x} & (λ x0 : A, projT1 (x x0)) = id}). {
-  transparent assert (x : A → {x : A & P x}). {
-    intros x.
-    exists x.
-    apply Hf.
-  }
-  now exists x; subst x; cbn.
-}
-exists a.
-intros h.
 ...
-exists a; subst a.
-intros x.
-cbn.
-destruct x.
-apply eq_existT_uncurried.
-cbn.
-...
-apply hott_4_2_6.
-Print Assumptions hott_4_2_6.
-apply hott_4_2_3.
-unfold qinv.
-exists g.
-unfold "◦◦", "∼", id.
-split.
--intros h.
- now subst f g.
--intros h.
- subst f g.
- cbn.
-...
-*)
