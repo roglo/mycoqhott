@@ -1059,17 +1059,19 @@ transparent assert (f : (A → {x : A & P x}) → (A → A)). {
   intros f x.
   apply (projT1 (f x)).
 }
+(*
 transparent assert (g : (A → A) → (A → {x : A & P x})). {
   intros g x.
   apply (existT P (g x) (projT1 (Hf (g x)))).
 }
+*)
 transparent assert (φ : (Π (x : A), P x) → fib f id). {
   intros h.
   now exists (λ x, existT _ x (h x)).
 }
 transparent assert (r : fib f id → (Π (x : A), P x)). {
-  intros (g', p) x.
-  apply ((happly (f g') id p x) ⁎ (pr₂ (g' x))).
+  intros (g, p) x.
+  apply ((happly _ _ p x) ⁎ (pr₂ (g x))).
 }
 assert (Hsr : r ◦◦ φ = id) by easy.
 ...
