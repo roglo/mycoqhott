@@ -738,6 +738,21 @@ Definition weak_funext A P :=
 Definition weak_funext1 A P :=
   (∀ x : A, {a : P x & ∀ y : P x, a = y}) → {a : ∀ x : A, P x & ∀ y : ∀ x : A, P x, a = y}.
 
+Theorem hott_4_9_2 A B X (e : A ≃ B) : (X → A) ≃ (X → B).
+Proof.
+set (p := ua e).
+assert (e = idtoeqv p). {
+  symmetry.
+  apply idtoeqv_ua.
+}
+
+...
+Check (idtoeqv e).
+
+assert (e : isequiv f) by apply qinv_isequiv, q.
+Check hott_4_1_1.
+...
+
 Definition hott_4_9_2 A B X (e : A ≃ B) : (X → A) ≃ (X → B) :=
   idtoeqv
     match ua e in (_ = y) return ((X → A) = (X → y)) with
