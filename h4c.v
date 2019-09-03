@@ -1093,7 +1093,12 @@ assert (H : retraction (fib f id) (Π (x : A), P x)). {
   now rewrite <- Hsr.
 }
 eapply hott_3_11_7; [ apply H | ].
-(**)
+Search (isContr (fib _ _)).
+apply isContr_fib_4_9_3.
+-intros h.
+unfold isContr.
+ Search (isContr (∀ _, _)).
+...
 eapply equiv_contr; [ | apply Hf ].
 apply quasi_inv.
 eapply equiv_compose; [ | apply H1 ].
