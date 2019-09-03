@@ -1065,10 +1065,15 @@ transparent assert (g : (A → A) → (A → {x : A & P x})). {
 }
 transparent assert (φ : (Π (x : A), P x) → fib f id). {
   intros h.
+(*
   subst f; cbn.
   unfold fib; cbn.
   exists (g id).
   easy.
+*)
+exists (λ x, existT _ x (h x)).
+subst f; cbn.
+easy.
 }
 transparent assert (r : fib f id → (Π (x : A), P x)). {
   intros (g', p) x.
@@ -1092,6 +1097,8 @@ assert (r ◦◦ φ = id). {
   subst r φ.
   unfold "◦◦".
 cbn.
+easy.
+}
 ...
 transparent assert (α : (A → Σ (x : A), P x) ≃ (A → A)). {
   transparent assert (f : (A → {x : A & P x}) → (A → A)). {
