@@ -1071,8 +1071,15 @@ transparent assert (φ : (Π (x : A), P x) → fib f id). {
   easy.
 }
 transparent assert (r : fib f id → (Π (x : A), P x)). {
+  intros (g', p) x.
+(**)
+Check (transport P (happly Σ_pr₁ Σ_pr₁ eq_refl (g' x)) (pr₂ (g' x))).
+Check (projT1 (Hf x)).
+...
+(*
   intros h x.
   apply (projT1 (Hf x)).
+*)
 }
 cbn in r.
 assert (r ◦◦ φ = id). {
