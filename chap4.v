@@ -2081,9 +2081,10 @@ intros p.
 pose proof isContr_fib_4_9_3 A P p as s.
 set (α := hott_4_9_3 A P p) in s.
 assert (q : (Π (x : A), P x) = chap3.retract (fib (Σ_pr₁ α) (@id A))).
-Focus 2.
+2: {
  assert (r : Π (x : A), P x) by apply p; exists r; intros t.
  apply (isContr_isProp _ (hott_3_11_6 p)).
+}
 
  apply ua.
  transparent assert
