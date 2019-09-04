@@ -738,6 +738,33 @@ Definition weak_funext A P :=
 Definition weak_funext1 A P :=
   (∀ x : A, {a : P x & ∀ y : P x, a = y}) → {a : ∀ x : A, P x & ∀ y : ∀ x : A, P x, a = y}.
 
+(*
+Theorem hott_4_9_2 A B X (e : A ≃ B) : (X → A) ≃ (X → B).
+Proof.
+remember (ua e) as p eqn:s.
+set (t := (idtoeqv_ua e)⁻¹ : e = idtoeqv (ua e)); simpl in t.
+rewrite <- s in t.
+destruct p.
+apply eqv_refl.
+Defined.
+
+Definition hott_4_9_2 :=
+(λ (A B X : Type) (e : A ≃ B),
+  let p : A = B := ua e in
+  let t : e = idtoeqv (ua e) := (idtoeqv_ua e)⁻¹ in
+  match
+    p as e0 in (_ = y)
+    return (∀ e1 : A ≃ y, e0 = ua e1 → e1 = idtoeqv e0 → (X → A) ≃ (X → y))
+  with
+  | eq_refl =>
+      λ (e0 : A ≃ A) (_ : eq_refl = ua e0) (_ : e0 = idtoeqv eq_refl),
+        eqv_refl (X → A)
+  end
+    e eq_refl
+    (eq_ind_r (λ e0 : A = B, e = idtoeqv e0) t eq_refl)) :
+  ∀ A B X : Type, A ≃ B → (X → A) ≃ (X → B).
+*)
+
 Definition hott_4_9_2 A B X (e : A ≃ B) : (X → A) ≃ (X → B) :=
   idtoeqv
     match ua e in (_ = y) return ((X → A) = (X → y)) with
