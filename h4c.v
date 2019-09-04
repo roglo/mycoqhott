@@ -764,6 +764,26 @@ Definition hott_4_9_2 :=
   ∀ A B X : Type, A ≃ B → (X → A) ≃ (X → B).
 *)
 
+(*
+Theorem hott_4_9_2 A B X (e : A ≃ B) : (X → A) ≃ (X → B).
+Proof.
+unfold "≃" in e |-*.
+transparent assert (f : (X → A) → X → B). {
+  intros f x.
+  apply (projT1 e (f x)).
+}
+exists f; subst f.
+apply qinv_isequiv.
+unfold qinv.
+transparent assert (g : (X → B) → X → A). {
+  intros f x.
+  apply ((projT1 (isequiv_qinv _ (projT2 e))) (f x)).
+}
+exists g; subst g; cbn.
+unfold "◦◦", "∼", id; cbn.
+...
+*)
+
 Definition hott_4_9_2 A B X (e : A ≃ B) : (X → A) ≃ (X → B) :=
   idtoeqv
     match ua e in (_ = y) return ((X → A) = (X → y)) with
@@ -1121,6 +1141,7 @@ transparent assert (g : (A → A) → (A → {x : A & P x})). {
 }
 *)
 set (α := hott_4_9_3 A P Hf).
+(*
 transparent assert (φ : (Π (x : A), P x) → fib (projT1 α) id). {
   intros h.
   exists (λ x, existT _ x (h x)).
@@ -1129,6 +1150,7 @@ transparent assert (φ : (Π (x : A), P x) → fib (projT1 α) id). {
   unfold hott_4_9_2.
   Check (ua (pre_hott_4_9_3 A P Hf)).
 ...
+*)
 transparent assert (φ : (Π (x : A), P x) → fib f id). {
   intros h.
   now exists (λ x, existT _ x (h x)).
