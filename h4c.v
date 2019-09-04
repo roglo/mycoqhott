@@ -8,9 +8,6 @@ Require Import Utf8.
 
 Definition isSet (A : Type) := ∀ (a b : A) (p q : a = b), p = q.
 
-(*
-Definition mid {A} (x : A) := x.
-*)
 Arguments id {_}.
 
 Notation "'Σ' ( x : A ) , B" :=
