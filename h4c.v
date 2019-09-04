@@ -1084,6 +1084,14 @@ eapply compose; [ | apply (q b₀) ].
 apply ap, p.
 Defined.
 
+(*
+(* https://stackoverflow.com/questions/48161372/case-analysis-on-evidence-of-equality-type-in-coq *)
+Lemma true_num : ∀ m :nat, ∀ x y : m=m, x=y.
+Proof.
+intros.
+destruct x.
+*)
+
 Theorem weak_funext_th : ∀ {A} (P : A → Type),
   (Π (x : A), isContr (P x)) → isContr (Π (x : A), P x).
 Proof.
