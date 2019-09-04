@@ -1987,3 +1987,10 @@ destruct H2 as [H2| H2]; [ easy | ].
 exfalso; apply H1; intros x H3.
 now apply H2; exists x.
 Qed.
+
+(* some people claim that excluded middle is not required for this proof *)
+Theorem is_epi_is_surj2 {A B : Ob SetCat} (f : Hom A B) :
+  is_epi f → is_surj f.
+Proof.
+intros He y.
+...
