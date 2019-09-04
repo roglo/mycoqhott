@@ -1924,13 +1924,26 @@ Definition is_inj {A B} (f : A → B) :=
 Definition is_surj {A B} (f : A → B) :=
   ∀ y : B, ∃ x : A, f x = y.
 
+(* defined in nLab; equal to is_inj if excluded middle *)
+Definition is_strongly_inj {A B} (f : A → B) :=
+  ∀ x y : A, x ≠ y → f x ≠ f y.
+
 Theorem is_inj_is_mono {A B : Ob SetCat} (f : Hom A B) :
   is_inj f → is_mono f.
 Proof.
 intros Hi C g h Hgh.
+assert (H1 : ∀ x, f (g x) = f (h x)). {
+  intros x.
+  change ((λ x, f (g x)) x = (λ x, f (h x)) x).
+  unfold "◦" in Hgh.
+  cbn in Hgh.
+  now destruct Hgh.
+}
 apply fun_ext; intros x.
-apply Hi, (@h4c.happly _ _ _ _ Hgh).
+apply Hi, H1.
 Qed.
+
+Print Assumptions is_inj_is_mono.
 
 Theorem is_mono_is_inj {A B : Ob SetCat} (f : Hom A B) :
   is_mono f → is_inj f.
@@ -1947,16 +1960,48 @@ specialize (H1 H); clear H.
 now apply @h4c.happly in H1.
 Qed.
 
+Print Assumptions is_mono_is_inj.
+
+Theorem is_inj_is_strongly_inj {A B : Ob SetCat} (f : Hom A B) :
+  is_inj f → is_strongly_inj f.
+Proof.
+intros H x y Hxy Hc.
+now apply Hxy, H.
+Qed.
+
+Theorem is_strongly_inj_is_mono {A B : Ob SetCat} (f : Hom A B) :
+  is_strongly_inj f → is_mono f.
+Proof.
+intros Hi C g h Hgh.
+apply fun_ext; intros x.
+specialize (@h4c.happly _ _ _ _ Hgh) as H1.
+cbn in H1.
+unfold is_strongly_inj in Hi.
+cbn in C, g, h.
+...
+
+Theorem is_mono_is_strongly_inj {A B : Ob SetCat} (f : Hom A B) :
+  is_mono f → is_strongly_inj f.
+Proof.
+intros Hm.
+now apply is_inj_is_strongly_inj, is_mono_is_inj.
+Qed.
+
+Print Assumptions is_mono_is_strongly_inj.
+
 Theorem is_surj_is_epi {A B : Ob SetCat} (f : Hom A B) :
   is_surj f → is_epi f.
 Proof.
 intros Hi C g h Hgh.
+cbn in C, f.
 unfold is_surj in Hi.
 apply fun_ext; intros y.
 specialize (Hi y) as (x, Hx).
 subst y.
 apply (@h4c.happly _ _ _ _ Hgh).
 Qed.
+
+Print Assumptions is_surj_is_epi.
 
 Theorem is_epi_is_surj {A B : Ob SetCat} (f : Hom A B) :
   (∀ P, P + (P → False))
@@ -1994,3 +2039,16 @@ Theorem is_epi_is_surj2 {A B : Ob SetCat} (f : Hom A B) :
 Proof.
 intros He y.
 Abort.
+
+(* Proposition 2.2. A function f : A → B between sets is monic just in
+   case itis injective. (Awodey) *)
+
+Theorem awodey_2_2 {A B : Ob SetCat} (f : Hom A B) :
+  is_mono f → is_inj f.
+Proof.
+intros Hm a a' Hf.
+enough (a ≠ a' → f a ≠ f a'). {
+  assert (H1 : a ≠ a' → False). {
+    intros Ha.
+    now specialize (H Ha).
+  }
