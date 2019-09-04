@@ -1182,4 +1182,5 @@ split; [ easy | ].
 intros h.
 subst f g.
 cbn.
-...
+(* oh et puis merde *)
+Abort.
