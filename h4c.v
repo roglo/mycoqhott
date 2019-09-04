@@ -1177,7 +1177,9 @@ transparent assert (g : (A → A) → A → {x : A & P x}). {
 }
 exists g; cbn.
 unfold "◦◦", "∼", id; cbn.
+move g before f.
 split; [ easy | ].
-intros h; subst g.
+intros h.
+subst f g.
 cbn.
 ...
