@@ -2067,3 +2067,17 @@ split.
  rewrite H, assoc, Hfg.
  apply unit_l.
 Qed.
+
+(* In Sets the converse of the foregoing also holds: every mono-epi is iso *)
+
+Theorem is_mono_epi_is_iso {A B : Ob SetCat} {f : Hom A B} :
+  is_mono f → is_epi f → is_isomorphism f.
+Proof.
+intros Hm He.
+unfold is_isomorphism.
+unfold is_mono in Hm.
+unfold is_epi in He.
+cbn in *.
+assert (g : st_type B → st_type A). {
+  intros b.
+...
