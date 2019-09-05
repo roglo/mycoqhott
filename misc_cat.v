@@ -2041,21 +2041,3 @@ Theorem is_epi_is_surj2 {A B : Ob SetCat} (f : Hom A B) :
 Proof.
 intros He y.
 Abort.
-
-(* Proposition 2.2. A function f : A → B between sets is monic just in
-   case it is injective. (Awodey) *)
-
-Theorem awodey_2_2 {A B : Ob SetCat} (f : Hom A B) :
-  is_mono f ↔ is_strongly_inj f.
-Proof.
-split.
--apply is_mono_is_strongly_inj.
--intros Hi.
- intros C g h Hgh.
- unfold is_strongly_inj in Hi.
- specialize (@h4c.happly _ _ _ _ Hgh) as H1.
- cbn in H1.
- (* Conversely, if f is injective and g, h : C → A are functions such
-    that g ≠ h, then for some c ∈ C, g(c)≠h(c). Since f is injective,
-    it follows that f (g (c)) ≠ f (h (c)), whence f g ≠ f h. (Awodey) *)
-...
