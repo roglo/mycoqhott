@@ -32,7 +32,9 @@ Definition isProp := h4c.isProp.
 
 Definition hProp := { A : Type & isProp A }.
 
-Axiom fun_ext : ∀ A B (f g : ∀ x : A, B x), (∀ x, f x = g x) → f = g.
+Theorem fun_ext : ∀ A B (f g : ∀ x : A, B x), (∀ x, f x = g x) → f = g.
+Proof. intros; now apply h4c.extensionality. Defined.
+
 Axiom prop_ext : ∀ A B, (A ↔ B) → A = B.
 (*
 put univalence instead?

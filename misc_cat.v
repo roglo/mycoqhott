@@ -1977,8 +1977,10 @@ apply fun_ext; intros x.
 specialize (@h4c.happly _ _ _ _ Hgh) as H1.
 cbn in H1.
 unfold is_strongly_inj in Hi.
-cbn in C, g, h.
-...
+specialize (H1 x) as H2.
+specialize (Hi (g x) (h x)) as H3.
+(* requires excluded middle *)
+Abort.
 
 Theorem is_mono_is_strongly_inj {A B : Ob SetCat} (f : Hom A B) :
   is_mono f → is_strongly_inj f.
@@ -2041,7 +2043,7 @@ intros He y.
 Abort.
 
 (* Proposition 2.2. A function f : A → B between sets is monic just in
-   case itis injective. (Awodey) *)
+   case it is injective. (Awodey) *)
 
 Theorem awodey_2_2 {A B : Ob SetCat} (f : Hom A B) :
   is_mono f → is_inj f.
