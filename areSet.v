@@ -118,7 +118,7 @@ Defined.
 
 (* proof bool is hset *)
 
-Definition isSet_bool : isSet bool.
+Theorem isSet_bool : isSet bool.
 Proof.
 intros x y p q.
 destruct x, y; try discriminate p.
@@ -129,6 +129,17 @@ destruct x, y; try discriminate p.
  refine (match p with eq_refl _ => _ end).
  refine (match q with eq_refl _ => _ end).
  reflexivity.
+Defined.
+
+(* proof unit is hset *)
+
+Theorem isSet_unit : isSet unit.
+Proof.
+intros x y p q.
+destruct x, y.
+refine (match p with eq_refl _ => _ end).
+refine (match q with eq_refl _ => _ end).
+easy.
 Defined.
 
 (* proof list is hset *)

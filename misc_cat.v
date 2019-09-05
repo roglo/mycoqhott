@@ -2046,11 +2046,9 @@ Abort.
    case it is injective. (Awodey) *)
 
 Theorem awodey_2_2 {A B : Ob SetCat} (f : Hom A B) :
-  is_mono f → is_inj f.
+  is_mono f ↔ is_strongly_inj f.
 Proof.
-intros Hm a a' Hf.
-enough (a ≠ a' → f a ≠ f a'). {
-  assert (H1 : a ≠ a' → False). {
-    intros Ha.
-    now specialize (H Ha).
-  }
+split.
+-apply is_mono_is_strongly_inj.
+-intros Hi.
+...
