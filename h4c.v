@@ -737,8 +737,7 @@ Definition weak_funext A P :=
 Definition weak_funext1 A P :=
   (∀ x : A, {a : P x & ∀ y : P x, a = y}) → {a : ∀ x : A, P x & ∀ y : ∀ x : A, P x, a = y}.
 
-(*
-Theorem hott_4_9_2 A B X (e : A ≃ B) : (X → A) ≃ (X → B).
+Theorem hott_4_9_2_tac A B X (e : A ≃ B) : (X → A) ≃ (X → B).
 Proof.
 remember (ua e) as p eqn:s.
 set (t := (idtoeqv_ua e)⁻¹ : e = idtoeqv (ua e)); simpl in t.
@@ -747,44 +746,19 @@ destruct p.
 apply eqv_refl.
 Defined.
 
-Definition hott_4_9_2 :=
-(λ (A B X : Type) (e : A ≃ B),
+Definition hott_4_9_2 A B X (e : A ≃ B) : (X → A) ≃ (X → B) :=
   let p : A = B := ua e in
-  let t : e = idtoeqv (ua e) := (idtoeqv_ua e)⁻¹ in
   match
-    p as e0 in (_ = y)
-    return (∀ e1 : A ≃ y, e0 = ua e1 → e1 = idtoeqv e0 → (X → A) ≃ (X → y))
+    p in (_ = y)
+    return (∀ e1 : A ≃ y, p = ua e1 → e1 = idtoeqv p → (X → A) ≃ (X → y))
   with
   | eq_refl =>
       λ (e0 : A ≃ A) (_ : eq_refl = ua e0) (_ : e0 = idtoeqv eq_refl),
         eqv_refl (X → A)
-  end
-    e eq_refl
-    (eq_ind_r (λ e0 : A = B, e = idtoeqv e0) t eq_refl)) :
-  ∀ A B X : Type, A ≃ B → (X → A) ≃ (X → B).
-*)
+  end e eq_refl
+  (eq_ind_r (λ e0 : A = B, e = idtoeqv e0) (idtoeqv_ua e)⁻¹ eq_refl).
 
-(*
-Theorem hott_4_9_2 A B X (e : A ≃ B) : (X → A) ≃ (X → B).
-Proof.
-unfold "≃" in e |-*.
-transparent assert (f : (X → A) → X → B). {
-  intros f x.
-  apply (projT1 e (f x)).
-}
-exists f; subst f.
-apply qinv_isequiv.
-unfold qinv.
-transparent assert (g : (X → B) → X → A). {
-  intros f x.
-  apply ((projT1 (isequiv_qinv _ (projT2 e))) (f x)).
-}
-exists g; subst g; cbn.
-unfold "◦◦", "∼", id; cbn.
-...
-*)
-
-Definition hott_4_9_2 A B X (e : A ≃ B) : (X → A) ≃ (X → B) :=
+Definition old_hott_4_9_2 A B X (e : A ≃ B) : (X → A) ≃ (X → B) :=
   idtoeqv
     match ua e in (_ = y) return ((X → A) = (X → y)) with
     | eq_refl => eq_refl
@@ -1144,11 +1118,12 @@ set (α := hott_4_9_3 A P Hf).
 transparent assert (φ : (Π (x : A), P x) → fib (projT1 α) id). {
   intros h.
   exists (λ x, existT _ x (h x)).
-Check (projT1 α (λ x : A, existT P x (h x))).
   unfold α.
-Check (projT1 (hott_4_9_3 A P Hf) (λ x : A, existT P x (h x))).
   unfold hott_4_9_3.
-  unfold hott_4_9_2.
+  unfold hott_4_9_2; cbn.
+...
+Check (projT1 α (λ x : A, existT P x (h x))).
+Check (projT1 (hott_4_9_3 A P Hf) (λ x : A, existT P x (h x))).
 cbn.
 unfold id.
 cbn.
