@@ -2041,3 +2041,29 @@ Theorem is_epi_is_surj2 {A B : Ob SetCat} (f : Hom A B) :
 Proof.
 intros He y.
 Abort.
+
+(* Proposition 2.6. Every iso is mono and epi (Awodey) *)
+
+Proposition awodey_2_6 {𝒞} {A B : Ob 𝒞} {f : Hom A B} :
+  is_isomorphism f → is_mono f * is_epi f.
+Proof.
+intros Hiso.
+destruct Hiso as (g & Hgf & Hfg).
+split.
+-intros C h i Hhi.
+ move C before B.
+ assert (h = g ◦ f ◦ i). {
+   replace h with (idc A ◦ h) by apply unit_r.
+   now rewrite <- Hgf, assoc, Hhi, assoc.
+ }
+ rewrite H, Hgf.
+ apply unit_r.
+-intros C h i Hhi.
+ move C before B.
+ assert (h = i ◦ f ◦ g). {
+   replace h with (h ◦ idc B) by apply unit_l.
+   now rewrite <- Hfg, <- assoc, Hhi.
+ }
+ rewrite H, assoc, Hfg.
+ apply unit_l.
+Qed.
