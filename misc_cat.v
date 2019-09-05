@@ -2051,4 +2051,6 @@ Proof.
 split.
 -apply is_mono_is_strongly_inj.
 -intros Hi.
+ intros C g h Hgh.
+ unfold is_strongly_inj in Hi.
 ...
