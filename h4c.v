@@ -785,6 +785,21 @@ unfold "◦◦", "∼", id; cbn.
 *)
 
 Definition hott_4_9_2 A B X (e : A ≃ B) : (X → A) ≃ (X → B).
+apply idtoeqv.
+destruct (ua e).
+Show Proof.
+mon cul
+...
+
+destruct (ua e).
+exists id.
+split.
+now exists id.
+now exists id.
+Defined.
+
+(*
+...
 unfold "≃" in *.
 destruct e as (f & Hf).
 transparent assert (g : (X → A) → X → B). {
@@ -799,8 +814,14 @@ transparent assert (h : (X → B) → X → A). {
   apply isequiv_qinv in Hf.
   apply (projT1 Hf), h, x.
 }
+unfold isequiv_qinv in h; cbn in h.
+destruct Hf as ((f1 & Hf1) & f2 & Hf2).
+cbn in h.
 exists h.
+subst g h.
 unfold "◦◦", "∼", id in *; cbn.
+Check @ua.
+...
 subst g h; cbn.
 split.
 -intros g.
@@ -817,8 +838,9 @@ Check
     end).
 Check (@eq_refl _ (X → A)).
 ...
+*)
 
-Definition hott_4_9_2 A B X (e : A ≃ B) : (X → A) ≃ (X → B) :=
+Definition old_hott_4_9_2 A B X (e : A ≃ B) : (X → A) ≃ (X → B) :=
   idtoeqv
     match ua e in (_ = y) return ((X → A) = (X → y)) with
     | eq_refl => eq_refl
@@ -1183,6 +1205,11 @@ Check (projT1 α (λ x : A, existT P x (h x))).
 Check (projT1 (hott_4_9_3 A P Hf) (λ x : A, existT P x (h x))).
   unfold hott_4_9_3.
   unfold hott_4_9_2.
+cbn.
+unfold id.
+cbn.
+remember (ua (pre_hott_4_9_3 A P Hf)) as x.
+...
 Check (projT1
     (idtoeqv
        match
