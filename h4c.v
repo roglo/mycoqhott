@@ -1125,6 +1125,10 @@ transparent assert (φ : (Π (x : A), P x) → fib (projT1 α) id). {
 ...
 }
 *)
+transparent assert (y : fib f id). {
+  unfold fib.
+  now exists (λ x, existT _ x (projT1 (Hf x))).
+}
 transparent assert (φ : (Π (x : A), P x) → fib f id). {
   intros h.
   now exists (λ x, existT _ x (h x)).
@@ -1137,18 +1141,14 @@ assert (Hsr : ψ ◦◦ φ = id) by easy.
 assert (H : retraction (fib f id) (Π (x : A), P x)). {
   unfold retraction.
   exists ψ, φ.
-  intros y.
-  replace y with (id y) by easy.
+  intros z.
+  replace z with (id z) by easy.
   now rewrite <- Hsr.
 }
 eapply hott_3_11_7; [ apply H | ].
 apply hott_4_2_6.
 apply hott_4_2_3.
 unfold qinv.
-assert (y : fib f id). {
-  unfold fib.
-  now exists (λ x, existT _ x (projT1 (Hf x))).
-}
 transparent assert (g : (A → A) → A → {x : A & P x}). {
   intros g x.
   apply (existT _ (g x) (projT1 (Hf (g x)))).
@@ -1158,7 +1158,7 @@ unfold "◦◦", "∼", id; cbn.
 split; [ easy | ].
 intros h.
 subst f g.
-cbn.
+cbn; cbn in y.
 ...
 apply extensionality; intros x.
 destruct (h x).
