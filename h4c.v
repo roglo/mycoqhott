@@ -1108,7 +1108,7 @@ transparent assert (f : (A → {x : A & P x}) → (A → A)). {
   intros f x.
   apply (projT1 (f x)).
 }
-(**)
+(*
 set (α := hott_4_9_3 A P Hf).
 transparent assert (φ : (Π (x : A), P x) → fib (projT1 α) id). {
   intros h.
@@ -1117,40 +1117,9 @@ transparent assert (φ : (Π (x : A), P x) → fib (projT1 α) id). {
   unfold hott_4_9_3.
   unfold hott_4_9_2; cbn.
 Check (pre_hott_4_9_3 A P Hf).
-Theorem glop A B (P : A → Type) (Hf : ∀ x, isContr (P x)) (h : ∀ x, P x) (x : B ≃ A)
-  (b : B) :
-  projT1
-    (match
-       ua x as p in (_ = y)
-       return
-         (∀ e1 : B ≃ y,
-            p = ua e1 → e1 = idtoeqv p → (A → B) ≃ (A → y))
-     with
-     | eq_refl =>
-         λ (e0 : B ≃ B) (_ : eq_refl = ua e0)
-           (_ : e0 = idtoeqv eq_refl), eqv_refl (A → B)
-     end x eq_refl (idtoeqv_ua x)⁻¹)
-    (λ x : A, b) = id.
-Proof.
-destruct (ua x).
-...
-Theorem glop A P (Hf : ∀ x, isContr (P x)) (h : ∀ x, P x) x :
-  projT1
-    (match
-       ua x as p in (_ = y)
-       return
-         (∀ e1 : {x : A & P x} ≃ y,
-            p = ua e1 → e1 = idtoeqv p → (A → {x : A & P x}) ≃ (A → y))
-     with
-     | eq_refl =>
-         λ (e0 : {x : A & P x} ≃ {x : A & P x}) (_ : eq_refl = ua e0)
-           (_ : e0 = idtoeqv eq_refl), eqv_refl (A → {x : A & P x})
-     end x eq_refl (idtoeqv_ua x)⁻¹)
-    (λ x : A, existT P x (h x)) = id.
-Proof.
 ...
 }
-(**)
+*)
 transparent assert (y : fib f id). {
   unfold fib.
   now exists (λ x, existT _ x (projT1 (Hf x))).
