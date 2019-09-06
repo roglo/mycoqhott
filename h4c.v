@@ -1148,8 +1148,8 @@ transparent assert (g : (A → A) → A → {x : A & P x}). {
   apply (existT _ (g x) (projT1 (Hf (g x)))).
 }
 exists g; cbn.
-unfold "◦◦", "∼", id; cbn.
 split; [ easy | ].
+unfold "◦◦", "∼", id; cbn.
 intros h.
 subst f g.
 cbn; cbn in y.
