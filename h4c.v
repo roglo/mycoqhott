@@ -1115,6 +1115,7 @@ transparent assert (g : (A → A) → (A → {x : A & P x})). {
 }
 *)
 set (α := hott_4_9_3 A P Hf).
+(*
 transparent assert (φ : (Π (x : A), P x) → fib (projT1 α) id). {
   intros h.
   exists (λ x, existT _ x (h x)).
@@ -1122,29 +1123,8 @@ transparent assert (φ : (Π (x : A), P x) → fib (projT1 α) id). {
   unfold hott_4_9_3.
   unfold hott_4_9_2; cbn.
 ...
-Check (projT1 α (λ x : A, existT P x (h x))).
-Check (projT1 (hott_4_9_3 A P Hf) (λ x : A, existT P x (h x))).
-cbn.
-unfold id.
-cbn.
-Check (ua (pre_hott_4_9_3 A P Hf)).
-...
-Check (projT1
-    (idtoeqv
-       match
-         ua (pre_hott_4_9_3 A P Hf) in (_ = y)
-         return ((A → {x0 : A & P x0}) = (A → y))
-       with
-       | eq_refl => eq_refl
-       end) (λ x : A, existT P x (h x))).
-Check (projT1 (idtoeqv (@eq_refl Type (A → {x : A & P x})))  (λ x : A, existT P x (h x))).
-Check @idtoeqv.
-...
-Check (@eq_refl Type (A → {x : A & P x})).
-Check (projT1 (idtoeqv (@eq_refl Type (A → {x : A & P x})))).
-Check (projT1 (idtoeqv (@eq_refl Type (A → {x : A & P x})))  (λ x : A, existT P x (h x))).
-  Check (ua (pre_hott_4_9_3 A P Hf)).
-...
+}
+*)
 transparent assert (φ : (Π (x : A), P x) → fib f id). {
   intros h.
   now exists (λ x, existT _ x (h x)).
@@ -1176,5 +1156,21 @@ split; [ easy | ].
 intros h.
 subst f g.
 cbn.
-(* oh et puis merde *)
-Abort.
+...
+apply extensionality; intros x.
+destruct (h x).
+cbn.
+apply eq_existT_uncurried.
+exists eq_refl.
+cbn.
+specialize (Hf x0) as H2.
+unfold isContr in H2.
+destruct H2 as (q & H2).
+specialize (H2 p) as H3.
+specialize (H2 (projT1 (Hf x0))) as H4.
+now destruct H3, H4.
+Defined.
+
+Print Assumptions weak_funext_th.
+
+...
