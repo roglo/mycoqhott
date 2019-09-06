@@ -1145,13 +1145,16 @@ eapply hott_3_11_7; [ apply H | ].
 apply hott_4_2_6.
 apply hott_4_2_3.
 unfold qinv.
+assert (y : fib f id). {
+  unfold fib.
+  now exists (λ x, existT _ x (projT1 (Hf x))).
+}
 transparent assert (g : (A → A) → A → {x : A & P x}). {
   intros g x.
   apply (existT _ (g x) (projT1 (Hf (g x)))).
 }
 exists g; cbn.
 unfold "◦◦", "∼", id; cbn.
-move g before f.
 split; [ easy | ].
 intros h.
 subst f g.
