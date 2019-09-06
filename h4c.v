@@ -1109,13 +1109,7 @@ transparent assert (f : (A → {x : A & P x}) → (A → A)). {
   apply (projT1 (f x)).
 }
 (*
-transparent assert (g : (A → A) → (A → {x : A & P x})). {
-  intros g x.
-  apply (existT P (g x) (projT1 (Hf (g x)))).
-}
-*)
 set (α := hott_4_9_3 A P Hf).
-(*
 transparent assert (φ : (Π (x : A), P x) → fib (projT1 α) id). {
   intros h.
   exists (λ x, existT _ x (h x)).
