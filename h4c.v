@@ -1116,6 +1116,7 @@ transparent assert (φ : (Π (x : A), P x) → fib (projT1 α) id). {
   unfold α.
   unfold hott_4_9_3.
   unfold hott_4_9_2; cbn.
+Check (pre_hott_4_9_3 A P Hf).
 ...
 }
 *)
