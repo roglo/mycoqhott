@@ -99,7 +99,14 @@ destruct pfn.
  split; [ | easy ].
  destruct Hdn as (z & Hz).
  subst fn.
+...
+ destruct d; [ easy | ].
+ destruct d; [ easy | ].
  destruct z; [ flia Hz | ].
- apply (Nat.mul_lt_mono_pos_l (S z)); [ flia | ].
- rewrite <- Hz.
+ destruct z. {
+   rewrite Nat.mul_1_l, <- (Nat.add_1_r (S d)) in Hz.
+   assert (H : fact (S n) = S d) by flia Hz.
+   clear Hz; rename H into Hz.
+   apply -> Nat.succ_lt_mono.
+   rewrite <- Hz.
 ...
