@@ -1,3 +1,4 @@
+Set Nested Proofs Allowed.
 Require Import Utf8 Arith Psatz.
 
 (* "fast" lia, to improve compilation speed *)
@@ -19,10 +20,29 @@ Definition is_prime n :=
   | S n' => prime_test n n'
   end.
 
-Theorem not_prime : ∀ n,
-  is_prime n = false → ∃ d, 1 < d ∧ d < n ∧ Nat.divide d n.
+Theorem fold_mod_succ : ∀ n d, d - snd (Nat.divmod n d 0 d) = n mod (S d).
+Proof. easy. Qed.
+
+Theorem not_prime_div : ∀ n d, 2 ≤ n → d < n →
+  prime_test n d = false
+  → ∃ m, 1 < m ∧ Nat.divide m n.
 Proof.
-intros * Hn.
+intros * Hn Hd Hp.
+revert n Hn Hd Hp.
+induction d; intros; [ easy | ].
+cbn in Hp.
+rewrite fold_mod_succ in Hp.
+...
+
+Theorem not_prime : ∀ n, 2 ≤ n →
+  is_prime n = false → ∃ d, 1 < d ∧ Nat.divide d n.
+Proof.
+intros * Hn Hp.
+destruct n; [ flia Hn | ].
+destruct n; [ flia Hn | ].
+clear Hn.
+unfold is_prime in Hp.
+apply (not_prime_div _ (S n)); [ flia | flia | easy ].
 ...
 
 Theorem infinite_primes : ∀ n, ∃ m, m > n ∧ is_prime m = true.
