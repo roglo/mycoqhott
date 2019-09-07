@@ -4,6 +4,8 @@ Require Import Utf8 Arith Psatz.
 (* "fast" lia, to improve compilation speed *)
 Tactic Notation "flia" hyp_list(Hs) := clear - Hs; lia.
 
+Notation "x ≤ y ≤ z" := (x <= y ∧ y <= z)%nat (at level 70, y at next level).
+
 Fixpoint prime_test n d :=
   match d with
   | 0 | 1 => true
@@ -64,6 +66,67 @@ unfold is_prime in Hp.
 apply (not_prime_div _ (S n)); [ flia | flia | easy ].
 Qed.
 
+Theorem div_gcd_fact : ∀ n d,
+  1 ≤ d ≤ n
+  → d / Nat.gcd (fact n) d = 1.
+Proof.
+intros * (Hd, Hdn).
+revert n Hdn.
+induction d; intros; [ flia Hd | clear Hd ].
+destruct d; [ now rewrite Nat.gcd_1_r | ].
+assert (H : 1 ≤ S d) by flia.
+specialize (IHd H); clear H.
+destruct n; [ flia Hdn | ].
+apply Nat.succ_le_mono in Hdn.
+specialize (IHd _ Hdn).
+Search (_ / _ = 1).
+cbn.
+,,,
+
+Theorem fact_divides_small : ∀ n d,
+  2 ≤ d ≤ n
+  → fact n = fact n / d * d.
+Proof.
+intros * (Hd, Hdn).
+replace d with (Nat.gcd (fact n) d) at 1. 2: {
+  admit.
+}
+rewrite Nat.gcd_div_swap.
+replace (d / Nat.gcd (fact n) d) with 1. 2: {
+  symmetry.
+...
+  revert d Hd Hdn.
+  induction n; intros; [ flia Hd Hdn | ].
+Search (Nat.gcd (_ + _)).
+
+...
+  revert d Hd Hdn.
+  induction n; intros; [ flia Hd Hdn | ].
+  replace (fact (S n)) with (S n * fact n) by easy.
+  destruct d; [ flia Hd | ].
+  apply Nat.succ_le_mono in Hdn.
+...
+
+
+Search (_ / _ * _).
+
+revert d Hd Hdn.
+induction n; intros; [ flia Hd Hdn | ].
+remember Nat.div as f; cbn; subst f.
+destruct d; [ flia Hd | ].
+apply Nat.succ_le_mono in Hdn.
+destruct (lt_dec d 2) as [Hd2| Hd2]. {
+  destruct d; [ flia Hd | ].
+  destruct d; [ | flia Hd2 ].
+  destruct n; [ flia Hdn | clear Hdn ].
+  destruct n; [ easy | ].
+  clear Hd Hd2.
+  specialize (IHn 2 (le_refl _)).
+  assert (H : 2 ≤ S (S n)) by flia.
+  specialize (IHn H); clear H.
+
+...
+
 Theorem infinite_primes : ∀ n, ∃ m, m > n ∧ is_prime m = true.
 Proof.
 intros.
@@ -99,6 +162,30 @@ destruct pfn.
  split; [ | easy ].
  destruct Hdn as (z & Hz).
  subst fn.
+ destruct (lt_dec (S n) d) as [Hnd| Hnd]; [ easy | ].
+ apply Nat.nlt_ge in Hnd; exfalso.
+ assert (Ht : Nat.divide d (fact (S n))). {
+   exists (fact (S n) / d).
+   destruct d; [ easy | ].
+   destruct d; [ easy | ].
+   clear - Hnd.
+   assert (Hd : 2 ≤ S (S d)) by flia.
+   assert (Hn : 1 ≤ S n) by flia.
+   remember (S (S d)) as e.
+   remember (S n) as m.
+   clear n d Heqe Heqm.
+   rename m into n; rename e into d.
+...
+   revert n Hnd.
+   induction d; intros. {
+     admit.
+   }
+   destruct n; [ flia Hnd | ].
+   apply Nat.succ_le_mono in Hnd.
+   specialize (IHd _ Hnd) as H1.
+   remember (S n) as m.
+   remember Nat.div as f; cbn; subst f m.
+
 ...
  destruct d; [ easy | ].
  destruct d; [ easy | ].
