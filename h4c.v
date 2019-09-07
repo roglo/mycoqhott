@@ -1154,6 +1154,7 @@ unfold "◦◦", "∼", id; cbn.
 intros h.
 subst f g.
 cbn; cbn in y.
+Abort. (* j'y arrive pas
 ...
 apply extensionality; intros x.
 destruct (h x).
@@ -1170,5 +1171,5 @@ now destruct H3, H4.
 Defined.
 
 Print Assumptions weak_funext_th.
-
 ...
+*)
