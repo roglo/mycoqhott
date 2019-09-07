@@ -2071,13 +2071,19 @@ Qed.
 (* In Sets the converse of the foregoing also holds: every mono-epi is iso *)
 
 Theorem is_mono_epi_is_iso {A B : Ob SetCat} {f : Hom A B} :
+  (∀ P, P + (P → False)) →
   is_mono f → is_epi f → is_isomorphism f.
 Proof.
-intros Hm He.
+intros excl_mid Hm He.
 unfold is_isomorphism.
 unfold is_mono in Hm.
 unfold is_epi in He.
 cbn in *.
 assert (g : st_type B → st_type A). {
   intros b.
-...
+  specialize (He (existT _ bool areSet.isSet_bool)) as H1.
+  cbn in H1.
+  specialize (H1 (λ x, if excl_mid (x = b) then true else false)).
+  specialize (H1 (λ _, false)).
+  cbn in H1.
+Abort. (* à voir... *)
