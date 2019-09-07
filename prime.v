@@ -4,6 +4,7 @@ Require Import Utf8 Arith Psatz.
 (* "fast" lia, to improve compilation speed *)
 Tactic Notation "flia" hyp_list(Hs) := clear - Hs; lia.
 
+Notation "x ≤ y < z" := (x <= y ∧ y < z)%nat (at level 70, y at next level).
 Notation "x ≤ y ≤ z" := (x <= y ∧ y <= z)%nat (at level 70, y at next level).
 
 Fixpoint prime_test n d :=
@@ -66,10 +67,28 @@ unfold is_prime in Hp.
 apply (not_prime_div _ (S n)); [ flia | flia | easy ].
 Qed.
 
+Theorem Nat_eq_div_1 : ∀ a b, b ≤ a < 2 * b → a / b = 1.
+Proof.
+intros * (Hba, Ha).
+replace a with (a - b + 1 * b) by flia Hba.
+rewrite Nat.div_add by (intros H; subst b; flia Ha).
+replace 1 with (0 + 1) at 2 by easy.
+apply Nat.add_cancel_r.
+apply Nat.div_small.
+flia Ha.
+Qed.
+
 Theorem div_gcd_fact : ∀ n d,
   1 ≤ d ≤ n
   → d / Nat.gcd (fact n) d = 1.
 Proof.
+intros * (Hd, Hdn).
+apply Nat_eq_div_1.
+split.
+Search (Nat.gcd _ _ * _).
+...
+-apply Nat.gcd_le_r.
+...
 intros * (Hd, Hdn).
 revert n Hdn.
 induction d; intros; [ flia Hd | clear Hd ].
