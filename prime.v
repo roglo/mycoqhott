@@ -26,6 +26,23 @@ Definition is_prime n :=
 Theorem fold_mod_succ : ∀ n d, d - snd (Nat.divmod n d 0 d) = n mod (S d).
 Proof. easy. Qed.
 
+Theorem Nat_div_less_small : ∀ n a b,
+  n * b ≤ a < (n + 1) * b
+  → a / b = n.
+Proof.
+intros * Hab.
+assert (Hb : b ≠ 0). {
+  now intros Hb; rewrite Hb, (Nat.mul_comm (n + 1)) in Hab.
+}
+replace a with (a - n * b + n * b) at 1 by now apply Nat.sub_add.
+rewrite Nat.div_add; [ | easy ].
+replace n with (0 + n) at 3 by easy; f_equal.
+apply Nat.div_small.
+apply Nat.add_lt_mono_r with (p := n * b).
+rewrite Nat.add_comm in Hab; cbn in Hab.
+now rewrite Nat.sub_add.
+Qed.
+
 Theorem not_prime_div : ∀ n d, 2 ≤ n → d < n →
   prime_test n d = false
   → ∃ m, is_prime m = true ∧ Nat.divide m n.
@@ -67,15 +84,26 @@ unfold is_prime in Hp.
 apply (not_prime_div _ (S n)); [ flia | flia | easy ].
 Qed.
 
-Theorem Nat_eq_div_1 : ∀ a b, b ≤ a < 2 * b → a / b = 1.
+Theorem Nat_gcd_le_l : ∀ a b, a ≠ 0 → Nat.gcd a b ≤ a.
 Proof.
-intros * (Hba, Ha).
-replace a with (a - b + 1 * b) by flia Hba.
-rewrite Nat.div_add by (intros H; subst b; flia Ha).
-replace 1 with (0 + 1) at 2 by easy.
-apply Nat.add_cancel_r.
-apply Nat.div_small.
-flia Ha.
+intros * Ha.
+specialize (Nat.gcd_divide_l a b) as (c, Hc).
+rewrite <- Nat.mul_1_l at 1.
+rewrite Hc at 2.
+apply Nat.mul_le_mono_pos_r.
+-apply Nat.neq_0_lt_0.
+ intros H.
+ now apply Nat.gcd_eq_0_l in H.
+-destruct c; [ easy | ].
+ apply -> Nat.succ_le_mono.
+ apply Nat.le_0_l.
+Qed.
+
+Theorem Nat_gcd_le_r : ∀ a b, b ≠ 0 → Nat.gcd a b ≤ b.
+Proof.
+intros * Hb.
+rewrite Nat.gcd_comm.
+now apply Nat_gcd_le_l.
 Qed.
 
 Theorem div_gcd_fact : ∀ n d,
@@ -83,23 +111,9 @@ Theorem div_gcd_fact : ∀ n d,
   → d / Nat.gcd (fact n) d = 1.
 Proof.
 intros * (Hd, Hdn).
-apply Nat_eq_div_1.
-split.
-Search (Nat.gcd _ _ * _).
-...
--apply Nat.gcd_le_r.
-...
-intros * (Hd, Hdn).
-revert n Hdn.
-induction d; intros; [ flia Hd | clear Hd ].
-destruct d; [ now rewrite Nat.gcd_1_r | ].
-assert (H : 1 ≤ S d) by flia.
-specialize (IHd H); clear H.
-destruct n; [ flia Hdn | ].
-apply Nat.succ_le_mono in Hdn.
-specialize (IHd _ Hdn).
-Search (_ / _ = 1).
-cbn.
+apply Nat_div_less_small.
+rewrite Nat.mul_1_l.
+split; [ apply Nat_gcd_le_r; flia Hd | ].
 ,,,
 
 Theorem fact_divides_small : ∀ n d,
