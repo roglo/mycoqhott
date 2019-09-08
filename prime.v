@@ -112,10 +112,44 @@ Proof. easy. Qed.
 Theorem Nat_fact_1 : fact 1 = 1.
 Proof. easy. Qed.
 
-Theorem fact_mul_div : ∀ n d,
+Theorem Nat_eq_fact_mod_0 : ∀ n d, d ≤ n → fact n mod fact d = 0.
+Proof.
+intros * Hdn.
+revert n Hdn.
+induction d; intros; [ easy | ].
+destruct n; [ flia Hdn | ].
+apply Nat.succ_le_mono in Hdn.
+apply IHd in Hdn.
+apply Nat.mod_divide in Hdn; [ | apply fact_neq_0 ].
+destruct Hdn as (c, Hc).
+rewrite Nat_fact_succ, Hc.
+apply Nat.mod_divide; [ apply fact_neq_0 | ].
+unfold Nat.divide.
+...
+exists (S n * (c / S d)).
+rewrite <- Nat.mul_assoc; f_equal.
+rewrite Nat_fact_succ.
+rewrite Nat.mul_assoc; f_equal.
+...
+assert (H : Nat.divide (S d) c). {
+  exists (fact n / fact (d + 1)).
+  rewrite Nat.add_1_r, Nat_fact_succ.
+  rewrite Hc.
+
+}
+destruct H as (z, Hz).
+rewrite Hz at 2.
+now rewrite Nat.div_mul.
+...
+
+Theorem Nat_fact_mul_div : ∀ n d,
   1 ≤ d ≤ n
   → fact n = fact d * (fact n / fact d).
 Proof.
+intros * (Hd, Hdn).
+specialize (Nat.div_mod (fact n) (fact d) (fact_neq_0 _)) as H1.
+...
+
 intros * (Hd, Hdn).
 destruct d; intros; [ flia Hd | clear Hd ].
 revert n Hdn.
