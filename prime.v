@@ -115,6 +115,10 @@ Proof. easy. Qed.
 Theorem Nat_eq_fact_mod_0 : ∀ n d, d ≤ n → fact n mod fact d = 0.
 Proof.
 intros * Hdn.
+apply Nat.mod_divide; [ apply fact_neq_0 | ].
+unfold Nat.divide.
+...
+intros * Hdn.
 revert n Hdn.
 induction d; intros; [ easy | ].
 destruct n; [ flia Hdn | ].
@@ -130,6 +134,9 @@ rewrite <- Nat.mul_assoc; f_equal.
 rewrite Nat_fact_succ.
 rewrite Nat.mul_assoc; f_equal.
 assert (Nat.gcd c (S d) = S d). {
+  rewrite Nat.gcd_comm.
+  apply Nat.divide_gcd_iff'.
+  unfold Nat.divide.
 ...
 }
 rewrite <- H at 1.
