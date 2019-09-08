@@ -106,6 +106,21 @@ rewrite Nat.gcd_comm.
 now apply Nat_gcd_le_l.
 Qed.
 
+Theorem eq_gcd_fact : ∀ n d,
+  1 ≤ d ≤ n
+  → Nat.gcd (fact n) d = d.
+Proof.
+intros * (Hd, Hdn).
+rewrite Nat.gcd_comm.
+apply Nat.divide_gcd_iff'.
+exists (fact (d - 1) * (fact n / fact (n - d))).
+rewrite Nat.mul_shuffle0.
+replace (fact (d - 1) * d) with (fact d). 2: {
+  destruct d; [ easy | cbn ].
+  rewrite Nat.sub_0_r, Nat.mul_succ_r; flia.
+}
+...
+
 Theorem div_gcd_fact : ∀ n d,
   1 ≤ d ≤ n
   → d / Nat.gcd (fact n) d = 1.
@@ -114,6 +129,8 @@ intros * (Hd, Hdn).
 apply Nat_div_less_small.
 rewrite Nat.mul_1_l.
 split; [ apply Nat_gcd_le_r; flia Hd | ].
+apply (lt_le_trans _ (2 * d)); [ flia Hd | ].
+apply Nat.mul_le_mono_l.
 ,,,
 
 Theorem fact_divides_small : ∀ n d,
