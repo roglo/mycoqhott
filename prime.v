@@ -141,3 +141,5 @@ rewrite <- Nat.mul_sub_distr_r in Hz.
 apply Nat.eq_mul_1 in Hz.
 now destruct Hz as (Hz, H); subst d.
 Qed.
+
+(* ζ(s) = Σ (n ∈ ℕ) 1/n^s = Π (p ∈ primes) 1/(1-1/p^s) *)
