@@ -143,3 +143,11 @@ now destruct Hz as (Hz, H); subst d.
 Qed.
 
 (* ζ(s) = Σ (n ∈ ℕ) 1/n^s = Π (p ∈ primes) 1/(1-1/p^s) *)
+
+Require Import Reals.
+
+Record series A := { ser : nat → A }.
+Record product A := { pro : nat → A }.
+
+Definition zeta s := {| ser n := (1 / INR n ^ s)%R |}.
+Print zeta.
