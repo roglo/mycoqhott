@@ -57,14 +57,16 @@ destruct Hp as (p & Hp & Hpn).
 now exists p.
 Qed.
 
-Theorem not_prime : ∀ n, 2 ≤ n →
-  is_prime n = false → ∃ d, is_prime d = true ∧ Nat.divide d n.
+Theorem prime_divisor : ∀ n, 2 ≤ n →
+  ∃ d, is_prime d = true ∧ Nat.divide d n.
 Proof.
-intros * Hn Hp.
+intros * Hn.
 destruct n; [ flia Hn | ].
 destruct n; [ flia Hn | ].
 clear Hn.
-unfold is_prime in Hp.
+remember (is_prime (S (S n))) as b eqn:Hb.
+symmetry in Hb.
+destruct b; [ now exists (S (S n)) | ].
 apply (not_prime_div _ (S n)); [ flia | flia | easy ].
 Qed.
 
@@ -110,50 +112,32 @@ Qed.
 Theorem infinite_primes : ∀ n, ∃ m, m > n ∧ is_prime m = true.
 Proof.
 intros.
-set (fn := fact n + 1).
-remember (is_prime fn) as pfn eqn:Hpfn.
-symmetry in Hpfn.
-destruct pfn.
--exists fn.
- split; [ | easy ].
- subst fn; clear Hpfn.
- induction n; [ flia | cbn ].
- rewrite <- (Nat.add_1_r n).
- apply Nat.add_lt_mono_r.
- destruct n; [ cbn; flia | ].
- apply (lt_le_trans _ (fact (S n) + 1)). {
-   cbn.
-   rewrite <- Nat.add_1_r.
-   apply Nat.add_lt_mono_r.
-   cbn in IHn; flia IHn.
- }
- apply Nat.add_le_mono_l; cbn.
- specialize (fact_neq_0 n) as H.
- remember (fact n) as m eqn:Hm.
- destruct m; [ easy | flia ].
--destruct n; [ now subst fn | ].
- apply not_prime in Hpfn. 2: {
-   clear Hpfn; subst fn; cbn.
-   specialize (fact_neq_0 n) as H1.
-   flia H1.
- }
- destruct Hpfn as (d & Hd & Hdn).
- exists d.
- split; [ | easy ].
- destruct Hdn as (z & Hz).
- subst fn.
- destruct (lt_dec (S n) d) as [Hnd| Hnd]; [ easy | ].
- apply Nat.nlt_ge in Hnd; exfalso.
- assert (Ht : Nat.divide d (fact (S n))). {
-   exists (fact (S n) / d).
-   apply Nat_fact_divides_small.
-   split; [ | easy ].
-   destruct d; [ easy | flia ].
- }
- destruct Ht as (t, Ht).
- rewrite Ht in Hz.
- apply Nat.add_sub_eq_l in Hz.
- rewrite <- Nat.mul_sub_distr_r in Hz.
- apply Nat.eq_mul_1 in Hz.
- now destruct Hz as (Hz, H); subst d.
+specialize (prime_divisor (fact n + 1)) as H1.
+assert (H : 2 ≤ fact n + 1). {
+  clear.
+  induction n; [ easy | ].
+  rewrite Nat_fact_succ.
+  apply (Nat.le_trans _ (fact n + 1)); [ easy | ].
+  apply Nat.add_le_mono_r.
+  cbn; flia.
+}
+specialize (H1 H); clear H.
+destruct H1 as (d & Hd & Hdn).
+exists d.
+split; [ | easy ].
+destruct (lt_dec n d) as [Hnd| Hnd]; [ easy | ].
+apply Nat.nlt_ge in Hnd; exfalso.
+assert (Ht : Nat.divide d (fact n)). {
+  exists (fact n / d).
+  apply Nat_fact_divides_small.
+  split; [ | easy ].
+  destruct d; [ easy | flia ].
+}
+destruct Hdn as (z, Hz).
+destruct Ht as (t, Ht).
+rewrite Ht in Hz.
+apply Nat.add_sub_eq_l in Hz.
+rewrite <- Nat.mul_sub_distr_r in Hz.
+apply Nat.eq_mul_1 in Hz.
+now destruct Hz as (Hz, H); subst d.
 Qed.
