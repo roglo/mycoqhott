@@ -1,10 +1,11 @@
+(* playing with prime numbers, as a break *)
+
 Set Nested Proofs Allowed.
 Require Import Utf8 Arith Psatz.
 
 (* "fast" lia, to improve compilation speed *)
 Tactic Notation "flia" hyp_list(Hs) := clear - Hs; lia.
 
-Notation "x ≤ y < z" := (x <= y ∧ y < z)%nat (at level 70, y at next level).
 Notation "x ≤ y ≤ z" := (x <= y ∧ y <= z)%nat (at level 70, y at next level).
 
 Fixpoint prime_test n d :=
