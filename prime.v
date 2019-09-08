@@ -106,6 +106,39 @@ rewrite Nat.gcd_comm.
 now apply Nat_gcd_le_l.
 Qed.
 
+Theorem Nat_fact_succ : ∀ n, fact (S n) = S n * fact n.
+Proof. easy. Qed.
+
+Theorem Nat_fact_1 : fact 1 = 1.
+Proof. easy. Qed.
+
+Theorem fact_mul_div : ∀ n d,
+  1 ≤ d ≤ n
+  → fact n = fact d * (fact n / fact d).
+Proof.
+intros * (Hd, Hdn).
+destruct d; intros; [ flia Hd | clear Hd ].
+revert n Hdn.
+induction d; intros. {
+  now rewrite Nat_fact_1, Nat.mul_1_l, Nat.div_1_r.
+}
+destruct n; [ flia Hdn | ].
+apply Nat.succ_le_mono in Hdn.
+rewrite Nat_fact_succ.
+rewrite IHd at 1; [ | easy ].
+rewrite (Nat.mul_comm (fact (S (S d)))).
+...
+set (x := S n * (fact (S d) * (fact n / fact (S d)))).
+assert (H : Nat.divide (fact (S (S d))) x). {
+  subst x.
+  unfold Nat.divide.
+...
+}
+destruct H as (z, Hz).
+rewrite Hz.
+rewrite Nat.div_mul; [ easy | apply fact_neq_0 ].
+...
+
 Theorem eq_gcd_fact : ∀ n d,
   1 ≤ d ≤ n
   → Nat.gcd (fact n) d = d.
@@ -113,7 +146,7 @@ Proof.
 intros * (Hd, Hdn).
 rewrite Nat.gcd_comm.
 apply Nat.divide_gcd_iff'.
-exists (fact (d - 1) * (fact n / fact (n - d))).
+exists (fact (d - 1) * (fact n / fact d)).
 rewrite Nat.mul_shuffle0.
 replace (fact (d - 1) * d) with (fact d). 2: {
   destruct d; [ easy | cbn ].
