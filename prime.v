@@ -226,26 +226,14 @@ destruct pfn.
  apply Nat.nlt_ge in Hnd; exfalso.
  assert (Ht : Nat.divide d (fact (S n))). {
    exists (fact (S n) / d).
-   destruct d; [ easy | ].
-   destruct d; [ easy | ].
-   clear - Hnd.
-   assert (Hd : 2 ≤ S (S d)) by flia.
-   assert (Hn : 1 ≤ S n) by flia.
-   remember (S (S d)) as e.
-   remember (S n) as m.
-   clear n d Heqe Heqm.
-   rename m into n; rename e into d.
    apply Nat_fact_divides_small.
-   split; [ flia Hd | easy ].
+   split; [ | easy ].
+   destruct d; [ easy | flia ].
  }
- destruct d; [ easy | ].
- destruct d; [ easy | ].
- destruct z; [ flia Hz | ].
- destruct z. {
-   rewrite Nat.mul_1_l, <- (Nat.add_1_r (S d)) in Hz.
-   assert (H : fact (S n) = S d) by flia Hz.
-   clear Hz; rename H into Hz.
-...
-   apply -> Nat.succ_lt_mono.
-   rewrite <- Hz.
-...
+ destruct Ht as (t, Ht).
+ rewrite Ht in Hz.
+ apply Nat.add_sub_eq_l in Hz.
+ rewrite <- Nat.mul_sub_distr_r in Hz.
+ apply Nat.eq_mul_1 in Hz.
+ now destruct Hz as (Hz, H); subst d.
+Qed.
