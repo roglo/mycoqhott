@@ -124,11 +124,11 @@ induction d; intros. {
 }
 destruct n; [ flia Hdn | ].
 apply Nat.succ_le_mono in Hdn.
-rewrite Nat_fact_succ.
+rewrite Nat_fact_succ at 1.
 rewrite IHd at 1; [ | easy ].
 rewrite (Nat.mul_comm (fact (S (S d)))).
 rewrite Nat.mul_assoc, Nat.mul_shuffle0.
-rewrite (Nat_fact_succ (S d)).
+rewrite (Nat_fact_succ (S d)) at 2.
 rewrite Nat.mul_assoc; f_equal.
 ...
 rewrite (Nat.mul_comm (S (S d))).
