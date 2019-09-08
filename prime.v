@@ -85,7 +85,7 @@ rewrite Nat_fact_succ.
 now exists (S n).
 Qed.
 
-Theorem Nat_divide_fact_le : ∀ n d, d ≤ n → Nat.divide (fact d) (fact n).
+Theorem Nat_le_divides_fact : ∀ n d, d ≤ n → Nat.divide (fact d) (fact n).
 Proof.
 intros * Hdn.
 replace d with (n - (n - d)) by flia Hdn.
@@ -97,7 +97,7 @@ Theorem Nat_fact_divides_small : ∀ n d,
   → fact n = fact n / d * d.
 Proof.
 intros * (Hd, Hdn).
-specialize (Nat_divide_fact_le n d Hdn) as H1.
+specialize (Nat_le_divides_fact n d Hdn) as H1.
 destruct H1 as (c, Hc).
 rewrite Hc at 2.
 destruct d; [ easy | ].
