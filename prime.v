@@ -127,16 +127,12 @@ apply Nat.succ_le_mono in Hdn.
 rewrite Nat_fact_succ.
 rewrite IHd at 1; [ | easy ].
 rewrite (Nat.mul_comm (fact (S (S d)))).
+rewrite Nat.mul_assoc, Nat.mul_shuffle0.
+rewrite (Nat_fact_succ (S d)).
+rewrite Nat.mul_assoc; f_equal.
 ...
-set (x := S n * (fact (S d) * (fact n / fact (S d)))).
-assert (H : Nat.divide (fact (S (S d))) x). {
-  subst x.
-  unfold Nat.divide.
-...
-}
-destruct H as (z, Hz).
-rewrite Hz.
-rewrite Nat.div_mul; [ easy | apply fact_neq_0 ].
+rewrite (Nat.mul_comm (S (S d))).
+rewrite <- Nat.div_div; [ | apply fact_neq_0 | easy ].
 ...
 
 Theorem eq_gcd_fact : ∀ n d,
