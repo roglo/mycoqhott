@@ -26,23 +26,6 @@ Definition is_prime n :=
 Theorem fold_mod_succ : ∀ n d, d - snd (Nat.divmod n d 0 d) = n mod (S d).
 Proof. easy. Qed.
 
-Theorem Nat_div_less_small : ∀ n a b,
-  n * b ≤ a < (n + 1) * b
-  → a / b = n.
-Proof.
-intros * Hab.
-assert (Hb : b ≠ 0). {
-  now intros Hb; rewrite Hb, (Nat.mul_comm (n + 1)) in Hab.
-}
-replace a with (a - n * b + n * b) at 1 by now apply Nat.sub_add.
-rewrite Nat.div_add; [ | easy ].
-replace n with (0 + n) at 3 by easy; f_equal.
-apply Nat.div_small.
-apply Nat.add_lt_mono_r with (p := n * b).
-rewrite Nat.add_comm in Hab; cbn in Hab.
-now rewrite Nat.sub_add.
-Qed.
-
 Theorem not_prime_div : ∀ n d, 2 ≤ n → d < n →
   prime_test n d = false
   → ∃ m, is_prime m = true ∧ Nat.divide m n.
@@ -84,32 +67,7 @@ unfold is_prime in Hp.
 apply (not_prime_div _ (S n)); [ flia | flia | easy ].
 Qed.
 
-Theorem Nat_gcd_le_l : ∀ a b, a ≠ 0 → Nat.gcd a b ≤ a.
-Proof.
-intros * Ha.
-specialize (Nat.gcd_divide_l a b) as (c, Hc).
-rewrite <- Nat.mul_1_l at 1.
-rewrite Hc at 2.
-apply Nat.mul_le_mono_pos_r.
--apply Nat.neq_0_lt_0.
- intros H.
- now apply Nat.gcd_eq_0_l in H.
--destruct c; [ easy | ].
- apply -> Nat.succ_le_mono.
- apply Nat.le_0_l.
-Qed.
-
-Theorem Nat_gcd_le_r : ∀ a b, b ≠ 0 → Nat.gcd a b ≤ b.
-Proof.
-intros * Hb.
-rewrite Nat.gcd_comm.
-now apply Nat_gcd_le_l.
-Qed.
-
 Theorem Nat_fact_succ : ∀ n, fact (S n) = S n * fact n.
-Proof. easy. Qed.
-
-Theorem Nat_fact_1 : fact 1 = 1.
 Proof. easy. Qed.
 
 Theorem Nat_divide_fact_fact : ∀ n d, Nat.divide (fact (n - d)) (fact n).
@@ -131,60 +89,21 @@ replace d with (n - (n - d)) by flia Hdn.
 apply Nat_divide_fact_fact.
 Qed.
 
-Theorem Nat_eq_fact_mod_0 : ∀ n d, d ≤ n → fact n mod fact d = 0.
-Proof.
-intros * Hdn.
-apply Nat.mod_divide; [ apply fact_neq_0 | ].
-now apply Nat_divide_fact_le.
-Qed.
-
-Theorem Nat_fact_mul_div : ∀ n d, d ≤ n → fact n = fact d * (fact n / fact d).
-Proof.
-intros * Hdn.
-specialize (Nat.div_mod (fact n) (fact d) (fact_neq_0 _)) as H1.
-rewrite Nat_eq_fact_mod_0 in H1; [ | easy ].
-now rewrite Nat.add_0_r in H1.
-Qed.
-
-Theorem Nat_gcd_fact : ∀ n d, 1 ≤ d ≤ n → Nat.gcd (fact n) d = d.
-Proof.
-intros * (Hd, Hdn).
-rewrite Nat.gcd_comm.
-apply Nat.divide_gcd_iff'.
-exists (fact (d - 1) * (fact n / fact d)).
-rewrite Nat.mul_shuffle0.
-replace (fact (d - 1) * d) with (fact d). 2: {
-  destruct d; [ easy | cbn ].
-  rewrite Nat.sub_0_r, Nat.mul_succ_r; flia.
-}
-now apply Nat_fact_mul_div.
-Qed.
-
-Theorem Nat_div_gcd_fact : ∀ n d, 1 ≤ d ≤ n → d / Nat.gcd (fact n) d = 1.
-Proof.
-intros * (Hd, Hdn).
-apply Nat_div_less_small.
-rewrite Nat.mul_1_l.
-split; [ apply Nat_gcd_le_r; flia Hd | ].
-apply (lt_le_trans _ (2 * d)); [ flia Hd | ].
-apply Nat.mul_le_mono_l.
-now rewrite Nat_gcd_fact.
-Qed.
-
 Theorem Nat_fact_divides_small : ∀ n d,
   1 ≤ d ≤ n
   → fact n = fact n / d * d.
 Proof.
 intros * (Hd, Hdn).
-replace d with (Nat.gcd (fact n) d) at 1. 2: {
-  now apply Nat_gcd_fact.
-}
-rewrite Nat.gcd_div_swap.
-replace (d / Nat.gcd (fact n) d) with 1. 2: {
-  symmetry.
-  now apply Nat_div_gcd_fact.
-}
-symmetry; apply Nat.mul_1_r.
+specialize (Nat_divide_fact_le n d Hdn) as H1.
+destruct H1 as (c, Hc).
+rewrite Hc at 2.
+destruct d; [ easy | ].
+rewrite Nat_fact_succ.
+rewrite (Nat.mul_comm (S d)).
+rewrite Nat.mul_assoc.
+rewrite Nat.div_mul; [ | easy ].
+rewrite Hc, Nat_fact_succ.
+now rewrite Nat.mul_assoc, Nat.mul_shuffle0.
 Qed.
 
 Theorem infinite_primes : ∀ n, ∃ m, m > n ∧ is_prime m = true.
