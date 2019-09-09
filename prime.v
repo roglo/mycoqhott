@@ -149,8 +149,24 @@ Require Import Reals.
 Record C := { Re : R; Im : R }.
 Declare Scope complex_scope.
 Delimit Scope complex_scope with C.
-Definition C_opp x := {| Re := - Re x; Im := - Im x |}.
+Definition C_opp c := {| Re := - Re c; Im := - Im c |}.
+Definition C_mul x y :=
+  {| Re := Re x * Re y - Im x * Im y;
+     Im := Re x * Im y + Im x * Re y |}.
+(* 1/(a+ib)=(a-ib)/(a²+b²) *)
+Definition C_inv x :=
+  {| Re := Re x / (Re x * Re x + Im x * Im x);
+     Im := - Im x / (Re x * Re x + Im x * Im x) |}.
+Definition C_div x y := C_mul x (C_inv y).
+(* e^(a+ib) = e^a (cos b + i sin b) *)
+Definition C_exp c :=
+  {| Re := exp (Re c) * cos (Im c);
+     Im := exp (Re c) * sin (Im c) |}.
+Definition C_of_R x := {| Re := x; Im := 0%R |}.
+Definition C_pow_nat_l n c := C_exp (C_mul c (C_of_R (ln (INR n)))).
 Notation "- x" := (C_opp x) : complex_scope.
+Notation "x * y" := (C_mul x y) : complex_scope.
+Notation "x / y" := (C_div x y) : complex_scope.
 Definition C_of_decimal_uint (n : Decimal.uint) : C :=
   {| Re := INR (Nat.of_uint n); Im := 0%R |}.
 Definition C_of_decimal_int (n : Decimal.int) : C :=
@@ -158,26 +174,30 @@ Definition C_of_decimal_int (n : Decimal.int) : C :=
   | Decimal.Pos ui => C_of_decimal_uint ui
   | Decimal.Neg ui => (- C_of_decimal_uint ui)%C
   end.
-...
-Definition to_decimal_uint (gq : GQ) : option Decimal.uint :=
-  let (num, den) := PQ_of_GQ gq in
-  match den with
-  | 0 => Some (Nat.to_uint (num + 1))
-  | _ => None
+Definition Req_dec' x y :=
+  if Rle_dec x y then if Rle_dec y x then true else false else false.
+Definition C_to_decimal_uint (c : C) : option Decimal.uint :=
+  if Req_dec' (Im c) 0%R then
+    if Req_dec' (frac_part (Re c)) 0%R then
+      if Rle_dec 0%R (Re c) then
+        Some (Nat.to_uint (Z.to_nat (Int_part (Re c))))
+      else None
+  else None
+  else None.
+Definition C_to_decimal_int (c : C) : option Decimal.int :=
+  match C_to_decimal_uint c with
+  | Some u => Some (Decimal.Pos u)
+  | None =>
+      match C_to_decimal_uint (- c)%C with
+      | Some u => Some (Decimal.Neg u)
+      | None => None
+      end
   end.
-
-Definition to_decimal_int (q : Q) : option Decimal.int :=
-  match q with
-  | Zero => Some (Nat.to_int 0)
-  | Pos gq => option_map Decimal.Pos (to_decimal_uint gq)
-  | Neg gq => option_map Decimal.Neg (to_decimal_uint gq)
-  end.
-
-Numeral Notation Q of_decimal_int to_decimal_int : Q_scope
+Numeral Notation C C_of_decimal_int C_to_decimal_int : complex_scope
   (abstract after 5001).
 
 Record series A := { ser : nat → A }.
 Record product A := { pro : nat → A }.
 
-Definition zeta s := {| ser n := (1 / INR n ^ s)%C |}.
+Definition zeta s := {| ser n := (1 / C_pow_nat_l n s)%C |}.
 Print zeta.
