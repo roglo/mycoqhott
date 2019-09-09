@@ -146,8 +146,38 @@ Qed.
 
 Require Import Reals.
 
+Record C := { Re : R; Im : R }.
+Declare Scope complex_scope.
+Delimit Scope complex_scope with C.
+Definition C_opp x := {| Re := - Re x; Im := - Im x |}.
+Notation "- x" := (C_opp x) : complex_scope.
+Definition C_of_decimal_uint (n : Decimal.uint) : C :=
+  {| Re := INR (Nat.of_uint n); Im := 0%R |}.
+Definition C_of_decimal_int (n : Decimal.int) : C :=
+  match n with
+  | Decimal.Pos ui => C_of_decimal_uint ui
+  | Decimal.Neg ui => (- C_of_decimal_uint ui)%C
+  end.
+...
+Definition to_decimal_uint (gq : GQ) : option Decimal.uint :=
+  let (num, den) := PQ_of_GQ gq in
+  match den with
+  | 0 => Some (Nat.to_uint (num + 1))
+  | _ => None
+  end.
+
+Definition to_decimal_int (q : Q) : option Decimal.int :=
+  match q with
+  | Zero => Some (Nat.to_int 0)
+  | Pos gq => option_map Decimal.Pos (to_decimal_uint gq)
+  | Neg gq => option_map Decimal.Neg (to_decimal_uint gq)
+  end.
+
+Numeral Notation Q of_decimal_int to_decimal_int : Q_scope
+  (abstract after 5001).
+
 Record series A := { ser : nat → A }.
 Record product A := { pro : nat → A }.
 
-Definition zeta s := {| ser n := (1 / INR n ^ s)%R |}.
+Definition zeta s := {| ser n := (1 / INR n ^ s)%C |}.
 Print zeta.
