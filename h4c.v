@@ -741,22 +741,10 @@ Theorem hott_4_9_2_tac A B X (e : A ≃ B) : (X → A) ≃ (X → B).
 Proof.
 (**)
 unfold "≃".
-Check (idtoeqv_ua e).
-...
-exists (λ h x, projT1 e (transport (λ _, X → A) (ua e)⁻¹ h x)).
+exists (λ h x, projT1 (idtoeqv (ua e)) (h x)).
 apply qinv_isequiv.
-transparent assert (g : (X → B) → X → A). {
-  intros h x.
-Check (transport _ (ua e) h x).
 ...
-  apply (projT1 (isequiv_qinv _ (projT2 e))).
-  apply (transport _ (ua e) h x).
-}
-exists g; subst g; cbn.
-split.
--unfold "◦◦", "∼", id; cbn.
- intros f; cbn.
- destruct e; cbn.
+rewrite idtoeqv_ua.
 ...
 remember (ua e) as p eqn:s.
 set (t := (idtoeqv_ua e)⁻¹ : e = idtoeqv (ua e)); simpl in t.
