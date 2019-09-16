@@ -741,6 +741,8 @@ Theorem hott_4_9_2_tac A B X (e : A ≃ B) : (X → A) ≃ (X → B).
 Proof.
 (**)
 unfold "≃".
+Check (idtoeqv_ua e).
+...
 exists (λ h x, projT1 e (transport (λ _, X → A) (ua e)⁻¹ h x)).
 apply qinv_isequiv.
 transparent assert (g : (X → B) → X → A). {
