@@ -745,6 +745,8 @@ exists (λ h x, projT1 e (transport (λ _, X → A) (ua e)⁻¹ h x)).
 apply qinv_isequiv.
 transparent assert (g : (X → B) → X → A). {
   intros h x.
+Check (transport _ (ua e) h x).
+...
   apply (projT1 (isequiv_qinv _ (projT2 e))).
   apply (transport _ (ua e) h x).
 }
