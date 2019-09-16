@@ -739,6 +739,7 @@ Definition weak_funext1 A P :=
 
 Theorem hott_4_9_2_tac A B X (e : A ≃ B) : (X → A) ≃ (X → B).
 Proof.
+unfold "≃".
 ...
 remember (ua e) as p eqn:s.
 set (t := (idtoeqv_ua e)⁻¹ : e = idtoeqv (ua e)); simpl in t.
