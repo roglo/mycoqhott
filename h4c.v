@@ -1156,6 +1156,17 @@ apply hott_4_2_6.
 apply hott_4_2_3.
 unfold qinv.
 transparent assert (g : (A → A) → A → {x : A & P x}). {
+(**)
+  apply hott_4_9_2_tac.
+...
+  exists (λ x, existT _ x (projT1 (Hf x))).
+  apply qinv_isequiv.
+  unfold qinv.
+  exists (λ x, projT1 x).
+  unfold "◦◦", "∼", id; cbn.
+  split.
+  -intros g.
+...
   intros g x.
   apply (existT _ (g x) (projT1 (Hf (g x)))).
 }
