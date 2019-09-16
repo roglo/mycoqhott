@@ -741,18 +741,21 @@ Theorem hott_4_9_2_tac A B X (e : A ≃ B) : (X → A) ≃ (X → B).
 Proof.
 (**)
 unfold "≃".
-exists (λ h x, projT1 (idtoeqv (ua e)) (h x)).
+exists (λ h x, projT1 e (h x)).
 apply qinv_isequiv.
-...
-rewrite idtoeqv_ua.
-...
-remember (ua e) as p eqn:s.
-set (t := (idtoeqv_ua e)⁻¹ : e = idtoeqv (ua e)); simpl in t.
-rewrite <- s in t.
-destruct p.
-apply eqv_refl.
+exists (λ h x, projT1 (isequiv_qinv _ (projT2 e)) (h x)).
+unfold "◦◦", "∼", id; cbn.
+split.
+-intros f.
+ rewrite <- (idtoeqv_ua e).
+ destruct (ua e); cbn.
+ now unfold id.
+-intros f.
+ rewrite <- (idtoeqv_ua e).
+ now destruct (ua e); cbn.
 Defined.
 
+(*
 Definition hott_4_9_2 A B X (e : A ≃ B) : (X → A) ≃ (X → B) :=
   let p : A = B := ua e in
   match
@@ -770,6 +773,7 @@ Definition old_hott_4_9_2 A B X (e : A ≃ B) : (X → A) ≃ (X → B) :=
     match ua e in (_ = y) return ((X → A) = (X → y)) with
     | eq_refl => eq_refl
     end.
+*)
 
 Notation "p '⁎'" := (transport _ p)
   (at level 8, left associativity, format "'[v' p ']' ⁎", only parsing).
@@ -815,7 +819,7 @@ Defined.
 Theorem hott_4_9_3 A (P : A → Type) (p : Π (x : A), isContr (P x)) :
   (A → Σ (x : A), P x) ≃ (A → A).
 Proof.
-apply hott_4_9_2.
+apply hott_4_9_2_tac.
 now apply pre_hott_4_9_3.
 Defined.
 
@@ -1115,26 +1119,26 @@ transparent assert (f : (A → {x : A & P x}) → (A → A)). {
   intros f x.
   apply (projT1 (f x)).
 }
-(*
+(**)
 set (α := hott_4_9_3 A P Hf).
 transparent assert (φ : (Π (x : A), P x) → fib (projT1 α) id). {
   intros h.
   exists (λ x, existT _ x (h x)).
   unfold α.
   unfold hott_4_9_3.
-  unfold hott_4_9_2; cbn.
-Check (pre_hott_4_9_3 A P Hf).
-...
+  now unfold hott_4_9_2_tac; cbn.
 }
-*)
+(**)
 transparent assert (y : fib f id). {
   unfold fib.
   now exists (λ x, existT _ x (projT1 (Hf x))).
 }
+(*
 transparent assert (φ : (Π (x : A), P x) → fib f id). {
   intros h.
   now exists (λ x, existT _ x (h x)).
 }
+*)
 transparent assert (ψ : fib f id → (Π (x : A), P x)). {
   intros (g', p) x.
   apply ((happly _ _ p x) ⁎ (pr₂ (g' x))).
@@ -1161,7 +1165,9 @@ unfold "◦◦", "∼", id; cbn.
 intros h.
 subst f g.
 cbn; cbn in y.
-Abort. (* j'y arrive pas
+...
+
+(* j'y arrive pas
 ...
 apply extensionality; intros x.
 destruct (h x).
