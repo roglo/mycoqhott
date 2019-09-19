@@ -670,35 +670,6 @@ Defined.
 Definition hott_4_8_1 A (B : A → Type) (a : A) :
   fib (Σ_pr₁ (B := B)) a ≃ B a.
 Proof.
-(* their proof... *)
-assert (p : fib (Σ_pr₁ (B := B)) a ≃ Σ (x : A), Σ (b : B x), x = a).
- eapply equiv_compose; [ eapply quasi_inv, ex_2_10 | apply eqv_refl ].
-
- eapply equiv_compose; [ apply p | clear p ].
- assert (p : (Σ (x : A), Σ (b : B x), x = a) ≃ Σ (x : A), Σ (p : x = a), B x).
-  exists
-    (λ w, existT _ (Σ_pr₁ w) (existT _ (Σ_pr₂ (Σ_pr₂ w)) (Σ_pr₁ (Σ_pr₂ w)))).
-  apply qinv_isequiv.
-  exists
-    (λ w, existT _ (Σ_pr₁ w) (existT _ (Σ_pr₂ (Σ_pr₂ w)) (Σ_pr₁ (Σ_pr₂ w)))).
-  unfold "◦◦", "∼", id; simpl.
-  split; intros (x, (p, q)); apply eq_refl.
-
-  eapply equiv_compose; [ apply p | clear p ].
-  transparent assert (f : (Σ (x : A), Σ (_ : x = a), B x) → B a).
-   intros (x, (p, q)); destruct p; apply q.
-
-   exists f; unfold f; clear f; simpl.
-   apply qinv_isequiv.
-   transparent assert (f : B a → (Σ (x : A), Σ (_ : x = a), B x)).
-    intros p; apply (existT _ a (existT _ (eq_refl _) p)).
-
-    exists f; unfold f; clear f; simpl.
-    unfold "◦◦", "∼", id; simpl.
-    split; [ easy | ].
-    intros (x, (p, q)); destruct p; apply eq_refl.
-(*
-(* my proof, shorter... *)
 transparent assert (f : fib (Σ_pr₁ (B := B)) a → B a).
  intros p; unfold fib in p.
  destruct p as ((x, p), q), q; apply p.
@@ -714,7 +685,6 @@ transparent assert (f : fib (Σ_pr₁ (B := B)) a → B a).
   split; [ easy | ].
   intros ((x, p), q); simpl in q.
   destruct q; apply eq_refl.
-*)
 Defined.
 
 Definition ua_pup {A B}
@@ -737,9 +707,8 @@ Definition weak_funext A P :=
 Definition weak_funext1 A P :=
   (∀ x : A, {a : P x & ∀ y : P x, a = y}) → {a : ∀ x : A, P x & ∀ y : ∀ x : A, P x, a = y}.
 
-Theorem hott_4_9_2_tac A B X (e : A ≃ B) : (X → A) ≃ (X → B).
+Theorem hott_4_9_2 A B X (e : A ≃ B) : (X → A) ≃ (X → B).
 Proof.
-(**)
 unfold "≃".
 exists (λ h x, projT1 e (h x)).
 apply qinv_isequiv.
@@ -754,26 +723,6 @@ split.
  rewrite <- (idtoeqv_ua e).
  now destruct (ua e); cbn.
 Defined.
-
-(*
-Definition hott_4_9_2 A B X (e : A ≃ B) : (X → A) ≃ (X → B) :=
-  let p : A = B := ua e in
-  match
-    p in (_ = y)
-    return (∀ e1 : A ≃ y, p = ua e1 → e1 = idtoeqv p → (X → A) ≃ (X → y))
-  with
-  | eq_refl =>
-      λ (e0 : A ≃ A) (_ : eq_refl = ua e0) (_ : e0 = idtoeqv eq_refl),
-        eqv_refl (X → A)
-  end e eq_refl
-  (eq_ind_r (λ e0 : A = B, e = idtoeqv e0) (idtoeqv_ua e)⁻¹ eq_refl).
-
-Definition old_hott_4_9_2 A B X (e : A ≃ B) : (X → A) ≃ (X → B) :=
-  idtoeqv
-    match ua e in (_ = y) return ((X → A) = (X → y)) with
-    | eq_refl => eq_refl
-    end.
-*)
 
 Notation "p '⁎'" := (transport _ p)
   (at level 8, left associativity, format "'[v' p ']' ⁎", only parsing).
@@ -819,7 +768,7 @@ Defined.
 Theorem hott_4_9_3 A (P : A → Type) (p : Π (x : A), isContr (P x)) :
   (A → Σ (x : A), P x) ≃ (A → A).
 Proof.
-apply hott_4_9_2_tac.
+apply hott_4_9_2.
 now apply pre_hott_4_9_3.
 Defined.
 
@@ -1089,37 +1038,15 @@ eapply compose; [ | apply (q b₀) ].
 apply ap, p.
 Defined.
 
-(*
-(* https://stackoverflow.com/questions/48161372/case-analysis-on-evidence-of-equality-type-in-coq *)
-Lemma true_num : ∀ m :nat, ∀ x y : m=m, x=y.
-Proof.
-intros.
-destruct x.
-*)
-
 Theorem weak_funext_th : ∀ {A} (P : A → Type),
   (Π (x : A), isContr (P x)) → isContr (Π (x : A), P x).
 Proof.
 intros * Hf.
 set (H1 := hott_4_8_1 A P).
-(*
-transparent assert (H2 : (Σ (x : A), P x) ≃ A). {
-  exists (λ x, projT1 x).
-  apply qinv_isequiv; unfold qinv.
-  exists (λ x, existT _ x (projT1 (Hf x))).
-  unfold "◦◦", "∼", id; cbn.
-  split; [ easy | ].
-  intros (x, Hx); cbn.
-  apply eq_existT_uncurried.
-  exists eq_refl; cbn.
-  destruct (Hf x) as (Hx', H); apply H.
-}
-*)
 transparent assert (f : (A → {x : A & P x}) → (A → A)). {
   intros f x.
   apply (projT1 (f x)).
 }
-(**)
 clear f.
 set (α := hott_4_9_3 A P Hf).
 transparent assert (φ : (Π (x : A), P x) → fib (projT1 α) id). {
@@ -1127,31 +1054,12 @@ transparent assert (φ : (Π (x : A), P x) → fib (projT1 α) id). {
   exists (λ x, existT _ x (h x)).
   unfold α.
   unfold hott_4_9_3.
-  now unfold hott_4_9_2_tac; cbn.
+  now unfold hott_4_9_2; cbn.
 }
-(**)
-(*
-transparent assert (y : fib f id). {
-  unfold fib.
-  now exists (λ x, existT _ x (projT1 (Hf x))).
-}
-*)
-(*
-transparent assert (φ : (Π (x : A), P x) → fib f id). {
-  intros h.
-  now exists (λ x, existT _ x (h x)).
-}
-*)
 transparent assert (ψ : fib (projT1 α) id → (Π (x : A), P x)). {
   intros (g', p) x.
   apply ((happly _ _ p x) ⁎ (pr₂ (g' x))).
 }
-(*
-transparent assert (ψ : fib f id → (Π (x : A), P x)). {
-  intros (g', p) x.
-  apply ((happly _ _ p x) ⁎ (pr₂ (g' x))).
-}
-*)
 assert (Hsr : ψ ◦◦ φ = id) by easy.
 assert (H : retraction (fib (projT1 α) id) (Π (x : A), P x)). {
   unfold retraction.
@@ -1160,19 +1068,11 @@ assert (H : retraction (fib (projT1 α) id) (Π (x : A), P x)). {
   replace z with (id z) by easy.
   now rewrite <- Hsr.
 }
-(*
-assert (H : retraction (fib f id) (Π (x : A), P x)). {
-  unfold retraction.
-  exists ψ, φ.
-  intros z.
-  replace z with (id z) by easy.
-  now rewrite <- Hsr.
-}
-*)
 eapply hott_3_11_7; [ apply H | ].
 apply hott_4_2_6.
 apply hott_4_2_3.
 apply (isequiv_qinv _ (projT2 α)).
 Qed.
 
+Check weak_funext_th.
 Print Assumptions weak_funext_th.
