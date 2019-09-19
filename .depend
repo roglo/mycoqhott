@@ -2,6 +2,8 @@ adjunction.vio: adjunction.v category.vio
 adjunction.vo adjunction.glob adjunction.v.beautified: adjunction.v category.vo
 areSet.vio: areSet.v h4c.vio
 areSet.vo areSet.glob areSet.v.beautified: areSet.v h4c.vo
+bug.vio: bug.v
+bug.vo bug.glob bug.v.beautified: bug.v
 category.vio: category.v h4c.vio
 category.vo category.glob category.v.beautified: category.v h4c.vo
 chap1.vio: chap1.v
@@ -16,10 +18,12 @@ chap5.vio: chap5.v chap1.vio chap2.vio chap3.vio chap4.vio
 chap5.vo chap5.glob chap5.v.beautified: chap5.v chap1.vo chap2.vo chap3.vo chap4.vo
 cone_lim.vio: cone_lim.v category.vio
 cone_lim.vo cone_lim.glob cone_lim.v.beautified: cone_lim.v category.vo
+funext.vio: funext.v
+funext.vo funext.glob funext.v.beautified: funext.v
 funib.vio: funib.v chap1.vio chap2.vio
 funib.vo funib.glob funib.v.beautified: funib.v chap1.vo chap2.vo
-h4c.vio: h4c.v
-h4c.vo h4c.glob h4c.v.beautified: h4c.v
+h4c.vio: h4c.v funext.vio
+h4c.vo h4c.glob h4c.v.beautified: h4c.v funext.vo
 misc_cat.vio: misc_cat.v category.vio areSet.vio
 misc_cat.vo misc_cat.glob misc_cat.v.beautified: misc_cat.v category.vo areSet.vo
 prop_ext_irr.vio: prop_ext_irr.v

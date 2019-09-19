@@ -171,7 +171,7 @@ Defined.
 
 Definition transport2 {C D} {F : functor C D} {G : functor D C}
   (GF : ∀ x : Ob C, f_obj G (f_obj F x) = x) x y :=
-  h4c.transport (λ '(x, y), Hom x y)
+  funext.transport (λ '(x, y), Hom x y)
     (eq_eq_eq_pair (eq_sym (GF x)) (eq_sym (GF y))).
 
 (* faithfulness & fullness *)
