@@ -1765,7 +1765,7 @@ specialize (H2 H); clear H.
 unfold Mon_Hom_eq in H2.
 cbn in H2.
 rewrite H1 in H2.
-now specialize (@h4c.happly _ _ _ _ H2) as H3.
+now specialize (@funext.happly _ _ _ _ H2) as H3.
 Defined.
 
 Theorem proposition_1_10 :
@@ -1957,7 +1957,7 @@ assert (H : (λ _ : st_type A, f x) = (λ _, f y)). {
   apply fun_ext; intros; easy.
 }
 specialize (H1 H); clear H.
-now apply @h4c.happly in H1.
+now apply @funext.happly in H1.
 Qed.
 
 Print Assumptions is_mono_is_inj.
@@ -1974,7 +1974,7 @@ Theorem is_strongly_inj_is_mono {A B : Ob SetCat} (f : Hom A B) :
 Proof.
 intros Hi C g h Hgh.
 apply fun_ext; intros x.
-specialize (@h4c.happly _ _ _ _ Hgh) as H1.
+specialize (@funext.happly _ _ _ _ Hgh) as H1.
 cbn in H1.
 unfold is_strongly_inj in Hi.
 specialize (H1 x) as H2.
@@ -2000,7 +2000,7 @@ unfold is_surj in Hi.
 apply fun_ext; intros y.
 specialize (Hi y) as (x, Hx).
 subst y.
-apply (@h4c.happly _ _ _ _ Hgh).
+apply (@funext.happly _ _ _ _ Hgh).
 Qed.
 
 Print Assumptions is_surj_is_epi.
@@ -2025,7 +2025,7 @@ assert (H1 : not (∀ x, f x ≠ y)). {
     now specialize (Hf x).
   }
   specialize (H1 H); clear H.
-  specialize (@h4c.happly _ _ _ _ H1 y) as H2.
+  specialize (@funext.happly _ _ _ _ H1 y) as H2.
   cbn in H2.
   now destruct (excl_mid (y = y)).
 }

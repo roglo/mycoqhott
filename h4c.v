@@ -10,12 +10,9 @@ Require Import funext.
 Definition isSet (A : Type) := ∀ (a b : A) (p q : a = b), p = q.
 Definition isProp (A : Type) := ∀ (x y : A), x = y.
 
-(*
 Definition lu {A} {b c : A} (r : b = c) : r = eq_refl b • r :=
   hott_2_1_4_i_2 r.
-*)
 
-(*
 Theorem hott_2_11_1 {A B} : ∀ (f : A → B), isequiv f → ∀ (a a' : A),
   (a = a') ≃ (f a = f a').
 Proof.
@@ -77,7 +74,6 @@ split; intros q.
  unfold "◦◦", "∼", id in β; simpl in β.
  unfold "◦◦"; simpl; rewrite β; reflexivity.
 Defined.
-*)
 
 Definition quasi_inv {A B} : A ≃ B → B ≃ A :=
   λ eqf,
@@ -177,7 +173,6 @@ split.
  apply Hfg.
 Qed.
 
-(*
 Theorem pair_transport_eq_existT {A} {P : A → Type} :
   ∀ a b (Ha : P a) (Hb : P b),
   {p : a = b & transport P p Ha = Hb} → existT P a Ha = existT P b Hb.
@@ -219,6 +214,7 @@ intros (p, Hp).
 now destruct p, Hp.
 Qed.
 
+(*
 Theorem transport_pair : ∀ A B C (x y : A) (p : x = y) b c,
   transport (λ z, (B z * C z)%type) p (b, c) =
   (transport B p b, transport C p c).
@@ -288,7 +284,6 @@ Qed.
 
 Axiom extensionality : ∀ {A B} f g, isequiv (@happly A B f g).
 
-(*
 Definition funext {A B} {f g : Π (x : A), B x}
   : (∀ x : A, f x = g x) → f = g
   := λ p,
@@ -379,6 +374,7 @@ rewrite Hp, Hq, Hx.
 reflexivity.
 Defined.
 
+(*
 Notation "⊥" := False.
 *)
 
@@ -420,6 +416,7 @@ Definition PT_elim {A} : isProp A → ∥A∥ → A :=
   λ PA, Σ_type.pr₁ (PT_rec A A id PA).
 Definition PT_intro_not {A} : notT A → notT ∥A∥ :=
   λ f, Σ_type.pr₁ (PT_rec A ⊥ f (λ x y : ⊥, match x with end)).
+*)
 
 Theorem isSet_True : isSet True.
 Proof.
@@ -432,7 +429,6 @@ Proof.
 apply isProp_isSet.
 now intros x y; destruct x, y.
 Qed.
-*)
 
 (*
 Theorem univalence : ∀ A B : Type, (A ≃ B) ≃ (A = B).

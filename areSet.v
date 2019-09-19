@@ -4,7 +4,7 @@ Set Universe Polymorphism.
 Set Nested Proofs Allowed.
 
 Require Import Utf8.
-Require Import h4c.
+Require Import h4c funext.
 
 Definition hott_2_3_10 {A B x y} :
     ∀ (f : A → B) (P : B → Type) (p : x = y) (u : P (f x)),

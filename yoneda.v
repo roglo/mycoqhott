@@ -54,7 +54,7 @@ split.
    apply fun_ext; intros X.
    apply fun_ext; intros f.
    specialize (Hη A X f) as H1; cbn in H1.
-   specialize (@h4c.happly _ _ _ _ H1 (idc A)) as H2.
+   specialize (@funext.happly _ _ _ _ H1 (idc A)) as H2.
    cbn in H2.
    now rewrite unit_l in H2.
  }
@@ -111,7 +111,7 @@ destruct η as (η, η_prop).
 cbn in *.
 apply f_equal.
 specialize (η_prop Y Z g) as H1.
-now specialize (@h4c.happly _ _ _ _ H1 (f_hom F f T)) as H2.
+now specialize (@funext.happly _ _ _ _ H1 (f_hom F f T)) as H2.
 Qed.
 
 Theorem functor_SetC_C_Set1_id_prop {C} (D := SetC_C C) (X : Ob D) :
@@ -159,7 +159,7 @@ specialize @nat_transf_comp_nt_commute as H2.
 specialize (H2 C SetCat (cov_hom_functor X) F G η η' Z T h).
 cbn in H2.
 unfold nt_component in H2.
-specialize (@h4c.happly _ _ _ _ H2 (g ◦ f)) as H3.
+specialize (@funext.happly _ _ _ _ H2 (g ◦ f)) as H3.
 cbn in H3.
 etransitivity; [ | apply H3 ].
 do 2 apply f_equal.
@@ -272,7 +272,7 @@ assert (p :
   destruct η as (η, Hη); cbn.
   rewrite f_comp_prop; cbn.
   specialize (Hη B X f) as H1; cbn in H1.
-  specialize (@h4c.happly _ _ _ _ H1) as H2; cbn in H2.
+  specialize (@funext.happly _ _ _ _ H1) as H2; cbn in H2.
   symmetry; apply H2.
 }
 exists p.
