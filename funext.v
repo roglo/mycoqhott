@@ -511,5 +511,5 @@ apply hott_4_2_3.
 apply (isequiv_qinv _ (projT2 α)).
 Qed.
 
-Check weak_funext_th.
+Check @weak_funext_th.
 Print Assumptions weak_funext_th.
