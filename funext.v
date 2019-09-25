@@ -475,7 +475,7 @@ eapply compose; [ | apply (q b₀) ].
 apply ap, p.
 Defined.
 
-Theorem weak_funext_th : ∀ {A} (P : A → Type),
+Theorem weak_funext : ∀ {A} (P : A → Type),
   (Π (x : A), isContr (P x)) → isContr (Π (x : A), P x).
 Proof.
 intros * Hf.
@@ -511,5 +511,11 @@ apply hott_4_2_3.
 apply (isequiv_qinv _ (projT2 α)).
 Qed.
 
-Check @weak_funext_th.
-Print Assumptions weak_funext_th.
+Check @weak_funext.
+Print Assumptions weak_funext.
+
+Theorem funext {A B} :∀ f g : ∀ (x : A), B x,
+  (∀ x : A, f x = g x) → f = g.
+Proof.
+intros  * Hfg.
+Check @weak_funext.
