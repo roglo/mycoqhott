@@ -519,3 +519,4 @@ Theorem funext {A B} :∀ f g : ∀ (x : A), B x,
 Proof.
 intros  * Hfg.
 Check @weak_funext.
+...
