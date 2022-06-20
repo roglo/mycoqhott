@@ -1,4 +1,4 @@
-Compilable with coq 8.10.
+The Coq Proof Assistant, version 8.14+alpha
 
 Trying to implement the HoTT book in Coq (files chap1.v to chap4.v):
 not terminated.

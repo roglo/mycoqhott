@@ -65,7 +65,7 @@ Class category :=
     unit_r : ∀ {A B} (f : Hom A B), comp f (idc B) = f;
     assoc : ∀ {A B C D} (f : Hom A B) (g : Hom B C) (h : Hom C D),
       comp f (comp g h) = comp (comp f g) h;
-    Hom_set x y : isSet (Hom x y) }.
+    Hom_set A B : isSet (Hom A B) }.
 
 Arguments Ob : clear implicits.
 Arguments Ob C%Cat : rename.
