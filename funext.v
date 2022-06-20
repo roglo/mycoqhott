@@ -247,7 +247,11 @@ split.
 Defined.
 
 Notation "p '⁎'" := (transport _ p)
+  (at level 8, left associativity, only parsing).
+(*
+Notation "p '⁎'" := (transport _ p)
   (at level 8, left associativity, format "'[v' p ']' ⁎", only parsing).
+*)
 
 Definition Σ_type_pair_eq {A} {P : A → Type} {x y : A} {u : P x} {v : P y} :
   Π (p : x = y), p⁎ u = v → existT _ x u = existT _ y v
@@ -511,6 +515,7 @@ apply hott_4_2_3.
 apply (isequiv_qinv _ (projT2 α)).
 Qed.
 
+(* to be completed
 Check @weak_funext.
 Print Assumptions weak_funext.
 
@@ -523,3 +528,4 @@ apply weak_funext.
 intros h.
 unfold isContr.
 ...
+*)

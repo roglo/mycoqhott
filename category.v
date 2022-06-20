@@ -316,6 +316,8 @@ apply fun_ext; intros z.
 apply Hom_set.
 Qed.
 
+...
+
 Theorem Fun_Hom_set {C D} : ∀ F G : functor C D,
   isSet (natural_transformation F G).
 Proof.

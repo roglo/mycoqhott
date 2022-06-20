@@ -187,7 +187,7 @@ Theorem eq_existT_pair_transport {A} {P : A → Type} :
 Proof.
 intros * Hee.
 inversion_sigma.
-destruct Hee0.
+destruct Hee1.
 now exists eq_refl.
 Defined.
 
@@ -204,9 +204,9 @@ split. {
   unfold "◦◦", "∼", id.
   intros p.
   inversion_sigma.
-  destruct p0.
-  cbn in p1; cbn.
-  now destruct p1.
+  destruct p1.
+  cbn in p2; cbn.
+  now destruct p2.
 }
 exists (eq_existT_pair_transport a b Ha Hb).
 unfold "◦◦", "∼", id.
@@ -223,6 +223,8 @@ intros.
 destruct p; reflexivity.
 Qed.
 *)
+
+...
 
 Theorem isnType_isnType_sigT (A : Type) : ∀ n P,
   (∀ x, isProp (P x)) → isnType A n → isnType (@sigT A P) n.
@@ -266,7 +268,7 @@ eapply isnType_if_equiv; [ | apply H4 ].
 now apply pair_transport_equiv_eq_existT.
 Qed.
 
-Theorem isSet_isSet_sigT {A} {P : A → Type} :
+Theorem isSet_isSet_sigT {A : Set} {P : A → Set} :
   (∀ x, isProp (P x)) → isSet A → isSet (@sigT A P).
 Proof.
 intros * HP HS.

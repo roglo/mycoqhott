@@ -12,7 +12,11 @@ Notation "⊤" := True.
 Notation "'ℬ'" := (bool : Type).
 Notation "'ℕ'" := nat.
 Notation "( x , y ) '_{' P }" := (existT P x y)
+  (at level 0, only parsing).
+(*
+Notation "( x , y ) '_{' P }" := (existT P x y)
   (at level 0, format "'[' ( x ,  y ) _{ P } ']'", only parsing).
+*)
 
 Open Scope nat_scope.
 

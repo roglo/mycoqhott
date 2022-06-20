@@ -286,7 +286,11 @@ Definition transport {A} P {x y : A} (p : x = y) : P x → P y :=
      : ∀ (A : Type) (P : A → Type) (x y : A), x = y → P x → P y *)
 
 Notation "p '⁎'" := (transport _ p)
+  (at level 8, left associativity, only parsing).
+(*
+Notation "p '⁎'" := (transport _ p)
   (at level 8, left associativity, format "'[v' p ']' ⁎", only parsing).
+*)
 
 (* lemma 2.3.2 path lifting property *)
 
@@ -3265,7 +3269,7 @@ existT isequiv (λ f, (λ a, f (inl a), λ b, f (inr b)))
   (qinv_isequiv (λ f, (λ a, f (inl a), λ b, f (inr b)))
      (existT _
         (λ (fg : (∀ a : A, X (inl a)) * (∀ b : B, X (inr b))) x,
-         let (f, g) := fg in dep_fun_map f g x)
+         let '(f, g) := fg in dep_fun_map f g x)
         (λ fg : (∀ x : A, X (inl x)) * (∀ x : B, X (inr x)),
          let (f, g) as p return
            ((λ a : A, let (f, _) := p in f a,

@@ -617,7 +617,7 @@ Defined.
 
 (* "For emphasis, the proper version (3.4.1) may be denoted LEM-₁" *)
 
-Definition LEM_p p := Π (A : Type), (ispType A p → (A + notT A)).
+Definition LEM_p p := Π (A : Set), (ispType A p → (A + notT A)).
 Definition LEM_inf := Π (A : Type), (A + notT A).
 
 (* "Definition 3.4.3.
@@ -920,7 +920,7 @@ Defined.
 
 (* equivalence is a set, whenever A and B are *)
 
-Definition isSet_equiv {A B : Type} : isSet A → isSet B → isSet (A ≃ B).
+Definition isSet_equiv {A B : Set} : isSet A → isSet B → isSet (A ≃ B).
 Proof.
 intros SA SB.
 apply ex_3_1_5_bis; [ apply ex_3_1_6; intros; apply SB | idtac ].
