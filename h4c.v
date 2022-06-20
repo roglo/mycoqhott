@@ -84,7 +84,7 @@ Definition quasi_inv {A B} : A ≃ B → B ≃ A :=
          existT _ f Hg)
  end.
 
-Fixpoint isnType A n :=
+Fixpoint isnType (A : Type) n : Type :=
   match n with
   | 0 => isProp A
   | S p' => ∀ x y : A, isnType (x = y) p'
@@ -224,9 +224,7 @@ destruct p; reflexivity.
 Qed.
 *)
 
-...
-
-Theorem isnType_isnType_sigT (A : Type) : ∀ n P,
+Theorem isnType_isnType_sigT (A : Type) : ∀ n (P : A → Type),
   (∀ x, isProp (P x)) → isnType A n → isnType (@sigT A P) n.
 Proof.
 intros * HP Hn.

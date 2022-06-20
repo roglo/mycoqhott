@@ -351,9 +351,9 @@ End lemma_3_1_8.
 
 (* generalization *)
 
-Definition isProp A := Π (x : A), Π (y : A), x = y.
+Definition isProp A : Type := Π (x : A), Π (y : A), x = y.
 
-Fixpoint ispType A p :=
+Fixpoint ispType (A : Type) p : Type :=
   match p with
   | 0 => isProp A
   | S p' => ∀ x y : A, ispType (x = y) p'
@@ -362,7 +362,7 @@ Fixpoint ispType A p :=
 (* A n-type has property 'ispType A (S n)', because the n of n-types
    starts at -1 *)
 
-Definition ispType_isSpType_tac {A} n : ispType A n → ispType A (S n).
+Definition ispType_isSpType_tac {A : Type} n : ispType A n → ispType A (S n).
 Proof.
 intros f x y.
 revert A f x y.
@@ -375,8 +375,8 @@ induction n; intros.
  intros p q; apply IHn, f.
 Defined.
 
-Definition ispType_isSpType {A} n : ispType A n → ispType A (S n) :=
-  nat_ind
+Definition ispType_isSpType {A : Type} n : ispType A n → ispType A (S n) :=
+  nat_rect
     (λ n, ∀ A, ispType A n → ispType A (S n))
     (λ A f x y p q,
      compose_cancel_l (f x x) p q
@@ -617,7 +617,7 @@ Defined.
 
 (* "For emphasis, the proper version (3.4.1) may be denoted LEM-₁" *)
 
-Definition LEM_p p := Π (A : Set), (ispType A p → (A + notT A)).
+Definition LEM_p p := Π (A : Type), (ispType A p → (A + notT A)).
 Definition LEM_inf := Π (A : Type), (A + notT A).
 
 (* "Definition 3.4.3.
@@ -761,6 +761,7 @@ Defined.
 
 Definition isPropImp {A B} : isProp B → isProp (A → B).
 Proof.
+intros * H.
 intros; apply ex_3_6_2; intros x; apply H.
 Defined.
 
