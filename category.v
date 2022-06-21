@@ -67,6 +67,9 @@ Class category :=
       comp f (comp g h) = comp (comp f g) h;
     Hom_set A B : isSet (Hom A B) }.
 
+(* ça va pas : c'est pas "Hom A B" qui doit être un set, mais "Hom",
+   lui-même : seulement, comment on fait ça ? *)
+
 Arguments Ob : clear implicits.
 Arguments Ob C%Cat : rename.
 Arguments Hom [_%Cat].
