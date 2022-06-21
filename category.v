@@ -70,16 +70,6 @@ Class category :=
 (* ça va pas : c'est pas "Hom A B" qui doit être un set, mais "Hom",
    lui-même : seulement, comment on fait ça ? *)
 
-(* to be completed
-Theorem hom_is_subset : ∀ (C : category) (A B : Ob),
-  { P & ∀ x : Hom A B, P x }.
-Proof.
-intros.
-specialize (Hom_set A B) as H1.
-unfold isSet, h4c.isSet in H1.
-...
-*)
-
 Arguments Ob : clear implicits.
 Arguments Ob C%Cat : rename.
 Arguments Hom [_%Cat].
